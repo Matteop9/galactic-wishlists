@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galactic Tycoons — Wishlists</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #1a1a2e;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #30363d;
+    }
+    header h1 { font-size: 1.15rem; font-weight: 600; }
+    header span { font-size: 0.8rem; color: #8b949e; margin-top: 2px; display: block; }
+
+    .container {
+      max-width: 560px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 20px;
+      flex: 1;
+    }
+
+    .run-btn {
+      width: 100%;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+      background: #238636;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .run-btn:hover:not(:disabled) { background: #2ea043; }
+    .run-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .results { display: flex; flex-direction: column; gap: 10px; }
+
+    .result-row {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: border-color 0.2s;
+    }
+    .result-row.success { border-color: #238636; }
+    .result-row.error   { border-color: #f85149; }
+    .result-row.loading { border-color: #388bfd; }
+
+    .status-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+
+    .result-body { flex: 1; min-width: 0; }
+    .result-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .result-detail {
+      font-size: 0.8rem;
+      color: #8b949e;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .result-row.success .result-detail { color: #3fb950; }
+    .result-row.error   .result-detail { color: #f85149; }
+    .result-row.loading .result-detail { color: #388bfd; }
+
+    .load-error {
+      background: #2a0d0d;
+      border: 1px solid #f85149;
+      border-radius: 10px;
+      padding: 16px;
+      color: #f85149;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .timestamp {
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: #484f58;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Galactic Tycoons — Wishlists</h1>
+    <span>Tap the button to add all items to every wishlist</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="load-error" id="loadError"></div>
+
+  <button class="run-btn" id="runBtn" onclick="runAll()" disabled>
+    <span class="spinner" id="spinner"></span>
+    <span id="btnText">Loading config...</span>
+  </button>
+
+  <div class="results" id="results"></div>
+  <div class="timestamp" id="timestamp"></div>
+</div>
+
+<script>
+  let config = null;
+
+  // Load config.json on page start
+  async function loadConfig() {
+    try {
+      const res = await fetch('./config.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      config = await res.json();
+      buildRows();
+      document.getElementById('btnText').textContent = 'Run All Wishlists';
+      document.getElementById('runBtn').disabled = false;
+    } catch (err) {
+      const el = document.getElementById('loadError');
+      el.textContent = 'Could not load config.json: ' + err.message +
+        '\n\nMake sure config.json is in the same folder and you are serving over HTTP (not file://).';
+      el.style.display = 'block';
+      document.getElementById('btnText').textContent = 'Config failed to load';
+    }
+  }
+
+  function buildRows() {
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+    config.requests.forEach((req, i) => {
+      const row = document.createElement('div');
+      row.className = 'result-row';
+      row.id = 'row-' + i;
+      row.innerHTML = `
+        <div class="status-icon" id="icon-${i}">○</div>
+        <div class="result-body">
+          <div class="result-name">${req.name}</div>
+          <div class="result-detail" id="detail-${i}">Ready</div>
+        </div>`;
+      container.appendChild(row);
+    });
+  }
+
+  function setRow(i, state, icon, detail) {
+    const row = document.getElementById('row-' + i);
+    row.className = 'result-row ' + state;
+    document.getElementById('icon-' + i).textContent = icon;
+    document.getElementById('detail-' + i).textContent = detail;
+  }
+
+  async function runAll() {
+    const btn = document.getElementById('runBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    btnText.textContent = 'Sending...';
+
+    // Mark all as loading
+    config.requests.forEach((_, i) => setRow(i, 'loading', '⋯', 'Sending...'));
+
+    const tasks = config.requests.map((req, i) => sendRequest(req, i));
+    await Promise.allSettled(tasks);
+
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    btnText.textContent = 'Run All Wishlists';
+    document.getElementById('timestamp').textContent =
+      'Last run: ' + new Date().toLocaleString();
+  }
+
+  async function sendRequest(req, i) {
+    try {
+      const res = await fetch(req.url, {
+        method: 'POST',
+        headers: {
+          'Authorization': config.bearer_token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(req.items)
+      });
+
+      const text = await res.text();
+      let detail;
+      try { detail = JSON.stringify(JSON.parse(text), null, 2); }
+      catch { detail = text || '(empty response)'; }
+
+      if (res.ok) {
+        setRow(i, 'success', '✅', 'Success (' + res.status + ')\n' + detail);
+      } else {
+        setRow(i, 'error', '❌', 'Error ' + res.status + ' ' + res.statusText + '\n' + detail);
+      }
+    } catch (err) {
+      setRow(i, 'error', '❌', 'Network error: ' + err.message);
+    }
+  }
+
+  loadConfig();
+</script>
+</body>
+</html>
