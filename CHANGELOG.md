@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-03-31 — Config timestamp & HTML update
+
+### Added
+- `last_updated` field in `config.json` — displayed on the page so you can confirm when a new config has propagated
+- "Config updated" timestamp shown below the header on the web page
+
 ## 2026-03-31 — Wishlist URL Update
 
 ### Changed
