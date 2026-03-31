@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>US Road Trip 2025</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      height: 56px;
+      flex-shrink: 0;
+      z-index: 200;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.18); }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+    .trip-meta {
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+    }
+    .trip-meta h1 {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #day-label {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      display: block;
+      margin-top: 1px;
+    }
+
+    /* ── App body ── */
+    #app-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 320px;
+      flex-shrink: 0;
+      background: #fff;
+      border-left: 1px solid #e2e8f0;
+      overflow-y: auto;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: opacity 0.2s ease;
+    }
+    #sidebar.fading { opacity: 0; }
+
+    .sb-location {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .location-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .nights-badge {
+      background: #2563eb;
+      color: #fff;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .transport-line {
+      font-size: 0.83rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+
+    .birthday-banner {
+      background: #fef3c7;
+      border-left: 3px solid #f59e0b;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #92400e;
+    }
+
+    .note-banner {
+      background: #f0fdf4;
+      border-left: 3px solid #22c55e;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #166534;
+    }
+
+    .sb-section {
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .sb-section-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #f59e0b;
+      margin-bottom: 8px;
+    }
+    .sb-section ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sb-section ul li {
+      font-size: 0.83rem;
+      color: #334155;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.4;
+    }
+    .sb-section ul li::before {
+      content: '·';
+      position: absolute;
+      left: 0;
+      color: #94a3b8;
+    }
+
+    .vibe-text {
+      font-size: 0.83rem;
+      color: #64748b;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* ── Dot markers (DivIcon) ── */
+    .dot-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dot-marker {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #2563eb;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      transition: all 0.3s ease;
+    }
+    .dot-active {
+      width: 18px;
+      height: 18px;
+      background: #f59e0b;
+      box-shadow: 0 0 0 4px rgba(245,158,11,0.3), 0 1px 4px rgba(0,0,0,0.2);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(245,158,11,0.3), 0 1px 4px rgba(0,0,0,0.2); }
+      50%       { box-shadow: 0 0 0 8px rgba(245,158,11,0.12), 0 1px 4px rgba(0,0,0,0.2); }
+    }
+
+    /* ── Character marker ── */
+    .char-marker {
+      font-size: 1.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      user-select: none;
+      animation: float 2.5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-6px); }
+    }
+
+    /* ── Leaflet overrides ── */
+    .leaflet-container { font-family: inherit; }
+  </style>
+</head>
+<body>
+
+<header>
+  <button class="nav-btn" id="btn-prev">&#8592; Prev</button>
+  <div class="trip-meta">
+    <h1>🇺🇸 US Road Trip 2025</h1>
+    <span id="day-label">Day 1 · Wed 10 Sept</span>
+  </div>
+  <button class="nav-btn" id="btn-next">Next &#8594;</button>
+</header>
+
+<div id="app-body">
+  <div id="map"></div>
+  <aside id="sidebar"></aside>
+</div>
+
+<script>
+  /* ─────────────────────────────────────────────
+     STOPS — unique locations for route + dots
+  ───────────────────────────────────────────── */
+  const STOPS = [
+    { name: 'Las Vegas',        coords: [36.1699, -115.1398] },
+    { name: 'Page, AZ',         coords: [36.9147, -111.4474] },
+    { name: 'Grand Canyon',     coords: [36.0544, -112.1401] },
+    { name: 'Williams / Rt 66', coords: [35.2497, -112.1873] },
+    { name: 'Sedona',           coords: [34.8697, -111.7610] },
+    { name: 'Phoenix',          coords: [33.4484, -112.0740] },
+    { name: 'St Pete Beach',    coords: [27.7256, -82.7401]  },
+    { name: 'Orlando',          coords: [28.5383, -81.3792]  },
+  ];
+
+  /* ─────────────────────────────────────────────
+     DAYS — one object per day (16 total)
+  ───────────────────────────────────────────── */
+  const DAYS = [
+    // ── LAS VEGAS ──────────────────────────────
+    {
+      day: 1, date: 'Wed 10 Sept', location: 'Las Vegas',
+      coords: [36.1699, -115.1398],
+      nights: 4, isFirstNight: true,
+      transport: { mode: '✈️', label: 'Arrived from UK today' },
+      vibe: 'Big nights, shows, food, day trips',
+      activities: [
+        'Walk the Strip at night — start at Bellagio fountains (free, hourly)',
+        'The Sphere — book in advance, unmissable',
+        'High Roller observation wheel at sunset',
+        'Day trip: Hoover Dam (~45 mins away)',
+        'Day trip: Valley of Fire State Park (~1 hr) — don\'t miss',
+      ],
+      food: [
+        'Secret Pizza — Cosmopolitan, floor 14',
+        'One blow-out dinner — Hell\'s Kitchen, Nobu, or Carbone',
+        'Rooftop cocktails at Foundation Room, Mandalay Bay',
+      ],
+      stay: ['Cosmopolitan', 'ARIA', 'Venetian (mid-premium)'],
+      note: null, birthday: false,
+    },
+    {
+      day: 2, date: 'Thu 11 Sept', location: 'Las Vegas',
+      coords: [36.1699, -115.1398],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Big nights, shows, food, day trips',
+      activities: [
+        'The Sphere (if not done Day 1)',
+        'Fremont Street Experience at night',
+        'Pool day at the hotel',
+        'High Roller at sunset',
+      ],
+      food: [
+        'Secret Pizza — Cosmopolitan, floor 14',
+        'Hell\'s Kitchen, Nobu, or Carbone',
+        'Foundation Room rooftop bar',
+      ],
+      stay: ['Cosmopolitan', 'ARIA', 'Venetian'],
+      note: null, birthday: false,
+    },
+    {
+      day: 3, date: 'Fri 12 Sept', location: 'Las Vegas',
+      coords: [36.1699, -115.1398],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Big nights, shows, food, day trips',
+      activities: [
+        'Day trip: Hoover Dam (~45 mins, guided or self-drive)',
+        'Day trip: Valley of Fire State Park — red rock formations',
+        'Bellagio fountains after dark',
+      ],
+      food: [
+        'Secret Pizza — Cosmopolitan, floor 14',
+        'One blow-out dinner (final chance!)',
+        'Foundation Room rooftop bar',
+      ],
+      stay: ['Cosmopolitan', 'ARIA', 'Venetian'],
+      note: null, birthday: false,
+    },
+    {
+      day: 4, date: 'Sat 13 Sept', location: 'Las Vegas',
+      coords: [36.1699, -115.1398],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Last night in Vegas — pack in the morning',
+      activities: [
+        'Morning: pack up and prep for road trip',
+        'Final Strip walk, any last sights',
+        'Hire car pickup tomorrow at LAS airport',
+      ],
+      food: [
+        'Last Vegas dinner — go big or go home',
+        'Secret Pizza one more time',
+      ],
+      stay: ['Cosmopolitan', 'ARIA', 'Venetian'],
+      note: '🚗 Hire car pickup tomorrow morning at LAS airport', birthday: false,
+    },
+    // ── PAGE, AZ ───────────────────────────────
+    {
+      day: 5, date: 'Sun 14 Sept', location: 'Page, AZ',
+      coords: [36.9147, -111.4474],
+      nights: 2, isFirstNight: true,
+      transport: { mode: '🚗', label: 'Drive from Las Vegas (~4.5 hrs) — hire car from LAS' },
+      vibe: 'Two jaw-dropping natural sights. Birthday stop 🎂',
+      activities: [
+        'Hire car pickup: Las Vegas Airport (LAS)',
+        'Drive to Page (~4.5 hrs via US-89)',
+        'Arrive: straight to Horseshoe Bend — golden hour, free, 20 min walk',
+        'Settle in to Hyatt Place Page',
+      ],
+      food: [
+        'Dinner in Page after Horseshoe Bend',
+      ],
+      stay: ['Hyatt Place Page'],
+      note: null, birthday: false,
+    },
+    {
+      day: 6, date: 'Mon 15 Sept', location: 'Page, AZ',
+      coords: [36.9147, -111.4474],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Birthday! Upper Antelope Canyon + Lake Powell',
+      activities: [
+        'Upper Antelope Canyon — 10:30am tour (booked via antelopecanyon.com)',
+        'Lunch in Page — celebrate!',
+        'Relaxed afternoon — Lake Powell viewpoints',
+        'Birthday dinner in Page 🎂',
+      ],
+      food: [
+        'Birthday dinner — something special!',
+        'Lunch in town after Antelope Canyon',
+      ],
+      stay: ['Hyatt Place Page'],
+      note: '🎂 Happy Birthday!', birthday: true,
+    },
+    // ── GRAND CANYON ───────────────────────────
+    {
+      day: 7, date: 'Tue 16 Sept', location: 'Grand Canyon',
+      coords: [36.0544, -112.1401],
+      nights: 2, isFirstNight: true,
+      transport: { mode: '🚗', label: 'Drive from Page, AZ (~2.5 hrs)' },
+      vibe: 'Two full days — don\'t rush it',
+      activities: [
+        'Mather Point at sunrise',
+        'Rim Trail walk to Bright Angel trailhead',
+        'Bright Angel Trail — hike down 1.5 miles, back up',
+        'Yavapai Geology Museum',
+      ],
+      food: [
+        'Maswik Lodge café or dining room',
+        'Pack snacks for the hike',
+      ],
+      stay: ['Maswik Lodge — inside the park, short walk to rim'],
+      note: null, birthday: false,
+    },
+    {
+      day: 8, date: 'Wed 17 Sept', location: 'Grand Canyon',
+      coords: [36.0544, -112.1401],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Explore the full rim — east and west',
+      activities: [
+        'Desert View Drive east along the rim',
+        'Desert View Watchtower (far east end)',
+        'Hermit Road shuttle west (free in Sept)',
+        'Sunset at Hopi Point',
+      ],
+      food: [
+        'Maswik Lodge dining',
+        'El Tovar Hotel dining room (book ahead)',
+      ],
+      stay: ['Maswik Lodge — inside the park'],
+      note: null, birthday: false,
+    },
+    // ── WILLIAMS / ROUTE 66 ────────────────────
+    {
+      day: 9, date: 'Thu 18 Sept', location: 'Williams / Route 66',
+      coords: [35.2497, -112.1873],
+      nights: 1, isFirstNight: true,
+      transport: { mode: '🚗', label: 'Drive from Grand Canyon (~1 hr via Hwy 180)' },
+      vibe: 'Classic Americana, Mother Road nostalgia',
+      activities: [
+        'Drive the original Route 66 between Seligman and Kingman',
+        'Snow Cap Drive-In, Seligman — iconic quirky diner',
+        'Delgadillo\'s Route 66 Gift Shop',
+        'Peach Springs & Hualapai Nation nearby',
+        'Williams — charming Route 66 town base',
+      ],
+      food: [
+        'Snow Cap Drive-In, Seligman',
+        'Dinner in Williams town',
+      ],
+      stay: ['Williams — various options (30 mins east of Seligman)'],
+      note: null, birthday: false,
+    },
+    // ── SEDONA ─────────────────────────────────
+    {
+      day: 10, date: 'Fri 19 Sept', location: 'Sedona',
+      coords: [34.8697, -111.7610],
+      nights: 1, isFirstNight: true,
+      transport: { mode: '🚗', label: 'Drive from Williams (~1 hr via AZ-89A)' },
+      vibe: 'Red rocks, adventure, one special evening',
+      activities: [
+        'Pink Jeep Broken Arrow Tour — booked via pinkadventuretours.com (2 hrs, exclusive trail)',
+        'Cathedral Rock hike at golden hour',
+        'Chapel of the Holy Cross',
+        'Tlaquepaque Arts Village',
+      ],
+      food: [
+        'Elote Café — arrive 5pm opening, walk-up only, outstanding Mexican',
+      ],
+      stay: ['L\'Auberge de Sedona', 'Amara Resort'],
+      note: null, birthday: false,
+    },
+    // ── PHOENIX ────────────────────────────────
+    {
+      day: 11, date: 'Sat 20 Sept', location: 'Phoenix',
+      coords: [33.4484, -112.0740],
+      nights: 1, isFirstNight: true,
+      transport: { mode: '🚗', label: 'Drive from Sedona (~2 hrs via AZ-179 / I-17)' },
+      vibe: 'One relaxed night before flying to Florida',
+      activities: [
+        'Drop off hire car at PHX Sky Harbor airport',
+        'Check in, drop luggage, decompress',
+        'Optional: dinner in Old Town Scottsdale if energy allows',
+      ],
+      food: [
+        'Old Town Scottsdale dinner — buzzy restaurant row',
+      ],
+      stay: ['Hotel near PHX Sky Harbor airport'],
+      note: '🚗 Drop hire car at PHX airport today', birthday: false,
+    },
+    // ── ST PETE BEACH ──────────────────────────
+    {
+      day: 12, date: 'Sun 21 Sept', location: 'St Pete Beach',
+      coords: [27.7256, -82.7401],
+      nights: 4, isFirstNight: true,
+      transport: { mode: '✈️', label: 'Flight: Phoenix (PHX) → Tampa (TPA)' },
+      vibe: 'Do absolutely nothing. Beach, swim, eat, repeat.',
+      activities: [
+        'Land at TPA, transfer to St Pete Beach',
+        'First beach swim of Florida',
+        'Sunset at Pier 60 — free, street performers every evening',
+        'Beachfront restaurant for dinner',
+      ],
+      food: [
+        'Casual beachfront restaurant on arrival',
+      ],
+      stay: ['Loews Don CeSar (iconic pink palace)', 'TradeWinds Island Resort', 'Sandpearl Resort Clearwater'],
+      note: null, birthday: false,
+    },
+    {
+      day: 13, date: 'Mon 22 Sept', location: 'St Pete Beach',
+      coords: [27.7256, -82.7401],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'No plans. No alarms. No tours.',
+      activities: [
+        'Morning swim',
+        'Beach day — all day',
+        'Sunset at Pier 60',
+        'Beachfront bars and restaurants',
+      ],
+      food: [
+        'Wherever looks good on the beach',
+        'Pier 60 area eats',
+      ],
+      stay: ['Loews Don CeSar', 'TradeWinds Island Resort', 'Sandpearl Resort'],
+      note: null, birthday: false,
+    },
+    {
+      day: 14, date: 'Tue 23 Sept', location: 'St Pete Beach',
+      coords: [27.7256, -82.7401],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Optional: Tampa for the evening',
+      activities: [
+        'Beach day',
+        'Optional: paddleboard or kayak rental',
+        'Evening in Ybor City, Tampa — Cuban food and cocktails',
+        'Sunset at Pier 60',
+      ],
+      food: [
+        'Cuban food in Ybor City, Tampa',
+        'Columbia Restaurant — classic Cuban in Ybor City',
+      ],
+      stay: ['Loews Don CeSar', 'TradeWinds Island Resort', 'Sandpearl Resort'],
+      note: null, birthday: false,
+    },
+    {
+      day: 15, date: 'Wed 24 Sept', location: 'St Pete Beach',
+      coords: [27.7256, -82.7401],
+      nights: null, isFirstNight: false,
+      transport: null,
+      vibe: 'Last full day on the beach',
+      activities: [
+        'Final morning swim',
+        'Last beach day — soak it in',
+        'Sunset at Pier 60 one last time',
+        'Nice farewell dinner',
+      ],
+      food: [
+        'Special farewell dinner — splurge!',
+        'Beachfront cocktails at sunset',
+      ],
+      stay: ['Loews Don CeSar', 'TradeWinds Island Resort', 'Sandpearl Resort'],
+      note: null, birthday: false,
+    },
+    // ── ORLANDO (FLY HOME) ─────────────────────
+    {
+      day: 16, date: 'Thu 25 Sept', location: 'Orlando',
+      coords: [28.5383, -81.3792],
+      nights: null, isFirstNight: false,
+      transport: { mode: '🚗', label: 'Drive from St Pete Beach to Orlando (~2 hrs)' },
+      vibe: 'Travel day — homeward bound',
+      activities: [
+        'Drive from St Pete Beach to Orlando (~2 hrs)',
+        'Drop bags, explore Orlando briefly if time allows',
+        'Head to MCO for evening departure',
+      ],
+      food: [
+        'Lunch near Orlando before the flight',
+        'Airport food at MCO',
+      ],
+      stay: [],
+      note: '✈️ Fly home from Orlando MCO — evening 26 Sept (Person 1) / early October (Person 2)', birthday: false,
+    },
+  ];
+
+  /* ─────────────────────────────────────────────
+     MAP STATE
+  ───────────────────────────────────────────── */
+  let map, characterMarker, dotMarkers = {};
+  let currentDayIndex = 0;
+
+  /* ─────────────────────────────────────────────
+     ZOOM LEVELS
+  ───────────────────────────────────────────── */
+  function getZoomForLocation(name) {
+    const zooms = {
+      'Las Vegas': 11,
+      'Page, AZ': 12,
+      'Grand Canyon': 11,
+      'Williams / Route 66': 11,
+      'Sedona': 12,
+      'Phoenix': 11,
+      'St Pete Beach': 12,
+      'Orlando': 11,
+    };
+    return zooms[name] || 11;
+  }
+
+  /* ─────────────────────────────────────────────
+     INIT MAP
+  ───────────────────────────────────────────── */
+  function initMap() {
+    map = L.map('map', { zoomControl: true, attributionControl: true });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19,
+      detectRetina: true,
+    }).addTo(map);
+
+    // Fit all stops in view on load
+    const bounds = L.latLngBounds(STOPS.map(s => s.coords));
+    map.fitBounds(bounds, { padding: [60, 60] });
+
+    // Route polyline
+    L.polyline(STOPS.map(s => s.coords), {
+      color: '#2563eb',
+      weight: 2.5,
+      opacity: 0.5,
+      dashArray: '6 4',
+    }).addTo(map);
+
+    // Location dot markers
+    STOPS.forEach(stop => {
+      const key = stop.coords.join(',');
+      const marker = L.marker(stop.coords, {
+        icon: L.divIcon({
+          className: 'dot-wrap',
+          html: `<div class="dot-marker" id="dot-${key}"></div>`,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        }),
+        interactive: false,
+      }).addTo(map);
+
+      // Tooltip with stop name
+      marker.bindTooltip(stop.name, { permanent: false, direction: 'top', offset: [0, -8] });
+      dotMarkers[key] = stop.coords;
+    });
+
+    // Character marker
+    characterMarker = L.marker(DAYS[0].coords, {
+      icon: makeCharIcon(DAYS[0]),
+      zIndexOffset: 1000,
+      interactive: false,
+    }).addTo(map);
+
+    window.addEventListener('resize', () => map.invalidateSize());
+  }
+
+  /* ─────────────────────────────────────────────
+     CHARACTER ICON
+  ───────────────────────────────────────────── */
+  function makeCharIcon(day) {
+    let emoji = '📍';
+    if (day.transport) {
+      if (day.transport.mode === '✈️') emoji = '✈️';
+      else if (day.transport.mode === '🚗') emoji = '🚗';
+    }
+    return L.divIcon({
+      className: '',
+      html: `<div class="char-marker">${emoji}</div>`,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+    });
+  }
+
+  /* ─────────────────────────────────────────────
+     UPDATE DOTS
+  ───────────────────────────────────────────── */
+  function updateDots(activeCoords) {
+    const activeKey = activeCoords.join(',');
+    Object.keys(dotMarkers).forEach(key => {
+      const el = document.getElementById(`dot-${key}`);
+      if (!el) return;
+      if (key === activeKey) {
+        el.classList.add('dot-active');
+      } else {
+        el.classList.remove('dot-active');
+      }
+    });
+  }
+
+  /* ─────────────────────────────────────────────
+     SIDEBAR RENDER
+  ───────────────────────────────────────────── */
+  function renderSidebar(day) {
+    const sb = document.getElementById('sidebar');
+    let html = '';
+
+    // Location + nights badge
+    html += `<div class="sb-location">
+      <span class="location-name">${day.location}</span>
+      ${day.isFirstNight && day.nights ? `<span class="nights-badge">${day.nights} night${day.nights > 1 ? 's' : ''}</span>` : ''}
+    </div>`;
+
+    // Date line
+    html += `<div style="font-size:0.8rem;color:#64748b;">Day ${day.day} &nbsp;·&nbsp; ${day.date}</div>`;
+
+    // Birthday banner
+    if (day.birthday) {
+      html += `<div class="birthday-banner">🎂 Happy Birthday! Special day ahead.</div>`;
+    }
+
+    // Note banner
+    if (day.note) {
+      html += `<div class="note-banner">${day.note}</div>`;
+    }
+
+    // Transport
+    if (day.transport) {
+      html += `<div class="transport-line">${day.transport.mode} <span>${day.transport.label}</span></div>`;
+    }
+
+    // Vibe
+    if (day.vibe) {
+      html += `<p class="vibe-text">${day.vibe}</p>`;
+    }
+
+    // Activities
+    if (day.activities && day.activities.length) {
+      html += `<div class="sb-section">
+        <div class="sb-section-title">Activities</div>
+        <ul>${day.activities.map(a => `<li>${a}</li>`).join('')}</ul>
+      </div>`;
+    }
+
+    // Food & drink
+    if (day.food && day.food.length) {
+      html += `<div class="sb-section">
+        <div class="sb-section-title">Eat &amp; Drink</div>
+        <ul>${day.food.map(f => `<li>${f}</li>`).join('')}</ul>
+      </div>`;
+    }
+
+    // Stay
+    if (day.stay && day.stay.length) {
+      html += `<div class="sb-section">
+        <div class="sb-section-title">Stay</div>
+        <ul>${day.stay.map(s => `<li>${s}</li>`).join('')}</ul>
+      </div>`;
+    }
+
+    sb.innerHTML = html;
+  }
+
+  function updateSidebar(day) {
+    const sb = document.getElementById('sidebar');
+    sb.classList.add('fading');
+    setTimeout(() => {
+      renderSidebar(day);
+      sb.classList.remove('fading');
+    }, 180);
+  }
+
+  /* ─────────────────────────────────────────────
+     GO TO DAY
+  ───────────────────────────────────────────── */
+  function goToDay(idx) {
+    if (idx < 0 || idx >= DAYS.length) return;
+
+    const prev = DAYS[currentDayIndex];
+    currentDayIndex = idx;
+    const day = DAYS[idx];
+
+    // Header
+    document.getElementById('day-label').textContent = `Day ${day.day} · ${day.date}`;
+
+    // Buttons
+    document.getElementById('btn-prev').disabled = idx === 0;
+    document.getElementById('btn-next').disabled = idx === DAYS.length - 1;
+
+    // Map — only flyTo if location changed
+    const coordsChanged = prev.coords.join() !== day.coords.join();
+    if (coordsChanged) {
+      map.flyTo(day.coords, getZoomForLocation(day.location), { animate: true, duration: 1.2 });
+      characterMarker.setLatLng(day.coords);
+      characterMarker.setIcon(makeCharIcon(day));
+    }
+
+    updateDots(day.coords);
+    updateSidebar(day);
+  }
+
+  /* ─────────────────────────────────────────────
+     BOOT
+  ───────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    initMap();
+    renderSidebar(DAYS[0]);
+    updateDots(DAYS[0].coords);
+
+    document.getElementById('btn-prev').addEventListener('click', () => goToDay(currentDayIndex - 1));
+    document.getElementById('btn-next').addEventListener('click', () => goToDay(currentDayIndex + 1));
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft')  goToDay(currentDayIndex - 1);
+      if (e.key === 'ArrowRight') goToDay(currentDayIndex + 1);
+    });
+
+    // Init button states
+    document.getElementById('btn-prev').disabled = true;
+  });
+</script>
+
+</body>
+</html>

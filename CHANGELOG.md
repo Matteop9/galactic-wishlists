@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-03-31 — Task Tracker (task-tracker/)
+
+### Added
+- `task-tracker/task-tracker.html` — self-contained weekly task tracker app hosted on GitHub Pages at https://matteop9.github.io/task-tracker/
+- Reads meeting transcripts (including Fireflies.ai export format) and calls Claude API (Haiku) to extract action items
+- Tasks grouped by owner with checkboxes, due date badges (urgent/overdue highlighting), and KPI strip
+- Week navigation with timezone-safe Monday-anchored date logic
+- SharePoint List integration (optional) — when configured, tasks saved to and loaded from a SharePoint list (`WeeklyTasks`) via SharePoint REST API
+- Optimistic UI updates on task completion; reverts on save failure
+- First-time API key modal; settings panel for API key and SharePoint site URL/list name
+- SharePoint/Local mode badge in header
+- `task-tracker/meeting-transcript.txt` — sample Continuum Consulting team stand-up transcript for testing
+
+### Notes
+- SharePoint integration requires the file to be hosted on the same SharePoint site (same-origin auth) — CORS blocks it from GitHub Pages
+- Teams Tab (website tab) works as a hosting workaround for team access without SharePoint hosting
+- BrowserFileHandling PowerShell fix required if hosting directly on SharePoint: `Set-SPOSite -Identity <url> -BrowserFileHandling Permissive`
+
 ## 2026-03-31 — Animated space background
 
 ### Added

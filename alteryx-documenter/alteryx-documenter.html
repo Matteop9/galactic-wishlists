@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alteryx Workflow Documenter</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+
+  header { background: #1a1a2e; color: #fff; padding: 18px 32px; display: flex; align-items: center; gap: 14px; }
+  header svg { flex-shrink: 0; }
+  header h1 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; }
+  header span { font-size: 0.8rem; color: #8892b0; margin-top: 2px; display: block; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+
+  .drop-zone {
+    border: 2px dashed #c0c8d8;
+    border-radius: 12px;
+    padding: 48px 32px;
+    text-align: center;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .drop-zone.drag-over { border-color: #0070f3; background: #e8f4ff; }
+  .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .drop-zone .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .drop-zone p { color: #555; font-size: 0.95rem; }
+  .drop-zone .hint { font-size: 0.8rem; color: #999; margin-top: 6px; }
+
+  .file-badge {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #e8f4ff;
+    border: 1px solid #b3d7ff;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-top: 16px;
+    font-size: 0.875rem;
+    color: #0056b3;
+  }
+  .file-badge.show { display: flex; }
+
+  .output-section { margin-top: 28px; display: none; }
+  .output-section.show { display: block; }
+
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .toolbar h2 { font-size: 0.95rem; font-weight: 600; color: #333; }
+  .btn-download {
+    background: #0070f3; color: #fff; border: none; border-radius: 7px;
+    padding: 8px 18px; font-size: 0.875rem; font-weight: 500; cursor: pointer;
+    display: flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  .btn-download:hover { background: #0056c7; }
+
+  #output {
+    white-space: pre-wrap;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    background: #1a1a2e;
+    color: #a8d8ea;
+    padding: 24px;
+    border-radius: 10px;
+    max-height: 620px;
+    overflow-y: auto;
+  }
+
+  .error-box {
+    background: #fff0f0; border: 1px solid #ffb3b3; border-radius: 8px;
+    padding: 14px 18px; color: #c0392b; font-size: 0.875rem; margin-top: 16px; display: none;
+  }
+  .error-box.show { display: block; }
+</style>
+</head>
+<body>
+
+<header>
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <rect width="32" height="32" rx="8" fill="#0070f3"/>
+    <path d="M8 16h16M16 8v16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="16" cy="16" r="4" fill="#fff" opacity="0.25"/>
+  </svg>
+  <div>
+    <h1>Alteryx Workflow Documenter</h1>
+    <span>Parses .yxmd / .yxwz / .yxmc and generates a plain-text documentation file</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="drop-zone" id="dropZone">
+    <input type="file" id="fileInput" accept=".yxmd,.yxwz,.yxmc" />
+    <div class="icon">📂</div>
+    <p>Drop your Alteryx file here, or click to browse</p>
+    <p class="hint">Accepts .yxmd &nbsp;·&nbsp; .yxwz &nbsp;·&nbsp; .yxmc</p>
+  </div>
+
+  <div class="file-badge" id="fileBadge">
+    <span>📄</span>
+    <span id="fileName"></span>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="output-section" id="outputSection">
+    <div class="toolbar">
+      <h2>Generated Documentation</h2>
+      <button class="btn-download" id="btnDownload">⬇ Download .txt</button>
+    </div>
+    <pre id="output"></pre>
+  </div>
+</div>
+
+<script>
+// ─── Plugin label lookup ──────────────────────────────────────────────────────
+const PLUGIN_LABELS = {
+  DbFileInput:          "Input Data",
+  DbFileOutput:         "Output Data",
+  AlteryxSelect:        "Select",
+  Formula:              "Formula",
+  MultiRowFormula:      "Multi-Row Formula",
+  Filter:               "Filter",
+  Join:                 "Join",
+  Union:                "Union",
+  Summarize:            "Summarize",
+  Transpose:            "Transpose",
+  FindReplace:          "Find & Replace",
+  TextInput:            "Text Input",
+  Test:                 "Test",
+  BrowseV2:             "Browse",
+  ToolContainer:        "Tool Container",
+  RecordID:             "Record ID",
+  Sort:                 "Sort",
+  Sample:               "Sample",
+  AppendFields:         "Append Fields",
+  CrossTab:             "Cross-Tab",
+  DateTimeParse:        "DateTime Parse",
+  RegExTool:            "RegEx",
+  RunCommand:           "Run Command",
+  AlteryxStartHere:     "App Input (Start Here)",
+  AlteryxEndHere:       "App Output (End Here)",
+  MapInput:             "Map Input",
+  ReportMap:            "Report Map",
+  Unique:               "Unique",
+  DataCleansing:        "Data Cleansing",
+  GenerateRows:         "Generate Rows",
+  MakeColumns:          "Make Columns",
+  MakeGroup:            "Make Group",
+  FieldInfo:            "Field Info",
+  RecordCount:          "Record Count",
+  BlockUntilDone:       "Block Until Done",
+  Detour:               "Detour",
+  AlteryxInterface:     "Interface (App)",
+  AlteryxMacroInput:    "Macro Input",
+  AlteryxMacroOutput:   "Macro Output",
+};
+
+// ─── File format code lookup ──────────────────────────────────────────────────
+const FILE_FORMATS = {
+  "0":  "Delimited text / CSV",
+  "1":  "Fixed-width text",
+  "2":  "dBase (.dbf)",
+  "6":  "Spatial (SHP)",
+  "11": "Access (.mdb)",
+  "13": "Alteryx DB (.yxdb)",
+  "20": "JSON",
+  "22": "Esri GDB",
+  "25": "Excel (.xlsx)",
+  "26": "Excel (.xlsm)",
+  "30": "XML",
+  "31": "Avro",
+  "32": "Parquet",
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function pluginLabel(pluginAttr) {
+  if (!pluginAttr) return "Unknown";
+  const parts = pluginAttr.split(".");
+  const key = parts[parts.length - 1];
+  return PLUGIN_LABELS[key] || key;
+}
+
+function text(el, selector) {
+  if (!el) return "";
+  const found = el.querySelector(selector);
+  return found ? (found.textContent || "").trim() : "";
+}
+
+function attr(el, name) {
+  return el ? (el.getAttribute(name) || "") : "";
+}
+
+function wrap(str, width = 100) {
+  if (!str) return "";
+  // simple word-wrap
+  const words = str.split(" ");
+  const lines = [];
+  let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trimStart().length > width) {
+      lines.push(cur.trim());
+      cur = w;
+    } else {
+      cur = cur ? cur + " " + w : w;
+    }
+  }
+  if (cur.trim()) lines.push(cur.trim());
+  return lines.join("\n    ");
+}
+
+function pad(str, len) {
+  return String(str).padEnd(len);
+}
+
+function hr(char = "=", len = 80) {
+  return char.repeat(len);
+}
+
+function section(title) {
+  return `\n${title}\n${hr("-", title.length)}\n`;
+}
+
+// Clean XML-encoded expressions into readable text
+function cleanExpr(expr) {
+  return (expr || "")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#xA;/g, "\n        ")
+    .replace(/&#x9;/g, "  ")
+    .trim();
+}
+
+// ─── Recursive node walker ────────────────────────────────────────────────────
+function walkNodes(nodesEl, parentContainerId, registry, containers) {
+  if (!nodesEl) return;
+  const children = nodesEl.children;
+  for (const node of children) {
+    if (node.tagName !== "Node") continue;
+    const toolId = attr(node, "ToolID");
+    const guiSettings = node.querySelector(":scope > GuiSettings");
+    const plugin = attr(guiSettings, "Plugin");
+    const label = pluginLabel(plugin);
+    const isContainer = plugin.includes("ToolContainer");
+
+    const propsEl = node.querySelector(":scope > Properties");
+    const configEl = propsEl ? propsEl.querySelector(":scope > Configuration") : null;
+    const annotEl = propsEl ? propsEl.querySelector(":scope > Annotation > AnnotationText") : null;
+    const annotation = annotEl ? annotEl.textContent.trim() : "";
+    const engineEl = node.querySelector(":scope > EngineSettings");
+    const entryPoint = attr(engineEl, "EngineDllEntryPoint");
+
+    const entry = { toolId, plugin, label, annotation, configEl, parentContainerId, entryPoint };
+    registry[toolId] = entry;
+
+    if (isContainer) {
+      const caption = text(configEl, "Caption") || annotation || "(unnamed container)";
+      const disabled = text(configEl, "Disabled");
+      const folded = text(configEl, "Folded");
+      const childNodes = node.querySelector(":scope > ChildNodes");
+      const childIds = [];
+      if (childNodes) {
+        for (const c of childNodes.children) {
+          if (c.tagName === "Node") childIds.push(attr(c, "ToolID"));
+        }
+      }
+      containers.push({ toolId, caption, disabled, folded, childIds });
+      // recurse into children
+      walkNodes(childNodes, toolId, registry, containers);
+    }
+  }
+}
+
+// ─── Detail extractors ────────────────────────────────────────────────────────
+function extractDetail(entry) {
+  const { configEl, entryPoint, annotation, toolId, label } = entry;
+  if (!configEl) return null;
+
+  const lines = [];
+
+  // Formula / MultiRowFormula
+  if (entryPoint === "AlteryxFormula" || entryPoint === "AlteryxMultiRowFormula") {
+    const fields = configEl.querySelectorAll("FormulaField");
+    for (const f of fields) {
+      const field = attr(f, "field");
+      const expr = cleanExpr(attr(f, "expression"));
+      lines.push(`  ${field} = ${expr}`);
+    }
+  }
+
+  // Filter
+  if (entryPoint === "AlteryxFilter") {
+    const mode = text(configEl, "Mode");
+    if (mode === "Custom") {
+      const expr = cleanExpr(text(configEl, "Expression"));
+      lines.push(`  Condition (Custom): ${expr}`);
+    } else {
+      const field = text(configEl, "Field");
+      const op = text(configEl, "Operator");
+      const operand = text(configEl, "Operand");
+      lines.push(`  Condition: [${field}] ${op} ${operand}`);
+    }
+    lines.push(`  True output → matching rows | False output → non-matching rows`);
+  }
+
+  // Join
+  if (entryPoint === "AlteryxJoin") {
+    const joinInfos = configEl.querySelectorAll("JoinInfo");
+    for (const ji of joinInfos) {
+      const conn = attr(ji, "connection");
+      const fields = [...ji.querySelectorAll("Field")].map(f => attr(f, "field")).join(", ");
+      lines.push(`  ${conn} key: ${fields}`);
+    }
+    lines.push(`  Outputs: Left (unmatched left), Join (matched), Right (unmatched right)`);
+  }
+
+  // Summarize
+  if (entryPoint === "AlteryxSummarize") {
+    const groupBys = [];
+    const aggs = [];
+    const sfields = configEl.querySelectorAll("SummarizeField");
+    for (const sf of sfields) {
+      const action = attr(sf, "action");
+      const field = attr(sf, "field");
+      const rename = attr(sf, "rename");
+      const out = rename && rename !== field ? `${field} → ${rename}` : field;
+      if (action === "GroupBy") groupBys.push(out);
+      else aggs.push(`${action}(${out})`);
+    }
+    if (groupBys.length) lines.push(`  Group by: ${groupBys.join(", ")}`);
+    if (aggs.length) lines.push(`  Aggregates: ${aggs.join(", ")}`);
+  }
+
+  // Find & Replace
+  if (entryPoint === "AlteryxFindReplace") {
+    const find = text(configEl, "FieldFind");
+    const search = text(configEl, "FieldSearch");
+    const replace = text(configEl, "ReplaceFoundField");
+    const mode = text(configEl, "ReplaceMode");
+    lines.push(`  Find in: [${find}], using lookup field: [${search}], replace with: [${replace}] (mode: ${mode})`);
+  }
+
+  // Select (only if interesting renames exist)
+  if (entryPoint === "AlteryxSelect") {
+    const renames = [];
+    const deselected = [];
+    const typeChanges = [];
+    const sfields = configEl.querySelectorAll("SelectField");
+    for (const sf of sfields) {
+      const f = attr(sf, "field");
+      const rename = attr(sf, "rename");
+      const selected = attr(sf, "selected");
+      const type = attr(sf, "type");
+      const size = attr(sf, "size");
+      if (f === "*Unknown") continue;
+      if (selected === "False") { deselected.push(f); continue; }
+      if (rename && rename !== f) renames.push(`${f} → ${rename}`);
+      if (type) typeChanges.push(`${rename || f}: ${type}${size ? `(${size})` : ""}`);
+    }
+    if (renames.length) lines.push(`  Renames: ${renames.join(", ")}`);
+    if (deselected.length) lines.push(`  Removed fields: ${deselected.join(", ")}`);
+    if (typeChanges.length && (renames.length || deselected.length)) {
+      // only show type changes if there's something interesting already
+    }
+  }
+
+  // Test
+  if (entryPoint === "AlteryxTest") {
+    const tests = configEl.querySelectorAll("Test");
+    for (const t of tests) {
+      const name = text(t, "Name");
+      const type = text(t, "Type");
+      const value = text(t, "Value");
+      lines.push(`  Test: "${name}" — expects ${type} = ${value}`);
+    }
+  }
+
+  // TextInput (inline data)
+  if (entryPoint === "AlteryxTextInput") {
+    const fields = [...configEl.querySelectorAll("Fields > Field")].map(f => attr(f, "name")).join(", ");
+    const rows = configEl.querySelectorAll("Data > r").length;
+    lines.push(`  Inline data: ${rows} row(s), fields: ${fields}`);
+    // show data rows
+    let rowNum = 0;
+    for (const r of configEl.querySelectorAll("Data > r")) {
+      rowNum++;
+      const vals = [...r.querySelectorAll("c")].map(c => c.textContent.trim());
+      lines.push(`  Row ${rowNum}: ${vals.join(" | ")}`);
+    }
+  }
+
+  // Union
+  if (entryPoint === "AlteryxUnion") {
+    const mode = text(configEl, "Mode");
+    lines.push(`  Mode: ${mode}`);
+  }
+
+  // Transpose
+  if (entryPoint === "AlteryxTranspose") {
+    const keys = [...configEl.querySelectorAll("KeyFields > Field")].map(f => attr(f, "field")).join(", ");
+    const data = [...configEl.querySelectorAll("DataFields > Field[selected='True']")].map(f => attr(f, "field")).join(", ");
+    if (keys) lines.push(`  Key fields: ${keys}`);
+    if (data) lines.push(`  Data fields (transposed): ${data}`);
+  }
+
+  return lines.length ? lines.join("\n") : null;
+}
+
+// ─── Main parser ──────────────────────────────────────────────────────────────
+function parseWorkflow(xmlText, fileName) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlText, "text/xml");
+
+  const parseError = doc.querySelector("parsererror");
+  if (parseError) throw new Error("XML parse error: " + parseError.textContent.slice(0, 200));
+
+  const root = doc.documentElement;
+  if (root.tagName !== "AlteryxDocument") throw new Error("Not a valid Alteryx document (root tag: " + root.tagName + ")");
+
+  // ── Metadata ──
+  const alteryxVersion = attr(root, "yxmdVer");
+  const metaInfo = root.querySelector(":scope > Properties > MetaInfo");
+  const wfName = (metaInfo ? text(metaInfo, "Name") : "") || fileName.replace(/\.[^.]+$/, "");
+  const wfDesc = metaInfo ? text(metaInfo, "Description") : "";
+  const wfAuthor = metaInfo ? text(metaInfo, "Author") : "";
+  const wfCompany = metaInfo ? text(metaInfo, "Company") : "";
+  const wfId = metaInfo ? attr(metaInfo.querySelector("WorkflowId"), "value") : "";
+  const layoutType = text(root.querySelector(":scope > Properties"), "LayoutType");
+  const ext = fileName.split(".").pop().toLowerCase();
+  const fileTypeLabel = { yxmd: "Standard Workflow (.yxmd)", yxwz: "Analytic App (.yxwz)", yxmc: "Macro (.yxmc)" }[ext] || ext;
+
+  // ── Walk all nodes ──
+  const registry = {}; // toolId → entry
+  const containers = [];
+  const nodesEl = root.querySelector(":scope > Nodes");
+  walkNodes(nodesEl, null, registry, containers);
+
+  const allTools = Object.values(registry);
+  const nonContainerTools = allTools.filter(t => !t.plugin.includes("ToolContainer"));
+
+  // ── Inputs ──
+  const inputs = nonContainerTools.filter(t => t.entryPoint === "AlteryxDbFileInput");
+  const textInputs = nonContainerTools.filter(t => t.entryPoint === "AlteryxTextInput");
+  const appInputs = nonContainerTools.filter(t => t.entryPoint === "AlteryxStartHere" || t.plugin.includes("AlteryxStartHere"));
+
+  // ── Outputs ──
+  const outputs = nonContainerTools.filter(t => t.entryPoint === "AlteryxDbFileOutput");
+  const appOutputs = nonContainerTools.filter(t => t.entryPoint === "AlteryxEndHere" || t.plugin.includes("AlteryxEndHere"));
+
+  // ── Parse connections ──
+  const connections = [];
+  const connEls = root.querySelectorAll(":scope > Connections > Connection");
+  for (const c of connEls) {
+    const origin = c.querySelector("Origin");
+    const dest = c.querySelector("Destination");
+    if (!origin || !dest) continue;
+    const wireless = attr(c, "Wireless") === "True";
+    connections.push({
+      fromId: attr(origin, "ToolID"),
+      fromPort: attr(origin, "Connection"),
+      toId: attr(dest, "ToolID"),
+      toPort: attr(dest, "Connection"),
+      wireless,
+    });
+  }
+
+  // ── Collect all file deps ──
+  const allFiles = new Set();
+  for (const t of [...inputs, ...outputs]) {
+    const fileEl = t.configEl ? t.configEl.querySelector("File") : null;
+    if (fileEl) {
+      const path = (fileEl.textContent || "").trim();
+      if (path) allFiles.add(path);
+    }
+  }
+
+  // ── Build label lookup for connections ──
+  function toolLabel(id) {
+    const e = registry[id];
+    if (!e) return `Tool ${id}`;
+    const ann = e.annotation || e.label;
+    return `[${id}] ${ann}`;
+  }
+
+  // ── Helper: get fields from MetaInfo ──
+  function getOutputFields(toolNode) {
+    const metaInfo = toolNode.querySelector ? toolNode.querySelector("MetaInfo[connection='Output'] RecordInfo") : null;
+    if (!metaInfo) return null;
+    const fields = [...metaInfo.querySelectorAll("Field")];
+    if (!fields.length) return null;
+    return fields.map(f => `${attr(f, "name")} (${attr(f, "type")})`).join(", ");
+  }
+
+  // ── Build executive summary narrative ──
+  function buildExecutiveSummary() {
+    const parts = [];
+
+    // Opening sentence: what kind of workflow and what it's named
+    const typeWord = { yxmd: "workflow", yxwz: "analytic app", yxmc: "macro" }[ext] || "workflow";
+    parts.push(`"${wfName}" is an Alteryx ${typeWord}${alteryxVersion ? ` (v${alteryxVersion})` : ""}.`);
+
+    // What it reads
+    if (inputs.length > 0) {
+      const inputDescs = inputs.map(t => {
+        const fileEl = t.configEl ? t.configEl.querySelector("File") : null;
+        const path = fileEl ? (fileEl.textContent || "").trim() : null;
+        const ann = t.annotation;
+        if (ann && path) return `${ann} (${path.split(/[/\\]/).pop()})`;
+        if (ann) return ann;
+        if (path) return path.split(/[/\\]/).pop();
+        return "an unnamed source";
+      });
+      if (inputDescs.length === 1) {
+        parts.push(`It reads input data from ${inputDescs[0]}.`);
+      } else {
+        const last = inputDescs.pop();
+        parts.push(`It reads input data from ${inputDescs.join(", ")} and ${last}.`);
+      }
+    }
+    if (textInputs.length > 0) {
+      const names = textInputs.map(t => t.annotation || "an inline dataset").join(", ");
+      parts.push(`It also uses ${textInputs.length} inline data table${textInputs.length > 1 ? "s" : ""} (${names}) embedded directly in the workflow.`);
+    }
+
+    // What it produces
+    if (outputs.length > 0) {
+      const outDescs = outputs.map(t => {
+        const fileEl = t.configEl ? t.configEl.querySelector("File") : null;
+        const path = fileEl ? (fileEl.textContent || "").trim() : null;
+        const ann = t.annotation;
+        if (ann && path) return `${ann} (${path.split(/[/\\]/).pop()})`;
+        if (ann) return ann;
+        if (path) return path.split(/[/\\]/).pop();
+        return "an unnamed output";
+      });
+      if (outDescs.length === 1) {
+        parts.push(`The output is written to ${outDescs[0]}.`);
+      } else {
+        const last = outDescs.pop();
+        parts.push(`Outputs are written to ${outDescs.join(", ")} and ${last}.`);
+      }
+    }
+
+    // Logical sections — describe the processing stages
+    if (containers.length > 0) {
+      parts.push(`\nThe workflow is organised into ${containers.length} logical stage${containers.length > 1 ? "s" : ""}:`);
+      containers.forEach((c, i) => {
+        // Describe what tools are in this stage
+        const childEntries = c.childIds.map(id => registry[id]).filter(Boolean);
+        const toolTypes = childEntries.map(e => e.label);
+        const unique = [...new Set(toolTypes)];
+
+        // Describe key operations within the container
+        const ops = [];
+        const hasFormulas = childEntries.some(e => e.entryPoint === "AlteryxFormula" || e.entryPoint === "AlteryxMultiRowFormula");
+        const hasFilters = childEntries.some(e => e.entryPoint === "AlteryxFilter");
+        const hasJoins = childEntries.some(e => e.entryPoint === "AlteryxJoin");
+        const hasSummarize = childEntries.some(e => e.entryPoint === "AlteryxSummarize");
+        const hasTests = childEntries.some(e => e.entryPoint === "AlteryxTest");
+        const hasFindReplace = childEntries.some(e => e.entryPoint === "AlteryxFindReplace");
+        const hasTranspose = childEntries.some(e => e.entryPoint === "AlteryxTranspose");
+        const hasInputs = childEntries.some(e => e.entryPoint === "AlteryxDbFileInput");
+        const hasOutputs = childEntries.some(e => e.entryPoint === "AlteryxDbFileOutput");
+        const hasUnion = childEntries.some(e => e.entryPoint === "AlteryxUnion");
+
+        if (hasInputs) ops.push("reads data");
+        if (hasFormulas) {
+          // Pull formula annotations for context
+          const fAnnotations = childEntries
+            .filter(e => e.entryPoint === "AlteryxFormula" || e.entryPoint === "AlteryxMultiRowFormula")
+            .map(e => e.annotation).filter(Boolean);
+          ops.push(fAnnotations.length ? `applies calculations (${fAnnotations.join("; ")})` : "applies formula calculations");
+        }
+        if (hasTranspose) ops.push("transposes data from columns to rows");
+        if (hasFindReplace) {
+          const frAnnotations = childEntries.filter(e => e.entryPoint === "AlteryxFindReplace").map(e => e.annotation).filter(Boolean);
+          ops.push(frAnnotations.length ? `performs lookups (${frAnnotations.join("; ")})` : "performs find & replace lookups");
+        }
+        if (hasJoins) ops.push("joins datasets");
+        if (hasUnion) ops.push("unions multiple data streams");
+        if (hasSummarize) {
+          const sumAnnotations = childEntries.filter(e => e.entryPoint === "AlteryxSummarize").map(e => e.annotation).filter(Boolean);
+          ops.push(sumAnnotations.length ? `aggregates data (${sumAnnotations.join("; ")})` : "aggregates data");
+        }
+        if (hasFilters) {
+          const fAnnotations = childEntries.filter(e => e.entryPoint === "AlteryxFilter").map(e => e.annotation).filter(Boolean);
+          ops.push(fAnnotations.length ? `filters records (${fAnnotations.join("; ")})` : "filters records");
+        }
+        if (hasTests) {
+          const tAnnotations = childEntries.filter(e => e.entryPoint === "AlteryxTest").map(e => e.annotation || e.configEl && text(e.configEl, "Name")).filter(Boolean);
+          ops.push(tAnnotations.length ? `performs data quality tests (${tAnnotations.join("; ")})` : "performs data quality checks");
+        }
+        if (hasOutputs) ops.push("writes output");
+
+        const opStr = ops.length ? ` — it ${ops.join(", ")}` : "";
+        const disStr = c.disabled === "True" ? " [currently disabled]" : "";
+        parts.push(`  ${i + 1}. ${c.caption}${disStr}${opStr}.`);
+      });
+    }
+
+    // Quality / validation checks
+    const testTools = nonContainerTools.filter(t => t.entryPoint === "AlteryxTest");
+    if (testTools.length > 0) {
+      const testNames = testTools
+        .map(t => {
+          if (!t.configEl) return null;
+          const name = text(t.configEl, "Name");
+          return name || t.annotation;
+        })
+        .filter(Boolean);
+      const uniqueNames = [...new Set(testNames)];
+      parts.push(`\nThe workflow includes ${testTools.length} data quality test${testTools.length > 1 ? "s" : ""}${uniqueNames.length ? `: ${uniqueNames.join("; ")}` : ""}.`);
+    }
+
+    // Note any wireless (off-canvas) connections
+    const wirelessConns = connections.filter(c => c.wireless);
+    if (wirelessConns.length > 0) {
+      parts.push(`It uses ${wirelessConns.length} wireless (off-canvas) connection${wirelessConns.length > 1 ? "s" : ""} to pass data between tools without visible connection lines.`);
+    }
+
+    return parts.join(" ");
+  }
+
+  // ── Assemble output text ──
+  const lines = [];
+
+  lines.push(hr("=", 80));
+  lines.push("ALTERYX WORKFLOW DOCUMENTATION");
+  lines.push(hr("=", 80));
+  lines.push(`Name:         ${wfName}`);
+  lines.push(`File:         ${fileName}`);
+  lines.push(`File Type:    ${fileTypeLabel}`);
+  lines.push(`Alteryx Ver:  ${alteryxVersion || "(unknown)"}`);
+  if (wfAuthor) lines.push(`Author:       ${wfAuthor}`);
+  if (wfCompany) lines.push(`Company:      ${wfCompany}`);
+  if (wfId) lines.push(`Workflow ID:  ${wfId}`);
+  if (layoutType) lines.push(`Layout:       ${layoutType}`);
+  if (wfDesc) lines.push(`Description:  ${wrap(wfDesc)}`);
+
+  // ── Executive Summary ──
+  lines.push(section("EXECUTIVE SUMMARY"));
+  lines.push(buildExecutiveSummary());
+
+  // ── Summary ──
+  lines.push(section("SUMMARY"));
+  lines.push(`Total tools:      ${nonContainerTools.length}`);
+  lines.push(`Tool containers:  ${containers.length}`);
+  lines.push(`File inputs:      ${inputs.length}`);
+  lines.push(`Inline inputs:    ${textInputs.length}`);
+  lines.push(`File outputs:     ${outputs.length}`);
+  lines.push(`Connections:      ${connections.length}`);
+  if (appInputs.length) lines.push(`App inputs:       ${appInputs.length}`);
+  if (appOutputs.length) lines.push(`App outputs:      ${appOutputs.length}`);
+
+  // ── Inputs ──
+  lines.push(section("INPUTS (File)"));
+  if (inputs.length === 0) {
+    lines.push("  (none)");
+  } else {
+    for (const t of inputs) {
+      const fileEl = t.configEl ? t.configEl.querySelector("File") : null;
+      const filePath = fileEl ? (fileEl.textContent || "").trim() : "(unknown)";
+      const fmt = fileEl ? FILE_FORMATS[attr(fileEl, "FileFormat")] || `format code ${attr(fileEl, "FileFormat")}` : "";
+      const label = t.annotation || "(no label)";
+      lines.push(`  Tool ${pad(t.toolId, 4)} | ${label}`);
+      lines.push(`          File: ${filePath}`);
+      if (fmt) lines.push(`          Format: ${fmt}`);
+      // try to get field info from registry node's MetaInfo
+      const nodeEl = nodesEl ? nodesEl.querySelector(`[ToolID="${t.toolId}"]`) : null;
+      const fields = nodeEl ? getOutputFields(nodeEl) : null;
+      if (fields) lines.push(`          Fields: ${fields}`);
+      lines.push("");
+    }
+  }
+
+  // ── Inline inputs ──
+  if (textInputs.length > 0) {
+    lines.push(section("INPUTS (Inline / Text Input)"));
+    for (const t of textInputs) {
+      const label = t.annotation || "(no label)";
+      lines.push(`  Tool ${pad(t.toolId, 4)} | ${label}`);
+      if (t.configEl) {
+        const fieldNames = [...t.configEl.querySelectorAll("Fields > Field")].map(f => attr(f, "name")).join(", ");
+        const rows = t.configEl.querySelectorAll("Data > r").length;
+        lines.push(`          Fields: ${fieldNames}`);
+        lines.push(`          Rows: ${rows}`);
+        let rowNum = 0;
+        for (const r of t.configEl.querySelectorAll("Data > r")) {
+          rowNum++;
+          const vals = [...r.querySelectorAll("c")].map(c => c.textContent.trim());
+          lines.push(`          Row ${rowNum}: ${vals.join(" | ")}`);
+        }
+      }
+      lines.push("");
+    }
+  }
+
+  // ── App inputs ──
+  if (appInputs.length > 0) {
+    lines.push(section("APP INPUTS (Interface)"));
+    for (const t of appInputs) {
+      lines.push(`  Tool ${pad(t.toolId, 4)} | ${t.annotation || "(no label)"}`);
+    }
+    lines.push("");
+  }
+
+  // ── Outputs ──
+  lines.push(section("OUTPUTS"));
+  if (outputs.length === 0 && appOutputs.length === 0) {
+    lines.push("  (none detected — workflow may use Browse tools or disabled outputs)");
+  } else {
+    for (const t of outputs) {
+      const fileEl = t.configEl ? t.configEl.querySelector("File") : null;
+      const filePath = fileEl ? (fileEl.textContent || "").trim() : "(unknown)";
+      const fmt = fileEl ? FILE_FORMATS[attr(fileEl, "FileFormat")] || `format code ${attr(fileEl, "FileFormat")}` : "";
+      const outputOption = t.configEl ? text(t.configEl, "OutputOption") : "";
+      const label = t.annotation || "(no label)";
+      lines.push(`  Tool ${pad(t.toolId, 4)} | ${label}`);
+      lines.push(`          File: ${filePath}`);
+      if (fmt) lines.push(`          Format: ${fmt}`);
+      if (outputOption) lines.push(`          Write mode: ${outputOption}`);
+      lines.push("");
+    }
+    for (const t of appOutputs) {
+      lines.push(`  Tool ${pad(t.toolId, 4)} | ${t.annotation || "(no label)"} [App Output]`);
+    }
+  }
+
+  // ── Tool containers ──
+  lines.push(section("LOGICAL SECTIONS (Tool Containers)"));
+  if (containers.length === 0) {
+    lines.push("  (no tool containers found)");
+  } else {
+    for (const c of containers) {
+      const status = c.folded === "True" ? " [FOLDED]" : "";
+      const dis = c.disabled === "True" ? " [DISABLED]" : "";
+      lines.push(`  Container ${c.toolId}: ${c.caption}${status}${dis}`);
+      if (c.childIds.length > 0) {
+        const childLabels = c.childIds.map(id => {
+          const e = registry[id];
+          return e ? `${e.label}${e.annotation ? ` (${e.annotation})` : ""}` : `Tool ${id}`;
+        });
+        lines.push(`  Tools: ${childLabels.join(" → ")}`);
+      }
+      lines.push("");
+    }
+  }
+
+  // ── Logic details ──
+  lines.push(section("LOGIC DETAILS (Per Tool)"));
+  const logicTools = nonContainerTools.filter(t => {
+    const ep = t.entryPoint;
+    return [
+      "AlteryxFormula", "AlteryxMultiRowFormula",
+      "AlteryxFilter", "AlteryxJoin", "AlteryxSummarize",
+      "AlteryxFindReplace", "AlteryxTest", "AlteryxTextInput",
+      "AlteryxUnion", "AlteryxTranspose", "AlteryxSelect",
+    ].includes(ep);
+  });
+
+  if (logicTools.length === 0) {
+    lines.push("  (no detailed logic tools found)");
+  } else {
+    for (const t of logicTools) {
+      const detail = extractDetail(t);
+      if (!detail) continue;
+      const ann = t.annotation ? ` — ${t.annotation}` : "";
+      lines.push(`  Tool ${pad(t.toolId, 4)} | ${t.label}${ann}`);
+      lines.push(detail);
+      lines.push("");
+    }
+  }
+
+  // ── Connections / data flow ──
+  lines.push(section("DATA FLOW (Connections)"));
+  if (connections.length === 0) {
+    lines.push("  (no connections found)");
+  } else {
+    for (const c of connections) {
+      const from = toolLabel(c.fromId);
+      const to = toolLabel(c.toId);
+      const port = c.fromPort !== "Output" ? `[${c.fromPort}]` : "";
+      const wireless = c.wireless ? " (wireless)" : "";
+      lines.push(`  ${from}  --${port}->  ${to}${wireless}`);
+    }
+    lines.push("");
+  }
+
+  // ── Tool inventory ──
+  lines.push(section("FULL TOOL INVENTORY"));
+  const typeCount = {};
+  for (const t of nonContainerTools) {
+    typeCount[t.label] = (typeCount[t.label] || 0) + 1;
+  }
+  lines.push("  Tool type counts:");
+  for (const [label, count] of Object.entries(typeCount).sort((a, b) => b[1] - a[1])) {
+    lines.push(`    ${pad(label, 28)} ${count}`);
+  }
+  lines.push("");
+  lines.push("  All tools:");
+  for (const t of nonContainerTools.sort((a, b) => Number(a.toolId) - Number(b.toolId))) {
+    const ann = t.annotation ? ` — ${t.annotation}` : "";
+    const container = t.parentContainerId ? ` (in container ${t.parentContainerId})` : "";
+    lines.push(`    ${pad(t.toolId, 5)} ${pad(t.label, 24)}${ann}${container}`);
+  }
+  lines.push("");
+
+  // ── File dependencies ──
+  lines.push(section("FILE DEPENDENCIES"));
+  if (allFiles.size === 0) {
+    lines.push("  (no file dependencies detected)");
+  } else {
+    let i = 1;
+    for (const f of allFiles) {
+      lines.push(`  ${i++}. ${f}`);
+    }
+  }
+
+  lines.push("");
+  lines.push(hr("=", 80));
+  lines.push(`Documentation generated by Alteryx Workflow Documenter`);
+  lines.push(`Generated: ${new Date().toLocaleString()}`);
+  lines.push(hr("=", 80));
+
+  return lines.join("\n");
+}
+
+// ─── UI wiring ────────────────────────────────────────────────────────────────
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+const fileBadge = document.getElementById("fileBadge");
+const fileNameEl = document.getElementById("fileName");
+const outputSection = document.getElementById("outputSection");
+const outputEl = document.getElementById("output");
+const btnDownload = document.getElementById("btnDownload");
+const errorBox = document.getElementById("errorBox");
+
+let lastDocText = "";
+let lastFileName = "";
+
+function showError(msg) {
+  errorBox.textContent = msg;
+  errorBox.classList.add("show");
+  outputSection.classList.remove("show");
+}
+
+function clearError() {
+  errorBox.classList.remove("show");
+}
+
+function processFile(file) {
+  clearError();
+  if (!file) return;
+  const ext = file.name.split(".").pop().toLowerCase();
+  if (!["yxmd", "yxwz", "yxmc"].includes(ext)) {
+    showError(`Unsupported file type: .${ext}. Please upload a .yxmd, .yxwz, or .yxmc file.`);
+    return;
+  }
+  fileNameEl.textContent = file.name;
+  fileBadge.classList.add("show");
+  lastFileName = file.name;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const doc = parseWorkflow(e.target.result, file.name);
+      lastDocText = doc;
+      outputEl.textContent = doc;
+      outputSection.classList.add("show");
+    } catch (err) {
+      showError("Error parsing file: " + err.message);
+    }
+  };
+  reader.onerror = () => showError("Failed to read file.");
+  reader.readAsText(file);
+}
+
+// File input change
+fileInput.addEventListener("change", (e) => {
+  if (e.target.files && e.target.files[0]) processFile(e.target.files[0]);
+});
+
+// Drag & drop
+dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("drag-over");
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+
+// Download
+btnDownload.addEventListener("click", () => {
+  if (!lastDocText) return;
+  const blob = new Blob([lastDocText], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = lastFileName.replace(/\.[^.]+$/, "") + "_documentation.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
