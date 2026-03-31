@@ -3,7 +3,7 @@
    "requests": [
      {
        "name": "Alpha",
-       "url": "https://api.g2.galactictycoons.com/public/wishlist/50005466/additems",
+       "url": "https://api.g2.galactictycoons.com/public/wishlist/50021673/additems",
        "items": [
 {
     "id": 43,
@@ -88,7 +88,7 @@
 ]
      },{
        "name": "Bravo",
-       "url": "https://api.g2.galactictycoons.com/public/wishlist/50012125/additems",
+       "url": "https://api.g2.galactictycoons.com/public/wishlist/50021674/additems",
        "items": [
 {
     "id": 169,
@@ -153,7 +153,7 @@
 ]
      },{
        "name": "Charlie",
-       "url": "https://api.g2.galactictycoons.com/public/wishlist/50012126/additems",
+       "url": "https://api.g2.galactictycoons.com/public/wishlist/50021675/additems",
        "items": [
 {
     "id": 169,
@@ -230,7 +230,7 @@
 ]
      },{
        "name": "Tango",
-       "url": "https://api.g2.galactictycoons.com/public/wishlist/50019148/additems",
+       "url": "https://api.g2.galactictycoons.com/public/wishlist/50021676/additems",
        "items": [
 {
     "id": 112,
@@ -323,7 +323,7 @@
 ]
      },{
        "name": "Void",
-       "url": "https://api.g2.galactictycoons.com/public/wishlist/50002825/additems",
+       "url": "https://api.g2.galactictycoons.com/public/wishlist/50021677/additems",
        "items": [
 {
     "id": 43,
@@ -372,7 +372,7 @@
 ]
      },{
        "name": "Whiskey",
-       "url": "https://api.g2.galactictycoons.com/public/wishlist/50008879/additems",
+       "url": "https://api.g2.galactictycoons.com/public/wishlist/50021678/additems",
        "items": [
 {
     "id": 135,

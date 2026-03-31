@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-03-31 — Wishlist URL Update
+
+### Changed
+- Updated wishlist IDs for all 6 requests (Alpha, Bravo, Charlie, Tango, Void, Whiskey) to new URLs
+
 ## 2026-03-31 — Initial Release
 
 ### Added
