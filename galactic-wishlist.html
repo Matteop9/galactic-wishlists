@@ -334,7 +334,7 @@
   // Load config.json on page start
   async function loadConfig() {
     try {
-      const res = await fetch('./config.json');
+      const res = await fetch('./config.json?v=' + Date.now());
       if (!res.ok) throw new Error('HTTP ' + res.status);
       config = await res.json();
       buildRows();
