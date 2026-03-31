@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-03-31 — Animated space background
+
+### Added
+- Canvas-based space animation: twinkling stars, shooting stars, supernovas with glows and spikes, soft nebula blobs
+- Header and cards use frosted glass effect (backdrop blur) over the animation
+
 ## 2026-03-31 — Config timestamp & HTML update
 
 ### Added

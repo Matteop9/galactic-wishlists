@@ -8,15 +8,25 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0d1117;
+      background: #000;
       color: #e6edf3;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
+    #space-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
 
     header {
-      background: #1a1a2e;
+      position: relative;
+      z-index: 1;
+      background: rgba(26, 26, 46, 0.85);
+      backdrop-filter: blur(6px);
       padding: 18px 24px;
       display: flex;
       align-items: center;
@@ -33,6 +43,8 @@
       margin: 0 auto;
       padding: 28px 20px;
       flex: 1;
+      position: relative;
+      z-index: 1;
     }
 
     .run-btn {
@@ -68,7 +80,8 @@
     .results { display: flex; flex-direction: column; gap: 10px; }
 
     .result-row {
-      background: #161b22;
+      background: rgba(22, 27, 34, 0.85);
+      backdrop-filter: blur(4px);
       border: 1px solid #30363d;
       border-radius: 10px;
       padding: 14px 16px;
@@ -96,7 +109,7 @@
     .result-row.loading .result-detail { color: #388bfd; }
 
     .load-error {
-      background: #2a0d0d;
+      background: rgba(42, 13, 13, 0.9);
       border: 1px solid #f85149;
       border-radius: 10px;
       padding: 16px;
@@ -115,6 +128,8 @@
   </style>
 </head>
 <body>
+
+<canvas id="space-canvas"></canvas>
 
 <header>
   <div>
@@ -135,6 +150,183 @@
   <div class="results" id="results"></div>
   <div class="timestamp" id="timestamp"></div>
 </div>
+
+<script>
+// ── Space background animation ──────────────────────────────
+(function() {
+  const canvas = document.getElementById('space-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const rand = (a, b) => Math.random() * (b - a) + a;
+  const randInt = (a, b) => Math.floor(rand(a, b));
+
+  // ── Stars ────────────────────────────────────────────────
+  const STAR_COUNT = 220;
+  const stars = Array.from({ length: STAR_COUNT }, () => ({
+    x: rand(0, 1), y: rand(0, 1),
+    r: rand(0.4, 1.8),
+    alpha: rand(0.3, 1),
+    twinkleSpeed: rand(0.005, 0.02),
+    twinkleDir: Math.random() > 0.5 ? 1 : -1,
+    color: ['#fff', '#cce0ff', '#ffd8a8', '#d4aaff'][randInt(0, 4)]
+  }));
+
+  function drawStars() {
+    stars.forEach(s => {
+      s.alpha += s.twinkleSpeed * s.twinkleDir;
+      if (s.alpha >= 1)   { s.alpha = 1;   s.twinkleDir = -1; }
+      if (s.alpha <= 0.1) { s.alpha = 0.1; s.twinkleDir =  1; }
+      ctx.globalAlpha = s.alpha;
+      ctx.fillStyle = s.color;
+      ctx.beginPath();
+      ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Shooting stars ───────────────────────────────────────
+  const shooters = [];
+  function spawnShooter() {
+    const angle = rand(20, 45) * Math.PI / 180;
+    shooters.push({
+      x: rand(0, canvas.width),
+      y: rand(0, canvas.height * 0.5),
+      len: rand(80, 200),
+      speed: rand(12, 22),
+      angle,
+      dx: Math.cos(angle),
+      dy: Math.sin(angle),
+      alpha: 1,
+      width: rand(1, 2.5)
+    });
+  }
+  setInterval(spawnShooter, rand(800, 1800));
+
+  function drawShooters() {
+    for (let i = shooters.length - 1; i >= 0; i--) {
+      const s = shooters[i];
+      s.x += s.dx * s.speed;
+      s.y += s.dy * s.speed;
+      s.alpha -= 0.025;
+      if (s.alpha <= 0) { shooters.splice(i, 1); continue; }
+
+      const grad = ctx.createLinearGradient(
+        s.x, s.y,
+        s.x - s.dx * s.len, s.y - s.dy * s.len
+      );
+      grad.addColorStop(0, `rgba(255,255,255,${s.alpha})`);
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = s.width;
+      ctx.beginPath();
+      ctx.moveTo(s.x, s.y);
+      ctx.lineTo(s.x - s.dx * s.len, s.y - s.dy * s.len);
+      ctx.stroke();
+    }
+  }
+
+  // ── Supernovas ───────────────────────────────────────────
+  const supernovas = [];
+  function spawnSupernova() {
+    const hues = [30, 200, 270, 0, 55]; // orange, cyan, purple, red, yellow
+    supernovas.push({
+      x: rand(canvas.width * 0.1, canvas.width * 0.9),
+      y: rand(canvas.height * 0.1, canvas.height * 0.9),
+      r: 0,
+      maxR: rand(60, 140),
+      hue: hues[randInt(0, hues.length)],
+      alpha: 1,
+      speed: rand(0.8, 1.8)
+    });
+  }
+  setInterval(spawnSupernova, rand(3000, 6000));
+
+  function drawSupernovas() {
+    for (let i = supernovas.length - 1; i >= 0; i--) {
+      const s = supernovas[i];
+      s.r += s.speed;
+      s.alpha = 1 - s.r / s.maxR;
+      if (s.alpha <= 0) { supernovas.splice(i, 1); continue; }
+
+      // Outer ring
+      ctx.globalAlpha = s.alpha * 0.8;
+      ctx.strokeStyle = `hsl(${s.hue}, 100%, 70%)`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Inner glow
+      const glow = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 0.6);
+      glow.addColorStop(0, `hsla(${s.hue}, 100%, 90%, ${s.alpha * 0.4})`);
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Spikes
+      ctx.globalAlpha = s.alpha * 0.6;
+      ctx.strokeStyle = `hsl(${s.hue}, 100%, 85%)`;
+      ctx.lineWidth = 1;
+      for (let a = 0; a < 8; a++) {
+        const ang = (a / 8) * Math.PI * 2;
+        const inner = s.r * 0.85;
+        const outer = s.r * 1.3;
+        ctx.beginPath();
+        ctx.moveTo(s.x + Math.cos(ang) * inner, s.y + Math.sin(ang) * inner);
+        ctx.lineTo(s.x + Math.cos(ang) * outer, s.y + Math.sin(ang) * outer);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // ── Nebula (static soft blobs) ───────────────────────────
+  function drawNebula() {
+    const blobs = [
+      { x: 0.15, y: 0.3,  r: 180, h: 240, a: 0.04 },
+      { x: 0.75, y: 0.6,  r: 220, h: 280, a: 0.035 },
+      { x: 0.5,  y: 0.85, r: 160, h: 200, a: 0.03 },
+    ];
+    blobs.forEach(b => {
+      const g = ctx.createRadialGradient(
+        b.x * canvas.width, b.y * canvas.height, 0,
+        b.x * canvas.width, b.y * canvas.height, b.r
+      );
+      g.addColorStop(0, `hsla(${b.h}, 80%, 50%, ${b.a})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(b.x * canvas.width, b.y * canvas.height, b.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  // ── Main loop ─────────────────────────────────────────────
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawNebula();
+    drawStars();
+    drawShooters();
+    drawSupernovas();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+// ── End space animation ──────────────────────────────────────
+</script>
 
 <script>
   let config = null;
