@@ -32,7 +32,7 @@ export default function ChatClient({ initialMessages, finalPlan: initialFinalPla
     setInput("");
     setStreaming(true);
 
-    const res = await fetch("/app/chat", {
+    const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages: newMessages, date }),
