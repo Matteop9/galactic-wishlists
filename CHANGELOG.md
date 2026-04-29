@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-04-29 — Wellbeing Buddy Phase 1 (wellbeing-buddy/)
+
+### Added
+- pnpm monorepo scaffold: `apps/web` (Next.js shell), `apps/worker` (Cloudflare Worker), `packages/shared` (Zod schemas + TS types)
+- Supabase schema: `user_preferences`, `health_metrics`, `daily_checkins`, `daily_plans`, `insights` — all RLS-enabled with `owner_all` policies and `updated_at` triggers
+- Cloudflare Worker (`wellbeing-worker.matteo-pallot.workers.dev`) — receives Health Auto Export webhook at `POST /health`
+  - Token auth via `?token=` query param
+  - Parses HAE payload shape `{ data: { metrics: [...] } }` with Zod
+  - Maps metric names to DB columns; converts kJ → kcal; rounds fractional step counts
+  - Upserts to `health_metrics` via Supabase REST API with `on_conflict=user_id,date`
+- End-to-end verified: real HAE export inserting 7 rows into Supabase
+
+## 2026-04-20 — Altar wedding services site (altar/)
+
+### Added
+- `altar/index.html` — single-file wedding services landing page for Maddie & Sophie
+- Services: Wedding Nannies, Cool Gel Nails, Wedding Photography, Wedding Hair — each with add-to-basket
+- wobbl crossover section with jelly cube CSS grid (palette inversion: cream bg, red accent)
+- Basket state in localStorage (`altar_basket`); floating basket button + slide-in drawer
+- Enquiry checkout form — submits to Supabase `orders` table (anon insert, no auth)
+- Settings modal for Supabase credentials (localStorage prefix `altar_`)
+- `altar/schema.sql` — `orders` table with RLS (anon insert, authenticated read)
+- Dark editorial aesthetic: near-black bg, champagne gold accents, Playfair Display + Inter
+
+## 2026-04-20 — wobbl landing page (wobbl/)
+
+### Added
+- `wobbl/index.html` — single-file brand landing page for wobbl jelly business
+- Sections: hero, product range (6 cards), brand collabs (confectionery / makeup / drinks), events (pop-ups + truck), retail preview, contact
+- Dark chrome aesthetic: near-black background, animated chrome gradient wordmark, silver-bordered cards, CSS grid layout
+- Fully responsive — 3-col range grid collapses to 1-col on mobile; burger nav on small screens
+- No external dependencies — opens directly from `file://`
+
 ## 2026-03-31 — Task Tracker (task-tracker/)
 
 ### Added

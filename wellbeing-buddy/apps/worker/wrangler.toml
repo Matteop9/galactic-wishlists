@@ -1,0 +1,9 @@
+name = "wellbeing-worker"
+main = "src/index.ts"
+compatibility_date = "2025-04-29"
+compatibility_flags = ["nodejs_compat"]
+
+# Secrets (set with `wrangler secret put`):
+#   WEBHOOK_SECRET   — token required in ?token= query param
+#   SUPABASE_URL     — your Supabase project URL
+#   SUPABASE_SERVICE_KEY — Supabase service role key (bypasses RLS for inserts)
