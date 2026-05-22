@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFL Dynasty Draft</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    /* Styles that can't be done with Tailwind utility classes alone */
+    .player-row { cursor: pointer; transition: background-color 0.1s; }
+    .player-row:hover { background-color: rgba(255,255,255,0.025); }
+    .player-row.is-drafted { opacity: 0.35; }
+    .player-row.is-drafted .player-name { text-decoration: line-through; }
+    .player-row.is-drafted .pick-rank { text-decoration: none; }
+    .player-row.is-undervalued td:first-child { border-left: 2px solid rgb(234 179 8); }
+    .cliff-row td { border-top: 2px dashed rgba(239, 68, 68, 0.4); }
+    .fc-spin { animation: spin 0.8s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .pos-tab-active { background: rgb(79 70 229); border-color: rgb(79 70 229); color: white; }
+    .pos-tab-inactive { background: rgb(31 41 55); border-color: rgb(55 65 81); color: rgb(156 163 175); }
+    .pos-tab-inactive:hover { background: rgb(55 65 81); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgb(75 85 99); border-radius: 3px; }
+    /* Responsive layout ---------------------------------------- */
+    @media (min-width: 768px) {
+      #main-content { height: calc(100vh - 52px); overflow: hidden; }
+      #sidebar { width: 256px; flex-shrink: 0; overflow-y: auto; }
+    }
+    @media (max-width: 767px) {
+      .player-row td { padding-top: 8px; padding-bottom: 8px; }
+      #main-content { overflow-y: visible; }
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen" style="font-family: system-ui, -apple-system, sans-serif;">
+
+<!-- ============================================================
+     SETTINGS MODAL
+     ============================================================ -->
+<div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+  <div class="bg-gray-800 rounded-xl border border-gray-600 p-6 w-88 shadow-2xl" style="width: 360px;">
+    <div class="flex justify-between items-center mb-5">
+      <h2 class="text-base font-bold text-white">Draft Settings</h2>
+      <button onclick="closeSettings()" class="text-gray-400 hover:text-white text-2xl leading-none w-7 h-7 flex items-center justify-center">&times;</button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs text-gray-400 mb-1.5 font-medium">Number of Teams</label>
+        <input id="s-teams" type="number" min="4" max="20" value="12"
+          class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1.5 font-medium">Rounds</label>
+        <input id="s-rounds" type="number" min="5" max="40" value="20"
+          class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-1.5 font-medium">Your Draft Position (1–teams)</label>
+        <input id="s-yourpick" type="number" min="1" max="20" value="1"
+          class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400 mb-2 font-medium">Draft Format</label>
+        <div class="flex flex-col gap-2">
+          <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="radio" name="s-format" value="snake" checked class="accent-indigo-500" /> Snake
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="radio" name="s-format" value="3rr" class="accent-indigo-500" /> 3rd Round Reversal
+          </label>
+          <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+            <input type="radio" name="s-format" value="linear" class="accent-indigo-500" /> Linear
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 flex gap-3">
+      <button onclick="saveSettings()"
+        class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg py-2 text-sm font-medium transition-colors">
+        Save
+      </button>
+      <button onclick="closeSettings()"
+        class="flex-1 bg-gray-700 hover:bg-gray-600 text-white rounded-lg py-2 text-sm font-medium transition-colors">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MY PICKS MODAL
+     ============================================================ -->
+<div id="picks-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+  <div class="bg-gray-800 rounded-xl border border-gray-600 p-6 shadow-2xl" style="width:420px; max-height:80vh; display:flex; flex-direction:column;">
+    <div class="flex justify-between items-center mb-1">
+      <h2 class="text-base font-bold text-white">My Picks</h2>
+      <button onclick="closePicksModal()" class="text-gray-400 hover:text-white text-2xl leading-none w-7 h-7 flex items-center justify-center">&times;</button>
+    </div>
+    <p class="text-xs text-gray-500 mb-3">Auto-calculated from your draft position. Remove picks traded away, or add picks traded to you.</p>
+    <div id="picks-list" class="flex-1 overflow-y-auto space-y-1 mb-4 min-h-0"></div>
+    <div class="flex gap-2 mb-3">
+      <input id="add-pick-input" type="text" placeholder='e.g. "3.3" or overall #27'
+        class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500"
+        onkeydown="if(event.key==='Enter') addCustomPick()" />
+      <button onclick="addCustomPick()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Add</button>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="resetToAutoPicks()" class="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg py-2 text-sm font-medium transition-colors">Reset to Auto</button>
+      <button onclick="closePicksModal()" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg py-2 text-sm font-medium transition-colors">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="bg-gray-900 border-b border-gray-700/80 px-4 py-2.5 flex flex-wrap items-center gap-2 sticky top-0 z-40">
+  <span class="text-white font-bold text-sm mr-1">NFL Dynasty Draft</span>
+
+  <button id="btn-load-fc" onclick="loadFC()"
+    class="flex items-center gap-1.5 bg-indigo-700 hover:bg-indigo-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+    <span id="fc-icon">&#8595;</span> Load FC Rankings
+  </button>
+
+  <label for="csv-input"
+    class="flex items-center gap-1.5 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs font-medium px-3 py-1.5 rounded-lg cursor-pointer transition-colors">
+    &#128196; Import CSV
+  </label>
+  <input id="csv-input" type="file" accept=".csv" class="hidden" onchange="importCSV(event)" />
+
+  <button onclick="openSettings()"
+    class="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+    &#9881; Settings
+  </button>
+
+  <button onclick="openPicksModal()"
+    class="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors" id="btn-my-picks">
+    &#9998; My Picks
+  </button>
+
+  <button onclick="copyShareLink()" id="btn-share"
+    class="flex items-center gap-1 bg-gray-700 hover:bg-gray-600 text-gray-200 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+    &#128279; Share
+  </button>
+
+  <div class="flex-1"></div>
+
+  <div id="pick-counter" class="hidden text-right">
+    <span id="pick-count-text" class="text-gray-400 text-xs"></span>
+  </div>
+
+  <button onclick="confirmReset()"
+    class="bg-red-900/40 hover:bg-red-800/60 text-red-300 text-xs font-medium px-3 py-1.5 rounded-lg border border-red-700/40 transition-colors">
+    &#8635; Reset
+  </button>
+</header>
+
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
+<main id="main-content" class="flex flex-col md:flex-row gap-3 p-3">
+
+  <!-- LEFT: Draft board -->
+  <div class="flex flex-col flex-1 min-w-0">
+
+    <!-- Filter bar -->
+    <div class="flex flex-wrap items-center gap-2 mb-2">
+      <div class="flex gap-1 pr-2 mr-0.5 border-r border-gray-700/60">
+        <button id="view-list" class="pos-tab pos-tab-active text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" onclick="setView('list')">List</button>
+        <button id="view-board" class="pos-tab pos-tab-inactive text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" onclick="setView('board')">Board</button>
+      </div>
+      <div class="flex gap-1" id="pos-filter-tabs">
+        <button class="pos-tab pos-tab-active text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" data-pos="ALL" onclick="setFilter('ALL')">All</button>
+        <button class="pos-tab pos-tab-inactive text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" data-pos="QB" onclick="setFilter('QB')">QB</button>
+        <button class="pos-tab pos-tab-inactive text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" data-pos="RB" onclick="setFilter('RB')">RB</button>
+        <button class="pos-tab pos-tab-inactive text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" data-pos="WR" onclick="setFilter('WR')">WR</button>
+        <button class="pos-tab pos-tab-inactive text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors" data-pos="TE" onclick="setFilter('TE')">TE</button>
+      </div>
+      <input id="search-input" type="text" placeholder="Search players..."
+        class="flex-1 max-w-xs bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500"
+        oninput="state.boardView ? renderTierBoard() : renderBoard()" />
+      <label class="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer select-none">
+        <input type="checkbox" id="show-drafted" checked onchange="state.boardView ? renderTierBoard() : renderBoard()" class="accent-indigo-500" />
+        Show drafted
+      </label>
+      <span id="player-count" class="text-xs text-gray-600 ml-1"></span>
+    </div>
+
+    <!-- List view -->
+    <div id="list-view" class="flex-1 overflow-auto bg-gray-900 rounded-xl border border-gray-800" style="min-height: 320px;">
+      <table class="w-full border-collapse" style="font-size: 12px;">
+        <thead class="sticky top-0 z-10">
+          <tr class="bg-gray-800 text-gray-400 uppercase" style="font-size: 10px; letter-spacing: 0.05em;">
+            <th class="px-2 py-2 text-right w-10">#</th>
+            <th class="px-3 py-2 text-left">Name</th>
+            <th class="px-2 py-2 text-center w-10">Pos</th>
+            <th class="px-2 py-2 text-center w-10">Team</th>
+            <th class="px-2 py-2 text-right w-16">FC Val</th>
+            <th class="px-2 py-2 text-right w-14">FC&nbsp;#</th>
+            <th class="px-2 py-2 text-right w-14">Custom</th>
+            <th class="px-2 py-2 text-right w-14">Gap</th>
+            <th class="px-2 py-2 text-center w-6"></th>
+          </tr>
+        </thead>
+        <tbody id="draft-board">
+          <tr>
+            <td colspan="9" class="text-center text-gray-600 py-16 text-sm">
+              Click <strong class="text-gray-400">Load FC Rankings</strong> to get started,
+              then optionally import your custom CSV.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Board view -->
+    <div id="board-view" class="hidden flex-1 overflow-auto bg-gray-900 rounded-xl border border-gray-800" style="min-height: 320px;">
+      <div class="sticky top-0 z-10 bg-gray-800 border-b border-gray-700/80" style="display:grid;grid-template-columns:repeat(4,1fr)">
+        <div class="text-blue-400 font-bold text-xs py-2 text-center border-r border-gray-700/50">QB</div>
+        <div class="text-emerald-400 font-bold text-xs py-2 text-center border-r border-gray-700/50">RB</div>
+        <div class="text-purple-400 font-bold text-xs py-2 text-center border-r border-gray-700/50">WR</div>
+        <div class="text-amber-400 font-bold text-xs py-2 text-center">TE</div>
+      </div>
+      <div id="tier-board-content" class="p-2"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Sidebar -->
+  <div id="sidebar" class="flex flex-col gap-3 flex-shrink-0">
+
+    <!-- Future picks -->
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-3">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-2.5 font-semibold">Future Picks</div>
+      <div id="future-picks-panel">
+        <div class="text-gray-700 text-xs">Load rankings to see projections</div>
+      </div>
+    </div>
+
+    <!-- Available by position -->
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-3">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-2.5 font-semibold">Available by Position</div>
+      <div id="position-summary" class="space-y-2">
+        <div class="text-gray-700 text-xs">Load rankings to see data</div>
+      </div>
+    </div>
+
+    <!-- Positional cliffs -->
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-3">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-2.5 font-semibold">Positional Cliffs</div>
+      <div id="cliff-panel" class="space-y-2.5">
+        <div class="text-gray-700 text-xs">Load rankings to see data</div>
+      </div>
+    </div>
+
+    <!-- My Team -->
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-3">
+      <div class="text-xs text-gray-400 uppercase tracking-wider mb-2.5 font-semibold">My Team</div>
+      <div id="my-team-panel">
+        <div class="text-gray-700 text-xs">Your picks will appear here as you draft</div>
+      </div>
+    </div>
+
+    <!-- Undervalued targets -->
+    <div class="bg-gray-900 border border-gray-800 rounded-xl p-3">
+      <div class="flex items-center justify-between mb-2.5">
+        <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Undervalued Targets</div>
+        <span class="text-xs text-gray-600">Custom &gt; FC</span>
+      </div>
+      <div id="undervalued-panel">
+        <div class="text-gray-700 text-xs">Import custom CSV to see targets</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ── State ─────────────────────────────────────────────────────
+const STORAGE_KEY = 'nfl_dynasty_draft_v1';
+
+let state = {
+  players: [],
+  draftedIds: [],
+  myPickNumbers: null,
+  boardTierOverrides: {},  // playerId -> tier index override for board view
+  settings: { teams: 12, rounds: 20, yourPick: 1, format: 'snake' },
+  pickCount: 0,
+  posFilter: new Set(),
+  boardView: false,
+};
+
+let _boardDragId = null;
+
+// ── Init ──────────────────────────────────────────────────────
+function init() {
+  loadStateFromStorage();
+  if (state.players.length > 0) renderAll();
+  checkShareLink(); // show restore banner if a #s= hash is present
+}
+
+// ── Storage ───────────────────────────────────────────────────
+function saveStateToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    players: state.players,
+    draftedIds: state.draftedIds,
+    myPickNumbers: state.myPickNumbers,
+    boardTierOverrides: state.boardTierOverrides,
+    settings: state.settings,
+    pickCount: state.pickCount,
+  }));
+}
+
+function loadStateFromStorage() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const saved = JSON.parse(raw);
+    state.players           = saved.players           || [];
+    state.draftedIds        = saved.draftedIds        || [];
+    state.myPickNumbers     = saved.myPickNumbers     || null;
+    state.boardTierOverrides = saved.boardTierOverrides || {};
+    state.settings          = Object.assign(state.settings, saved.settings || {});
+    state.pickCount     = saved.pickCount || 0;
+    document.getElementById('s-teams').value    = state.settings.teams;
+    document.getElementById('s-rounds').value   = state.settings.rounds;
+    document.getElementById('s-yourpick').value = state.settings.yourPick;
+    document.querySelectorAll('input[name="s-format"]').forEach(r => {
+      r.checked = r.value === state.settings.format;
+    });
+  } catch(e) {
+    console.warn('Failed to restore draft state:', e);
+  }
+}
+
+// ── Name normalisation ────────────────────────────────────────
+function normName(name) {
+  return String(name)
+    .toLowerCase()
+    .replace(/\s+(jr\.?|sr\.?|ii{1,3}|iv|v)$/i, '')
+    .replace(/[^a-z\s]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// ── FantasyCalc ───────────────────────────────────────────────
+async function loadFC() {
+  const btn  = document.getElementById('btn-load-fc');
+  const icon = document.getElementById('fc-icon');
+  btn.disabled = true;
+  icon.innerHTML = '<span class="fc-spin">&#8635;</span>';
+
+  try {
+    const url = 'https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&ppr=1&teP=true';
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    mergeFCData(data);
+    saveStateToStorage();
+    renderAll();
+  } catch(err) {
+    alert(
+      'Failed to load FantasyCalc rankings.\n\n' + err.message +
+      '\n\nMake sure you\'re serving this file over HTTP, not file://.\n' +
+      'Run: python -m http.server 8000'
+    );
+  } finally {
+    btn.disabled = false;
+    icon.innerHTML = '&#8595;';
+  }
+}
+
+function mergeFCData(fcData) {
+  // Build FC map
+  const fcMap = new Map();
+  fcData.forEach((entry, idx) => {
+    const pos = (entry.player.position || '').toUpperCase();
+    if (!['QB','RB','WR','TE'].includes(pos)) return;
+    const key = normName(entry.player.name);
+    if (fcMap.has(key)) return; // keep first occurrence
+    fcMap.set(key, {
+      name: entry.player.name,
+      position: pos,
+      nflTeam: entry.player.nflTeamAbbreviation || entry.player.team || '—',
+      fcValue: entry.value,
+      fcRank: entry.overallRank || (idx + 1),
+      age: entry.player.age ?? null,
+    });
+  });
+
+  // Preserve custom ranks from existing state (or pending share-link data)
+  const customMap = new Map();
+  state.players.forEach(p => {
+    if (p.customRank != null) customMap.set(p.id, { rank: p.customRank });
+  });
+  if (state._pendingCustomRanks) {
+    Object.entries(state._pendingCustomRanks).forEach(([id, rank]) => {
+      if (!customMap.has(id)) customMap.set(id, { rank });
+    });
+    delete state._pendingCustomRanks;
+  }
+
+  // Rebuild players list from FC data
+  const built = [];
+  fcMap.forEach((fc, key) => {
+    const cr = customMap.has(key) ? customMap.get(key).rank : null;
+    const player = makePlayer(key, fc.name, fc.position, fc.nflTeam, fc.fcValue, fc.fcRank, cr);
+    player.age = fc.age;
+    built.push(player);
+  });
+
+  // Add custom-only players (existed before, no FC match)
+  customMap.forEach((data, key) => {
+    if (!fcMap.has(key)) {
+      const existing = state.players.find(p => p.id === key);
+      if (existing) {
+        built.push(makePlayer(key, existing.name, existing.position, existing.nflTeam, null, null, data.rank, true));
+      }
+    }
+  });
+
+  // Restore drafted state
+  const draftedSet = new Set(state.draftedIds);
+  built.forEach(p => {
+    if (draftedSet.has(p.id)) {
+      p.drafted = true;
+      const match = state.players.find(q => q.id === p.id);
+      if (match) { p.draftPick = match.draftPick; p.myPick = match.myPick || false; }
+    }
+  });
+
+  built.sort((a, b) => a.compositeRank - b.compositeRank);
+  state.players = built;
+}
+
+// ── CSV Import ────────────────────────────────────────────────
+function importCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: results => {
+      processCSV(results.data);
+      saveStateToStorage();
+      renderAll();
+      event.target.value = '';
+    },
+    error: err => alert('CSV error: ' + err.message),
+  });
+}
+
+function processCSV(rows) {
+  // Flexible column detection
+  const get = (row, ...keys) => {
+    for (const k of keys) {
+      const val = row[k] || row[k.toLowerCase()] || row[k.toUpperCase()];
+      if (val != null && String(val).trim() !== '') return String(val).trim();
+    }
+    return '';
+  };
+
+  const customEntries = [];
+  rows.forEach(row => {
+    const name    = get(row, 'name', 'Name', 'player', 'Player', 'Player Name', 'full_name');
+    const rankRaw = get(row, 'Expert Rank', 'expert_rank', 'rank', 'Rank', 'ExpertRank', 'expert', 'Overall', 'ADP');
+    const pos     = get(row, 'position', 'Position', 'pos', 'Pos').toUpperCase();
+    const team    = get(row, 'team', 'Team', 'nfl_team', 'nflTeam', 'NFL Team');
+    if (!name || !rankRaw) return;
+    const rank = Math.round(parseFloat(rankRaw) * 100) / 100;
+    if (isNaN(rank)) return;
+    customEntries.push({ key: normName(name), rawName: name, rank, position: pos, nflTeam: team });
+  });
+
+  // Map existing players for quick lookup
+  const playerMap = new Map(state.players.map(p => [p.id, p]));
+  const matched = new Set();
+
+  customEntries.forEach(entry => {
+    if (playerMap.has(entry.key)) {
+      const p = playerMap.get(entry.key);
+      p.customRank = entry.rank;
+      p.compositeRank = calcComposite(p.fcRank, p.customRank);
+      p.undervaluedScore = calcGap(p.fcRank, p.customRank);
+      matched.add(entry.key);
+    } else {
+      // New player not in FC
+      const np = makePlayer(
+        entry.key, entry.rawName,
+        entry.position || '??', entry.nflTeam || '—',
+        null, null, entry.rank, true
+      );
+      state.players.push(np);
+    }
+  });
+
+  // Clear custom ranks for players NOT in the new CSV (optional — keeps old if not re-imported)
+  state.players.sort((a, b) => a.compositeRank - b.compositeRank);
+}
+
+// ── Player builder ────────────────────────────────────────────
+function makePlayer(id, name, position, nflTeam, fcValue, fcRank, customRank, unmatched) {
+  return {
+    id, name, position, nflTeam,
+    fcValue:  fcValue  ?? null,
+    fcRank:   fcRank   ?? null,
+    customRank: customRank ?? null,
+    compositeRank: calcComposite(fcRank, customRank),
+    undervaluedScore: calcGap(fcRank, customRank),
+    age: null,
+    drafted: false,
+    myPick: false,
+    draftPick: null,
+    unmatched: unmatched || false,
+  };
+}
+
+function calcComposite(fcRank, customRank) {
+  if (fcRank != null && customRank != null) return (fcRank + customRank) / 2;
+  if (fcRank != null)     return fcRank;
+  if (customRank != null) return customRank + 500;
+  return 9999;
+}
+
+function calcGap(fcRank, customRank) {
+  if (fcRank == null || customRank == null) return 0;
+  return Math.round(fcRank - customRank);
+}
+
+// ── Window / timeline helpers ─────────────────────────────────
+const WINDOWS = {
+  peak:       { label: 'Peak Now',   cls: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/30'   },
+  building:   { label: 'Building',   cls: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/30' },
+  developing: { label: 'Developing', cls: 'text-blue-400',   bg: 'bg-blue-500/10 border-blue-500/30'     },
+  lottery:    { label: 'Lottery',    cls: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/30' },
+};
+
+function getWindow(p) {
+  if (p.age != null) {
+    if (p.age < 23)  return 'lottery';
+    if (p.age < 25)  return 'developing';
+    if (p.age < 28)  return 'building';
+    if (p.age < 31)  return 'peak';
+    return 'declining';
+  }
+  const r = p.fcRank;
+  if (!r) return null;
+  if (r <= 24)  return 'peak';
+  if (r <= 72)  return 'building';
+  if (r <= 168) return 'developing';
+  return 'lottery';
+}
+
+// ── Draft actions ─────────────────────────────────────────────
+function toggleDrafted(id) {
+  const p = state.players.find(q => q.id === id);
+  if (!p) return;
+
+  if (p.drafted) {
+    p.drafted   = false;
+    p.myPick    = false;
+    p.draftPick = null;
+    state.draftedIds = state.draftedIds.filter(d => d !== id);
+    state.pickCount  = Math.max(0, state.pickCount - 1);
+  } else {
+    state.pickCount++;
+    p.drafted   = true;
+    p.draftPick = state.pickCount;
+    p.myPick    = yourPickNumbers().includes(state.pickCount);
+    state.draftedIds.push(id);
+  }
+
+  saveStateToStorage();
+  renderAll();
+}
+
+function confirmReset() {
+  if (state.pickCount === 0) return;
+  if (!confirm('Clear all drafted picks? Your rankings will stay loaded.')) return;
+  state.players.forEach(p => { p.drafted = false; p.draftPick = null; });
+  state.draftedIds = [];
+  state.pickCount  = 0;
+  saveStateToStorage();
+  renderAll();
+}
+
+// ── Settings ──────────────────────────────────────────────────
+function openSettings()  { document.getElementById('settings-modal').classList.remove('hidden'); }
+function closeSettings() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+function saveSettings() {
+  state.settings.teams    = Math.max(2, parseInt(document.getElementById('s-teams').value, 10)    || 12);
+  state.settings.rounds   = Math.max(1, parseInt(document.getElementById('s-rounds').value, 10)   || 20);
+  state.settings.yourPick = Math.max(1, parseInt(document.getElementById('s-yourpick').value, 10) || 1);
+  state.settings.yourPick = Math.min(state.settings.yourPick, state.settings.teams);
+  state.settings.format   = document.querySelector('input[name="s-format"]:checked')?.value || 'snake';
+  closeSettings();
+  saveStateToStorage();
+  renderAll();
+}
+
+// ── My Picks modal ───────────────────────────────────────────
+function openPicksModal() {
+  if (!state.myPickNumbers) state.myPickNumbers = [...calcPickNumbers()];
+  renderPicksModal();
+  document.getElementById('picks-modal').classList.remove('hidden');
+}
+
+function closePicksModal() {
+  document.getElementById('picks-modal').classList.add('hidden');
+  saveStateToStorage();
+  renderAll();
+}
+
+function resetToAutoPicks() {
+  state.myPickNumbers = null;
+  closePicksModal();
+}
+
+function renderPicksModal() {
+  const picks = state.myPickNumbers || calcPickNumbers();
+  const { teams } = state.settings;
+  const isCustom = !!state.myPickNumbers;
+
+  const html = picks.length ? picks.map(overall => {
+    const round = Math.ceil(overall / teams);
+    const pickInRound = overall - (round - 1) * teams;
+    return `<div class="flex items-center gap-2 bg-gray-700/50 rounded-lg px-3 py-1.5">
+      <span class="text-xs text-gray-500 font-mono w-8">#${overall}</span>
+      <span class="flex-1 text-sm text-gray-200">Round ${round}, Pick ${pickInRound}</span>
+      <button onclick="removeCustomPick(${overall})"
+        class="text-gray-600 hover:text-red-400 text-lg leading-none transition-colors">&times;</button>
+    </div>`;
+  }).join('') : '<div class="text-gray-600 text-xs py-2 text-center">No picks — add some below.</div>';
+
+  const badge = isCustom
+    ? '<span class="text-xs text-yellow-500 font-medium">&#9998; Edited</span>'
+    : '<span class="text-xs text-gray-500">Auto</span>';
+
+  document.getElementById('picks-list').innerHTML =
+    `<div class="flex justify-between items-center mb-1">`+
+    `<span class="text-xs text-gray-500">${picks.length} picks</span>${badge}</div>` + html;
+}
+
+function removeCustomPick(overall) {
+  if (!state.myPickNumbers) state.myPickNumbers = [...calcPickNumbers()];
+  state.myPickNumbers = state.myPickNumbers.filter(p => p !== overall);
+  renderPicksModal();
+}
+
+function addCustomPick() {
+  const input = document.getElementById('add-pick-input');
+  const val = input.value.trim();
+  if (!val) return;
+  const { teams } = state.settings;
+  let overall;
+  const rdotP = val.match(/^(\d+)[.\-](\d+)$/);
+  if (rdotP) {
+    overall = (parseInt(rdotP[1]) - 1) * teams + parseInt(rdotP[2]);
+  } else {
+    overall = parseInt(val);
+  }
+  if (!overall || isNaN(overall) || overall < 1) {
+    alert('Enter a pick as Round.Pick (e.g. "3.3") or an overall number (e.g. "27")');
+    return;
+  }
+  if (!state.myPickNumbers) state.myPickNumbers = [...calcPickNumbers()];
+  if (!state.myPickNumbers.includes(overall)) {
+    state.myPickNumbers.push(overall);
+    state.myPickNumbers.sort((a, b) => a - b);
+  }
+  input.value = '';
+  renderPicksModal();
+}
+
+// ── Position filter ───────────────────────────────────────────
+function setFilter(pos) {
+  if (pos === 'ALL') {
+    state.posFilter.clear();
+  } else {
+    if (state.posFilter.has(pos)) state.posFilter.delete(pos);
+    else state.posFilter.add(pos);
+  }
+  document.querySelectorAll('.pos-tab').forEach(tab => {
+    const isAll = tab.dataset.pos === 'ALL';
+    const active = isAll ? state.posFilter.size === 0 : state.posFilter.has(tab.dataset.pos);
+    tab.classList.toggle('pos-tab-active',   active);
+    tab.classList.toggle('pos-tab-inactive', !active);
+  });
+  if (state.boardView) renderTierBoard();
+  else renderBoard();
+}
+
+function getFiltered() {
+  const showDrafted = document.getElementById('show-drafted')?.checked ?? true;
+  const search = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  return state.players.filter(p => {
+    if (!showDrafted && p.drafted) return false;
+    if (state.posFilter.size > 0 && !state.posFilter.has(p.position)) return false;
+    if (search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+}
+
+// ── Cliff detection ───────────────────────────────────────────
+function detectCliffs(sorted) {
+  const cliffs = new Set();
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = sorted[i - 1];
+    const curr = sorted[i];
+    if (prev.fcValue && curr.fcValue && (prev.fcValue - curr.fcValue) / prev.fcValue >= 0.10) {
+      cliffs.add(curr.id); continue;
+    }
+    if (curr.compositeRank - prev.compositeRank > 6) {
+      cliffs.add(curr.id);
+    }
+  }
+  return cliffs;
+}
+
+// ── Your picks ────────────────────────────────────────────────
+function calcPickNumbers() {
+  const { teams, rounds, yourPick, format } = state.settings;
+  const picks = [];
+  for (let r = 0; r < rounds; r++) {
+    let isReverse;
+    if (format === 'snake')   isReverse = r % 2 === 1;
+    else if (format === '3rr') isReverse = r === 0 ? false : r <= 2 ? true : r % 2 === 0;
+    else                      isReverse = false; // linear
+    const slot = isReverse ? (teams - yourPick + 1) : yourPick;
+    picks.push(r * teams + slot);
+  }
+  return picks;
+}
+
+function yourPickNumbers() {
+  return state.myPickNumbers ?? calcPickNumbers();
+}
+
+// ── Rendering ─────────────────────────────────────────────────
+function renderAll() {
+  if (state.boardView) renderTierBoard();
+  else renderBoard();
+  renderSidebar();
+  renderPickCounter();
+}
+
+function renderPickCounter() {
+  const total   = state.settings.teams * state.settings.rounds;
+  const counter = document.getElementById('pick-counter');
+  const text    = document.getElementById('pick-count-text');
+  if (state.players.length > 0) {
+    counter.classList.remove('hidden');
+    const avail = state.players.filter(p => !p.drafted).length;
+    text.textContent = `Pick ${state.pickCount} of ${total} · ${avail} available`;
+  }
+}
+
+function renderBoard() {
+  const tbody    = document.getElementById('draft-board');
+  const filtered = getFiltered();
+  const countEl  = document.getElementById('player-count');
+  const avail    = filtered.filter(p => !p.drafted).length;
+  countEl.textContent = filtered.length > 0 ? `${avail} available` : '';
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-600 py-10 text-sm">No players match your filters.</td></tr>`;
+    return;
+  }
+
+  // Detect cliffs among available players in filtered set
+  const availSorted = filtered.filter(p => !p.drafted);
+  const cliffs = detectCliffs(availSorted);
+
+  let availRank = 0;
+  tbody.innerHTML = filtered.map(p => {
+    if (!p.drafted) availRank++;
+    return playerRow(p, p.drafted ? null : availRank, cliffs.has(p.id) && !p.drafted);
+  }).join('');
+}
+
+const POS_COLOR = {
+  QB: 'text-blue-300 bg-blue-500/10 border-blue-500/30',
+  RB: 'text-emerald-300 bg-emerald-500/10 border-emerald-500/30',
+  WR: 'text-purple-300 bg-purple-500/10 border-purple-500/30',
+  TE: 'text-amber-300 bg-amber-500/10 border-amber-500/30',
+};
+const POS_TEXT = { QB: 'text-blue-400', RB: 'text-emerald-400', WR: 'text-purple-400', TE: 'text-amber-400' };
+
+function playerRow(p, rank, cliffBefore) {
+  const cliffCls = cliffBefore  ? 'cliff-row'      : '';
+  const draftCls = p.drafted    ? 'is-drafted'      : '';
+  const uvCls    = (!p.drafted && p.undervaluedScore >= 10) ? 'is-undervalued' : '';
+  const posBadge = POS_COLOR[p.position] || 'text-gray-300 bg-gray-700 border-gray-600';
+
+  const fcValStr  = p.fcValue != null
+    ? (p.fcValue >= 1000 ? (p.fcValue/1000).toFixed(1)+'k' : p.fcValue)
+    : '<span class="text-gray-700">—</span>';
+
+  const fcRankStr   = p.fcRank   != null ? p.fcRank   : '<span class="text-gray-700">—</span>';
+  const custRankStr = p.customRank != null ? p.customRank.toFixed(2) : '<span class="text-gray-700">—</span>';
+
+  let gapStr = '<span class="text-gray-700">—</span>';
+  if (p.undervaluedScore !== 0) {
+    const sign = p.undervaluedScore > 0 ? '+' : '';
+    const col  = p.undervaluedScore > 0 ? 'text-yellow-400' : 'text-red-400';
+    gapStr = `<span class="${col}">${sign}${Math.round(p.undervaluedScore)}</span>`;
+  }
+
+  const rankCell = p.drafted
+    ? `<span class="text-gray-600">#${p.draftPick}</span>`
+    : `<span class="font-mono text-gray-300">${rank}</span>`;
+
+  const checkCell = p.drafted ? '<span class="text-green-600">&#10003;</span>' : '';
+  const unmatchedIcon = p.unmatched ? ' <span class="text-yellow-500 text-xs" title="No FC data matched">?</span>' : '';
+
+  const safeId = p.id.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+  return `<tr class="player-row ${draftCls} ${uvCls} ${cliffCls} border-b border-gray-800/50"
+              onclick="toggleDrafted('${safeId}')">
+    <td class="px-2 py-1.5 text-right w-10 text-xs">${rankCell}</td>
+    <td class="px-3 py-1.5">
+      <span class="player-name text-gray-100 font-medium">${esc(p.name)}</span>${unmatchedIcon}
+    </td>
+    <td class="px-2 py-1.5 text-center">
+      <span class="text-xs px-1.5 py-0.5 rounded border font-semibold ${posBadge}">${p.position}</span>
+    </td>
+    <td class="px-2 py-1.5 text-center text-gray-500 text-xs">${esc(p.nflTeam)}</td>
+    <td class="px-2 py-1.5 text-right text-gray-300 font-mono text-xs">${fcValStr}</td>
+    <td class="px-2 py-1.5 text-right text-gray-400 font-mono text-xs">${fcRankStr}</td>
+    <td class="px-2 py-1.5 text-right text-gray-400 font-mono text-xs">${custRankStr}</td>
+    <td class="px-2 py-1.5 text-right text-xs">${gapStr}</td>
+    <td class="px-2 py-1.5 text-center text-xs">${checkCell}</td>
+  </tr>`;
+}
+
+function renderSidebar() {
+  renderFuturePicksPanel();
+  renderPositionSummary();
+  renderCliffPanel();
+  renderUndervaluedPanel();
+  renderMyTeam();
+}
+
+function renderMyTeam() {
+  const el = document.getElementById('my-team-panel');
+  const myPicks = state.players.filter(p => p.myPick && p.drafted)
+    .sort((a, b) => a.draftPick - b.draftPick);
+
+  if (!myPicks.length) {
+    el.innerHTML = '<div class="text-gray-700 text-xs">Your picks will appear here as you draft</div>';
+    return;
+  }
+
+  // Count by window
+  const counts = { peak: 0, building: 0, developing: 0, lottery: 0 };
+  myPicks.forEach(p => { const w = getWindow(p); if (w && w in counts) counts[w]++; });
+  const total = myPicks.length;
+
+  // Distribution bar
+  const barColors = { peak: 'bg-green-500', building: 'bg-yellow-500', developing: 'bg-blue-500', lottery: 'bg-purple-500' };
+  const bar = Object.entries(counts).map(([w, n]) =>
+    n > 0 ? `<div class="${barColors[w]} h-full" style="width:${(n/total*100).toFixed(1)}%" title="${WINDOWS[w].label}: ${n}"></div>` : ''
+  ).join('');
+
+  // Recommendation: suggest window most needed
+  const dominated = Object.entries(counts).sort((a,b) => b[1]-a[1])[0][0];
+  const needed    = Object.entries(counts).sort((a,b) => a[1]-b[1])[0][0];
+  const rec = counts[needed] === 0
+    ? `No ${WINDOWS[needed].label} players yet — consider targeting some.`
+    : `Mostly ${WINDOWS[dominated].label} picks — balance with ${WINDOWS[needed].label}.`;
+
+  // Timeline match: top 3 available players whose window matches what's needed
+  const matches = state.players
+    .filter(p => !p.drafted && getWindow(p) === needed)
+    .sort((a, b) => a.compositeRank - b.compositeRank)
+    .slice(0, 3);
+
+  const matchHtml = matches.length ? `
+    <div class="mt-2 pt-2 border-t border-gray-800">
+      <div class="text-xs text-gray-500 mb-1">${WINDOWS[needed].label} targets available:</div>
+      ${matches.map(p => `
+        <div class="flex items-center gap-1.5 py-0.5 cursor-pointer hover:bg-gray-800/40 rounded px-1"
+             onclick="toggleDrafted('${p.id.replace(/'/g,"\\'")}')">
+          <span class="${POS_TEXT[p.position]||'text-gray-400'} text-xs font-medium w-5">${p.position}</span>
+          <span class="flex-1 text-gray-200 text-xs truncate">${esc(p.name)}</span>
+          <span class="text-gray-500 text-xs">#${Math.round(p.compositeRank)}</span>
+        </div>`).join('')}
+    </div>` : '';
+
+  // My picks list
+  const pickList = myPicks.map(p => {
+    const w = getWindow(p);
+    const meta = w && WINDOWS[w];
+    const badge = meta ? `<span class="text-xs px-1 rounded border ${meta.cls} ${meta.bg} flex-shrink-0">${meta.label}</span>` : '';
+    const ageStr = p.age != null ? `<span class="text-gray-600 text-xs flex-shrink-0">${Math.round(p.age)}</span>` : '';
+    return `<div class="flex items-center gap-1.5 py-0.5">
+      <span class="${POS_TEXT[p.position]||'text-gray-400'} text-xs font-medium w-5 flex-shrink-0">${p.position}</span>
+      <span class="flex-1 text-gray-200 text-xs truncate">${esc(p.name)}</span>
+      ${ageStr}${badge}
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="h-2 flex rounded-full overflow-hidden mb-2">${bar}</div>
+    <div class="text-xs text-gray-500 mb-2">${rec}</div>
+    <div class="space-y-0.5 max-h-44 overflow-y-auto">${pickList}</div>
+    ${matchHtml}`;
+}
+
+function renderPositionSummary() {
+  const el = document.getElementById('position-summary');
+  if (!state.players.length) { el.innerHTML = '<div class="text-gray-700 text-xs">Load rankings to see data</div>'; return; }
+
+  const bars = { QB: 'bg-blue-500', RB: 'bg-emerald-500', WR: 'bg-purple-500', TE: 'bg-amber-500' };
+  el.innerHTML = ['QB','RB','WR','TE'].map(pos => {
+    const all   = state.players.filter(p => p.position === pos);
+    const avail = all.filter(p => !p.drafted).length;
+    const pct   = all.length > 0 ? (avail / all.length) * 100 : 0;
+    return `<div class="flex items-center gap-2">
+      <span class="text-xs font-medium w-6 ${POS_TEXT[pos]}">${pos}</span>
+      <div class="flex-1 bg-gray-800 rounded-full h-1.5">
+        <div class="${bars[pos]} h-1.5 rounded-full" style="width:${pct}%"></div>
+      </div>
+      <span class="text-xs text-gray-500 w-14 text-right">${avail}/${all.length}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderCliffPanel() {
+  const el = document.getElementById('cliff-panel');
+  if (!state.players.length) { el.innerHTML = '<div class="text-gray-700 text-xs">Load rankings to see data</div>'; return; }
+
+  el.innerHTML = ['QB','RB','WR','TE'].map(pos => {
+    const avail = state.players
+      .filter(p => p.position === pos && !p.drafted)
+      .sort((a, b) => a.compositeRank - b.compositeRank);
+
+    if (!avail.length) return `
+      <div class="flex justify-between text-xs">
+        <span class="font-medium ${POS_TEXT[pos]}">${pos}</span>
+        <span class="text-gray-600">None left</span>
+      </div>`;
+
+    let cliffAt = null;
+    for (let i = 1; i < avail.length; i++) {
+      const prev = avail[i-1], curr = avail[i];
+      if (prev.fcValue && curr.fcValue && (prev.fcValue - curr.fcValue) / prev.fcValue >= 0.20) { cliffAt = i; break; }
+      if (curr.compositeRank - prev.compositeRank > 12) { cliffAt = i; break; }
+    }
+
+    const cliffTxt = cliffAt != null
+      ? `<span class="text-red-400">cliff after #${cliffAt}</span>`
+      : `<span class="text-gray-700">no cliff</span>`;
+
+    return `<div class="text-xs space-y-0.5">
+      <div class="flex justify-between">
+        <span class="font-medium ${POS_TEXT[pos]}">${pos} <span class="text-gray-600 font-normal">(${avail.length})</span></span>
+        ${cliffTxt}
+      </div>
+      <div class="text-gray-600 truncate">Next: ${esc(avail[0].name)}</div>
+    </div>`;
+  }).join('<div class="border-t border-gray-800 my-1.5"></div>');
+}
+
+function renderUndervaluedPanel() {
+  const el = document.getElementById('undervalued-panel');
+  if (!state.players.some(p => p.customRank != null)) {
+    el.innerHTML = '<div class="text-gray-700 text-xs">Import custom CSV to see targets</div>';
+    return;
+  }
+  // Look at the next 25 available players, show top 5 with any positive gap
+  const nextWindow = state.players
+    .filter(p => !p.drafted)
+    .sort((a, b) => a.compositeRank - b.compositeRank)
+    .slice(0, 25);
+
+  const targets = nextWindow
+    .filter(p => p.undervaluedScore > 0)
+    .sort((a, b) => b.undervaluedScore - a.undervaluedScore)
+    .slice(0, 5);
+
+  if (!targets.length) {
+    el.innerHTML = '<div class="text-gray-600 text-xs">No undervalued players in next 25 picks</div>';
+    return;
+  }
+  el.innerHTML = targets.map(p => {
+    const safeId = p.id.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return `<div class="flex items-center gap-1.5 py-1 border-b border-gray-800/50 cursor-pointer hover:bg-gray-800/30 rounded px-1"
+                onclick="toggleDrafted('${safeId}')">
+      <span class="text-xs font-medium w-5 flex-shrink-0 ${POS_TEXT[p.position] || 'text-gray-400'}">${p.position}</span>
+      <span class="flex-1 text-gray-200 text-xs truncate">${esc(p.name)}</span>
+      <span class="text-yellow-400 text-xs font-mono font-bold flex-shrink-0">+${Math.round(p.undervaluedScore)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderFuturePicksPanel() {
+  const el = document.getElementById('future-picks-panel');
+  if (!state.players.length) {
+    el.innerHTML = '<div class="text-gray-700 text-xs">Load rankings to see projections</div>';
+    return;
+  }
+
+  const { teams } = state.settings;
+  const available = state.players
+    .filter(p => !p.drafted)
+    .sort((a, b) => a.compositeRank - b.compositeRank);
+
+  const futurePicks = yourPickNumbers()
+    .filter(n => n > state.pickCount)
+    .slice(0, 5);
+
+  if (!futurePicks.length) {
+    el.innerHTML = '<div class="text-gray-600 text-xs">No picks remaining</div>';
+    return;
+  }
+
+  el.innerHTML = futurePicks.map((overall, i) => {
+    const round        = Math.ceil(overall / teams);
+    const pickInRound  = overall - (round - 1) * teams;
+    const picksAway    = overall - state.pickCount;
+    const awayLabel    = picksAway === 1 ? 'next pick' : `${picksAway} away`;
+    const isNext       = i === 0;
+
+    // Players projected still available: those ranked after the picks that come before ours
+    const startIdx   = Math.max(0, picksAway - 1);
+    const projected  = available.slice(startIdx, startIdx + 4);
+    const cliffs     = detectCliffs(available);
+
+    const playersHtml = projected.length ? projected.map((p, j) => {
+      const atSlot   = j === 0;
+      const uvScore  = Math.round(p.undervaluedScore);
+      const uvBadge  = uvScore > 0
+        ? `<span class="text-yellow-400 font-mono text-xs ml-1">+${uvScore}</span>` : '';
+      const cliffMark = cliffs.has(p.id)
+        ? `<span class="text-red-500 text-xs ml-0.5" title="Cliff here">↓</span>` : '';
+      return `<div class="flex items-center gap-1 py-0.5 ${atSlot ? '' : 'opacity-50'}">
+        <span class="${POS_TEXT[p.position] || 'text-gray-400'} text-xs font-medium w-5 flex-shrink-0">${p.position}</span>
+        <span class="flex-1 text-gray-200 text-xs truncate">${esc(p.name)}</span>
+        ${cliffMark}${uvBadge}
+      </div>`;
+    }).join('') : '<div class="text-gray-700 text-xs">No players left</div>';
+
+    const headerCls = isNext
+      ? 'text-indigo-400 font-bold'
+      : 'text-gray-400 font-semibold';
+
+    return `
+      <div class="${i > 0 ? 'mt-3 pt-3 border-t border-gray-800' : ''}">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs ${headerCls}">
+            R${round}.${String(pickInRound).padStart(2,'0')}
+            <span class="text-gray-600 font-normal ml-1">#${overall}</span>
+          </span>
+          <span class="text-xs ${isNext ? 'text-indigo-400 font-semibold' : 'text-gray-600'}">${awayLabel}</span>
+        </div>
+        <div class="pl-1">${playersHtml}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── Share link ────────────────────────────────────────────────
+let _pendingShareData = null;
+
+function copyShareLink() {
+  const compact = {
+    v: 1,
+    s: state.settings,
+    p: state.pickCount,
+    d: state.draftedIds,
+    m: state.myPickNumbers,
+    b: state.boardTierOverrides,
+    // custom ranks keyed by player id — lets phone restore them after loading FC
+    c: Object.fromEntries(
+      state.players
+        .filter(pl => pl.customRank != null)
+        .map(pl => [pl.id, pl.customRank])
+    ),
+  };
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(compact))));
+  const url = `${location.origin}${location.pathname}#s=${encoded}`;
+
+  const btn = document.getElementById('btn-share');
+  const orig = btn.innerHTML;
+
+  navigator.clipboard.writeText(url)
+    .then(() => {
+      btn.innerHTML = '&#10003; Copied!';
+      btn.classList.add('text-green-400');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('text-green-400'); }, 2500);
+    })
+    .catch(() => {
+      // Fallback for http:// or old browsers
+      prompt('Copy this link to open on another device:', url);
+    });
+}
+
+function checkShareLink() {
+  const hash = location.hash;
+  if (!hash.startsWith('#s=')) return;
+  try {
+    const compact = JSON.parse(decodeURIComponent(escape(atob(hash.slice(3)))));
+    if (!compact || compact.v !== 1) return;
+    _pendingShareData = compact;
+
+    const banner = document.createElement('div');
+    banner.id = 'restore-banner';
+    banner.className = 'bg-indigo-900/80 border-b border-indigo-700/60 px-4 py-2.5 flex items-center gap-3 text-sm';
+    banner.innerHTML =
+      '<span class="text-indigo-100 flex-1 text-xs">&#128279; Shared draft state found — restore it?</span>' +
+      '<button onclick="restoreFromShareLink()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded text-xs font-medium">Restore</button>' +
+      '<button onclick="document.getElementById(\'restore-banner\').remove()" class="text-indigo-400 hover:text-white px-2 py-1 text-xs">Dismiss</button>';
+    document.body.insertBefore(banner, document.querySelector('header'));
+  } catch(e) {
+    console.warn('Invalid share link:', e);
+  }
+}
+
+function restoreFromShareLink() {
+  const compact = _pendingShareData;
+  _pendingShareData = null;
+  if (!compact) return;
+
+  state.settings        = Object.assign(state.settings, compact.s || {});
+  state.pickCount       = compact.p || 0;
+  state.draftedIds      = compact.d || [];
+  state.myPickNumbers   = compact.m || null;
+  state.boardTierOverrides = compact.b || {};
+
+  // Apply custom ranks to already-loaded players; otherwise stash for when FC loads
+  const cMap = compact.c || {};
+  if (state.players.length > 0) {
+    state.players.forEach(pl => {
+      if (cMap[pl.id] != null) {
+        pl.customRank      = cMap[pl.id];
+        pl.compositeRank   = calcComposite(pl.fcRank, pl.customRank);
+        pl.undervaluedScore = calcGap(pl.fcRank, pl.customRank);
+      }
+    });
+    // Restore drafted flags
+    const draftedSet = new Set(state.draftedIds);
+    state.players.forEach(pl => {
+      pl.drafted   = draftedSet.has(pl.id);
+      pl.myPick    = pl.drafted && yourPickNumbers().includes(pl.draftPick);
+    });
+    state.players.sort((a, b) => a.compositeRank - b.compositeRank);
+  } else {
+    // Players not loaded yet — stash custom ranks so mergeFCData picks them up
+    state._pendingCustomRanks = cMap;
+  }
+
+  // Sync settings UI
+  document.getElementById('s-teams').value    = state.settings.teams;
+  document.getElementById('s-rounds').value   = state.settings.rounds;
+  document.getElementById('s-yourpick').value = state.settings.yourPick;
+  document.querySelectorAll('input[name="s-format"]').forEach(r => {
+    r.checked = r.value === state.settings.format;
+  });
+
+  saveStateToStorage();
+  if (state.players.length > 0) renderAll();
+  document.getElementById('restore-banner')?.remove();
+  history.replaceState(null, '', location.pathname);
+}
+
+// ── View toggle ───────────────────────────────────────────────
+function setView(v) {
+  state.boardView = v === 'board';
+  document.getElementById('list-view').classList.toggle('hidden',  state.boardView);
+  document.getElementById('board-view').classList.toggle('hidden', !state.boardView);
+  document.getElementById('view-list').classList.toggle('pos-tab-active',    !state.boardView);
+  document.getElementById('view-list').classList.toggle('pos-tab-inactive',   state.boardView);
+  document.getElementById('view-board').classList.toggle('pos-tab-active',    state.boardView);
+  document.getElementById('view-board').classList.toggle('pos-tab-inactive',  !state.boardView);
+  if (state.boardView) renderTierBoard();
+  else renderBoard();
+}
+
+// ── Tier calculations ─────────────────────────────────────────
+function calcTiers(players) {
+  if (!players.length) return [];
+  const sorted = [...players].sort((a, b) => a.compositeRank - b.compositeRank);
+
+  const overrideSet = new Set(Object.keys(state.boardTierOverrides));
+  const natural   = sorted.filter(p => !overrideSet.has(p.id));
+  const overridden = sorted.filter(p =>  overrideSet.has(p.id));
+
+  const tiers = natural.length ? [[natural[0]]] : [];
+  for (let i = 1; i < natural.length; i++) {
+    const prev = natural[i - 1], curr = natural[i];
+    const cliff =
+      (prev.fcValue && curr.fcValue && (prev.fcValue - curr.fcValue) / prev.fcValue >= 0.10) ||
+      (curr.compositeRank - prev.compositeRank > 6);
+    if (cliff) tiers.push([curr]);
+    else tiers[tiers.length - 1].push(curr);
+  }
+
+  overridden.forEach(p => {
+    const idx = Math.max(0, Math.min(state.boardTierOverrides[p.id], tiers.length - 1));
+    if (tiers[idx]) tiers[idx].push(p);
+    else tiers.push([p]);
+  });
+
+  return tiers.filter(t => t.length > 0);
+}
+
+function calcPickLinesForBoard(tiers) {
+  const futurePicks = yourPickNumbers().filter(n => n > state.pickCount).slice(0, 5);
+  if (!futurePicks.length) return [];
+
+  let cum = 0;
+  const tierCumCounts = tiers.map(tier => {
+    cum += tier.filter(p => !p.drafted).length;
+    return cum;
+  });
+
+  const { teams } = state.settings;
+  return futurePicks.map((overall, i) => {
+    const round       = Math.ceil(overall / teams);
+    const pickInRound = overall - (round - 1) * teams;
+    const picksAway   = overall - state.pickCount;
+    const targetRank  = picksAway - 1;
+
+    let tierIdx = tiers.length;
+    for (let t = 0; t < tierCumCounts.length; t++) {
+      if (tierCumCounts[t] > targetRank) { tierIdx = t; break; }
+    }
+    return { tierIdx, overall, round, pickInRound, isNext: i === 0, picksAway };
+  });
+}
+
+// ── Tier board rendering ───────────────────────────────────────
+function renderTierBoard() {
+  const content = document.getElementById('tier-board-content');
+  if (!content) return;
+
+  const showDrafted = document.getElementById('show-drafted')?.checked ?? true;
+  const search      = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  const countEl     = document.getElementById('player-count');
+
+  if (!state.players.length) {
+    content.innerHTML = '<div class="text-gray-600 text-xs text-center py-12">Load FC Rankings to see the board</div>';
+    countEl.textContent = '';
+    return;
+  }
+
+  const players = state.players.filter(p => {
+    if (!showDrafted && p.drafted) return false;
+    if (state.posFilter.size > 0 && !state.posFilter.has(p.position)) return false;
+    if (search && !p.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const avail = players.filter(p => !p.drafted).length;
+  countEl.textContent = players.length > 0 ? `${avail} available` : '';
+
+  if (!players.length) {
+    content.innerHTML = '<div class="text-gray-600 text-xs text-center py-12">No players match your filters.</div>';
+    return;
+  }
+
+  const tiers     = calcTiers(players);
+  const pickLines = calcPickLinesForBoard(tiers);
+
+  const pickLineMap = new Map();
+  pickLines.forEach(pl => { if (!pickLineMap.has(pl.tierIdx)) pickLineMap.set(pl.tierIdx, pl); });
+
+  let html = '';
+  tiers.forEach((tier, tierIdx) => {
+    if (pickLineMap.has(tierIdx)) html += renderPickLine(pickLineMap.get(tierIdx));
+    html += renderTierRow(tier, tierIdx);
+  });
+  if (pickLineMap.has(tiers.length)) html += renderPickLine(pickLineMap.get(tiers.length));
+
+  content.innerHTML = html || '<div class="text-gray-600 text-xs text-center py-12">No players to display.</div>';
+}
+
+function renderPickLine(pl) {
+  const cls       = pl.isNext ? 'border-indigo-400 text-indigo-400' : 'border-gray-600/70 text-gray-500';
+  const awayLabel = pl.picksAway === 1 ? 'next' : `${pl.picksAway} away`;
+  return `<div class="relative my-2 mx-2 flex items-center gap-2">
+    <div class="flex-1 border-t border-dashed ${cls}"></div>
+    <span class="text-xs font-semibold ${cls} flex-shrink-0 bg-gray-900 px-1 whitespace-nowrap">
+      R${pl.round}.${String(pl.pickInRound).padStart(2, '0')}
+      <span class="font-normal opacity-70">(${awayLabel})</span>
+    </span>
+    <div class="flex-1 border-t border-dashed ${cls}"></div>
+  </div>`;
+}
+
+function renderTierRow(tier, tierIdx) {
+  const cols = ['QB','RB','WR','TE'].map(pos => {
+    const cards = tier.filter(p => p.position === pos).map(p => playerBoardCard(p)).join('');
+    return `<div class="border-r border-gray-800/40 last:border-r-0 p-1.5 min-h-10 flex flex-col gap-1">${cards}</div>`;
+  }).join('');
+
+  return `<div id="tier-row-${tierIdx}" class="grid border-b border-gray-800/30 transition-colors"
+               style="grid-template-columns:repeat(4,1fr)"
+               ondragover="boardDragOver(event,${tierIdx})"
+               ondrop="boardDrop(event,${tierIdx})">${cols}</div>`;
+}
+
+function playerBoardCard(p) {
+  const isDrafted = p.drafted;
+  const uvBorder  = (!isDrafted && p.undervaluedScore >= 10)
+    ? 'border-l-2 border-yellow-500' : 'border border-gray-700/40';
+  const safeId    = p.id.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  const fcValStr  = p.fcValue != null
+    ? (p.fcValue >= 1000 ? (p.fcValue / 1000).toFixed(1) + 'k' : String(p.fcValue)) : '';
+  const uvBadge   = (!isDrafted && p.undervaluedScore > 0)
+    ? `<span class="text-yellow-400 font-bold ml-auto">+${Math.round(p.undervaluedScore)}</span>` : '';
+  const checkMark = isDrafted ? '<span class="text-green-600 font-bold ml-auto">✓</span>' : '';
+  const titleAge  = p.age != null ? ` · ${Math.round(p.age)}yo` : '';
+
+  return `<div class="bg-gray-800/70 rounded text-xs p-1.5 cursor-pointer ${uvBorder} ${isDrafted ? 'opacity-30' : 'hover:bg-gray-700/70'} transition-colors"
+               draggable="true"
+               ondragstart="boardDragStart(event,'${safeId}')"
+               onclick="event.stopPropagation();toggleDrafted('${safeId}')"
+               title="${esc(p.name)}${titleAge}">
+    <div class="font-medium text-gray-100 truncate ${isDrafted ? 'line-through' : ''}">${esc(p.name)}</div>
+    <div class="flex items-center gap-1 mt-0.5 text-gray-500">
+      <span>${esc(p.nflTeam)}</span>
+      ${fcValStr ? `<span class="opacity-60">${fcValStr}</span>` : ''}
+      ${uvBadge}${checkMark}
+    </div>
+  </div>`;
+}
+
+// ── Board drag-and-drop ───────────────────────────────────────
+function boardDragStart(event, playerId) {
+  _boardDragId = playerId;
+  event.dataTransfer.effectAllowed = 'move';
+  event.stopPropagation();
+}
+
+function boardDragOver(event, tierIdx) {
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('[id^="tier-row-"]').forEach(el => {
+    el.style.backgroundColor = el.id === `tier-row-${tierIdx}` ? 'rgba(99,102,241,0.08)' : '';
+  });
+}
+
+function boardDrop(event, targetTierIdx) {
+  event.preventDefault();
+  document.querySelectorAll('[id^="tier-row-"]').forEach(el => { el.style.backgroundColor = ''; });
+  if (!_boardDragId) return;
+  state.boardTierOverrides[_boardDragId] = targetTierIdx;
+  _boardDragId = null;
+  saveStateToStorage();
+  renderTierBoard();
+}
+
+// ── Utility ───────────────────────────────────────────────────
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Boot ──────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
