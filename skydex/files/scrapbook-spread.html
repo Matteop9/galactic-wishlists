@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkyDex — Scrapbook</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2EBDC; --paper-deep:#E7DCC6; --paper-edge:#D8C9A8;
+  --ink:#20262B; --ink-soft:#4A5560; --ink-faint:#8A9396;
+  --sky:#0E7C86; --stamp:#B5402E; --brass:#B98A2E;
+  --leather:#5A4632; --leather-dark:#3E3122; --leather-light:#6E5740;
+  --thread:#C9A24B;
+  --font-display:"Saira Condensed",sans-serif;
+  --font-body:"Source Serif 4",Georgia,serif;
+  --font-data:"IBM Plex Mono",monospace;
+  --font-hand:"Caveat",cursive;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:#2A2622;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:48px 24px;font-family:var(--font-body);
+  background-image:radial-gradient(circle at 50% 30%, #3a342d 0%, #221f1b 80%);}
+
+/* ============ THE BOOK ============ */
+.book{position:relative;display:flex;width:980px;max-width:100%;
+  border-radius:6px;box-shadow:0 40px 80px rgba(0,0,0,.55), 0 8px 20px rgba(0,0,0,.4);}
+
+/* leather cover peeking around the pages */
+.book::before{content:"";position:absolute;inset:-22px -26px;border-radius:14px;z-index:-1;
+  background:linear-gradient(135deg,var(--leather-light),var(--leather) 40%,var(--leather-dark));
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.25), inset 0 0 40px rgba(0,0,0,.4);}
+/* corner protectors */
+.corner{position:absolute;width:46px;height:46px;z-index:3;
+  background:linear-gradient(135deg,var(--brass),#8A6A1E);opacity:.9;}
+.corner.tl{top:-22px;left:-26px;border-radius:14px 0 60px 0;}
+.corner.tr{top:-22px;right:-26px;border-radius:0 14px 0 60px;}
+.corner.bl{bottom:-22px;left:-26px;border-radius:0 60px 0 14px;}
+.corner.br{bottom:-22px;right:-26px;border-radius:60px 0 14px 0;}
+
+/* the two pages */
+.page{flex:1;background:var(--paper);position:relative;padding:38px 34px 44px;min-height:600px;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(120,100,70,.06) 32px),
+    radial-gradient(circle at 18% 12%, rgba(180,150,100,.10), transparent 55%);}
+.page.left{border-radius:6px 0 0 6px;box-shadow:inset -28px 0 40px -28px rgba(0,0,0,.35);}
+.page.right{border-radius:0 6px 6px 0;box-shadow:inset 28px 0 40px -28px rgba(0,0,0,.35);padding-bottom:74px;}
+/* centre binding shadow + stitching */
+.spine{width:34px;background:linear-gradient(90deg,
+  rgba(0,0,0,.28),rgba(0,0,0,.12) 40%,rgba(0,0,0,.12) 60%,rgba(0,0,0,.28));
+  position:relative;}
+.spine::after{content:"";position:absolute;top:24px;bottom:24px;left:50%;width:0;
+  border-left:2px dashed var(--thread);transform:translateX(-50%);opacity:.7;}
+
+/* page header */
+.page-head{display:flex;align-items:baseline;justify-content:space-between;
+  border-bottom:1.5px solid var(--paper-edge);padding-bottom:8px;margin-bottom:8px;}
+.book-title{font-family:var(--font-display);font-weight:700;font-size:1.45rem;letter-spacing:.04em;color:var(--ink);text-transform:uppercase;}
+.page-no{font-family:var(--font-data);font-size:11px;color:var(--ink-faint);letter-spacing:.1em;}
+.page-sub{font-family:var(--font-data);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--stamp);margin-bottom:24px;}
+
+/* polaroid grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:26px 22px;}
+.polaroid{background:#FBF8F1;padding:10px 10px 0;border-radius:2px;
+  box-shadow:0 4px 10px rgba(40,30,15,.22);position:relative;}
+.polaroid.tilt-l{transform:rotate(-2.2deg);}
+.polaroid.tilt-r{transform:rotate(1.8deg);}
+.polaroid .frame{aspect-ratio:1/1;border-radius:1px;overflow:hidden;position:relative;}
+.polaroid .caption{font-family:var(--font-hand);font-size:1.15rem;color:var(--ink-soft);
+  text-align:center;padding:7px 4px 11px;line-height:1;}
+
+/* filled sky photo */
+.sky-photo{width:100%;height:100%;position:relative;
+  background:linear-gradient(180deg,#8FB8D4 0%,#B8D2DE 55%,#DDE6DF 100%);}
+.sky-photo .pl{position:absolute;}
+/* contrail */
+.sky-photo .trail{position:absolute;height:2px;background:rgba(255,255,255,.7);border-radius:2px;}
+
+/* empty slot — the "to collect" state */
+.polaroid.empty{background:rgba(251,248,241,.5);box-shadow:none;
+  border:2px dashed var(--paper-edge);}
+.polaroid.empty .frame{background:repeating-linear-gradient(45deg,
+  rgba(216,201,168,.18),rgba(216,201,168,.18) 8px,transparent 8px,transparent 16px);
+  display:flex;align-items:center;justify-content:center;}
+.polaroid.empty .frame span{font-family:var(--font-data);font-size:10px;letter-spacing:.14em;
+  color:var(--ink-faint);text-transform:uppercase;text-align:center;line-height:1.5;}
+.polaroid.empty .caption{color:var(--ink-faint);font-family:var(--font-data);font-size:10px;letter-spacing:.1em;}
+
+/* mini verification stamp on filled polaroids */
+.mini-stamp{position:absolute;bottom:14px;right:8px;width:40px;height:40px;border-radius:50%;
+  border:1.5px solid var(--stamp);color:var(--stamp);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-data);font-size:5.5px;font-weight:600;letter-spacing:.08em;text-align:center;
+  transform:rotate(-14deg);background:rgba(251,248,241,.55);line-height:1.15;z-index:2;}
+
+/* ============ LUGGAGE TAGS ============ */
+.tags{position:absolute;top:-30px;right:18px;display:flex;gap:14px;z-index:4;}
+.tag{position:relative;width:78px;padding:14px 8px 10px;border-radius:6px 6px 8px 8px;
+  font-family:var(--font-data);box-shadow:0 6px 14px rgba(0,0,0,.3);
+  transform-origin:top center;}
+.tag::before{content:"";position:absolute;top:7px;left:50%;width:9px;height:9px;border-radius:50%;
+  background:#FBF8F1;border:2px solid rgba(0,0,0,.25);transform:translateX(-50%);}
+/* string */
+.tag::after{content:"";position:absolute;top:-12px;left:50%;width:1.5px;height:18px;
+  background:var(--thread);transform:translateX(-50%) rotate(4deg);}
+.tag .t-rare{font-size:7px;letter-spacing:.12em;text-transform:uppercase;text-align:center;opacity:.8;}
+.tag .t-code{font-family:var(--font-display);font-weight:700;font-size:1.3rem;text-align:center;letter-spacing:.04em;line-height:1;margin-top:4px;}
+.tag .t-sub{font-size:7px;text-align:center;letter-spacing:.06em;margin-top:3px;opacity:.75;}
+.tag.airline{background:#E7DCC6;color:var(--sky);border:1px solid var(--paper-edge);transform:rotate(-7deg);}
+.tag.airport{background:#E7DCC6;color:var(--stamp);border:1px solid var(--paper-edge);transform:rotate(5deg);margin-top:8px;}
+.tag.type{background:var(--ink);color:var(--paper);transform:rotate(-3deg);margin-top:3px;}
+
+/* progress footer on right page */
+.progress{position:absolute;bottom:30px;left:34px;right:34px;
+  font-family:var(--font-data);font-size:10px;letter-spacing:.08em;color:var(--ink-soft);}
+.progress .bar{height:7px;background:var(--paper-deep);border-radius:4px;margin-top:7px;overflow:hidden;border:1px solid var(--paper-edge);}
+.progress .fill{height:100%;width:64%;background:linear-gradient(90deg,var(--sky),var(--brass));}
+</style>
+</head>
+<body>
+  <div class="book">
+    <div class="corner tl"></div><div class="corner tr"></div>
+    <div class="corner bl"></div><div class="corner br"></div>
+
+    <!-- luggage tags hanging off the top -->
+    <div class="tags">
+      <div class="tag airline"><div class="t-rare">Airline book</div><div class="t-code">BA</div><div class="t-sub">British Airways</div></div>
+      <div class="tag type"><div class="t-rare">Type book</div><div class="t-code">359</div><div class="t-sub">A350-1000</div></div>
+      <div class="tag airport"><div class="t-rare">Airport book</div><div class="t-code">JER</div><div class="t-sub">Jersey</div></div>
+    </div>
+
+    <!-- LEFT PAGE -->
+    <div class="page left">
+      <div class="page-head">
+        <span class="book-title">Widebody Book</span>
+        <span class="page-no">p. 14</span>
+      </div>
+      <div class="page-sub">Long-haul · four-engine &amp; twin · collected</div>
+      <div class="grid">
+        <div class="polaroid tilt-l">
+          <div class="frame"><div class="sky-photo">
+            <svg class="pl" style="top:38%;left:30%;transform:rotate(18deg)" width="64" height="64" viewBox="0 0 64 64"><g fill="#37444E"><path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z"/></g></svg>
+            <div class="trail" style="top:30%;left:8%;width:30%;transform:rotate(18deg)"></div>
+          </div></div>
+          <div class="mini-stamp">VERIFIED<br>SIGHTING</div>
+          <div class="caption">A380 · first one!</div>
+        </div>
+        <div class="polaroid tilt-r">
+          <div class="frame"><div class="sky-photo" style="background:linear-gradient(180deg,#A9B8C2,#CBD6DA 60%,#E2E6DF);">
+            <svg class="pl" style="top:42%;left:34%;transform:rotate(-8deg)" width="58" height="58" viewBox="0 0 64 64"><g fill="#2E3A43"><path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z"/></g></svg>
+          </div></div>
+          <div class="mini-stamp">VERIFIED<br>SIGHTING</div>
+          <div class="caption">747 freighter</div>
+        </div>
+        <div class="polaroid empty">
+          <div class="frame"><span>NOT YET<br>SPOTTED</span></div>
+          <div class="caption">787 Dreamliner</div>
+        </div>
+        <div class="polaroid empty">
+          <div class="frame"><span>NOT YET<br>SPOTTED</span></div>
+          <div class="caption">A330neo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spine"></div>
+
+    <!-- RIGHT PAGE -->
+    <div class="page right">
+      <div class="page-head">
+        <span class="book-title">Widebody Book</span>
+        <span class="page-no">p. 15</span>
+      </div>
+      <div class="page-sub">continued</div>
+      <div class="grid">
+        <div class="polaroid tilt-r">
+          <div class="frame"><div class="sky-photo" style="background:linear-gradient(180deg,#E8B98A,#EBC9A0 50%,#D8C9A8);">
+            <svg class="pl" style="top:40%;left:30%;transform:rotate(12deg)" width="60" height="60" viewBox="0 0 64 64"><g fill="#3A2E26"><path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z"/></g></svg>
+          </div></div>
+          <div class="mini-stamp">VERIFIED<br>SIGHTING</div>
+          <div class="caption">A350 · sunset</div>
+        </div>
+        <div class="polaroid empty">
+          <div class="frame"><span>NOT YET<br>SPOTTED</span></div>
+          <div class="caption">777-300ER</div>
+        </div>
+        <div class="polaroid empty">
+          <div class="frame"><span>NOT YET<br>SPOTTED</span></div>
+          <div class="caption">A340-600</div>
+        </div>
+      </div>
+      <div class="progress">
+        WIDEBODY BOOK · 9 of 14 collected
+        <div class="bar"><div class="fill"></div></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

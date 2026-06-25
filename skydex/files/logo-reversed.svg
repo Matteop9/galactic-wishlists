@@ -1,0 +1,28 @@
+<svg width="470" height="140" viewBox="0 0 470 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex logo reversed">
+  <defs>
+    <style>
+      .wm{font-family:"Saira Condensed","Oswald","Arial Narrow",sans-serif;font-weight:700;}
+      .tag{font-family:"IBM Plex Mono","Consolas",monospace;font-weight:500;letter-spacing:0.18em;}
+      .stamptxt{font-family:"IBM Plex Mono","Consolas",monospace;font-weight:600;letter-spacing:0.14em;}
+    </style>
+  </defs>
+  <rect width="470" height="140" fill="#20262B"/>
+  <g transform="translate(70,70)">
+    <circle r="56" fill="none" stroke="#D9614E" stroke-width="3.5"/>
+    <circle r="48" fill="none" stroke="#D9614E" stroke-width="1.4" stroke-dasharray="2 4"/>
+    <path id="r-top" d="M -38,-4 A 38 38 0 0 1 38,-4" fill="none"/>
+    <path id="r-bot" d="M -36,6 A 38 38 0 0 0 36,6" fill="none"/>
+    <text class="stamptxt" fill="#D9614E" font-size="9"><textPath href="#r-top" startOffset="50%" text-anchor="middle">VERIFIED SIGHTING</textPath></text>
+    <text class="stamptxt" fill="#D9614E" font-size="8"><textPath href="#r-bot" startOffset="50%" text-anchor="middle">REAL PHOTO</textPath></text>
+    <circle cx="-30" cy="2" r="1.4" fill="#D9614E"/><circle cx="30" cy="2" r="1.4" fill="#D9614E"/>
+    <line x1="-26" y1="0" x2="-14" y2="0" stroke="#D9614E" stroke-width="1.6"/>
+    <line x1="14" y1="0" x2="26" y2="0" stroke="#D9614E" stroke-width="1.6"/>
+    <line x1="0" y1="-24" x2="0" y2="-16" stroke="#D9614E" stroke-width="1.6"/>
+    <g fill="#F2EBDC" transform="rotate(28)">
+      <path d="M 0,-13 L 2.2,-2 L 16,5 L 16,8.5 L 2.2,5 L 1.6,12 L 5,15 L 5,17 L 0,15.5 L -5,17 L -5,15 L -1.6,12 L -2.2,5 L -16,8.5 L -16,5 L -2.2,-2 Z"/>
+    </g>
+  </g>
+  <text class="wm" x="142" y="78" font-size="52" fill="#F2EBDC">Sky<tspan fill="#3BB6BE">Dex</tspan></text>
+  <line x1="143" y1="92" x2="402" y2="92" stroke="#4A5560" stroke-width="1.5"/>
+  <text class="tag" x="143" y="110" font-size="10.5" fill="#B5BEC4">THE AUTHENTIC PLANE-SPOTTING COLLECTION</text>
+</svg>

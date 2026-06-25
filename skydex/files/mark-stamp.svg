@@ -1,0 +1,27 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex mark">
+  <defs>
+    <style>.stamptxt{font-family:"IBM Plex Mono","Consolas",monospace;font-weight:600;letter-spacing:0.14em;}</style>
+  </defs>
+  <!-- paper tile -->
+  <rect width="160" height="160" rx="34" fill="#F2EBDC"/>
+  <g transform="translate(80,80)">
+    <circle r="56" fill="none" stroke="#B5402E" stroke-width="3.5"/>
+    <circle r="48" fill="none" stroke="#B5402E" stroke-width="1.4" stroke-dasharray="2 4"/>
+    <path id="m-top" d="M -38,-4 A 38 38 0 0 1 38,-4" fill="none"/>
+    <path id="m-bot" d="M -36,6 A 38 38 0 0 0 36,6" fill="none"/>
+    <text class="stamptxt" fill="#B5402E" font-size="9">
+      <textPath href="#m-top" startOffset="50%" text-anchor="middle">VERIFIED SIGHTING</textPath>
+    </text>
+    <text class="stamptxt" fill="#B5402E" font-size="8">
+      <textPath href="#m-bot" startOffset="50%" text-anchor="middle">REAL PHOTO</textPath>
+    </text>
+    <circle cx="-30" cy="2" r="1.4" fill="#B5402E"/>
+    <circle cx="30" cy="2" r="1.4" fill="#B5402E"/>
+    <line x1="-26" y1="0" x2="-14" y2="0" stroke="#B5402E" stroke-width="1.6"/>
+    <line x1="14"  y1="0" x2="26"  y2="0" stroke="#B5402E" stroke-width="1.6"/>
+    <line x1="0" y1="-24" x2="0" y2="-16" stroke="#B5402E" stroke-width="1.6"/>
+    <g fill="#20262B" transform="rotate(28)">
+      <path d="M 0,-13 L 2.2,-2 L 16,5 L 16,8.5 L 2.2,5 L 1.6,12 L 5,15 L 5,17 L 0,15.5 L -5,17 L -5,15 L -1.6,12 L -2.2,5 L -16,8.5 L -16,5 L -2.2,-2 Z"/>
+    </g>
+  </g>
+</svg>

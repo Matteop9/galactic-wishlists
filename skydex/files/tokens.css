@@ -1,0 +1,76 @@
+/* ============================================================
+   SkyDex — Design Tokens
+   The authentic plane-spotting collection.
+   Personality: warm, analogue, earned (field-logbook)
+   ============================================================ */
+
+:root {
+  /* ---- Core palette -------------------------------------- */
+  /* Warm aged paper — the logbook page itself */
+  --paper:        #F2EBDC;   /* primary background */
+  --paper-deep:   #E7DCC6;   /* recessed surfaces, card backs */
+  --paper-edge:   #D8C9A8;   /* hairline borders on paper */
+
+  /* Aviation ink — the writing on the page */
+  --ink:          #20262B;   /* primary text, near-black slate */
+  --ink-soft:     #4A5560;   /* secondary text */
+  --ink-faint:    #8A93962; /* placeholder, disabled (see fallback below) */
+  --ink-faint-ok: #8A9396;   /* placeholder, disabled */
+
+  /* Sky — the brand accent, a dusk runway-light teal */
+  --sky:          #0E7C86;   /* primary brand / verified actions */
+  --sky-deep:     #0A5D64;   /* pressed / hover-dark */
+  --sky-tint:     #CDE5E6;   /* sky wash, selected fills */
+
+  /* Stamp — the verification mark. Earned, never decorative. */
+  --stamp:        #B5402E;   /* oxidised vermilion ink */
+  --stamp-deep:   #8E3122;
+  --stamp-tint:   #ECD2CB;
+
+  /* Brass — rarity & first-of-type highlights */
+  --brass:        #B98A2E;
+  --brass-tint:   #EBDCB6;
+
+  /* ---- Rarity scale (cards) ------------------------------ */
+  --rarity-common:    #6E7A6A;  /* lichen grey-green */
+  --rarity-uncommon:  #3E7A5A;  /* field green */
+  --rarity-rare:      #2E5E86;  /* altitude blue */
+  --rarity-epic:      #6A3E86;  /* dusk violet */
+  --rarity-legendary: #B98A2E;  /* brass */
+
+  /* ---- Type --------------------------------------------- */
+  /* Display / instrument voice — condensed, technical */
+  --font-display: "Saira Condensed", "Oswald", "Arial Narrow", sans-serif;
+  /* Body / logbook voice — humanist serif */
+  --font-body:    "Source Serif 4", "Georgia", "Times New Roman", serif;
+  /* Flight data — true monospace, reads like a transponder */
+  --font-data:    "IBM Plex Mono", "SF Mono", "Consolas", monospace;
+
+  /* Type scale (1.250 major third) */
+  --t-xs:   0.64rem;
+  --t-sm:   0.80rem;
+  --t-base: 1.00rem;
+  --t-md:   1.25rem;
+  --t-lg:   1.563rem;
+  --t-xl:   1.953rem;
+  --t-2xl:  2.441rem;
+  --t-3xl:  3.052rem;
+
+  /* ---- Geometry ----------------------------------------- */
+  --r-sm:  3px;
+  --r-md:  6px;
+  --r-lg:  10px;
+  --r-pill: 999px;
+
+  /* Spacing (8px base) */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+  /* ---- Elevation (warm, low — paper doesn't float high) -- */
+  --shadow-1: 0 1px 2px rgba(32,38,43,0.10);
+  --shadow-2: 0 2px 8px rgba(32,38,43,0.12);
+  --shadow-3: 0 8px 24px rgba(32,38,43,0.16);
+
+  /* Hairline — the logbook rule */
+  --rule: 1px solid var(--paper-edge);
+}

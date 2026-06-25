@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/* SkyDex — field-logbook identity. Warm, analogue, earned.
+   Tokens mirror files/tokens.css; mapped into Tailwind's theme so
+   utilities like bg-paper, text-ink, text-sky, font-display exist. */
+@theme {
+  --color-paper: #f2ebdc;
+  --color-paper-deep: #e7dcc6;
+  --color-paper-edge: #d8c9a8;
+
+  --color-ink: #20262b;
+  --color-ink-soft: #4a5560;
+  --color-ink-faint: #8a9396;
+
+  --color-sky: #0e7c86;
+  --color-sky-deep: #0a5d64;
+  --color-sky-tint: #cde5e6;
+
+  --color-stamp: #b5402e;
+  --color-stamp-deep: #8e3122;
+  --color-stamp-tint: #ecd2cb;
+
+  --color-brass: #b98a2e;
+  --color-brass-tint: #ebdcb6;
+
+  --color-rarity-common: #6e7a6a;
+  --color-rarity-uncommon: #3e7a5a;
+  --color-rarity-rare: #2e5e86;
+  --color-rarity-epic: #6a3e86;
+  --color-rarity-legendary: #b98a2e;
+
+  --font-display: var(--font-saira), "Arial Narrow", sans-serif;
+  --font-serif: var(--font-source-serif), Georgia, serif;
+  --font-mono: var(--font-plex-mono), "Consolas", monospace;
+  --font-hand: var(--font-caveat), cursive;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  line-height: 1.55;
+}
+
+/* Reusable control styles from the brand sheet (buttons + filter pills). */
+.sd-btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: 6px;
+  border: 1.8px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.05s;
+}
+.sd-btn:active {
+  transform: translateY(1px);
+}
+.sd-btn:focus-visible {
+  outline: 3px solid var(--color-brass);
+  outline-offset: 2px;
+}
+.sd-btn--capture {
+  background: var(--color-sky);
+  color: var(--color-paper);
+}
+.sd-btn--capture:hover {
+  background: var(--color-sky-deep);
+}
+.sd-btn--log {
+  background: transparent;
+  color: var(--color-sky);
+  border-color: var(--color-sky);
+}
+.sd-btn--log:hover {
+  background: var(--color-sky-tint);
+  color: var(--color-sky-deep);
+}
+.sd-btn--confirmed {
+  background: var(--color-stamp);
+  color: var(--color-paper);
+}
+.sd-btn--disabled,
+.sd-btn:disabled {
+  background: var(--color-paper-deep);
+  color: var(--color-ink-faint);
+  cursor: not-allowed;
+}
+
+/* Special-livery cards — a holographic sheen travels through the border to mark
+   one of the ~2,000 specially-painted airframes. Uses the padding-box/border-box
+   background-clip trick so the animated gradient lives in the border and works
+   inside the card's overflow-hidden. Falls back to a static gradient when the
+   user prefers reduced motion. The element must keep a transparent border + the
+   paper-deep fill (set in the component) for the layers to line up. */
+.sd-livery {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--color-paper-deep), var(--color-paper-deep)) padding-box,
+    linear-gradient(
+      110deg,
+      var(--color-brass),
+      var(--color-sky),
+      var(--color-stamp),
+      var(--color-brass)
+    )
+      border-box;
+  background-size: 100% 100%, 300% 100%;
+  background-repeat: no-repeat;
+  animation: sd-livery-sheen 4.5s linear infinite;
+}
+@keyframes sd-livery-sheen {
+  from {
+    background-position: 0 0, 0% 0;
+  }
+  to {
+    background-position: 0 0, 300% 0;
+  }
+}
+
+/* "Special livery" badge — a soft brass glow pulses to draw the eye. */
+.sd-livery-badge {
+  animation: sd-livery-glow 2.6s ease-in-out infinite;
+}
+@keyframes sd-livery-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(185, 138, 46, 0);
+  }
+  50% {
+    box-shadow: 0 0 10px 1px rgba(185, 138, 46, 0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sd-livery {
+    animation: none;
+    background-position: 0 0, 50% 0;
+  }
+  .sd-livery-badge {
+    animation: none;
+  }
+}

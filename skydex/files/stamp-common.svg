@@ -1,0 +1,19 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex common stamp">
+<defs>
+    <style>
+      .arc{font-family:"IBM Plex Mono","Consolas",monospace;font-weight:600;letter-spacing:0.14em;}
+      .lbl{font-family:"Saira Condensed","Oswald",sans-serif;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
+      .hex{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.06em;}
+    </style>
+    <!-- plane glyph reused across all tiers -->
+    <g id="plane">
+      <path d="M 0,-12 L 2,-2 L 15,5 L 15,8 L 2,5 L 1.5,11 L 4.5,14 L 4.5,16 L 0,14.5 L -4.5,16 L -4.5,14 L -1.5,11 L -2,5 L -15,8 L -15,5 L -2,-2 Z"/>
+    </g>
+  </defs>
+<g transform="translate(60,60)">
+    <circle r="44" fill="none" stroke="#6E7A6A" stroke-width="3"/>
+    <path id="c-top" d="M -30,-3 A 30 30 0 0 1 30,-3" fill="none"/>
+    <text class="arc" fill="#6E7A6A" font-size="8"><textPath href="#c-top" startOffset="50%" text-anchor="middle">COMMON</textPath></text>
+    <use href="#plane" fill="#6E7A6A" transform="rotate(20) scale(1.05)"/>
+  </g>
+</svg>

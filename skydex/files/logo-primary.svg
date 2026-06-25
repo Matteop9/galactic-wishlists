@@ -1,0 +1,47 @@
+<svg width="470" height="140" viewBox="0 0 470 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex logo">
+  <defs>
+    <style>
+      .wm   { font-family:"Saira Condensed","Oswald","Arial Narrow",sans-serif; font-weight:700; }
+      .tag  { font-family:"IBM Plex Mono","Consolas",monospace; font-weight:500; letter-spacing:0.18em; }
+      .stamptxt { font-family:"IBM Plex Mono","Consolas",monospace; font-weight:600; letter-spacing:0.14em; }
+    </style>
+  </defs>
+
+  <!-- ===== STAMP MARK ===== -->
+  <g transform="translate(70,70)">
+    <!-- outer stamp ring, slightly broken like a real rubber stamp -->
+    <circle r="56" fill="none" stroke="#B5402E" stroke-width="3.5"/>
+    <circle r="48" fill="none" stroke="#B5402E" stroke-width="1.4" stroke-dasharray="2 4"/>
+
+    <!-- aradvance stamp text around the ring -->
+    <path id="arc-top" d="M -38,-4 A 38 38 0 0 1 38,-4" fill="none"/>
+    <path id="arc-bot" d="M -36,6 A 38 38 0 0 0 36,6" fill="none"/>
+    <text class="stamptxt" fill="#B5402E" font-size="9">
+      <textPath href="#arc-top" startOffset="50%" text-anchor="middle">VERIFIED SIGHTING</textPath>
+    </text>
+    <text class="stamptxt" fill="#B5402E" font-size="8">
+      <textPath href="#arc-bot" startOffset="50%" text-anchor="middle">REAL PHOTO</textPath>
+    </text>
+    <circle cx="-30" cy="2" r="1.4" fill="#B5402E"/>
+    <circle cx="30" cy="2" r="1.4" fill="#B5402E"/>
+
+    <!-- reticle crosshair -->
+    <line x1="-26" y1="0" x2="-14" y2="0" stroke="#B5402E" stroke-width="1.6"/>
+    <line x1="14"  y1="0" x2="26"  y2="0" stroke="#B5402E" stroke-width="1.6"/>
+    <line x1="0" y1="-24" x2="0" y2="-16" stroke="#B5402E" stroke-width="1.6"/>
+
+    <!-- the plane, caught in the reticle -->
+    <g fill="#20262B" transform="rotate(28)">
+      <path d="M 0,-13
+               L 2.2,-2 L 16,5 L 16,8.5 L 2.2,5
+               L 1.6,12 L 5,15 L 5,17 L 0,15.5
+               L -5,17 L -5,15 L -1.6,12
+               L -2.2,5 L -16,8.5 L -16,5 L -2.2,-2 Z"/>
+    </g>
+  </g>
+
+  <!-- ===== WORDMARK ===== -->
+  <text class="wm" x="142" y="78" font-size="52" fill="#20262B">Sky<tspan fill="#0E7C86">Dex</tspan></text>
+  <line x1="143" y1="92" x2="402" y2="92" stroke="#D8C9A8" stroke-width="1.5"/>
+  <text class="tag" x="143" y="110" font-size="10.5" fill="#4A5560">THE AUTHENTIC PLANE-SPOTTING COLLECTION</text>
+</svg>

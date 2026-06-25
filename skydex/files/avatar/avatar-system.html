@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkyDex — Avatar System</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700&family=Source+Serif+4:wght@400;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F2EBDC;--paper-deep:#E7DCC6;--paper-edge:#D8C9A8;--ink:#20262B;--ink-soft:#4A5560;--ink-faint:#8A9396;--sky:#0E7C86;--stamp:#B5402E;--brass:#B98A2E;
+--fd:"Saira Condensed",sans-serif;--fb:"Source Serif 4",Georgia,serif;--fm:"IBM Plex Mono",monospace;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--fb);}
+.wrap{max-width:1000px;margin:0 auto;padding:56px 32px 96px;}
+h1{font-family:var(--fd);font-weight:700;font-size:2.6rem;letter-spacing:.01em;margin:0;}
+.sub{font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--stamp);margin:6px 0 0;}
+.lede{color:var(--ink-soft);max-width:64ch;margin:18px 0 0;font-size:1.05rem;}
+.eyebrow{font-family:var(--fm);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--stamp);margin:56px 0 4px;}
+h2{font-family:var(--fd);font-weight:700;font-size:1.7rem;margin:0 0 6px;padding-bottom:8px;border-bottom:1px solid var(--paper-edge);}
+.note{color:var(--ink-soft);max-width:62ch;margin:0 0 22px;font-size:.96rem;}
+.row{display:flex;flex-wrap:wrap;gap:16px;}
+.av{width:72px;}
+.av svg{width:72px;height:72px;border-radius:18px;display:block;box-shadow:0 2px 6px rgba(32,38,43,.12);}
+.av.sm{width:54px;} .av.sm svg{width:54px;height:54px;border-radius:14px;}
+.av.tlabel{text-align:center;width:96px;} .av.tlabel span{display:block;font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:var(--ink-faint);margin-top:8px;text-transform:uppercase;}
+.math{font-family:var(--fm);background:var(--paper-deep);border:1px solid var(--paper-edge);border-radius:8px;padding:16px 20px;display:inline-block;font-size:1rem;color:var(--ink);}
+.math b{color:var(--sky);} .math .eq{color:var(--stamp);font-weight:600;}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,54px);gap:10px;}
+.demo{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--paper-deep);border:1px solid var(--paper-edge);border-radius:12px;padding:22px 24px;}
+.demo input{font-family:var(--fm);font-size:1rem;padding:10px 12px;border:1px solid var(--paper-edge);border-radius:6px;background:#FBF8F1;color:var(--ink);width:220px;}
+.demo .out{display:flex;gap:16px;align-items:center;}
+.demo .out svg{width:64px;height:64px;border-radius:16px;box-shadow:0 2px 6px rgba(32,38,43,.15);}
+.demo .meta{font-family:var(--fm);font-size:12px;color:var(--ink-soft);line-height:1.7;}
+.demo .meta b{color:var(--ink);}
+.names{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.names button{font-family:var(--fm);font-size:11px;padding:6px 12px;border:1px solid var(--paper-edge);background:transparent;border-radius:999px;color:var(--ink-soft);cursor:pointer;}
+.names button:hover{border-color:var(--sky);color:var(--sky);}
+</style></head><body><div class="wrap">
+
+<h1>Avatar System</h1>
+<p class="sub">SkyDex · identity by combination</p>
+<p class="lede">Rather than a fixed gallery of stock icons, every user gets one avatar built from a plane-spotter's world — aircraft and the kit around them — combined with the brand palette. Small parts, hundreds of outcomes, all unmistakably SkyDex.</p>
+
+<p class="eyebrow">01 · The maths</p>
+<h2>How we get hundreds</h2>
+<p class="note">Three independent axes multiply. Add a fourth later (a rarity ring, a seasonal motif) and it climbs again — no new artwork required.</p>
+<div class="math"><b>12</b> motifs &nbsp;×&nbsp; <b>8</b> colours &nbsp;×&nbsp; <b>3</b> backgrounds &nbsp;<span class="eq">= 288 unique avatars</span></div>
+
+<p class="eyebrow">02 · Motifs</p>
+<h2>The spotter's world</h2>
+<p class="note">Twelve monoline glyphs: four aircraft and eight pieces of the surrounding kit — control tower, radio mast, suitcase, binoculars, windsock, compass, ticket, globe.</p>
+<div class="row"><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#20262B"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/>
+    <g fill="#F2EBDC">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#F2EBDC"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#CDE5E6"/>
+    <g fill="none" stroke="#0A5D64" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/>
+    <g fill="none" stroke="#2A2010" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#2A2010" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#2A2010"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#2E5E86"/>
+    <g fill="none" stroke="#E2EEF7" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F2EBDC" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#F2EBDC"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#F2EBDC" stroke-width="3"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#CDE5E6"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#0A5D64" stroke-width="4"/>
+    <g fill="none" stroke="#0A5D64" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div></div>
+
+<p class="eyebrow">03 · Colour</p>
+<h2>One motif, eight schemes</h2>
+<p class="note">Each motif recolours across the full brand palette. Same shape, completely different feel.</p>
+<div class="row"><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#20262B"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#F2EBDC"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#F2EBDC"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#CDE5E6"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#0A5D64"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#F8E9E3"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#2A2010"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#EAF3E9"/></svg></div><div class="av"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#2E5E86"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#E2EEF7"/></svg></div></div>
+
+<p class="eyebrow">04 · Background</p>
+<h2>Three treatments</h2>
+<p class="note">A plain tile, an RAF-style roundel, or the verification stamp ring — the last ties the avatar back to the core brand idea.</p>
+<div class="row"><div class="av tlabel"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg><span>solid</span></div><div class="av tlabel"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg><span>roundel</span></div><div class="av tlabel"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg><span>stamp</span></div></div>
+
+<p class="eyebrow">05 · Assigned, not chosen</p>
+<h2>Deterministic from a username</h2>
+<p class="note">The app hashes the user ID and maps it onto the three axes, so everyone gets a stable avatar with no storage and no picker. Try a few names.</p>
+<div class="demo">
+  <div>
+    <input id="uname" value="matteo" oninput="render()" placeholder="username">
+    <div class="names">
+      <button onclick="set('amelia')">amelia</button>
+      <button onclick="set('noah')">noah</button>
+      <button onclick="set('spotter_92')">spotter_92</button>
+      <button onclick="set('jersey_planes')">jersey_planes</button>
+      <button onclick="set('G-XWBA')">G-XWBA</button>
+    </div>
+  </div>
+  <div class="out"><div id="avout"></div>
+    <div class="meta" id="avmeta"></div>
+  </div>
+</div>
+
+<p class="eyebrow">06 · Variety</p>
+<h2>A wall of them</h2>
+<p class="note">A spread across the full combination space.</p>
+<div class="wall"><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#20262B"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#F2EBDC"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#F2EBDC"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#F8E9E3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#2A2010"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="#EAF3E9"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="#20262B">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="#F2EBDC">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="#F2EBDC">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="#F8E9E3">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="#2A2010">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="#EAF3E9">
+      <path d="M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#20262B"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#F2EBDC"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#F2EBDC"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#F8E9E3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#2A2010"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4.5" stroke-linecap="round">
+      <path d="M50 24 L50 76"/><path d="M26 50 L74 50"/>
+      <path d="M38 30 Q50 22 62 30"/><path d="M38 70 Q50 78 62 70"/>
+    </g><circle cx="50" cy="50" r="5" fill="#EAF3E9"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 36 L76 36"/>
+      <path d="M50 36 L50 44"/>
+      <path d="M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z"/>
+      <path d="M28 64 L44 64"/>
+      <path d="M78 50 L78 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M43 82 L45 52 L55 52 L57 82"/>
+      <path d="M36 52 L64 52 L58 40 L42 40 Z"/>
+      <path d="M50 40 L50 28"/>
+      <path d="M45 28 L55 28"/>
+      <path d="M34 82 L66 82"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#20262B" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#20262B"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#F2EBDC" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#F2EBDC"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#F2EBDC" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#F2EBDC"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#F8E9E3" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#F8E9E3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#2A2010" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#2A2010"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 22 L34 84"/><path d="M50 22 L66 84"/>
+      <path d="M44 46 L56 46"/><path d="M40 62 L60 62"/><path d="M36 78 L64 78"/>
+    </g>
+    <g fill="none" stroke="#EAF3E9" stroke-width="3" stroke-linecap="round">
+      <path d="M50 22 Q40 16 36 22"/><path d="M50 22 Q60 16 64 22"/>
+    </g><circle cx="50" cy="22" r="3.5" fill="#EAF3E9"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linejoin="round">
+      <rect x="26" y="38" width="48" height="42" rx="5"/>
+      <path d="M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38"/>
+      <path d="M50 38 L50 80"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linejoin="round">
+      <rect x="22" y="40" width="22" height="34" rx="9"/>
+      <rect x="56" y="40" width="22" height="34" rx="9"/>
+      <path d="M44 50 L56 50"/>
+      <path d="M28 40 L34 30 L38 30"/><path d="M72 40 L66 30 L62 30"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 22 L30 82"/>
+      <path d="M30 32 L70 38 L66 50 L30 52 Z"/>
+      <path d="M70 38 L74 40"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#20262B" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#20262B"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#20262B" stroke-width="3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F2EBDC" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#F2EBDC"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#F2EBDC" stroke-width="3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F2EBDC" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#F2EBDC"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#F2EBDC" stroke-width="3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F8E9E3" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#F8E9E3"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#F8E9E3" stroke-width="3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#2A2010" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#2A2010"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#2A2010" stroke-width="3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#EAF3E9" stroke-width="4"/>
+    <path d="M50 30 L57 50 L50 70 L43 50 Z" fill="#EAF3E9"/>
+    <circle cx="50" cy="50" r="3.5" fill="none" stroke="#EAF3E9" stroke-width="3"/></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <g fill="none" stroke="#20262B" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <g fill="none" stroke="#2A2010" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="4" stroke-linejoin="round">
+      <path d="M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z"/>
+      <path d="M58 38 L58 72" stroke-dasharray="3 5"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#F2EBDC"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#20262B" stroke-width="4"/>
+    <g fill="none" stroke="#20262B" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#20262B"/><circle cx="50" cy="50" r="40" fill="none" stroke="#F2EBDC" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#F2EBDC" stroke-width="1.2" opacity="0.16"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F2EBDC" stroke-width="4"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0E7C86"/><circle cx="50" cy="50" r="41" fill="none" stroke="#F2EBDC" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#F2EBDC" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F2EBDC" stroke-width="4"/>
+    <g fill="none" stroke="#F2EBDC" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B5402E"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#F8E9E3" stroke-width="4"/>
+    <g fill="none" stroke="#F8E9E3" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#B98A2E"/><circle cx="50" cy="50" r="40" fill="none" stroke="#2A2010" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="#2A2010" stroke-width="1.2" opacity="0.16"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#2A2010" stroke-width="4"/>
+    <g fill="none" stroke="#2A2010" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div><div class="av sm"><svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#3E7A5A"/><circle cx="50" cy="50" r="41" fill="none" stroke="#EAF3E9" stroke-width="2.4" opacity="0.30"/><circle cx="50" cy="50" r="35" fill="none" stroke="#EAF3E9" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>
+    <circle cx="50" cy="50" r="28" fill="none" stroke="#EAF3E9" stroke-width="4"/>
+    <g fill="none" stroke="#EAF3E9" stroke-width="3">
+      <path d="M22 50 L78 50"/>
+      <ellipse cx="50" cy="50" rx="13" ry="28"/>
+      <path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/>
+    </g></svg></div></div>
+
+</div>
+<script>
+const GLYPHS={"airliner": "\n    <path d=\"M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z\" fill=\"{C}\"/>", "jet": "\n    <g fill=\"{C}\">\n      <path d=\"M18 54 Q14 52 16 49 L40 47 L58 30 L64 30 L54 47 L74 46 L82 38 L86 38 L82 48 Q83 50 82 52 L86 52 L82 62 L78 62 L74 54 L54 53 L64 70 L58 70 L40 53 L16 51 Q14 56 18 54 Z\"/>\n    </g>", "prop": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4.5\" stroke-linecap=\"round\">\n      <path d=\"M50 24 L50 76\"/><path d=\"M26 50 L74 50\"/>\n      <path d=\"M38 30 Q50 22 62 30\"/><path d=\"M38 70 Q50 78 62 70\"/>\n    </g><circle cx=\"50\" cy=\"50\" r=\"5\" fill=\"{C}\"/>", "helicopter": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <path d=\"M24 36 L76 36\"/>\n      <path d=\"M50 36 L50 44\"/>\n      <path d=\"M34 58 Q34 44 50 44 Q60 44 64 52 L82 56 L82 60 L66 62 Q62 64 50 64 Q34 64 34 58 Z\"/>\n      <path d=\"M28 64 L44 64\"/>\n      <path d=\"M78 50 L78 64\"/>\n    </g>", "control_tower": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <path d=\"M43 82 L45 52 L55 52 L57 82\"/>\n      <path d=\"M36 52 L64 52 L58 40 L42 40 Z\"/>\n      <path d=\"M50 40 L50 28\"/>\n      <path d=\"M45 28 L55 28\"/>\n      <path d=\"M34 82 L66 82\"/>\n    </g>", "radio_tower": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"3.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <path d=\"M50 22 L34 84\"/><path d=\"M50 22 L66 84\"/>\n      <path d=\"M44 46 L56 46\"/><path d=\"M40 62 L60 62\"/><path d=\"M36 78 L64 78\"/>\n    </g>\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"3\" stroke-linecap=\"round\">\n      <path d=\"M50 22 Q40 16 36 22\"/><path d=\"M50 22 Q60 16 64 22\"/>\n    </g><circle cx=\"50\" cy=\"22\" r=\"3.5\" fill=\"{C}\"/>", "suitcase": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4\" stroke-linejoin=\"round\">\n      <rect x=\"26\" y=\"38\" width=\"48\" height=\"42\" rx=\"5\"/>\n      <path d=\"M40 38 L40 30 Q40 26 44 26 L56 26 Q60 26 60 30 L60 38\"/>\n      <path d=\"M50 38 L50 80\"/>\n    </g>", "binoculars": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4\" stroke-linejoin=\"round\">\n      <rect x=\"22\" y=\"40\" width=\"22\" height=\"34\" rx=\"9\"/>\n      <rect x=\"56\" y=\"40\" width=\"22\" height=\"34\" rx=\"9\"/>\n      <path d=\"M44 50 L56 50\"/>\n      <path d=\"M28 40 L34 30 L38 30\"/><path d=\"M72 40 L66 30 L62 30\"/>\n    </g>", "windsock": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n      <path d=\"M30 22 L30 82\"/>\n      <path d=\"M30 32 L70 38 L66 50 L30 52 Z\"/>\n      <path d=\"M70 38 L74 40\"/>\n    </g>", "compass": "\n    <circle cx=\"50\" cy=\"50\" r=\"28\" fill=\"none\" stroke=\"{C}\" stroke-width=\"4\"/>\n    <path d=\"M50 30 L57 50 L50 70 L43 50 Z\" fill=\"{C}\"/>\n    <circle cx=\"50\" cy=\"50\" r=\"3.5\" fill=\"none\" stroke=\"{C}\" stroke-width=\"3\"/>", "ticket": "\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"4\" stroke-linejoin=\"round\">\n      <path d=\"M24 38 L76 38 Q76 46 80 48 Q76 50 76 58 L76 72 L24 72 L24 58 Q28 50 24 48 Q28 46 24 38 Z\"/>\n      <path d=\"M58 38 L58 72\" stroke-dasharray=\"3 5\"/>\n    </g>", "globe": "\n    <circle cx=\"50\" cy=\"50\" r=\"28\" fill=\"none\" stroke=\"{C}\" stroke-width=\"4\"/>\n    <g fill=\"none\" stroke=\"{C}\" stroke-width=\"3\">\n      <path d=\"M22 50 L78 50\"/>\n      <ellipse cx=\"50\" cy=\"50\" rx=\"13\" ry=\"28\"/>\n      <path d=\"M28 36 Q50 44 72 36\"/><path d=\"M28 64 Q50 56 72 64\"/>\n    </g>"};
+const PALS={"paper": ["#F2EBDC", "#20262B"], "ink": ["#20262B", "#F2EBDC"], "sky": ["#0E7C86", "#F2EBDC"], "sky_tint": ["#CDE5E6", "#0A5D64"], "stamp": ["#B5402E", "#F8E9E3"], "brass": ["#B98A2E", "#2A2010"], "field": ["#3E7A5A", "#EAF3E9"], "altitude": ["#2E5E86", "#E2EEF7"]};
+const TRTS=["solid","roundel","stamp"];
+const MOTIFS=Object.keys(GLYPHS);
+const PALNAMES=Object.keys(PALS);
+function bg(t,bgc,gc){
+  const base=`<rect width="100" height="100" rx="22" fill="${bgc}"/>`;
+  if(t==="roundel")return base+`<circle cx="50" cy="50" r="40" fill="none" stroke="${gc}" stroke-width="2" opacity="0.22"/><circle cx="50" cy="50" r="32" fill="none" stroke="${gc}" stroke-width="1.2" opacity="0.16"/>`;
+  if(t==="stamp")return base+`<circle cx="50" cy="50" r="41" fill="none" stroke="${gc}" stroke-width="2.4" opacity="0.3"/><circle cx="50" cy="50" r="35" fill="none" stroke="${gc}" stroke-width="1" stroke-dasharray="2 4" opacity="0.25"/>`;
+  return base;
+}
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function avatarFor(name){
+  const h=hashStr(name.trim().toLowerCase()||"anon");
+  const m=MOTIFS[h%MOTIFS.length];
+  const p=PALNAMES[(h>>>5)%PALNAMES.length];
+  const t=TRTS[(h>>>11)%TRTS.length];
+  const [bgc,gc]=PALS[p];
+  const g=GLYPHS[m].replaceAll("{C}",gc);
+  return {svg:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${bg(t,bgc,gc)}${g}</svg>`,m,p,t};
+}
+function set(n){document.getElementById('uname').value=n;render();}
+function render(){
+  const a=avatarFor(document.getElementById('uname').value);
+  document.getElementById('avout').innerHTML=a.svg;
+  document.getElementById('avmeta').innerHTML=`<b>${a.m}</b> · ${a.p} · ${a.t}`;
+}
+render();
+</script>
+</body></html>

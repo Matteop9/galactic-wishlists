@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkyDex — Brand Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2EBDC; --paper-deep:#E7DCC6; --paper-edge:#D8C9A8;
+  --ink:#20262B; --ink-soft:#4A5560; --ink-faint:#8A9396;
+  --sky:#0E7C86; --sky-deep:#0A5D64; --sky-tint:#CDE5E6;
+  --stamp:#B5402E; --stamp-deep:#8E3122; --stamp-tint:#ECD2CB;
+  --brass:#B98A2E; --brass-tint:#EBDCB6;
+  --font-display:"Saira Condensed",sans-serif;
+  --font-body:"Source Serif 4",Georgia,serif;
+  --font-data:"IBM Plex Mono",monospace;
+  --r-md:6px; --r-lg:10px; --r-pill:999px;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);line-height:1.55;}
+.wrap{max-width:1080px;margin:0 auto;padding:56px 32px 96px;}
+
+/* header */
+.masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:8px;flex-wrap:wrap;}
+.masthead img{height:96px;}
+.masthead .meta{font-family:var(--font-data);font-size:11px;letter-spacing:.14em;
+  color:var(--ink-soft);text-transform:uppercase;text-align:right;}
+
+/* section scaffolding */
+section{margin-top:64px;}
+.eyebrow{font-family:var(--font-data);font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--stamp);margin:0 0 4px;}
+h2{font-family:var(--font-display);font-weight:700;font-size:1.95rem;letter-spacing:.01em;
+  margin:0 0 24px;padding-bottom:8px;border-bottom:1px solid var(--paper-edge);}
+.note{color:var(--ink-soft);font-size:.95rem;max-width:62ch;margin:-12px 0 24px;}
+
+/* palette */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
+.sw{border-radius:var(--r-md);overflow:hidden;border:1px solid var(--paper-edge);background:#fff;}
+.sw .chip{height:84px;}
+.sw .info{padding:8px 10px;font-family:var(--font-data);font-size:11px;line-height:1.5;}
+.sw .info .nm{font-weight:600;color:var(--ink);letter-spacing:.04em;}
+.sw .info .hx{color:var(--ink-soft);}
+
+/* type scale */
+.type-row{display:flex;align-items:baseline;gap:20px;padding:14px 0;border-bottom:1px solid var(--paper-edge);}
+.type-row .tag{font-family:var(--font-data);font-size:11px;color:var(--ink-faint);
+  letter-spacing:.1em;width:140px;flex:none;text-transform:uppercase;}
+.d-3xl{font-family:var(--font-display);font-weight:700;font-size:3.05rem;line-height:1;}
+.d-xl{font-family:var(--font-display);font-weight:600;font-size:1.95rem;}
+.b-lg{font-family:var(--font-body);font-size:1.25rem;}
+.b-base{font-family:var(--font-body);font-size:1rem;}
+.data{font-family:var(--font-data);font-size:1rem;letter-spacing:.04em;}
+
+/* buttons */
+.btn-grid{display:flex;flex-wrap:wrap;gap:16px;align-items:center;}
+.sd-btn{font-family:var(--font-display);font-weight:600;letter-spacing:.04em;font-size:1.1rem;
+  text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;padding:13px 20px;
+  border-radius:var(--r-md);border:1.8px solid transparent;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,transform .05s;}
+.sd-btn:active{transform:translateY(1px);}
+.sd-btn:focus-visible{outline:3px solid var(--brass);outline-offset:2px;}
+.sd-btn--capture{background:var(--sky);color:var(--paper);}
+.sd-btn--capture:hover{background:var(--sky-deep);}
+.sd-btn--log{background:transparent;color:var(--sky);border-color:var(--sky);}
+.sd-btn--log:hover{background:var(--sky-tint);color:var(--sky-deep);}
+.sd-btn--confirmed{background:var(--stamp);color:var(--paper);}
+.sd-btn--disabled{background:var(--paper-deep);color:var(--ink-faint);cursor:not-allowed;}
+.sd-quiet{background:none;border:none;font-family:var(--font-display);font-size:1rem;
+  color:var(--ink-soft);border-bottom:1px dashed var(--ink-soft);cursor:pointer;padding:2px 0;}
+.sd-quiet:hover{color:var(--ink);border-bottom-color:var(--ink);}
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+.sd-pill{font-family:var(--font-display);font-weight:600;font-size:.8rem;letter-spacing:.06em;
+  text-transform:uppercase;padding:7px 16px;border-radius:var(--r-pill);
+  border:1.5px solid var(--paper-edge);background:transparent;color:var(--ink-soft);cursor:pointer;}
+.sd-pill--active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+.sd-pill--legendary{background:var(--brass-tint);color:#8A6A1E;border-color:var(--brass);
+  display:inline-flex;align-items:center;gap:6px;}
+.sd-pill--legendary::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brass);}
+
+/* sample card */
+.card{width:300px;background:var(--paper-deep);border:1px solid var(--paper-edge);
+  border-radius:var(--r-lg);overflow:hidden;box-shadow:0 8px 24px rgba(32,38,43,.16);position:relative;}
+.card .photo{height:170px;background:
+  linear-gradient(180deg,#9FC0D4 0%,#C4D6DF 60%,#DfE6E0 100%);position:relative;overflow:hidden;}
+.card .photo .plane{position:absolute;top:54px;left:120px;transform:rotate(24deg);}
+.card .stamp{position:absolute;top:12px;right:12px;width:64px;height:64px;border-radius:50%;
+  border:2px solid var(--stamp);color:var(--stamp);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-data);font-size:8px;font-weight:600;letter-spacing:.1em;text-align:center;
+  transform:rotate(-12deg);background:rgba(242,235,220,.7);line-height:1.2;}
+.card .body{padding:14px 16px 16px;}
+.card .reg{font-family:var(--font-display);font-weight:700;font-size:1.6rem;letter-spacing:.02em;color:var(--ink);}
+.card .type{font-family:var(--font-body);font-size:.95rem;color:var(--ink-soft);margin-bottom:10px;}
+.card .data-rows{font-family:var(--font-data);font-size:11px;color:var(--ink-soft);
+  border-top:1px solid var(--paper-edge);padding-top:10px;display:grid;gap:3px;}
+.card .data-rows b{color:var(--ink);font-weight:600;}
+.rarity-bar{position:absolute;top:0;left:0;width:6px;height:100%;background:var(--brass);}
+
+.foot{margin-top:72px;border-top:1px solid var(--paper-edge);padding-top:16px;
+  font-family:var(--font-data);font-size:11px;color:var(--ink-faint);letter-spacing:.06em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <img src="logos/logo-primary.svg" alt="SkyDex">
+    <div class="meta">Brand sheet · v1.0<br>Field-logbook identity<br>June 2026</div>
+  </div>
+
+  <section>
+    <p class="eyebrow">The thesis</p>
+    <h2>A genuine logbook of the sky</h2>
+    <p class="note">Where the incumbent gives you a simulated catch from the sofa, SkyDex gives you a record you earned, one real sighting at a time. The brand is built on that single idea: a sighting is proven, and the proof is a stamp. Everything warm, analogue, and earned — never a slick game UI.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">01 · Colour</p>
+    <h2>Palette</h2>
+    <p class="note">Aged paper carries the surface; aviation ink does the writing; the teal is the brand and the verified action; the oxidised vermilion is reserved for the verification stamp and nothing else.</p>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#F2EBDC"></div><div class="info"><div class="nm">Paper</div><div class="hx">#F2EBDC</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E7DCC6"></div><div class="info"><div class="nm">Paper Deep</div><div class="hx">#E7DCC6</div></div></div>
+      <div class="sw"><div class="chip" style="background:#D8C9A8"></div><div class="info"><div class="nm">Paper Edge</div><div class="hx">#D8C9A8</div></div></div>
+      <div class="sw"><div class="chip" style="background:#20262B"></div><div class="info"><div class="nm">Ink</div><div class="hx">#20262B</div></div></div>
+      <div class="sw"><div class="chip" style="background:#4A5560"></div><div class="info"><div class="nm">Ink Soft</div><div class="hx">#4A5560</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0E7C86"></div><div class="info"><div class="nm">Sky</div><div class="hx">#0E7C86</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0A5D64"></div><div class="info"><div class="nm">Sky Deep</div><div class="hx">#0A5D64</div></div></div>
+      <div class="sw"><div class="chip" style="background:#CDE5E6"></div><div class="info"><div class="nm">Sky Tint</div><div class="hx">#CDE5E6</div></div></div>
+      <div class="sw"><div class="chip" style="background:#B5402E"></div><div class="info"><div class="nm">Stamp</div><div class="hx">#B5402E</div></div></div>
+      <div class="sw"><div class="chip" style="background:#B98A2E"></div><div class="info"><div class="nm">Brass</div><div class="hx">#B98A2E</div></div></div>
+    </div>
+    <p class="note" style="margin-top:20px;">Rarity scale — Common <b>#6E7A6A</b>, Uncommon <b>#3E7A5A</b>, Rare <b>#2E5E86</b>, Epic <b>#6A3E86</b>, Legendary <b>#B98A2E</b>.</p>
+    <div style="display:flex;gap:0;border-radius:6px;overflow:hidden;max-width:500px;">
+      <div style="flex:1;height:36px;background:#6E7A6A"></div>
+      <div style="flex:1;height:36px;background:#3E7A5A"></div>
+      <div style="flex:1;height:36px;background:#2E5E86"></div>
+      <div style="flex:1;height:36px;background:#6A3E86"></div>
+      <div style="flex:1;height:36px;background:#B98A2E"></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">02 · Type</p>
+    <h2>Typefaces</h2>
+    <p class="note">Saira Condensed for the instrument voice — headings, registrations, buttons. Source Serif 4 for the logbook body. IBM Plex Mono for all flight data, so a tail number reads like it came straight off a transponder.</p>
+    <div class="type-row"><span class="tag">Display / Saira</span><span class="d-3xl">SkyDex</span></div>
+    <div class="type-row"><span class="tag">Heading / Saira</span><span class="d-xl">Verified Sighting</span></div>
+    <div class="type-row"><span class="tag">Body lg / Serif</span><span class="b-lg">A genuine logbook of the sky.</span></div>
+    <div class="type-row"><span class="tag">Body / Serif</span><span class="b-base">Photograph a real aircraft you can actually see; a confirmed sighting becomes a collectible card.</span></div>
+    <div class="type-row"><span class="tag">Data / Mono</span><span class="data">G-XWBA · A350-1000 · BRG 247° · ELV 31° · 11:42:08</span></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">03 · Buttons</p>
+    <h2>Controls</h2>
+    <p class="note">Two actions sit at the core of the loop. <b>Capture</b> is the hero — a verified real photo. <b>Log</b> is the casual, low-value catch from the map. The vermilion confirmed state is the success moment, and it borrows the stamp.</p>
+    <div class="btn-grid">
+      <button class="sd-btn sd-btn--capture">
+        <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7" fill="none" stroke="#F2EBDC" stroke-width="2"/><circle cx="10" cy="10" r="2.6" fill="#F2EBDC"/></svg>
+        Capture aircraft
+      </button>
+      <button class="sd-btn sd-btn--log">Log from map</button>
+      <button class="sd-btn sd-btn--confirmed">
+        <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="none" stroke="#F2EBDC" stroke-width="1.4"/><path d="M6 10l3 3 5-6" fill="none" stroke="#F2EBDC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Sighting verified
+      </button>
+      <button class="sd-btn sd-btn--disabled" disabled>No aircraft in range</button>
+      <button class="sd-quiet">View in scrapbook</button>
+    </div>
+    <div class="pills">
+      <button class="sd-pill sd-pill--active">Airlines</button>
+      <button class="sd-pill">Types</button>
+      <button class="sd-pill">Airports</button>
+      <button class="sd-pill sd-pill--legendary">Legendary</button>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">04 · Assembled</p>
+    <h2>Sighting card</h2>
+    <p class="note">The signature artifact — the player's own photo, the verification stamp landed in the corner, the rarity rail down the edge, and the real flight data set in mono.</p>
+    <div class="card">
+      <span class="rarity-bar"></span>
+      <div class="photo">
+        <svg class="plane" width="56" height="56" viewBox="0 0 56 56"><g fill="#3A4750"><path d="M28 6 l3 18 l22 9 l0 5 l-22 -6 l-2 10 l6 5 l0 3 l-7 -2 l-7 2 l0 -3 l6 -5 l-2 -10 l-22 6 l0 -5 l22 -9 z"/></g></svg>
+        <div class="stamp">VERIFIED<br>SIGHTING</div>
+      </div>
+      <div class="body">
+        <div class="reg">G-XWBA</div>
+        <div class="type">Airbus A350-1000 · British Airways</div>
+        <div class="data-rows">
+          <div>ROUTE&nbsp;&nbsp;&nbsp;&nbsp;<b>LHR → JNB</b></div>
+          <div>ALT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>37,000 ft</b></div>
+          <div>RARITY&nbsp;&nbsp;&nbsp;<b style="color:#B98A2E">LEGENDARY</b></div>
+          <div>SEEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>16 Jun 2026 · Jersey</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">SkyDex · the authentic plane-spotting collection · real planes, real photos, really verified</div>
+</div>
+</body>
+</html>
