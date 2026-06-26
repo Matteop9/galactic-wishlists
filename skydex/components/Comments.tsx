@@ -74,9 +74,20 @@ export default function Comments({
     <div className="border-t border-paper-edge px-4 py-3">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="font-mono text-xs uppercase tracking-wide text-ink-soft hover:text-ink"
+        className="flex items-center gap-1.5 font-mono text-xs lowercase tracking-wide text-sky hover:text-sky-deep"
       >
-        {open ? "Hide comments" : n > 0 ? `Comments (${n})` : "Comments"}
+        <svg
+          className="h-3.5 w-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        {open ? "hide comments" : n > 0 ? `${n} comment${n === 1 ? "" : "s"}` : "comment"}
       </button>
 
       {open && (

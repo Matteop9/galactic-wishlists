@@ -14,33 +14,28 @@ type Slot = {
   verified: boolean;
 };
 
-function Polaroid({ slot, tilt }: { slot: Slot; tilt: number }) {
-  const rotate = `rotate(${tilt}deg)`;
+// One ruled slot in the book. Collected = photo + small rarity stamp; empty =
+// dashed box with a diagonal hatch and a mono "NOT YET SPOTTED".
+function BookSlot({ slot }: { slot: Slot }) {
   if (!slot.photo) {
     return (
-      <div
-        className="rounded-sm border-2 border-dashed border-paper-edge bg-paper/40 p-2.5 pb-0"
-        style={{ transform: rotate }}
-      >
-        <div className="flex aspect-square items-center justify-center bg-[repeating-linear-gradient(45deg,rgba(216,201,168,0.18),rgba(216,201,168,0.18)_8px,transparent_8px,transparent_16px)]">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-ink-faint">
+      <div className="overflow-hidden rounded-lg border border-dashed border-paper-edge bg-paper-deep">
+        <div className="flex aspect-[4/3] items-center justify-center bg-[repeating-linear-gradient(45deg,rgba(216,201,168,0.3)_0_8px,transparent_8px_16px)]">
+          <span className="text-center font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink-faint">
             Not yet
             <br />
             spotted
           </span>
         </div>
-        <div className="py-2 text-center font-mono text-[10px] uppercase tracking-wide text-ink-faint">
+        <div className="px-2 py-1.5 text-center font-mono text-[10px] uppercase tracking-wide text-ink-faint">
           {slot.label}
         </div>
       </div>
     );
   }
   return (
-    <div
-      className="relative rounded-sm bg-[#FBF8F1] p-2.5 pb-0 shadow-[0_4px_10px_rgba(40,30,15,0.22)]"
-      style={{ transform: rotate }}
-    >
-      <div className="relative aspect-square overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-paper-edge bg-white shadow-[0_4px_12px_rgba(32,38,43,0.1)]">
+      <div className="relative aspect-[4/3] overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={slot.photo} alt={slot.label} className="h-full w-full object-cover" />
         {slot.rarity && (
@@ -48,11 +43,11 @@ function Polaroid({ slot, tilt }: { slot: Slot; tilt: number }) {
           <img
             src={`/stamps/${slot.rarity}.svg`}
             alt={slot.rarity}
-            className="absolute bottom-1 right-1 h-9 w-9"
+            className="absolute bottom-1 right-1 h-8 w-8"
           />
         )}
       </div>
-      <div className="py-2 text-center font-hand text-lg leading-none text-ink-soft">
+      <div className="px-2 py-1.5 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-ink">
         {slot.label}
       </div>
     </div>
@@ -62,11 +57,12 @@ function Polaroid({ slot, tilt }: { slot: Slot; tilt: number }) {
 export default async function BooksPage({
   searchParams,
 }: {
-  searchParams: Promise<{ book?: string }>;
+  searchParams: Promise<{ book?: string; view?: string }>;
 }) {
   const sp = await searchParams;
   const kind: BookKind =
     sp.book === "airline" || sp.book === "rarity" ? sp.book : "type";
+  const missingOnly = sp.view === "missing";
 
   const supabase = await createClient();
   const {
@@ -145,13 +141,14 @@ export default async function BooksPage({
 
   const collected = slots.filter((s) => s.photo).length;
   const pct = slots.length ? Math.round((collected / slots.length) * 100) : 0;
+  const shownSlots = missingOnly ? slots.filter((s) => !s.photo) : slots;
 
-  const tab = (k: BookKind, label: string) =>
-    `rounded-md border px-4 py-2 font-display text-sm font-semibold uppercase tracking-wide ${
-      kind === k
-        ? "border-ink bg-ink text-paper"
-        : "border-paper-edge bg-paper-deep text-ink-soft hover:border-ink"
-    }`;
+  // Luggage-tag tab: squared, left dot coloured by book kind.
+  const TABS: { k: BookKind; label: string; dot: string }[] = [
+    { k: "type", label: "Type", dot: "var(--color-ink)" },
+    { k: "airline", label: "Airline", dot: "var(--color-brass)" },
+    { k: "rarity", label: "Rarity", dot: "var(--color-stamp)" },
+  ];
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10">
@@ -164,30 +161,80 @@ export default async function BooksPage({
         </Link>
       </div>
 
-      <div className="mt-5 flex gap-2">
-        <Link href="/books?book=type" className={tab("type", "Type")}>Type</Link>
-        <Link href="/books?book=airline" className={tab("airline", "Airline")}>Airline</Link>
-        <Link href="/books?book=rarity" className={tab("rarity", "Rarity")}>Rarity</Link>
+      {/* tag tabs */}
+      <div className="mt-5 flex flex-wrap gap-2">
+        {TABS.map((t) => {
+          const active = kind === t.k;
+          return (
+            <Link
+              key={t.k}
+              href={`/books?book=${t.k}`}
+              className={`relative rounded-[4px] border py-2 pl-6 pr-3.5 font-display text-sm font-semibold uppercase tracking-wide transition-colors ${
+                active
+                  ? "border-ink bg-ink text-paper"
+                  : "border-paper-edge bg-paper-deep text-ink-soft hover:border-ink"
+              }`}
+            >
+              <span
+                aria-hidden
+                className="absolute left-2.5 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full"
+                style={
+                  active
+                    ? { background: "var(--color-paper)" }
+                    : { border: `1.5px solid ${t.dot}` }
+                }
+              />
+              {t.label}
+            </Link>
+          );
+        })}
       </div>
 
-      {/* progress */}
-      <div className="mt-6 font-mono text-xs uppercase tracking-wide text-ink-soft">
-        {collected} of {slots.length} collected
-        <div className="mt-2 h-2 overflow-hidden rounded border border-paper-edge bg-paper-deep">
-          <div
-            className="h-full bg-gradient-to-r from-sky to-brass"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
+      {/* progress + All/Missing filter */}
+      <div className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-wide text-ink-soft">
+        <span>
+          {collected} of {slots.length} collected
+        </span>
+        <span className="flex gap-1.5">
+          {([
+            { v: "all", label: "All" },
+            { v: "missing", label: "Missing" },
+          ] as const).map(({ v, label }) => {
+            const on = missingOnly ? v === "missing" : v === "all";
+            return (
+              <Link
+                key={v}
+                href={`/books?book=${kind}${v === "missing" ? "&view=missing" : ""}`}
+                className={`rounded-full border px-2.5 py-0.5 text-[10px] tracking-[0.06em] ${
+                  on ? "border-ink bg-ink text-paper" : "border-paper-edge text-ink-soft hover:border-ink"
+                }`}
+              >
+                {label}
+              </Link>
+            );
+          })}
+        </span>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded border border-paper-edge bg-paper-deep">
+        <div
+          className="h-full bg-gradient-to-r from-sky to-brass"
+          style={{ width: `${pct}%` }}
+        />
       </div>
 
       {/* the page */}
       <div className="mt-6 rounded-lg border border-paper-edge bg-paper p-4 shadow-inner sm:p-6">
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3">
-          {slots.map((slot, i) => (
-            <Polaroid key={slot.key} slot={slot} tilt={i % 2 === 0 ? -2.2 : 1.8} />
-          ))}
-        </div>
+        {shownSlots.length === 0 ? (
+          <p className="py-8 text-center font-mono text-xs uppercase tracking-wide text-ink-faint">
+            {missingOnly ? "Nothing missing — book complete." : "Nothing here yet."}
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+            {shownSlots.map((slot) => (
+              <BookSlot key={slot.key} slot={slot} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );

@@ -21,12 +21,34 @@ export type Sighting = {
   is_admin?: boolean | null;
   origin?: string | null;
   destination?: string | null;
+  flight_no?: string | null;
+  painted_as?: string | null;
+  operating_as?: string | null;
+  eta?: string | null;
+  gspeed_kt?: number | null;
+  vspeed_fpm?: number | null;
 };
 
 export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () => void }) {
   const airline = s.airline ?? airlineFromCallsign(s.callsign);
   const livery = specialLivery(s.registration);
   const altFt = s.altitude_m != null ? Math.round(s.altitude_m / 0.3048) : null;
+  const flightNo = s.flight_no || s.callsign;
+  const wetLease = Boolean(
+    s.painted_as && s.operating_as && s.painted_as !== s.operating_as,
+  );
+  // Flight state at the moment of capture (from FR24): climb/cruise/descent + speed.
+  const phase =
+    s.vspeed_fpm != null
+      ? s.vspeed_fpm > 300
+        ? "Climbing"
+        : s.vspeed_fpm < -300
+          ? "Descending"
+          : "Cruising"
+      : null;
+  const eta = s.eta
+    ? new Date(s.eta).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+    : null;
   const seen = new Date(s.captured_at).toLocaleString("en-GB", {
     day: "numeric",
     month: "short",
@@ -35,13 +57,24 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
     minute: "2-digit",
   });
 
+  const rarityColor = RARITY_COLOR[s.rarity] ?? "var(--color-paper-edge)";
+
   return (
     <div
       className={`relative overflow-hidden rounded-lg bg-paper-deep shadow-[0_8px_24px_rgba(32,38,43,0.16)] ${
         livery ? "sd-livery border-[3px]" : "border-2"
       }`}
-      style={livery ? undefined : { borderColor: RARITY_COLOR[s.rarity] ?? "var(--color-paper-edge)" }}
+      style={livery ? undefined : { borderColor: rarityColor }}
     >
+      {/* rarity rail — a coloured spine down the left edge (skipped on livery
+          cards, which carry their own animated border as the signal) */}
+      {!livery && (
+        <span
+          aria-hidden
+          className="absolute inset-y-0 left-0 z-10 w-1.5"
+          style={{ background: rarityColor }}
+        />
+      )}
       <div
         className={`relative h-40 bg-gradient-to-b from-[#9FC0D4] via-[#C4D6DF] to-[#DFE6E0] ${
           onOpen && s.photo_url ? "cursor-zoom-in" : ""
@@ -70,6 +103,11 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
             ✦ Special Livery
           </span>
         )}
+        {wetLease && (
+          <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full border border-sky bg-paper/85 px-2.5 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-sky">
+            Wet-lease
+          </span>
+        )}
       </div>
 
       <div className="px-4 pb-4 pt-3">
@@ -91,15 +129,24 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
           <div className="mb-2.5" />
         )}
         <div className="grid gap-0.5 border-t border-paper-edge pt-2.5 font-mono text-[11px] text-ink-soft">
-          {s.callsign && (
+          {flightNo && (
             <div>
-              FLIGHT&nbsp;&nbsp;<b className="font-semibold text-ink">{s.callsign}</b>
+              FLIGHT&nbsp;&nbsp;<b className="font-semibold text-ink">{flightNo}</b>
             </div>
           )}
           {altFt != null && (
             <div>
               ALT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <b className="font-semibold text-ink">{altFt.toLocaleString()} ft</b>
+            </div>
+          )}
+          {phase && (
+            <div>
+              PHASE&nbsp;&nbsp;
+              <b className="font-semibold text-ink">
+                {phase}
+                {s.gspeed_kt != null ? ` · ${s.gspeed_kt} kt` : ""}
+              </b>
             </div>
           )}
           {(s.origin || s.destination) && (
@@ -110,6 +157,11 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
                 {" → "}
                 {s.destination ? <AirportCode code={s.destination} /> : "—"}
               </b>
+            </div>
+          )}
+          {eta && (
+            <div>
+              ETA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b className="font-semibold text-ink">{eta}</b>
             </div>
           )}
           <div>

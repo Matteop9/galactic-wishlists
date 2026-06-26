@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getViewer } from "@/lib/auth";
 import UserMenu from "@/components/UserMenu";
-import NavLinks from "@/components/NavLinks";
 
 export default async function TopNav() {
   const { user, handle, avatarSeed, isAdmin } = await getViewer();
@@ -9,18 +8,15 @@ export default async function TopNav() {
   return (
     <header className="border-b-2 border-ink bg-paper">
       <nav className="mx-auto flex max-w-3xl flex-nowrap items-center justify-between gap-2 px-5 py-3">
-        <Link
-          href="/"
-          className="shrink-0 font-display text-2xl font-bold leading-none tracking-tight text-ink"
-        >
-          Sky<span className="text-sky">Dex</span>
+        <Link href="/" aria-label="SkyDex — home" className="shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-tag-mark.svg" alt="SkyDex" className="h-9 w-auto" />
         </Link>
 
         <div className="flex items-center gap-1">
           {user ? (
             <>
-              <NavLinks />
-              <span aria-hidden className="mx-1 h-6 w-px bg-paper-edge" />
+              {/* primary nav now lives in the fixed bottom tab bar */}
               <UserMenu handle={handle} avatarSeed={avatarSeed} isAdmin={isAdmin} />
             </>
           ) : (

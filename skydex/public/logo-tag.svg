@@ -1,0 +1,20 @@
+<svg width="300" height="160" viewBox="0 0 300 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex">
+  <defs>
+    <style>
+      .wm  { font-family:"Saira Condensed","Oswald","Arial Narrow",sans-serif; font-weight:700; }
+      .tag { font-family:"IBM Plex Mono","Consolas",monospace; font-weight:500; letter-spacing:0.16em; }
+    </style>
+  </defs>
+
+  <line x1="150" y1="6" x2="150" y2="34" stroke="#B98A2E" stroke-width="2.5"></line>
+  <circle cx="150" cy="6" r="4.5" fill="#8A6A3E"></circle>
+
+  <rect x="44" y="34" width="212" height="108" rx="12" fill="#E7DCC6" stroke="#D8C9A8" stroke-width="1.5"></rect>
+
+  <circle cx="150" cy="50" r="7" fill="#F2EBDC" stroke="#B98A2E" stroke-width="3"></circle>
+
+  <text class="wm" x="150" y="104" font-size="50" fill="#20262B" text-anchor="middle">Sky<tspan fill="#0E7C86">Dex</tspan></text>
+
+  <line x1="72" y1="116" x2="228" y2="116" stroke="#B98A2E" stroke-width="1.4" stroke-dasharray="3 4"></line>
+  <text class="tag" x="150" y="132" font-size="8.5" fill="#4A5560" text-anchor="middle">FIELD COLLECTION · EST. 2026</text>
+</svg>

@@ -2,10 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { type Sighting } from "@/components/SightingCard";
 import SightingBrowser from "@/components/SightingBrowser";
-import CollectionGrid, { type CollectionItem } from "@/components/CollectionGrid";
 import ProgressWheel from "@/components/ProgressWheel";
 import AirportCode from "@/components/AirportCode";
-import { airlineLogoUrl } from "@/lib/airlines";
 import { RARITY_TIERS, RARITY_RANK, RARITY_COLOR } from "@/lib/rarity";
 import { SPECIAL_LIVERIES, SPECIAL_LIVERIES_COUNT, normalizeReg } from "@/lib/specialLiveries";
 
@@ -94,55 +92,16 @@ export default async function ScrapbookPage() {
   const departures = airportCounts("origin");
   const destinations = airportCounts("destination");
 
-  const sortedTypes = [...types].sort(
-    (a, b) =>
-      (RARITY_RANK[a.rarity] ?? 0) - (RARITY_RANK[b.rarity] ?? 0) ||
-      a.code.localeCompare(b.code),
-  );
-  const sortedAirlines = [...airlines].sort((a, b) => a.name.localeCompare(b.name));
-
-  const typeItems: CollectionItem[] = sortedTypes.map((t) => {
-    const got = collectedTypes.has(t.code);
-    return {
-      key: t.code,
-      label: t.display_name ?? t.code,
-      title: `${t.name} · ${t.rarity}`,
-      got,
-      className: "rounded-md border px-2.5 py-1 font-mono text-xs font-semibold",
-      style: got
-        ? {
-            background: RARITY_COLOR[t.rarity],
-            borderColor: RARITY_COLOR[t.rarity],
-            color: "var(--color-paper)",
-          }
-        : { borderColor: "var(--color-paper-edge)", color: "var(--color-ink-faint)", opacity: 0.55 },
-    };
-  });
-
-  const carrierItems: CollectionItem[] = sortedAirlines.map((a) => {
-    const got = collectedAirlines.has(a.name);
-    return {
-      key: a.name,
-      label: a.name,
-      title: a.name,
-      got,
-      iconUrl: airlineLogoUrl(a.name) ?? undefined,
-      className: `rounded-md border px-2.5 py-1 text-xs ${
-        got
-          ? "border-sky bg-sky-tint font-semibold text-sky-deep"
-          : "border-paper-edge text-ink-faint opacity-55"
-      }`,
-    };
-  });
-
   if (rows.length === 0) {
     return (
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10">
         <h1 className="border-b border-paper-edge pb-2 font-display text-3xl font-bold tracking-tight">
           Scrapbook
         </h1>
-        <div className="mt-8 rounded-lg border border-dashed border-paper-edge p-8 text-center">
-          <p className="text-ink-soft">Your logbook is empty.</p>
+        <div className="mt-8 flex flex-col items-center rounded-lg border border-dashed border-paper-edge p-8 text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-tag.svg" alt="" className="sd-tag-swing h-32 w-auto opacity-90" />
+          <p className="mt-4 text-ink-soft">Your logbook is empty.</p>
           <Link href="/spot" className="sd-btn sd-btn--capture mt-5 inline-flex">
             Spot your first aircraft
           </Link>
@@ -201,59 +160,45 @@ export default async function ScrapbookPage() {
         </div>
       </div>
 
-      {/* Collections — collapsed by default to keep the page scannable */}
-      <details className="group mt-6 rounded-lg border border-paper-edge bg-paper-deep">
-        <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
-          <ProgressWheel value={collectedTypes.size} total={types.length} size={46} stroke={6} />
-          <span className="font-display text-lg font-semibold uppercase tracking-wide text-ink">
-            Types
-          </span>
-          <span className="font-mono text-sm text-ink-soft">
-            {collectedTypes.size}/{types.length}
-          </span>
-          <span aria-hidden className="ml-auto text-ink-soft transition-transform group-open:rotate-180">
-            ▾
-          </span>
-        </summary>
-        <div className="border-t border-paper-edge px-4 pb-4 pt-3">
-          <CollectionGrid title="Types" items={typeItems} compact />
-        </div>
-      </details>
+      {/* The books — luggage-tag tabs into the universe to tick off */}
+      <h2 className="mt-9 border-b border-paper-edge pb-1.5 font-display text-sm font-semibold uppercase tracking-[0.08em] text-ink-soft">
+        The books
+      </h2>
+      <div className="mt-4 flex flex-wrap gap-2.5">
+        {([
+          { book: "type", label: "Types", dot: "var(--color-ink)", got: collectedTypes.size, total: types.length },
+          { book: "airline", label: "Carriers", dot: "var(--color-brass)", got: collectedAirlines.size, total: airlines.length },
+          { book: "rarity", label: "Rarity", dot: "var(--color-stamp)", got: collectedTypes.size, total: types.length },
+        ] as const).map((t) => (
+          <Link
+            key={t.book}
+            href={`/books?book=${t.book}`}
+            className="group relative flex items-center gap-2 rounded-[5px] border border-paper-edge bg-paper-deep py-2 pl-6 pr-3.5 font-display text-sm font-semibold uppercase tracking-wide text-ink-soft transition-colors hover:border-ink hover:text-ink"
+          >
+            <span
+              aria-hidden
+              className="absolute left-2.5 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full"
+              style={{ background: t.dot }}
+            />
+            {t.label}
+            <span className="font-mono text-xs font-normal normal-case text-ink-faint">
+              {t.got}/{t.total}
+            </span>
+          </Link>
+        ))}
+      </div>
 
-      <details className="group mt-4 rounded-lg border border-paper-edge bg-paper-deep">
-        <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
-          <ProgressWheel value={collectedAirlines.size} total={airlines.length} size={46} stroke={6} />
-          <span className="font-display text-lg font-semibold uppercase tracking-wide text-ink">
-            Carriers
-          </span>
-          <span className="font-mono text-sm text-ink-soft">
-            {collectedAirlines.size}/{airlines.length}
-          </span>
-          <span aria-hidden className="ml-auto text-ink-soft transition-transform group-open:rotate-180">
-            ▾
-          </span>
-        </summary>
-        <div className="border-t border-paper-edge px-4 pb-4 pt-3">
-          <CollectionGrid title="Carriers" items={carrierItems} compact />
-        </div>
-      </details>
-
+      {/* Airports seen — no universe to tick off, so shown as a tally, not a book */}
       {([
         { label: "Departures", data: departures },
         { label: "Destinations", data: destinations },
       ] as const).map(({ label, data }) =>
         data.length > 0 ? (
-          <details key={label} className="group mt-4 rounded-lg border border-paper-edge bg-paper-deep">
-            <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
-              <span className="font-display text-lg font-semibold uppercase tracking-wide text-ink">
-                {label}
-              </span>
-              <span className="font-mono text-sm text-ink-soft">{data.length}</span>
-              <span aria-hidden className="ml-auto text-ink-soft transition-transform group-open:rotate-180">
-                ▾
-              </span>
-            </summary>
-            <div className="flex flex-wrap gap-2 border-t border-paper-edge px-4 pb-4 pt-3">
+          <div key={label} className="mt-6">
+            <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
+              {label} <span className="text-ink-soft">· {data.length}</span>
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
               {data.map(([code, count]) => (
                 <AirportCode
                   key={code}
@@ -263,7 +208,7 @@ export default async function ScrapbookPage() {
                 />
               ))}
             </div>
-          </details>
+          </div>
         ) : null,
       )}
 

@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
+// Luggage-tag mark on teal — matches the new SkyDex tag identity.
 export default function AppleIcon() {
   return new ImageResponse(
     (
@@ -16,12 +17,12 @@ export default function AppleIcon() {
           background: "#0E7C86",
         }}
       >
-        <svg width="120" height="120" viewBox="-20 -20 40 40">
-          <path
-            d="M 0,-12 L 2,-2 L 15,5 L 15,8 L 2,5 L 1.5,11 L 4.5,14 L 4.5,16 L 0,14.5 L -4.5,16 L -4.5,14 L -1.5,11 L -2,5 L -15,8 L -15,5 L -2,-2 Z"
-            fill="#F2EBDC"
-            transform="rotate(20)"
-          />
+        <svg width="180" height="180" viewBox="0 0 100 100">
+          <rect x="22" y="20" width="56" height="60" rx="11" fill="#F2EBDC" />
+          <circle cx="50" cy="33" r="6" fill="#0E7C86" stroke="#B98A2E" strokeWidth="3" />
+          <g transform="translate(50,57) rotate(22) scale(1.05) translate(-32,-32)" fill="#0E7C86">
+            <path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z" />
+          </g>
         </svg>
       </div>
     ),

@@ -9,7 +9,7 @@ import { type ReactionState } from "@/lib/reactions";
 export const dynamic = "force-dynamic";
 
 const COLS =
-  "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin";
+  "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm";
 
 type FeedRow = {
   id: string;
@@ -27,6 +27,12 @@ type FeedRow = {
   destination: string | null;
   avatar_seed: string | null;
   is_admin: boolean | null;
+  flight_no: string | null;
+  painted_as: string | null;
+  operating_as: string | null;
+  eta: string | null;
+  gspeed_kt: number | null;
+  vspeed_fpm: number | null;
 };
 
 export default async function FeedPage() {
@@ -84,6 +90,22 @@ export default async function FeedPage() {
       title="Global feed"
       subtitle="Verified sightings from spotters around the world. Tap Comments to join in."
     >
+      {/* feed scope chips — Following/Nearby are upcoming */}
+      <div className="-mt-3 mb-6 flex gap-2">
+        <span className="rounded-full border border-ink bg-ink px-3.5 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper">
+          Latest
+        </span>
+        {["Following", "Nearby"].map((c) => (
+          <span
+            key={c}
+            title="Coming soon"
+            className="cursor-default rounded-full border border-paper-edge px-3.5 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-ink-faint"
+          >
+            {c}
+          </span>
+        ))}
+      </div>
+
       {devMode && (
         <p className="mb-5 font-mono text-xs text-stamp">
           Dev mode — showing unverified sightings; delete controls enabled.{" "}

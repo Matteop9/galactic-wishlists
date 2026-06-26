@@ -1,9 +1,12 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import ProfileSightings from "@/components/ProfileSightings";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth";
 import { type Sighting } from "@/components/SightingCard";
+import { RARITY_RANK, RARITY_COLOR } from "@/lib/rarity";
+import { airportName } from "@/lib/airports";
 
 export const dynamic = "force-dynamic";
 
@@ -51,6 +54,34 @@ function StatTile({ label, value, rank }: { label: string; value: number; rank: 
       <div className="font-mono text-[10px] uppercase tracking-wide text-ink-faint">{label}</div>
       <div className="mt-0.5 font-mono text-[11px] text-sky">{rank ? `#${rank}` : "—"}</div>
     </div>
+  );
+}
+
+// Compact "rarest catch" tile — rarity rail + reg + tier label, photo if any.
+function RareCatch({ s }: { s: Sighting }) {
+  const color = RARITY_COLOR[s.rarity] ?? "var(--color-paper-edge)";
+  return (
+    <Link
+      href={`/s/${s.id}`}
+      className="relative block overflow-hidden rounded-lg border-2 bg-paper-deep transition-transform hover:-translate-y-0.5"
+      style={{ borderColor: color }}
+    >
+      <span aria-hidden className="absolute inset-y-0 left-0 z-10 w-1.5" style={{ background: color }} />
+      <div className="relative h-[70px] bg-gradient-to-b from-[#9FC0D4] via-[#C4D6DF] to-[#DFE6E0]">
+        {s.photo_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={s.photo_url} alt="" className="h-full w-full object-cover" />
+        )}
+      </div>
+      <div className="px-2.5 py-1.5">
+        <div className="font-display text-base font-bold leading-none text-ink">
+          {s.registration || s.callsign || "Unknown"}
+        </div>
+        <div className="mt-1 font-mono text-[9px] uppercase tracking-wide" style={{ color }}>
+          {s.rarity}
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -106,27 +137,105 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
   const since = new Date(profile.created_at).toLocaleString("en-GB", {
     month: "short",
     year: "numeric",
-  });
+  }).toUpperCase();
+
+  // Two rarest verified catches for the headline strip.
+  const rarest = [...sightings]
+    .sort((a, b) => (RARITY_RANK[b.rarity] ?? 0) - (RARITY_RANK[a.rarity] ?? 0))
+    .slice(0, 2);
+
+  const homeName = airportName(profile.home_airport);
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8">
-      {/* header */}
-      <div className="flex items-center gap-4 border-b border-paper-edge pb-5">
-        <Avatar seed={profile.avatar_seed ?? profile.handle} admin={Boolean(profile.is_admin)} size={64} />
-        <div className="min-w-0">
-          <h1 className="truncate font-display text-3xl font-bold tracking-tight text-ink">
+      {/* cover band — teal gradient with a faint oversized plane glyph */}
+      <div className="relative h-28 overflow-hidden rounded-xl bg-gradient-to-r from-sky to-sky-deep">
+        <svg
+          aria-hidden
+          className="absolute right-7 top-5 rotate-[18deg] opacity-25"
+          width="130"
+          height="130"
+          viewBox="0 0 64 64"
+          fill="var(--color-paper)"
+        >
+          <path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z" />
+        </svg>
+      </div>
+
+      {/* avatar overlaps the band; handle + meta + edit */}
+      <div className="flex items-end gap-4 px-1">
+        <span className="-mt-10 shrink-0 rounded-full border-4 border-paper bg-paper shadow-[0_4px_10px_rgba(32,38,43,0.2)]">
+          <Avatar seed={profile.avatar_seed ?? profile.handle} admin={Boolean(profile.is_admin)} size={78} />
+        </span>
+        <div className="min-w-0 flex-1 pb-1">
+          <h1 className="truncate font-display text-3xl font-bold leading-none tracking-tight text-ink">
             @{profile.handle}
           </h1>
-          <p className="font-mono text-xs text-ink-soft">
-            {profile.home_airport ? `Home ${profile.home_airport} · ` : ""}Spotter since {since}
+          <p className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-ink-soft">
+            {profile.home_airport ? `${profile.home_airport} · ` : ""}SINCE {since}
           </p>
         </div>
         {isOwner && (
-          <a href="/settings" className="ml-auto sd-btn sd-btn--log !px-3 !py-1.5 !text-xs">
-            Settings
+          <a href="/settings" className="mb-1 sd-btn sd-btn--log !px-3.5 !py-1.5 !text-xs">
+            Edit
           </a>
         )}
       </div>
+
+      {/* stat strip */}
+      <div className="mt-4 flex overflow-hidden rounded-lg border border-paper-edge bg-paper-deep">
+        {([
+          { label: "Sightings", value: String(stats?.spots_all ?? sightings.length), accent: false },
+          { label: "Types", value: String(stats?.types ?? 0), accent: false },
+          { label: "Rank", value: stats?.spots_all_rank ? `#${stats.spots_all_rank}` : "—", accent: true },
+        ] as const).map((cell, i) => (
+          <div
+            key={cell.label}
+            className={`flex-1 px-3 py-3 text-center ${i < 2 ? "border-r border-paper-edge" : ""}`}
+          >
+            <div
+              className={`font-display text-2xl font-bold leading-none ${
+                cell.accent ? "text-brass" : "text-ink"
+              }`}
+            >
+              {cell.value}
+            </div>
+            <div className="mt-1 font-mono text-[9px] uppercase tracking-wide text-ink-soft">
+              {cell.label}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* home base luggage tag */}
+      {profile.home_airport && (
+        <div className="mt-4 flex items-center gap-2.5">
+          <span className="relative rounded-[5px] bg-ink py-1.5 pl-5 pr-3.5 font-display text-base font-bold tracking-wide text-paper">
+            <span
+              aria-hidden
+              className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-paper"
+            />
+            {profile.home_airport}
+          </span>
+          <span className="text-sm text-ink-soft">
+            Home base{homeName ? ` · ${homeName}` : ""}
+          </span>
+        </div>
+      )}
+
+      {/* rarest catches */}
+      {rarest.length > 0 && (
+        <section className="mt-6">
+          <h2 className="border-b border-paper-edge pb-1.5 font-display text-sm font-semibold uppercase tracking-[0.08em] text-ink-soft">
+            Rarest catches
+          </h2>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            {rarest.map((s) => (
+              <RareCatch key={s.id} s={s} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* favourites */}
       {featured.length > 0 && (

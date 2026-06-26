@@ -1,24 +1,8 @@
-<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex uncommon stamp">
-<defs>
-    <style>
-      .arc{font-family:"IBM Plex Mono","Consolas",monospace;font-weight:600;letter-spacing:0.14em;}
-      .lbl{font-family:"Saira Condensed","Oswald",sans-serif;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
-      .hex{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.06em;}
-    </style>
-    <!-- plane glyph reused across all tiers -->
-    <g id="plane">
-      <path d="M 0,-12 L 2,-2 L 15,5 L 15,8 L 2,5 L 1.5,11 L 4.5,14 L 4.5,16 L 0,14.5 L -4.5,16 L -4.5,14 L -1.5,11 L -2,5 L -15,8 L -15,5 L -2,-2 Z"/>
-    </g>
-  </defs>
-<g transform="translate(60,60)">
-    <circle r="44" fill="none" stroke="#3E7A5A" stroke-width="3"/>
-    <circle r="37" fill="none" stroke="#3E7A5A" stroke-width="1.2"/>
-    <path id="u-top" d="M -31,-3 A 31 31 0 0 1 31,-3" fill="none"/>
-    <text class="arc" fill="#3E7A5A" font-size="8"><textPath href="#u-top" startOffset="50%" text-anchor="middle">UNCOMMON</textPath></text>
-    <!-- base tick row -->
-    <g stroke="#3E7A5A" stroke-width="1.4">
-      <line x1="-12" y1="30" x2="-12" y2="35"/><line x1="0" y1="31" x2="0" y2="36"/><line x1="12" y1="30" x2="12" y2="35"/>
-    </g>
-    <use href="#plane" fill="#3E7A5A" transform="rotate(20) scale(1.05)"/>
-  </g>
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Uncommon">
+  <circle cx="40" cy="40" r="36" fill="#3E7A5A"></circle>
+  <circle cx="40" cy="40" r="30" fill="none" stroke="#F2EBDC" stroke-width="1.2" stroke-opacity="0.5"></circle>
+  <path id="ar-u" d="M18 40 A22 22 0 0 1 62 40" fill="none"></path>
+  <text font-family="&#39;Saira Condensed&#39;,sans-serif" font-weight="600" letter-spacing="0.13em" font-size="7.5" fill="#F2EBDC"><textPath href="#ar-u" startOffset="50%" text-anchor="middle">UNCOMMON</textPath></text>
+  <g transform="translate(40,40) rotate(24) scale(0.58) translate(-32,-32)" fill="#F2EBDC"><path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z"></path></g>
+  <g fill="#F2EBDC"><circle cx="35" cy="60" r="2"></circle><circle cx="45" cy="60" r="2"></circle></g>
 </svg>

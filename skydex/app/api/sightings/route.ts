@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { lookupRoute, lookupAircraftType, resolveRouteDirection } from "@/lib/route";
 import { lookupLiveByHex } from "@/lib/aircraft";
+import { lookupFr24ByRegistration, lookupFr24AirlineName } from "@/lib/fr24";
 import { normalizeBrand, airlineFromCallsign } from "@/lib/airlines";
 import { specialLivery } from "@/lib/specialLiveries";
-
-const MANUFACTURER_RE =
-  /^(Airbus|Boeing|McDonnell Douglas|Embraer|Bombardier|De Havilland|Lockheed|Ilyushin|Antonov|Tupolev|Cessna|Piper|Saab|Learjet|Gulfstream|Aerospatiale\/BAC|North American|Supermarine|Avro|General Dynamics)\s+/i;
+import { aircraftTypeName, aircraftTypeDisplay } from "@/lib/aircraftTypes";
 
 /**
  * POST /api/sightings  (multipart form: `photo` file optional, `meta` JSON)
@@ -44,61 +42,54 @@ export async function POST(request: Request) {
     photoPath = path;
   }
 
-  // Route lookup from the callsign (best-effort). adsbdb's callsign→route is not
-  // position-aware (airlines reuse a callsign across both legs), so we correct the
-  // leg direction against the plane's actual track + position and only persist a
-  // route when the geometry confirms it — see resolveRouteDirection in lib/route.ts.
-  // LICENSING NOTE (FR24-acquisition goal): adsbdb's terms discourage incorporating
-  // route data into another DB; persisting origin/destination here re-opens that
-  // flag (see research/data-licences.md) — revisit before any commercial launch.
-  const route = await lookupRoute(meta.callsign ?? null);
-  const directed = resolveRouteDirection(
-    route,
-    meta.planeLat ?? null,
-    meta.planeLon ?? null,
-    meta.track ?? null,
+  // Aircraft type + registration come from the live feed (airplanes.live, sent in
+  // meta). Type/reg are occasionally absent at capture (a position with no aircraft-DB
+  // match — brand-new deliveries etc.); re-query the live feed by hex to recover them
+  // (the airframe is overhead, so it's trackable).
+  let aircraftType: string | null = meta.aircraftType ?? null;
+  let registration: string | null = meta.registration ?? null;
+  if ((!aircraftType || !registration) && meta.icao24) {
+    const live = await lookupLiveByHex(meta.icao24);
+    aircraftType = aircraftType ?? live.aircraftType;
+    registration = registration ?? live.registration;
+  }
+
+  // Authoritative enrichment from Flightradar24 (the commercially-licensed source we
+  // persist — see lib/fr24.ts). One filtered `full` lookup by registration returns the
+  // direction-correct origin/destination, operator, ETA, and live flight state — and
+  // backfills type/reg if the live feed lacked them. This replaces adsbdb (route +
+  // airframe) and the old position-based leg-direction heuristic: FR24 already knows
+  // the leg being flown. Best-effort — nulls if FR24 is unavailable or reg is missing.
+  const fr = await lookupFr24ByRegistration(registration);
+  registration = registration ?? fr.registration;
+  aircraftType = aircraftType ?? fr.aircraftType;
+  const origin = fr.originIata;
+  const destination = fr.destinationIata;
+
+  // Carrier = consolidated brand. FR24's operator code → authoritative name; fall back
+  // to the callsign-derived operator when FR24 has nothing.
+  const fr24Airline = fr.operatingAs ? await lookupFr24AirlineName(fr.operatingAs) : null;
+  const brand = normalizeBrand(fr24Airline) ?? airlineFromCallsign(meta.callsign ?? null);
+
+  // Wet-lease: airframe wears one airline's livery but is operated by another.
+  const wetLease = Boolean(
+    fr.paintedAs && fr.operatingAs && fr.paintedAs !== fr.operatingAs,
   );
 
-  // Carrier = consolidated brand, sourced from the route data (fallback: callsign).
-  const brand = normalizeBrand(route.airline) ?? airlineFromCallsign(meta.callsign ?? null);
-
-  // Type comes from the live feed, but it's sometimes absent at capture (a feed
-  // can return a position with no aircraft-database match, e.g. brand-new
-  // deliveries, or the fallback provider served the candidate). Recover it without
-  // losing the catch:
-  //  1. Re-query the live feeds by hex — the airframe is overhead, so it's
-  //     trackable, and the providers' databases differ on newer airframes.
-  //  2. Fall back to adsbdb's static DB (covers airframes no longer airborne).
-  let aircraftType: string | null = meta.aircraftType ?? null;
-  let typeDesc: string | null = meta.typeDesc ?? null;
-  let registration: string | null = meta.registration ?? null;
-  if (!aircraftType && meta.icao24) {
-    const live = await lookupLiveByHex(meta.icao24);
-    if (live.aircraftType) {
-      aircraftType = live.aircraftType;
-      typeDesc = typeDesc ?? live.typeDesc;
-      registration = registration ?? live.registration;
-    }
-  }
-  if (!aircraftType) {
-    const t = await lookupAircraftType(registration ?? meta.icao24 ?? null);
-    if (t.icaoType) {
-      aircraftType = t.icaoType;
-      typeDesc = typeDesc ?? t.typeDesc;
-      registration = registration ?? t.registration;
-    }
-  }
-
-  const typeName = aircraftType
-    ? typeDesc
-      ? typeDesc.replace(MANUFACTURER_RE, "").trim()
-      : aircraftType
-    : null;
+  // Friendly type name comes from our own license-clean ICAO→name map (lib/aircraftTypes),
+  // NOT the live feed's `desc` (airplanes.live's free tier is non-commercial). Unknown
+  // codes fall back to the raw ICAO code until curated.
+  const typeName = aircraftType ? aircraftTypeDisplay(aircraftType) ?? aircraftType : null;
 
   // Grow the reference universe so it always matches the live data.
   if (aircraftType) {
     await supabase.from("aircraft_types").upsert(
-      { code: aircraftType, name: typeDesc ?? aircraftType, display_name: typeName, rarity: "common" },
+      {
+        code: aircraftType,
+        name: aircraftTypeName(aircraftType) ?? aircraftType,
+        display_name: typeName,
+        rarity: "common",
+      },
       { onConflict: "code", ignoreDuplicates: true },
     );
   }
@@ -123,8 +114,8 @@ export async function POST(request: Request) {
   const discoveries = {
     type: isNew("aircraft_type", aircraftType),
     airline: isNew("airline", brand),
-    origin: isNew("origin", directed.origin),
-    destination: isNew("destination", directed.destination),
+    origin: isNew("origin", origin),
+    destination: isNew("destination", destination),
   };
 
   // Rarity is driven by the aircraft type's tier in the universe.
@@ -155,11 +146,17 @@ export async function POST(request: Request) {
       registration: registration,
       aircraft_type: aircraftType,
       airline: brand,
-      origin: directed.origin,
-      destination: directed.destination,
+      origin: origin,
+      destination: destination,
       altitude_m: meta.altM ?? null,
       bearing: meta.bearing ?? null,
       elevation: meta.elevation ?? null,
+      flight_no: fr.flightNo,
+      painted_as: fr.paintedAs,
+      operating_as: fr.operatingAs,
+      eta: fr.eta,
+      gspeed_kt: fr.gspeedKt,
+      vspeed_fpm: fr.vspeedFpm,
       rarity,
       verified: Boolean(meta.verified),
     })
@@ -183,5 +180,6 @@ export async function POST(request: Request) {
     discoveries,
     typeName,
     specialLivery: liv?.livery ?? null,
+    wetLease,
   });
 }

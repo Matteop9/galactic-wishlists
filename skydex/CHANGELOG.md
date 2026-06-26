@@ -2,6 +2,59 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.0 — 2026-06-26
+
+Full visual redesign — **"The Logbook"** direction (paper + teal identity, sharpened). Structural + asset + motion pass; design tokens (`app/globals.css` `@theme` + `files/tokens.css`) are unchanged, so the colour/type system is intact. Nothing here touches Supabase, auth, FR24, or data shapes — presentation, assets, and one new client nav component.
+
+### Added
+- **Luggage-tag logo.** New `public/logo-tag.svg` (full lockup with string + eyelet) and `public/logo-tag-mark.svg` (cropped tag body for the header). Font-family `<style>` baked into the SVGs so the wordmark renders correctly when loaded via `<img>`. Mirrored to `files/logo-tag.svg`.
+- **Bolder rarity stamps.** Drop-in replaced `public/stamps/{common,uncommon,rare,epic,legendary}.svg` with pip-based versions (tier = fill colour + pip count; common is intentionally hollow; escalating ornament uncommon→legendary). Same filenames, so no code references changed. Mirrored to `files/stamp-*.svg`.
+- **Bottom tab bar (all viewports).** New `components/MobileTabBar.tsx` (client) — fixed bar with labelled icons (Spot · Scrapbook · Feed · Boards · Profile), active = `bg-sky-tint`, inner row centred at `max-w-md`. Mounted in `app/layout.tsx` for signed-in users; `<body>` gets `pb-[68px]` so content + footer clear it. This is now the **single** primary nav — the desktop icon row was removed from `TopNav` (which keeps the logo + account menu); `NavLinks.tsx` is no longer used.
+- **Redesign motion** (`app/globals.css`): `sd-tag-swing` (idle hero/empty-state sway), `sd-stamp-thunk` (verify reward), `sd-card-rise` (card entrance) keyframes + helper classes, all gated on `prefers-reduced-motion`.
+- **Profile** (`app/u/[handle]/page.tsx`): teal cover band with a faint oversized plane glyph, avatar framed overlapping the band (`border-4 border-paper`), a 3-cell stat strip (Sightings / Types / Rank), a home-base luggage tag (airport code + name via `airportName`), and a "Rarest catches" 2-col grid.
+- **Books** (`app/books/page.tsx`): All / Missing filter via a `view` search param (server-side, no client JS).
+
+### Changed
+- **Header** (`components/TopNav.tsx`): text wordmark → `logo-tag-mark.svg`.
+- **Favicon / PWA** (`app/icon.tsx`, `app/apple-icon.tsx`): plane-on-teal → luggage-tag mark (tag body + eyelet + plane glyph), kept font-free so `ImageResponse` needs no external font fetch.
+- **Home** (`app/page.tsx`): swinging `logo-tag` hero hung from a pin, CTA pair, and a 01/02/03 "how it works" step strip; release log kept below.
+- **Scrapbook** (`app/scrapbook/page.tsx`): the four collapsible collection `<details>` (Types/Carriers/Departures/Destinations) replaced by luggage-tag book tabs into `/books`; Departures/Destinations kept as a compact tally; empty state gets the swinging tag. Removed now-unused `CollectionGrid`/`airlineLogoUrl` usage.
+- **Books** (`app/books/page.tsx`): tabs restyled as luggage tags (left dot coloured by book kind, active = `bg-ink text-paper`); polaroid slots → clean ruled boxes (collected = photo + small stamp bottom-right; empty = dashed + hatch + mono "NOT YET SPOTTED").
+- **Cards** (`components/SightingCard.tsx`): added a rarity-colour rail down the left edge (skipped on special-livery cards, which keep their animated border as the signal).
+- **Feed** (`app/feed/page.tsx`): Latest / Following / Nearby scope chips (Following/Nearby marked upcoming).
+- **Comments trigger** (`components/Comments.tsx`): restyled to a sky-toned link with a speech-bubble icon and an "N comments" count.
+- **ProgressWheel** (`components/ProgressWheel.tsx`): now a client component — the progress arc sweeps up from empty on mount (skipped under reduced-motion).
+
+### Notes
+- Verified via clean `next build` + production-server screenshots (dev Turbopack HMR socket blocks the screenshot tool's network-idle wait; a `skydex-prod` launch config on port 3100 was added for visual checks).
+
+## v0.2.7 — 2026-06-25
+
+### Changed
+- **License-clean aircraft type names.** New `lib/aircraftTypes.ts` — a curated, static ICAO type designator → friendly-name map (compiled from public ICAO Doc 8643 designators), with `aircraftTypeName()` (full, e.g. "Airbus A320neo") and `aircraftTypeDisplay()` (manufacturer-stripped short form). This **replaces airplanes.live's `desc`** as the source of the names persisted into the `aircraft_types` universe — that feed's free tier is non-commercial, so persisting its strings was a licensing risk (last open item from the data-licence review). The live feed / FR24 still supply the ICAO code; this map supplies the name.
+  - `app/api/sightings/route.ts`: type-name persistence now reads the static map (removed the `typeDesc`/`MANUFACTURER_RE` derivation and the unused `typeDesc` variable). Unknown codes fall back to the raw ICAO code until curated.
+  - **Re-seeded the 79 existing `aircraft_types` rows** from the map (`name` + `display_name` via the same manufacturer-strip regex, computed in SQL to match the app helper). Fixes inconsistent live-feed-derived names (`AGUSTA AW-109 Grand` → `AgustaWestland AW109`, `BEECH 200 Super King Air` → `Beechcraft King Air 200`, `ATR-72-500` → `ATR 72-500`, etc.). Rarity tiers untouched.
+
+### Notes
+- Completes the persisted-data licence cleanup: routes/operator/reg now come from FR24 (v0.2.6) and type names from our own map — the card's persisted layer no longer depends on non-commercial sources.
+
+## v0.2.6 — 2026-06-25
+
+### Added
+- **Flightradar24 capture enrichment (hybrid data architecture).** airplanes.live still drives the live map / nearby feed (transient, nothing persisted); at capture, a single filtered FR24 `full` lookup by **registration** now provides the authoritative data we persist on the card. New `lib/fr24.ts` (`lookupFr24ByRegistration`, `lookupFr24AirlineName`) — IPv4 undici dispatcher, `Authorization: Bearer $FR24_API_TOKEN` + `Accept-Version: v1`, best-effort (returns nulls on missing token / rate-limit / outage so a capture never fails).
+  - `app/api/sightings/route.ts`: FR24 is the source of **origin/destination** (direction-correct — FR24 knows the leg, so the old position-based heuristic is gone), **operator** (`operating_as` → `lookupFr24AirlineName` → `normalizeBrand`, fallback callsign), and backfills **type/registration** when the live feed lacked them. Persists new fields and a derived **wet-lease** flag.
+  - New `sightings` columns (migration `add_fr24_flight_fields`): `flight_no`, `painted_as`, `operating_as`, `eta`, `gspeed_kt`, `vspeed_fpm`. Mirrored into the `feed_sightings` and `all_sightings` views.
+- **Richer cards** (`components/SightingCard.tsx`, wired through `app/feed/page.tsx` `COLS`/`FeedRow`): IATA flight number (`flight_no`, falls back to callsign), a **PHASE** line (Climbing / Cruising / Descending + ground speed, from FR24 `vspeed`/`gspeed` at capture), an **ETA** line, and a **Wet-lease** badge when `painted_as ≠ operating_as`.
+
+### Changed / Removed
+- **adsbdb retired.** Deleted `lib/route.ts` (`lookupRoute` / `lookupAircraftType` / `resolveRouteDirection`) — FR24 supplies routes + airframe natively. This **closes the adsbdb route-persistence licensing flag** (their terms discouraged incorporating routes into another DB) and removes the leg-direction heuristic entirely.
+
+### Notes
+- **Cost (Explorer / $9, 60k credits/mo):** ~8 credits per capture (filtered `full`) + ~1 (airline-info) ≈ 9/capture → ~6,600 captures/month. FR24 live positions only return *airborne* aircraft — fine at capture.
+- **Requires `FR24_API_TOKEN`** in env (local `.env.local` + Vercel project env). Without it, capture still works but FR24 fields stay null and carrier falls back to the callsign map.
+- **Friendly type names + rarity stay in `aircraft_types`** (our curated/self-growing universe) — FR24 has no aircraft-type catalogue, only the ICAO code. Type `display_name` is still seeded from airplanes.live's `desc` at capture; making that fully license-clean (a static ICAO→name seed) is part of the upcoming **backfill-data cleanup review**.
+- **Liveries unchanged** — special/retro liveries are reg-specific and invisible to FR24 (`painted_as` only gives the painted brand); the curated `lib/specialLiveries.ts` reg-match stays. FR24 adds wet-lease detection as a separate, new signal.
+
 ## v0.2.5 — 2026-06-25
 
 ### Added

@@ -1,6 +1,10 @@
-// Pure SVG completion donut — no client JS, renders fine inside a server
-// component. Used large in the scrapbook hero and small in collapsed headers.
-// Echoes the brand's circular rarity-stamp motif with a thin dotted inner ring.
+"use client";
+
+import { useEffect, useState } from "react";
+
+// Completion donut — echoes the brand's circular rarity-stamp motif with a thin
+// dotted inner ring. The progress arc sweeps up from empty on mount (earned,
+// never instant); the sweep is skipped under prefers-reduced-motion.
 
 type Props = {
   value: number;
@@ -24,6 +28,20 @@ export default function ProgressWheel({
   const c = 2 * Math.PI * r;
   const pct = total > 0 ? Math.min(1, value / total) : 0; // guards /0 and value > total
   const showSub = size >= 88;
+
+  // Start empty, then sweep to the target offset once mounted.
+  const [filled, setFilled] = useState(false);
+  useEffect(() => {
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setFilled(true);
+      return;
+    }
+    const id = requestAnimationFrame(() => setFilled(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-1.5">
@@ -50,8 +68,9 @@ export default function ProgressWheel({
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={`${c} ${c}`}
-          strokeDashoffset={c * (1 - pct)}
+          strokeDashoffset={filled ? c * (1 - pct) : c}
           transform={`rotate(-90 ${cx} ${cx})`}
+          style={{ transition: "stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1)" }}
         />
         <text
           x={cx}

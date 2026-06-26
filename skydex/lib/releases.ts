@@ -12,6 +12,33 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.0",
+    date: "2026-06-26",
+    changes: [
+      "A fresh look — “The Logbook”. New luggage-tag logo, bolder rarity stamps, and a warmer, more field-journal feel across the whole app.",
+      "New bottom tab bar — Spot, Scrapbook, Feed, Boards and Profile are always one tap away, on phone and desktop alike.",
+      "Redesigned profile — a teal cover band, your home-base tag, a clean stats strip and your rarest catches up top.",
+      "Books got tidier — luggage-tag tabs, cleaner slots, and an All / Missing filter.",
+      "Subtle motion — the hero tag sways, progress wheels sweep up as you collect, and the verified stamp lands with a satisfying thunk. All of it respects your reduced-motion setting.",
+    ],
+  },
+  {
+    version: "0.2.7",
+    date: "2026-06-25",
+    changes: [
+      "Tidier aircraft type names — every type now uses one clean, consistent name (so it's “AgustaWestland AW109”, not “AGUSTA AW-109 Grand”). Your existing cards updated automatically.",
+    ],
+  },
+  {
+    version: "0.2.6",
+    date: "2026-06-25",
+    changes: [
+      "Cards now carry richer, more accurate flight info — your sighting is verified against Flightradar24 at the moment of capture, so the route, operator and registration are spot-on.",
+      "New on every card: the plane's phase of flight when you caught it (climbing, cruising or descending) and its speed, plus the arrival time.",
+      "Spotted a wet-lease? Aircraft flying for one airline but painted in another's colours now get a Wet-lease badge.",
+    ],
+  },
+  {
     version: "0.2.5",
     date: "2026-06-25",
     changes: [

@@ -137,6 +137,62 @@ body {
   }
 }
 
+/* ---- Redesign motion ---------------------------------------------------- */
+/* All loops are decorative and gated on reduced-motion (handled below). */
+@keyframes sd-tag-swing {
+  0%,
+  100% {
+    transform: rotate(-3.2deg);
+  }
+  50% {
+    transform: rotate(3.2deg);
+  }
+}
+@keyframes sd-stamp-thunk {
+  0% {
+    transform: rotate(-44deg) scale(1.9);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  18% {
+    transform: rotate(-7deg) scale(0.9);
+  }
+  26% {
+    transform: rotate(-15deg) scale(1.05);
+  }
+  100% {
+    transform: rotate(-13deg) scale(1);
+    opacity: 1;
+  } /* settle & hold */
+}
+@keyframes sd-card-rise {
+  0% {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* idle sway on the hero/empty-state luggage tag */
+.sd-tag-swing {
+  transform-origin: top center;
+  animation: sd-tag-swing 3.8s ease-in-out infinite;
+}
+/* fires once when a sighting verifies — not an infinite loop in production */
+.sd-stamp-thunk {
+  transform-origin: center;
+  animation: sd-stamp-thunk 0.6s cubic-bezier(0.2, 0.9, 0.2, 1.1) both;
+}
+/* feed/scrapbook card entrance; stagger with an inline animation-delay */
+.sd-card-rise {
+  animation: sd-card-rise 0.45s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sd-livery {
     animation: none;
@@ -144,5 +200,10 @@ body {
   }
   .sd-livery-badge {
     animation: none;
+  }
+  .sd-tag-swing,
+  .sd-stamp-thunk,
+  .sd-card-rise {
+    animation: none !important;
   }
 }

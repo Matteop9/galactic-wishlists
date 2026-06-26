@@ -3,7 +3,9 @@ import { Saira_Condensed, Source_Serif_4, IBM_Plex_Mono, Caveat } from "next/fon
 import Link from "next/link";
 import "./globals.css";
 import TopNav from "@/components/TopNav";
+import MobileTabBar from "@/components/MobileTabBar";
 import GuideModal from "@/components/GuideModal";
+import { getViewer } from "@/lib/auth";
 import { CURRENT_VERSION } from "@/lib/releases";
 
 const saira = Saira_Condensed({
@@ -41,15 +43,18 @@ export const viewport: Viewport = {
   themeColor: "#0E7C86",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const { user, handle } = await getViewer();
+
   return (
     <html
       lang="en"
       className={`${saira.variable} ${sourceSerif.variable} ${plexMono.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      {/* pad the page bottom so content + footer clear the fixed tab bar */}
+      <body className={`flex min-h-full flex-col ${user ? "pb-[68px]" : ""}`}>
         <TopNav />
         <div className="flex flex-1 flex-col">{children}</div>
         <GuideModal />
@@ -63,6 +68,7 @@ export default function RootLayout({
             </span>
           </div>
         </footer>
+        {user && <MobileTabBar handle={handle} />}
       </body>
     </html>
   );

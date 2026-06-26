@@ -1,19 +1,7 @@
-<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SkyDex common stamp">
-<defs>
-    <style>
-      .arc{font-family:"IBM Plex Mono","Consolas",monospace;font-weight:600;letter-spacing:0.14em;}
-      .lbl{font-family:"Saira Condensed","Oswald",sans-serif;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
-      .hex{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.06em;}
-    </style>
-    <!-- plane glyph reused across all tiers -->
-    <g id="plane">
-      <path d="M 0,-12 L 2,-2 L 15,5 L 15,8 L 2,5 L 1.5,11 L 4.5,14 L 4.5,16 L 0,14.5 L -4.5,16 L -4.5,14 L -1.5,11 L -2,5 L -15,8 L -15,5 L -2,-2 Z"/>
-    </g>
-  </defs>
-<g transform="translate(60,60)">
-    <circle r="44" fill="none" stroke="#6E7A6A" stroke-width="3"/>
-    <path id="c-top" d="M -30,-3 A 30 30 0 0 1 30,-3" fill="none"/>
-    <text class="arc" fill="#6E7A6A" font-size="8"><textPath href="#c-top" startOffset="50%" text-anchor="middle">COMMON</textPath></text>
-    <use href="#plane" fill="#6E7A6A" transform="rotate(20) scale(1.05)"/>
-  </g>
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Common">
+  <circle cx="40" cy="40" r="35" fill="#F2EBDC" stroke="#6E7A6A" stroke-width="3.5"></circle>
+  <path id="ar-c" d="M18 40 A22 22 0 0 1 62 40" fill="none"></path>
+  <text font-family="&#39;Saira Condensed&#39;,sans-serif" font-weight="600" letter-spacing="0.14em" font-size="8" fill="#6E7A6A"><textPath href="#ar-c" startOffset="50%" text-anchor="middle">COMMON</textPath></text>
+  <g transform="translate(40,40) rotate(24) scale(0.58) translate(-32,-32)" fill="#6E7A6A"><path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z"></path></g>
+  <circle cx="40" cy="60" r="2.1" fill="#6E7A6A"></circle>
 </svg>
