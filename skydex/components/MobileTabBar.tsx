@@ -55,12 +55,13 @@ export default function MobileTabBar({ handle }: { handle: string | null }) {
   // the Books/Liveries collections live in the Scrapbook, account pages under
   // Profile. Without this, those pages leave no tab lit; and matching bare
   // "/u/" lit Profile on *anyone's* profile, not just your own.
+  // Spot sits in the middle as the raised primary action — it's THE button.
   const tabs = [
-    { key: "/spot", href: "/spot", label: "Spot", also: [] as string[] },
     { key: "/scrapbook", href: "/scrapbook", label: "Scrapbook", also: ["/books", "/liveries"] },
     { key: "/feed", href: "/feed", label: "Feed", also: [] as string[] },
+    { key: "/spot", href: "/spot", label: "Spot", also: [] as string[] },
     { key: "/leaderboards", href: "/leaderboards", label: "Boards", also: [] as string[] },
-    { key: "profile", href: profileHref, label: "Profile", also: ["/settings", "/profile"] },
+    { key: "profile", href: profileHref, label: "Profile", also: ["/settings", "/profile", "/review"] },
   ];
 
   return (
@@ -68,12 +69,40 @@ export default function MobileTabBar({ handle }: { handle: string | null }) {
       aria-label="Primary"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-paper-edge bg-paper-deep pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="mx-auto flex max-w-md items-center justify-around px-2 pt-2 pb-2">
+      <div className="mx-auto flex max-w-md items-end justify-around px-2 pt-2 pb-2">
         {tabs.map((t) => {
           const active =
             pathname === t.href ||
             pathname.startsWith(`${t.href}/`) ||
             t.also.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+
+          if (t.key === "/spot") {
+            return (
+              <Link
+                key={t.key}
+                href={t.href}
+                aria-label={t.label}
+                aria-current={active ? "page" : undefined}
+                className="-mt-7 flex flex-col items-center gap-0.5"
+              >
+                <span
+                  className={`flex h-14 w-14 items-center justify-center rounded-full border-4 border-paper-deep shadow-lg transition-colors [&>svg]:h-7 [&>svg]:w-7 ${
+                    active ? "bg-stamp text-paper" : "bg-sky text-paper hover:bg-sky-deep"
+                  }`}
+                >
+                  {ICONS[t.key]}
+                </span>
+                <span
+                  className={`font-display text-[10px] font-bold uppercase tracking-wide ${
+                    active ? "text-stamp-deep" : "text-sky-deep"
+                  }`}
+                >
+                  {t.label}
+                </span>
+              </Link>
+            );
+          }
+
           return (
             <Link
               key={t.key}

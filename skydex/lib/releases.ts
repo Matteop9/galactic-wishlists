@@ -12,6 +12,15 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.5",
+    date: "2026-07-12",
+    changes: [
+      "The Spot button moved to the middle of the bar and got big — it's THE button. Tap the teal circle, catch a plane.",
+      "Community review is here (Settings → Community review): help keep the feed honest by checking random spotters' photos really show an aircraft. Unlocks once you have 5 verified sightings.",
+      "Photos that three independent reviewers can't see a plane in are hidden from the feed and go to an admin for a final decision — honest yes-votes cancel out no-votes, reviews are anonymous and randomly assigned, and nobody can pick whose photos they review.",
+    ],
+  },
+  {
     version: "0.3.4",
     date: "2026-07-12",
     changes: [

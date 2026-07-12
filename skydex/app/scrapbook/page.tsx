@@ -30,7 +30,7 @@ export default async function ScrapbookPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: sightingData }, { data: typeData }, { data: airlineData }] =
+  const [{ data: sightingData }, { data: typeData }, { data: airlineData }, { data: warningData }] =
     await Promise.all([
       supabase
         .from("sightings")
@@ -41,6 +41,15 @@ export default async function ScrapbookPage() {
         .order("created_at", { ascending: false }),
       supabase.from("aircraft_types").select("code, name, display_name, rarity"),
       supabase.from("airlines").select("name"),
+      // Community-review warnings on this user's photos (active = pending an
+      // admin verdict; upheld = removal confirmed).
+      supabase
+        .from("photo_warnings")
+        .select("status, created_at")
+        .eq("user_id", user!.id)
+        .in("status", ["active", "upheld"])
+        .order("created_at", { ascending: false })
+        .limit(10),
     ]);
 
   const rows = (sightingData ?? []) as Row[];
@@ -110,6 +119,10 @@ export default async function ScrapbookPage() {
     );
   }
 
+  const warnings = (warningData ?? []) as { status: string; created_at: string }[];
+  const pendingWarnings = warnings.filter((w) => w.status === "active").length;
+  const upheldWarnings = warnings.filter((w) => w.status === "upheld").length;
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-paper-edge pb-2">
@@ -118,6 +131,21 @@ export default async function ScrapbookPage() {
           Open as book
         </Link>
       </div>
+
+      {(pendingWarnings > 0 || upheldWarnings > 0) && (
+        <div className="mt-6 rounded-lg border border-stamp/60 bg-stamp-tint/40 p-4 text-sm text-ink">
+          <p className="font-display font-semibold uppercase tracking-wide text-stamp-deep">
+            Photo warning
+          </p>
+          <p className="mt-1">
+            Please make sure you can see the plane in your picture.
+            {pendingWarnings > 0 &&
+              ` ${pendingWarnings} of your photos ${pendingWarnings === 1 ? "was" : "were"} flagged by community review — other spotters couldn't see an aircraft in ${pendingWarnings === 1 ? "it" : "them"}. ${pendingWarnings === 1 ? "It's" : "They're"} hidden from the public feed while an admin takes a look.`}
+            {upheldWarnings > 0 &&
+              ` ${upheldWarnings} ${upheldWarnings === 1 ? "photo was" : "photos were"} removed from the public feed after review.`}
+          </p>
+        </div>
+      )}
 
       {/* hero — completion is the front-and-centre of the scrapbook */}
       <div className="mt-6 rounded-lg border border-paper-edge bg-paper-deep p-5">

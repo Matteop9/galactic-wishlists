@@ -49,6 +49,29 @@ export async function resolveReport(id: string): Promise<AdminResult> {
   return { ok: true };
 }
 
+/** Admin-only: uphold (approve=true) or overturn a community photo flag.
+ *  The verdict itself is enforced in the resolve_photo_flag RPC (is_admin()). */
+export async function resolvePhotoFlag(
+  sightingId: string,
+  approve: boolean,
+): Promise<AdminResult> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const { error } = await supabase.rpc("resolve_photo_flag", {
+    p_sighting: sightingId,
+    p_approve: approve,
+  });
+  if (error) return { error: error.message };
+
+  revalidatePath("/reports");
+  revalidatePath("/feed");
+  return { ok: true };
+}
+
 /** Admin-only: mark a feedback item resolved. */
 export async function resolveFeedback(id: string): Promise<AdminResult> {
   const supabase = await createClient();

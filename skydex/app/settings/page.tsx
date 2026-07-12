@@ -71,6 +71,21 @@ export default async function SettingsPage() {
         <OpenGuideButton />
       </div>
 
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">
+        <div>
+          <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink">
+            Community review
+          </h2>
+          <p className="mt-1 text-sm text-ink-soft">
+            Check random spotters&apos; photos really show an aircraft. Unlocks at 5 verified
+            sightings.
+          </p>
+        </div>
+        <a href="/review" className="sd-btn sd-btn--log">
+          Start reviewing
+        </a>
+      </div>
+
       {profile?.is_admin && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">
           <div>

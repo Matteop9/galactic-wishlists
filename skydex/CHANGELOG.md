@@ -2,6 +2,21 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.5 — 2026-07-12
+
+Centre Spot button + community photo review (feedback 2026-07-12).
+
+### Added
+- **Community photo review.** New `/review` page (linked from Settings): signed-in spotters are served random, anonymous photos from other users and answer one question — can you see an aircraft? All trust logic lives in SECURITY DEFINER RPCs (migration `community_photo_review`):
+  - `review_next()` — server-side random assignment (reviewers can't choose or identify targets, never see the same photo twice, own photos excluded).
+  - `review_vote(p_sighting, p_can_see)` — enforces reviewer standing (≥5 verified sightings), a 100-votes/24h cap, one vote per user per photo (PK), and the **net-3 rule**: a photo is flagged only when `no − yes ≥ 3`, so honest yes-votes cancel a brigade.
+  - At net-3: `sightings.review_status = 'flagged'` → the photo disappears from every public surface (`feed_sightings` view now filters flagged/removed; feed, profiles, share pages all read it), the owner gets a `photo_warnings` row, and the sighting joins the admin queue. **The community can only hide — nothing is deleted or unverified without an admin.**
+  - `resolve_photo_flag(p_sighting, p_approve)` (admin-only): approve → `removed` + `verified = false` (drops off leaderboards too), warning upheld; reject → `cleared` (restored and permanently immune from re-flagging), warning withdrawn.
+  - Owner warning banner on the Scrapbook ("Please make sure you can see the plane in your picture"), distinguishing pending flags from upheld removals.
+  - Admin queue on `/reports`: flagged photo, vote tally, owner, Approve removal / Reject–restore buttons (`resolvePhotoFlag` server action).
+  - New tables `photo_reviews`, `photo_warnings` (RLS: own/admin read only; writes only via RPCs).
+- **Centre Spot button** (`components/MobileTabBar.tsx`): tab order is now Scrapbook · Feed · **SPOT** · Boards · Profile, with Spot as a raised 56 px teal circle (stamp-red when active) breaking the bar line — the unmissable primary action. `/review` lights the Profile tab.
+
 ## v0.3.4 — 2026-07-12
 
 Map newness colouring, round 2 (user feedback on v0.3.3's single-dimension gold).
