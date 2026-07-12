@@ -3,8 +3,17 @@ import { fetch as undiciFetch, Agent } from "undici";
 
 export const runtime = "nodejs";
 
-const dispatcher = new Agent({ connect: { family: 4, timeout: 10_000 } });
+const dispatcher = new Agent({
+  connect: { family: 4, timeout: 10_000 },
+  headersTimeout: 10_000,
+  bodyTimeout: 10_000,
+});
 const UA = "SkyDex/0.1 (+https://skydex-two.vercel.app)";
+
+// Airframe photos change rarely and Planespotters is a rate-limited courtesy
+// API — let Vercel's edge cache absorb repeat card renders.
+const CACHE_HIT = { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800" };
+const CACHE_MISS = { "Cache-Control": "public, s-maxage=300" };
 
 /**
  * GET /api/aircraft-photo?reg=G-XWBA
@@ -13,14 +22,16 @@ const UA = "SkyDex/0.1 (+https://skydex-two.vercel.app)";
  */
 export async function GET(request: Request) {
   const reg = (new URL(request.url).searchParams.get("reg") ?? "").trim();
-  if (!reg) return NextResponse.json({ photo: null });
+  if (!/^[A-Za-z0-9-]{3,12}$/.test(reg)) {
+    return NextResponse.json({ photo: null }, { headers: CACHE_MISS });
+  }
 
   try {
     const res = await undiciFetch(
       `https://api.planespotters.net/pub/photos/reg/${encodeURIComponent(reg)}`,
       { headers: { "User-Agent": UA }, dispatcher },
     );
-    if (!res.ok) return NextResponse.json({ photo: null });
+    if (!res.ok) return NextResponse.json({ photo: null }, { headers: CACHE_MISS });
     const json = (await res.json()) as {
       photos?: {
         thumbnail_large?: { src: string };
@@ -30,15 +41,18 @@ export async function GET(request: Request) {
       }[];
     };
     const p = json.photos?.[0];
-    if (!p) return NextResponse.json({ photo: null });
-    return NextResponse.json({
-      photo: {
-        src: p.thumbnail_large?.src ?? p.thumbnail?.src ?? null,
-        link: p.link ?? null,
-        photographer: p.photographer ?? null,
+    if (!p) return NextResponse.json({ photo: null }, { headers: CACHE_HIT });
+    return NextResponse.json(
+      {
+        photo: {
+          src: p.thumbnail_large?.src ?? p.thumbnail?.src ?? null,
+          link: p.link ?? null,
+          photographer: p.photographer ?? null,
+        },
       },
-    });
+      { headers: CACHE_HIT },
+    );
   } catch {
-    return NextResponse.json({ photo: null });
+    return NextResponse.json({ photo: null }, { headers: CACHE_MISS });
   }
 }

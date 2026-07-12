@@ -2,6 +2,84 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.3 — 2026-07-12
+
+Rarity overhaul part 1 + spot-map upgrades, driven by the in-app feedback backlog (all three 2026-07-11 items + review of the 2026-06-16 items, three of which were already shipped and are now marked resolved).
+
+### Added
+- **Field-of-view cone on the spot map** (`components/SpotMap.tsx`): a brass wedge anchored on the observer, rotating live with the device compass (`heading` prop from `app/spot/page.tsx`). Half-angle is `FOV_HALF_ANGLE = 22°` — deliberately the same as the capture logic's `HEADING_TOL`, so the cone IS the window the camera will accept a target in; length is 45% of the range ring. Hidden (empty geometry) when no compass is available (desktop).
+- **Per-kind plane icons on the map**: four silhouettes — `heli` (rotor cross), `light` (straight-wing GA/bizjet), `narrow` (the original jet), `wide` (bigger, swept) — sized differently so a widebody reads bigger than a Cessna at a glance. Classification via new `mapKind()` in `lib/aircraftTypes.ts`: curated category first, ADS-B emitter category (`A1/A2` light, `A5` heavy, `A7` rotorcraft) as fallback for uncurated codes. Heavy military transports (C-17, A400M, KC-135…) render as widebodies.
+- **"New for you" marker colouring**: map markers turn brass when the aircraft's type is missing from the viewer's collection (own distinct `aircraft_type` set, fetched client-side under the existing own-rows RLS; refreshed after each capture). Tracking stays stamp-red and wins; a small legend explains both.
+- **`category` + military parsing from the live feed** (`lib/aircraft.ts`): readsb `category` (ADS-B emitter class) and `dbFlags` bit 0 (military) now parsed in both the area feed and the capture-time hex lookup, and passed through `/api/flights`.
+- **Category taxonomy in code** (`lib/aircraftTypes.ts`): `aircraftCategory()` — a curated ICAO-code→category map mirroring the DB taxonomy (widebody/narrowbody/regional/business jet/general aviation/freighter/helicopter/military/vintage), plus ~45 new helicopter/military/special-freighter entries in the name map (AW139 family, H125–H225, Robinsons, Bells, Sikorskys; C-17, KC-135, P-8, F-15/18/35, Typhoon, Osprey…; Beluga/BelugaXL/Dreamlifter).
+- **24h Europe traffic snapshot tooling** (`scripts/rarity-snapshot.mjs` + `scripts/rarity-apply.mjs`): half-hourly sampling at 9 points whose 250 nm circles tile core Europe, counting **distinct airframes per type per 24 h** (a loitering helicopter counts once, like an A320 that crossed once). Primary source adsb.lol (ODbL, commercial-safe; also validates the planned live-feed swap), airplanes.live fallback. Resumable state in `scripts/.rarity-state.json` (gitignored); the apply script prints the distribution and emits reviewable re-tier SQL (measured tier → DB-side category floors → absent-types-to-rare → per-sighting rarity backfill). Zero FR24 credits.
+
+### Changed
+- **DB migration `helicopter_category_rarity_floors_and_universe_rpc`:**
+  - `helicopter` added to the category taxonomy + a CHECK constraint locks the allowed set; the 15 uncategorised self-grown types backfilled (all 5 helicopters, ATRs, bizjets, King Air/PC-12/PC-7, A300-600F).
+  - **Category rarity floors** via new `rarity_rank()`/`rarity_floor()` SQL helpers: helicopter ≥ uncommon, military ≥ rare, vintage ≥ epic — applied to existing rows (the five helicopters left `common`) and enforced on all future registrations. Fixes "helicopters shouldn't go down as common by default".
+  - **`register_aircraft_type()` RPC** (SECURITY DEFINER) replaces the client-path universe upsert: new types default to `max('rare', floor(category))` instead of flat `common` — a type absent from the curated universe is rare by construction. Also self-heals placeholder names and fills missing categories on re-capture. The `aircraft_types_insert_auth` RLS policy is **dropped** — the REST API can no longer insert reference rows at all (stronger than the v0.3.1 hardening).
+  - `sightings.rarity` backfilled to match the universe (leaderboards already join live; cards/profiles now agree).
+- `/api/sightings` derives the category for new types from the curated map first, then live ADS-B hints (military flag / rotorcraft emitter class).
+
+### Feedback housekeeping
+- Marked resolved (shipped in earlier releases): airport-code full names (v0.1.24), scrapbook collected/missing filter (v0.1.24/v0.3.0), more pronounced rarity graphics (v0.1.24 border + v0.3.0 stamps/rail).
+- Still open by design: measured re-tier lands when the 24 h snapshot completes (part 2); reactions shipped previously but the popularity-sorted feed + capture-of-the-day remain backlog; airline logos in scrapbook pending the licensing review.
+
+## v0.3.2 — 2026-07-06
+
+Pre-marketing pass, part 1: auth simplification + analytics.
+
+### Changed
+- **Google-only sign-in.** Magic-link email auth removed (`app/login/actions.ts` deleted; `app/login/page.tsx` is now a single Google OAuth button with a note for previous email users). Removes the Supabase-SMTP deliverability dependency from the signup funnel entirely. Lockout check ran against `auth.identities` first: every active email-only user is on gmail.com (Supabase auto-links Google sign-ins by verified email), so no one loses their logbook. **Manual step: disable the Email provider in Supabase Auth → Providers** (which also moots the leaked-password-protection advisory). The login page also validates the `next` param the same way the callback does.
+- **Vercel Web Analytics** (`@vercel/analytics`, `<Analytics />` in `app/layout.tsx`). Cookieless page-view + route analytics. **Manual step: enable Analytics on the project in the Vercel dashboard.**
+
+## v0.3.1 — 2026-07-06
+
+Security + reliability hardening pass, driven by a full from-scratch review (4 parallel review agents over security/auth, data layer, UI, and architecture, plus live inspection of the Supabase RLS policies and advisors).
+
+### Security
+- **Server-side capture verification** (`app/api/sightings/route.ts`). The client's `verified`/`rarity` flags are now ignored; the server re-queries the claimed hex on airplanes.live and checks the plane is airborne, within 80 km of the observer, and (when pointing data is present) within a generous bearing/elevation cone. Upstream outage → lenient (photo captures still verify); upstream healthy but plane not airborne → unverified. `lookupLiveByHex` extended to return live position + `found`/`unavailable` distinction.
+- **Input validation on capture.** Every `meta` field is type/range-checked (`lat`/`lon`/`heading`/`pitch`/icao24 format/etc.); malformed JSON → 400 instead of an unhandled 500; `capturedAt` clamped to [now−10 min, now+2 min] so daily boards can't be farmed by backdating.
+- **Rate limiting + dedupe.** Max 5 captures/user/minute (DB count check); duplicate capture of the same airframe within ±5 min → friendly 409, backed by a DB exclusion constraint `sightings_no_rapid_dupes` (btree_gist, epoch-range, scoped to rows after 2026-07-06 so 3 pre-existing dupes are untouched). Concurrent-insert 23P01 mapped to 409.
+- **Photo upload hardening.** 8 MB cap, magic-byte sniff (JPEG/PNG/WebP only — client MIME not trusted on a public bucket), extension follows sniffed type, and a failed insert now removes the just-uploaded photo instead of leaking storage.
+- **Open redirect closed** in `app/auth/callback/route.ts` — `next` must match `^\/(?![\/\\])`.
+- **DB migration `harden_capture_and_universe_tables`:** `aircraft_types`/`airlines` INSERT policies replaced `WITH CHECK (true)` with format validation (ICAO code regex, `rarity = 'common'`, length caps) so the REST API can't inject junk reference rows or self-graded rarities; `handle_new_user()` EXECUTE revoked from `anon`/`authenticated`.
+- **Security headers** (`next.config.ts`): nosniff, X-Frame-Options DENY, Referrer-Policy, Permissions-Policy (camera/geolocation self-only).
+- Profanity filter now folds NFKD + Cyrillic/Greek homoglyphs before collapsing (single-homoglyph bypass closed).
+- `*.zip` gitignored (public repo).
+
+### Reliability / correctness
+- **Spot page sensor lifecycle:** `watchPosition` id and the orientation listener are now cleaned up on unmount (GPS/compass no longer run forever after navigating away); poll effects no longer restart per GPS fix (coords state is identity-stable within ~11 m) so `/api/flights` really polls at 6 s.
+- **Android compass:** uses `deviceorientationabsolute` where available (plain alpha is not north-referenced on Android).
+- **Observer altitude** (GPS) now feeds both the detection cone (`/api/flights?alt=`) and capture verification — spotters at elevation get correct angles. Missing aircraft altitude is now `null` (excluded from the cone) instead of a fake 0 m.
+- **Undici timeouts** (`headersTimeout`/`bodyTimeout`) on all three external clients — a stalled upstream can no longer hang routes toward the function timeout.
+- **FR24:** callsign-keyed fallback lookup when the airframe has no registration (previously those captures silently got no enrichment); callsign cross-check discards a mismatched (stale-reg) FR24 record; airline names cached in-instance for 24 h (~1 credit saved per repeat-carrier capture).
+- Unknown callsign prefixes no longer pollute the `airlines` universe (bare 3-letter codes are shown on the card but not upserted).
+- Discovery check is now 4 indexed probes instead of scanning the user's entire sighting history per capture.
+- Card times render in UTC ("Zulu") via deterministic formatting — kills the hydration mismatch flash and reads correctly for aviation.
+- Profile "Rarest catches" now probes each rarity tier over the whole history (was: derived from the 60 most recent rows).
+- Feed/board error states: LeaderboardBoard distinguishes RPC failure from an empty board; ReportButton no longer shows "Reported" when the insert failed; comment delete confirms + surfaces errors; comment Enter respects the busy flag and IME composition.
+
+### Performance
+- Proxy matcher excludes `/api/*` + metadata routes (the polled `/api/flights` was paying a Supabase auth round-trip per call), and the has-handle check is cached in a `sd-has-handle` cookie instead of a per-request `profiles` query.
+- Vercel region `fra1` → `lhr1` (Supabase is eu-west-2/London).
+- `/api/aircraft-photo` responses now carry `s-maxage=86400` (+ reg format validation); card photos get `loading="lazy"`.
+
+### UX / a11y / SEO
+- New `components/useDialog.ts` hook (Escape close, body scroll lock, focus on open) wired into Lightbox, DiscoveryMoment and GuideModal, all now `role="dialog" aria-modal`; card photo zoom is keyboard-operable with real alt text; UserMenu closes on Escape and its backdrop now sits above the tab bar.
+- iOS PWA: `viewportFit: "cover"` + body clearance `calc(68px + env(safe-area-inset-bottom))`; manifest gains a maskable icon entry.
+- GuideModal only auto-opens on core routes (not legal pages or shared card links); tab bar active states fixed (own profile only; Books/Liveries light Scrapbook; Settings lights Profile).
+- Admin reports now link to the reported sighting; ShareButton falls back to a copy prompt when share/clipboard are unavailable.
+- `metadataBase` + root OpenGraph block, new `app/robots.ts` + `app/sitemap.ts` (static routes + public profiles).
+
+### Housekeeping
+- Deleted dead `components/NavLinks.tsx` + `components/CollectionGrid.tsx`; rewrote the boilerplate README; `package.json` version synced to the app version (0.3.1).
+
+### Notes
+- **Requires no new env vars.** `NEXT_PUBLIC_SITE_URL` is optional (falls back to skydex-two.vercel.app).
+- Remaining manual items: enable leaked-password protection in Supabase Auth settings; decide whether `research/` should stay in the public repo; consider `next/image` adoption (needs `images.remotePatterns`).
+
 ## v0.3.0 — 2026-06-26
 
 Full visual redesign — **"The Logbook"** direction (paper + teal identity, sharpened). Structural + asset + motion pass; design tokens (`app/globals.css` `@theme` + `files/tokens.css`) are unchanged, so the colour/type system is intact. Nothing here touches Supabase, auth, FR24, or data shapes — presentation, assets, and one new client nav component.

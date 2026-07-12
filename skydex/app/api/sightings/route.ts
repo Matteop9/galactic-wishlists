@@ -1,15 +1,66 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { lookupLiveByHex } from "@/lib/aircraft";
-import { lookupFr24ByRegistration, lookupFr24AirlineName } from "@/lib/fr24";
+import {
+  lookupFr24ByRegistration,
+  lookupFr24ByCallsign,
+  lookupFr24AirlineName,
+  EMPTY_FR24,
+} from "@/lib/fr24";
 import { normalizeBrand, airlineFromCallsign } from "@/lib/airlines";
 import { specialLivery } from "@/lib/specialLiveries";
-import { aircraftTypeName, aircraftTypeDisplay } from "@/lib/aircraftTypes";
+import { aircraftTypeName, aircraftTypeDisplay, aircraftCategory } from "@/lib/aircraftTypes";
+import { haversineMeters, bearingDeg, elevationDeg, angularDiff } from "@/lib/geo";
+
+// ---- Abuse / verification tuning ----
+const RATE_LIMIT_PER_MINUTE = 5;
+const DUPE_WINDOW_MS = 5 * 60 * 1000; // matches the DB exclusion constraint
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+const MAX_CAPTURE_AGE_MS = 10 * 60 * 1000; // how far back capturedAt may claim
+const MAX_CLOCK_SKEW_MS = 2 * 60 * 1000; // how far ahead (client clock drift)
+const VERIFY_MAX_DISTANCE_KM = 80; // plane must be plausibly visible
+// Generous cones: the plane moves between capture and our re-query, and phone
+// compasses drift. These block fabrication, not honest users.
+const VERIFY_HEADING_TOL = 60;
+const VERIFY_PITCH_TOL = 45;
+
+// ---- Input validation helpers (meta is untrusted client JSON) ----
+function num(v: unknown, min: number, max: number): number | null {
+  const n = typeof v === "number" ? v : typeof v === "string" ? Number(v) : NaN;
+  return Number.isFinite(n) && n >= min && n <= max ? n : null;
+}
+function str(v: unknown, maxLen: number, pattern?: RegExp): string | null {
+  if (typeof v !== "string") return null;
+  const s = v.trim();
+  if (!s || s.length > maxLen) return null;
+  if (pattern && !pattern.test(s)) return null;
+  return s;
+}
+
+// Magic-byte sniff — the client-declared MIME type is not trusted (public bucket).
+function sniffImageType(bytes: Uint8Array): { ext: string; mime: string } | null {
+  if (bytes.length > 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff)
+    return { ext: "jpg", mime: "image/jpeg" };
+  if (
+    bytes.length > 8 &&
+    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47
+  )
+    return { ext: "png", mime: "image/png" };
+  if (
+    bytes.length > 12 &&
+    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 &&
+    bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50
+  )
+    return { ext: "webp", mime: "image/webp" };
+  return null;
+}
 
 /**
  * POST /api/sightings  (multipart form: `photo` file optional, `meta` JSON)
- * Stores a sighting for the signed-in user. A verified capture carries a photo;
- * a casual "log from map" has no photo and verified=false.
+ * Stores a sighting for the signed-in user. A verified capture carries a photo
+ * AND passes the server-side geometry check against the live feed; a casual
+ * "log from map" has no photo and verified=false. The client's `verified` flag
+ * is ignored — verification is decided here.
  */
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -20,47 +71,140 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
-  const form = await request.formData();
+  // ---- Parse + validate the untrusted meta blob ----
+  let form: FormData;
+  try {
+    form = await request.formData();
+  } catch {
+    return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
+  }
   const photo = form.get("photo");
-  const meta = JSON.parse(String(form.get("meta") ?? "{}"));
+  let meta: Record<string, unknown>;
+  try {
+    const parsed: unknown = JSON.parse(String(form.get("meta") ?? "{}"));
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error();
+    meta = parsed as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: "Invalid meta JSON" }, { status: 400 });
+  }
 
-  let photoPath: string | null = null;
-  if (photo instanceof File && photo.size > 0) {
-    const path = `${user.id}/${crypto.randomUUID()}.jpg`;
-    const { error: upErr } = await supabase.storage
+  const lat = num(meta.lat, -90, 90);
+  const lon = num(meta.lon, -180, 180);
+  const heading = num(meta.heading, 0, 360);
+  const pitch = num(meta.pitch, -90, 90);
+  const altM = num(meta.altM, -500, 30_000);
+  const obsAltM = num(meta.obsAltM, -500, 9_000) ?? 0; // observer GPS altitude (MSL)
+  const bearing = num(meta.bearing, 0, 360);
+  const elevation = num(meta.elevation, -90, 90);
+  const icao24 = str(meta.icao24, 6, /^[0-9a-fA-F~]{3,6}$/)?.toLowerCase() ?? null;
+  const callsign = str(meta.callsign, 12);
+  let registration = str(meta.registration, 12);
+  let aircraftType = str(meta.aircraftType, 4, /^[A-Za-z0-9]{2,4}$/)?.toUpperCase() ?? null;
+
+  // capturedAt: clamp to [now - 10 min, now + 2 min]; anything else (missing,
+  // malformed, backdated to farm daily boards) becomes server time.
+  const now = Date.now();
+  let capturedAtMs = now;
+  const rawCapturedAt = meta.capturedAt;
+  const claimed =
+    typeof rawCapturedAt === "number"
+      ? rawCapturedAt
+      : typeof rawCapturedAt === "string"
+        ? Date.parse(rawCapturedAt)
+        : NaN;
+  if (
+    Number.isFinite(claimed) &&
+    claimed >= now - MAX_CAPTURE_AGE_MS &&
+    claimed <= now + MAX_CLOCK_SKEW_MS
+  ) {
+    capturedAtMs = claimed;
+  }
+  const capturedAtIso = new Date(capturedAtMs).toISOString();
+
+  // ---- Rate limit: cheap DB count, no extra infra ----
+  const { count: recentCount } = await supabase
+    .from("sightings")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .gte("created_at", new Date(now - 60_000).toISOString());
+  if ((recentCount ?? 0) >= RATE_LIMIT_PER_MINUTE) {
+    return NextResponse.json(
+      { error: "Too many captures — give it a minute." },
+      { status: 429 },
+    );
+  }
+
+  // ---- Duplicate pre-check (before FR24, so replays don't burn credits).
+  // The DB exclusion constraint is the real guard; this gives a friendly answer.
+  if (icao24) {
+    const { data: dupe } = await supabase
       .from("sightings")
-      .upload(path, photo, {
-        contentType: photo.type || "image/jpeg",
-        upsert: false,
-      });
-    if (upErr) {
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("icao24", icao24)
+      .gte("captured_at", new Date(capturedAtMs - DUPE_WINDOW_MS).toISOString())
+      .lte("captured_at", new Date(capturedAtMs + DUPE_WINDOW_MS).toISOString())
+      .limit(1);
+    if (dupe && dupe.length > 0) {
       return NextResponse.json(
-        { error: `Photo upload failed: ${upErr.message}` },
-        { status: 500 },
+        { error: "You've already logged this aircraft just now." },
+        { status: 409 },
       );
     }
-    photoPath = path;
   }
 
-  // Aircraft type + registration come from the live feed (airplanes.live, sent in
-  // meta). Type/reg are occasionally absent at capture (a position with no aircraft-DB
-  // match — brand-new deliveries etc.); re-query the live feed by hex to recover them
-  // (the airframe is overhead, so it's trackable).
-  let aircraftType: string | null = meta.aircraftType ?? null;
-  let registration: string | null = meta.registration ?? null;
-  if ((!aircraftType || !registration) && meta.icao24) {
-    const live = await lookupLiveByHex(meta.icao24);
-    aircraftType = aircraftType ?? live.aircraftType;
-    registration = registration ?? live.registration;
+  // ---- Server-side verification against the live feed ----
+  // Re-query the claimed hex: it must be airborne, near the observer, and (when
+  // the client supplied pointing data) roughly where the camera was pointing.
+  // The live record is also the authoritative source for type/reg — preferred
+  // over the client's copy of the same feed.
+  const live = icao24 ? await lookupLiveByHex(icao24) : null;
+  if (live?.found) {
+    aircraftType = live.aircraftType ?? aircraftType;
+    registration = live.registration ?? registration;
   }
 
-  // Authoritative enrichment from Flightradar24 (the commercially-licensed source we
-  // persist — see lib/fr24.ts). One filtered `full` lookup by registration returns the
-  // direction-correct origin/destination, operator, ETA, and live flight state — and
-  // backfills type/reg if the live feed lacked them. This replaces adsbdb (route +
-  // airframe) and the old position-based leg-direction heuristic: FR24 already knows
-  // the leg being flown. Best-effort — nulls if FR24 is unavailable or reg is missing.
-  const fr = await lookupFr24ByRegistration(registration);
+  const hasPhoto = photo instanceof File && photo.size > 0;
+  let verified = false;
+  if (hasPhoto && icao24 && lat != null && lon != null && live) {
+    if (live.found && live.lat != null && live.lon != null) {
+      const groundM = haversineMeters(lat, lon, live.lat, live.lon);
+      const liveBearing = bearingDeg(lat, lon, live.lat, live.lon);
+      const liveElevation =
+        live.altM != null ? elevationDeg(groundM, live.altM - obsAltM) : null;
+      const nearEnough = groundM / 1000 <= VERIFY_MAX_DISTANCE_KM;
+      const headingOk =
+        heading != null && angularDiff(heading, liveBearing) <= VERIFY_HEADING_TOL;
+      const pitchOk =
+        pitch == null ||
+        liveElevation == null ||
+        Math.abs(pitch - liveElevation) <= VERIFY_PITCH_TOL;
+      verified = nearEnough && headingOk && pitchOk;
+    } else if (live.unavailable) {
+      // Upstream outage — no verdict either way. Don't punish an honest capture;
+      // the photo + a moment-ago /api/flights match got them here.
+      verified = true;
+    }
+    // live.found === false with upstream healthy → the plane isn't airborne.
+    // That's a fabricated or stale capture: stays unverified.
+  }
+
+  // ---- FR24 enrichment (authoritative persisted card data) ----
+  let fr = await lookupFr24ByRegistration(registration);
+  if (!fr.registration && callsign) {
+    // Reg-less airframe: fall back to a callsign-keyed lookup.
+    fr = await lookupFr24ByCallsign(callsign);
+  }
+  // Cross-check: the FR24 record is keyed on registration; if its callsign
+  // contradicts the one we captured, the reg was stale — a mismatched flight's
+  // route/operator must not be persisted onto this card.
+  if (
+    fr.callsign &&
+    callsign &&
+    fr.callsign.trim().toUpperCase() !== callsign.trim().toUpperCase()
+  ) {
+    fr = EMPTY_FR24;
+  }
   registration = registration ?? fr.registration;
   aircraftType = aircraftType ?? fr.aircraftType;
   const origin = fr.originIata;
@@ -69,7 +213,7 @@ export async function POST(request: Request) {
   // Carrier = consolidated brand. FR24's operator code → authoritative name; fall back
   // to the callsign-derived operator when FR24 has nothing.
   const fr24Airline = fr.operatingAs ? await lookupFr24AirlineName(fr.operatingAs) : null;
-  const brand = normalizeBrand(fr24Airline) ?? airlineFromCallsign(meta.callsign ?? null);
+  const brand = normalizeBrand(fr24Airline) ?? airlineFromCallsign(callsign);
 
   // Wet-lease: airframe wears one airline's livery but is operated by another.
   const wetLease = Boolean(
@@ -81,41 +225,51 @@ export async function POST(request: Request) {
   // codes fall back to the raw ICAO code until curated.
   const typeName = aircraftType ? aircraftTypeDisplay(aircraftType) ?? aircraftType : null;
 
-  // Grow the reference universe so it always matches the live data.
+  // Grow the reference universe so it always matches the live data. Server-side
+  // RPC (SECURITY DEFINER): computes the rarity default from the category —
+  // curated map first, live ADS-B hints (military flag / rotorcraft emitter
+  // class) for codes we haven't curated yet. Client REST inserts are gone.
   if (aircraftType) {
-    await supabase.from("aircraft_types").upsert(
-      {
-        code: aircraftType,
-        name: aircraftTypeName(aircraftType) ?? aircraftType,
-        display_name: typeName,
-        rarity: "common",
-      },
-      { onConflict: "code", ignoreDuplicates: true },
-    );
+    const category =
+      aircraftCategory(aircraftType) ??
+      (live?.military ? "military" : live?.adsbCategory === "A7" ? "helicopter" : null);
+    await supabase.rpc("register_aircraft_type", {
+      p_code: aircraftType,
+      p_name: aircraftTypeName(aircraftType) ?? aircraftType,
+      p_display_name: typeName,
+      p_category: category,
+    });
   }
-  if (brand) {
+  // Only real brand names grow the airlines universe — a bare 3-letter ICAO code
+  // (unknown callsign prefix) would permanently inflate everyone's completion
+  // denominator. The card still shows the raw code; it just isn't a checklist entry.
+  if (brand && !/^[A-Z0-9]{3}$/.test(brand)) {
     await supabase.from("airlines").upsert({ name: brand }, { onConflict: "name", ignoreDuplicates: true });
   }
 
-  // What's new for this user — computed before the insert so it excludes the
-  // capture we're about to make. Powers the discovery moment.
-  const { data: prior } = await supabase
-    .from("sightings")
-    .select("aircraft_type, airline, origin, destination")
-    .eq("user_id", user.id);
-  const priorRows = (prior ?? []) as {
-    aircraft_type: string | null;
-    airline: string | null;
-    origin: string | null;
-    destination: string | null;
-  }[];
-  const isNew = (key: keyof (typeof priorRows)[number], val: string | null) =>
-    Boolean(val) && !priorRows.some((p) => p[key] === val);
+  // What's new for this user — four targeted probes (not a scan of their whole
+  // history), computed before the insert so it excludes the capture itself.
+  const seenBefore = async (col: string, val: string | null): Promise<boolean> => {
+    if (!val) return false;
+    const { data } = await supabase
+      .from("sightings")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq(col, val)
+      .limit(1);
+    return (data?.length ?? 0) > 0;
+  };
+  const [seenType, seenAirline, seenOrigin, seenDestination] = await Promise.all([
+    seenBefore("aircraft_type", aircraftType),
+    seenBefore("airline", brand),
+    seenBefore("origin", origin),
+    seenBefore("destination", destination),
+  ]);
   const discoveries = {
-    type: isNew("aircraft_type", aircraftType),
-    airline: isNew("airline", brand),
-    origin: isNew("origin", origin),
-    destination: isNew("destination", destination),
+    type: Boolean(aircraftType) && !seenType,
+    airline: Boolean(brand) && !seenAirline,
+    origin: Boolean(origin) && !seenOrigin,
+    destination: Boolean(destination) && !seenDestination,
   };
 
   // Rarity is driven by the aircraft type's tier in the universe.
@@ -129,28 +283,55 @@ export async function POST(request: Request) {
     if (typeRow?.rarity) rarity = typeRow.rarity;
   }
 
+  // ---- Photo upload — validated, and last before the insert so a failed
+  // insert can clean up after itself instead of leaking storage. ----
+  let photoPath: string | null = null;
+  if (hasPhoto) {
+    const file = photo as File;
+    if (file.size > MAX_PHOTO_BYTES) {
+      return NextResponse.json({ error: "Photo too large (8 MB max)." }, { status: 413 });
+    }
+    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    const kind = sniffImageType(head);
+    if (!kind) {
+      return NextResponse.json(
+        { error: "Photo must be a JPEG, PNG, or WebP image." },
+        { status: 415 },
+      );
+    }
+    const path = `${user.id}/${crypto.randomUUID()}.${kind.ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("sightings")
+      .upload(path, file, { contentType: kind.mime, upsert: false });
+    if (upErr) {
+      return NextResponse.json(
+        { error: `Photo upload failed: ${upErr.message}` },
+        { status: 500 },
+      );
+    }
+    photoPath = path;
+  }
+
   const { data, error } = await supabase
     .from("sightings")
     .insert({
       user_id: user.id,
       photo_path: photoPath,
-      captured_at: meta.capturedAt
-        ? new Date(meta.capturedAt).toISOString()
-        : new Date().toISOString(),
-      lat: meta.lat ?? null,
-      lon: meta.lon ?? null,
-      heading: meta.heading ?? null,
-      pitch: meta.pitch ?? null,
-      icao24: meta.icao24 ?? null,
-      callsign: meta.callsign ?? null,
+      captured_at: capturedAtIso,
+      lat,
+      lon,
+      heading,
+      pitch,
+      icao24,
+      callsign,
       registration: registration,
       aircraft_type: aircraftType,
       airline: brand,
       origin: origin,
       destination: destination,
-      altitude_m: meta.altM ?? null,
-      bearing: meta.bearing ?? null,
-      elevation: meta.elevation ?? null,
+      altitude_m: altM,
+      bearing,
+      elevation,
       flight_no: fr.flightNo,
       painted_as: fr.paintedAs,
       operating_as: fr.operatingAs,
@@ -158,12 +339,23 @@ export async function POST(request: Request) {
       gspeed_kt: fr.gspeedKt,
       vspeed_fpm: fr.vspeedFpm,
       rarity,
-      verified: Boolean(meta.verified),
+      verified,
     })
     .select()
     .single();
 
   if (error) {
+    // Don't leak the photo when the row never landed.
+    if (photoPath) {
+      await supabase.storage.from("sightings").remove([photoPath]);
+    }
+    // 23P01 = the exclusion constraint caught a concurrent duplicate.
+    if (error.code === "23P01") {
+      return NextResponse.json(
+        { error: "You've already logged this aircraft just now." },
+        { status: 409 },
+      );
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

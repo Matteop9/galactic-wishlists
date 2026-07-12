@@ -29,6 +29,22 @@ export type Sighting = {
   vspeed_fpm?: number | null;
 };
 
+// Times render in UTC ("Zulu"), the aviation convention — and, unlike
+// toLocaleString, identical on server and client, so cards don't flash a
+// hydration-mismatched hour on load.
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const two = (n: number) => String(n).padStart(2, "0");
+function zuluTime(iso: string): string | null {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? null : `${two(d.getUTCHours())}:${two(d.getUTCMinutes())}Z`;
+}
+function zuluDateTime(iso: string): string | null {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime())
+    ? null
+    : `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${zuluTime(iso)}`;
+}
+
 export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () => void }) {
   const airline = s.airline ?? airlineFromCallsign(s.callsign);
   const livery = specialLivery(s.registration);
@@ -46,16 +62,8 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
           ? "Descending"
           : "Cruising"
       : null;
-  const eta = s.eta
-    ? new Date(s.eta).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
-    : null;
-  const seen = new Date(s.captured_at).toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const eta = s.eta ? zuluTime(s.eta) : null;
+  const seen = zuluDateTime(s.captured_at) ?? s.captured_at;
 
   const rarityColor = RARITY_COLOR[s.rarity] ?? "var(--color-paper-edge)";
 
@@ -80,10 +88,29 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
           onOpen && s.photo_url ? "cursor-zoom-in" : ""
         }`}
         onClick={onOpen && s.photo_url ? onOpen : undefined}
+        {...(onOpen && s.photo_url
+          ? {
+              role: "button" as const,
+              tabIndex: 0,
+              "aria-label": `View photo of ${s.registration || s.callsign || "sighting"}`,
+              onKeyDown: (e: React.KeyboardEvent) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onOpen();
+                }
+              },
+            }
+          : {})}
       >
         {s.photo_url && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={s.photo_url} alt="" className="h-full w-full object-cover" />
+          <img
+            src={s.photo_url}
+            alt={`Sighting photo of ${s.registration || s.callsign || "an aircraft"}`}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
         )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

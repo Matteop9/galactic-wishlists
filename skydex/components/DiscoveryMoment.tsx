@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ShareButton from "@/components/ShareButton";
+import { useDialog } from "@/components/useDialog";
 
 export type DiscoveryResult = {
   id: string;
@@ -35,6 +36,7 @@ export default function DiscoveryMoment({
   onClose: () => void;
 }) {
   const [pop, setPop] = useState<Popularity | null>(null);
+  const dialogRef = useDialog(onClose);
 
   // Just-in-time: the screen renders instantly, the numbers fill in a beat later.
   useEffect(() => {
@@ -79,7 +81,12 @@ export default function DiscoveryMoment({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-ink/95 p-4"
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sighting captured"
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-ink/95 p-4 outline-none"
       onClick={onClose}
     >
       <div

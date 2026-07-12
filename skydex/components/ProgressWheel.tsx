@@ -29,17 +29,17 @@ export default function ProgressWheel({
   const pct = total > 0 ? Math.min(1, value / total) : 0; // guards /0 and value > total
   const showSub = size >= 88;
 
-  // Start empty, then sweep to the target offset once mounted.
+  // Start empty, then sweep to the target offset once mounted. rAF in both
+  // branches: under reduced-motion the CSS transition is what we skip, and
+  // deferring the state flip a frame keeps the effect render-safe.
   const [filled, setFilled] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    const id = requestAnimationFrame(() => {
+      setReduceMotion(reduce);
       setFilled(true);
-      return;
-    }
-    const id = requestAnimationFrame(() => setFilled(true));
+    });
     return () => cancelAnimationFrame(id);
   }, []);
 
@@ -70,7 +70,11 @@ export default function ProgressWheel({
           strokeDasharray={`${c} ${c}`}
           strokeDashoffset={filled ? c * (1 - pct) : c}
           transform={`rotate(-90 ${cx} ${cx})`}
-          style={{ transition: "stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1)" }}
+          style={{
+            transition: reduceMotion
+              ? "none"
+              : "stroke-dashoffset 0.9s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
         />
         <text
           x={cx}

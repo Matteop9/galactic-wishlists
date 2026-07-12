@@ -21,18 +21,22 @@ export type Candidate = {
   typeDesc: string | null;
   lat: number;
   lon: number;
-  altM: number;
+  altM: number | null;
   distanceKm: number;
   bearing: number; // degrees from observer, 0 = north
-  elevation: number; // degrees above horizon
+  elevation: number | null; // degrees above horizon; null = no altitude broadcast
   track: number | null;
   velocityMs: number | null;
+  adsbCategory: string | null; // ADS-B emitter category (map icon fallback for uncurated codes)
+  military: boolean;
 };
 
 /**
- * GET /api/flights?lat=..&lon=..&radiusKm=..[&all=1]
+ * GET /api/flights?lat=..&lon=..&radiusKm=..[&alt=..][&all=1]
  * Returns nearby aircraft with the bearing + elevation at which the observer
  * would see each — the geometry the capture step matches the camera against.
+ * `alt` = observer altitude (metres MSL, from GPS); without it a spotter at
+ * elevation (Denver etc.) gets wildly inflated elevation angles.
  *
  * By default results are filtered to the detection cone (what the camera could
  * plausibly capture). Pass `all=1` for the situational map view: every aircraft
@@ -40,12 +44,18 @@ export type Candidate = {
  */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const lat = Number(searchParams.get("lat"));
-  const lon = Number(searchParams.get("lon"));
+  // Number(null) is 0, so a missing param would silently pass the finite check
+  // and query the live feed at (0,0) — require the params to actually exist.
+  const rawLat = searchParams.get("lat");
+  const rawLon = searchParams.get("lon");
+  const lat = rawLat === null ? NaN : Number(rawLat);
+  const lon = rawLon === null ? NaN : Number(rawLon);
   const radiusKm = Math.min(Number(searchParams.get("radiusKm")) || 80, 150);
+  const rawAlt = Number(searchParams.get("alt"));
+  const obsAltM = Number.isFinite(rawAlt) ? Math.min(Math.max(rawAlt, -500), 9000) : 0;
   const all = searchParams.get("all") === "1";
 
-  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) {
     return NextResponse.json({ error: "lat and lon are required" }, { status: 400 });
   }
 
@@ -74,15 +84,20 @@ export async function GET(request: Request) {
         altM: a.altM,
         distanceKm: Number((ground / 1000).toFixed(1)),
         bearing: Math.round(bearingDeg(lat, lon, a.lat, a.lon)),
-        elevation: Math.round(elevationDeg(ground, a.altM)),
+        elevation:
+          a.altM != null ? Math.round(elevationDeg(ground, a.altM - obsAltM)) : null,
         track: a.track,
         velocityMs: a.velocityMs,
+        adsbCategory: a.adsbCategory,
+        military: a.military,
       };
     })
     .filter(
       (c) =>
         all ||
-        (c.elevation >= MIN_ELEVATION && c.distanceKm <= maxRangeKm(c.elevation, radiusKm)),
+        (c.elevation != null &&
+          c.elevation >= MIN_ELEVATION &&
+          c.distanceKm <= maxRangeKm(c.elevation, radiusKm)),
     )
     .sort((a, b) => a.distanceKm - b.distanceKm);
 

@@ -12,6 +12,38 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.3",
+    date: "2026-07-12",
+    changes: [
+      "The map now shows your field of view — a gold cone sweeps with your phone's compass so you can see exactly which way you're facing, sized to the same window the camera accepts a capture in.",
+      "Planes on the map now look like what they are — helicopters get a rotor icon, light aircraft and bizjets a small silhouette, widebodies a big one.",
+      "Gold planes on the map = a type you haven't caught yet. Go get them.",
+      "Helicopters have joined the rarity system properly — they're never graded Common again, and military aircraft now carry their own category with a Rare floor.",
+      "Brand-new aircraft types discovered in the wild now enter the universe as Rare (not Common) — if it's not already in the SkyDex catalogue, it's not an everyday plane.",
+      "Behind the scenes: we're measuring 24 hours of real European air traffic to re-grade every type's rarity from actual data — proper distinction between common and rare is coming to your whole collection.",
+    ],
+  },
+  {
+    version: "0.3.2",
+    date: "2026-07-06",
+    changes: [
+      "Sign-in is now one tap with Google — no more waiting for magic-link emails. If you joined by email, just use Google with the same address and your logbook carries straight over.",
+      "We've added privacy-friendly analytics so we can see which parts of SkyDex people love (no cookies, no tracking you around the web).",
+    ],
+  },
+  {
+    version: "0.3.1",
+    date: "2026-07-06",
+    changes: [
+      "Verification got real teeth — every capture is now re-checked server-side against live flight data (position, direction, elevation) before it earns the VERIFIED stamp. Nobody can fake their way onto the boards.",
+      "Duplicate protection — accidentally double-tapping capture no longer logs the same plane twice.",
+      "Spotting from altitude now works properly — your GPS elevation feeds the detection cone, so mountain and hilltop spotters see accurate angles.",
+      "Times on cards now read in UTC (Zulu) — the aviation way, and consistent wherever you are.",
+      "Sharper around the edges — keyboard and screen-reader support for photo viewers and dialogs, honest error messages when something fails to post, and the tab bar now clears the iPhone home indicator.",
+      "Under the hood: faster page loads (lighter session checks, cached airline lookups, cached reference photos) and a stack of security hardening.",
+    ],
+  },
+  {
     version: "0.3.0",
     date: "2026-06-26",
     changes: [

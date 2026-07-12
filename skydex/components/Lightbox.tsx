@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { type Sighting } from "@/components/SightingCard";
 import AirportCode from "@/components/AirportCode";
 import { airlineFromCallsign } from "@/lib/airlines";
+import { useDialog } from "@/components/useDialog";
 
 type RefPhoto = { src: string | null; link: string | null; photographer: string | null };
 
@@ -16,6 +17,7 @@ export default function Lightbox({
 }) {
   const [ref, setRef] = useState<RefPhoto | null>(null);
   const [swapped, setSwapped] = useState(false); // false = your shot big
+  const dialogRef = useDialog(onClose);
 
   useEffect(() => {
     const reg = sighting.registration;
@@ -42,7 +44,12 @@ export default function Lightbox({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-ink/90 p-4"
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Photo of ${sighting.registration || sighting.callsign || "sighting"}`}
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-ink/90 p-4 outline-none"
       onClick={onClose}
     >
       {hasRef ? (
@@ -103,7 +110,7 @@ export default function Lightbox({
       )}
 
       <p className="mt-4 font-mono text-xs uppercase tracking-widest text-paper/50">
-        Tap background to close
+        Tap background or press Esc to close
       </p>
     </div>
   );

@@ -16,6 +16,7 @@ export default function ReportButton({
 }) {
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   if (!currentUserId) return null;
 
@@ -23,20 +24,26 @@ export default function ReportButton({
     const reason = window.prompt("Report this — what's wrong? (optional)");
     if (reason === null) return; // cancelled
     setBusy(true);
+    setFailed(false);
     const supabase = createClient();
-    await supabase.from("reports").insert({
+    const { error } = await supabase.from("reports").insert({
       reporter_id: currentUserId,
       target_type: targetType,
       target_id: targetId,
       reason: reason || null,
     });
     setBusy(false);
+    if (error) {
+      // Don't show "Reported" for a report that never landed.
+      setFailed(true);
+      return;
+    }
     setDone(true);
   }
 
   return (
     <button onClick={report} disabled={busy || done} className={className}>
-      {done ? "Reported" : "Report"}
+      {done ? "Reported" : failed ? "Failed — retry" : "Report"}
     </button>
   );
 }

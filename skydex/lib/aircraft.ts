@@ -22,7 +22,13 @@ import { fetch as undiciFetch, Agent } from "undici";
 import { haversineMeters } from "@/lib/geo";
 
 // Force IPv4 — some upstreams advertise IPv6 that Vercel's egress can't reach.
-const dispatcher = new Agent({ connect: { family: 4, timeout: 12_000 } });
+// headers/body timeouts too: connect.timeout only covers the handshake, and a
+// stalled response would otherwise hang the polled /api/flights route.
+const dispatcher = new Agent({
+  connect: { family: 4, timeout: 12_000 },
+  headersTimeout: 12_000,
+  bodyTimeout: 12_000,
+});
 
 const FT_TO_M = 0.3048;
 const KT_TO_MS = 0.514444;
@@ -32,12 +38,14 @@ export type Aircraft = {
   callsign: string;
   lat: number;
   lon: number;
-  altM: number;
+  altM: number | null; // null = no altitude broadcast (don't fake ground level)
   registration: string | null;
   aircraftType: string | null; // ICAO type code, e.g. B738
   typeDesc: string | null; // e.g. BOEING 737-800
   track: number | null;
   velocityMs: number | null;
+  adsbCategory: string | null; // ADS-B emitter category (A1 light … A5 heavy, A7 rotorcraft)
+  military: boolean; // readsb dbFlags bit 0
 };
 
 export type AircraftResult = { aircraft: Aircraft[]; source: string };
@@ -55,6 +63,8 @@ type AcRecord = {
   alt_geom?: number;
   gs?: number;
   track?: number;
+  category?: string; // ADS-B emitter category, e.g. "A3"
+  dbFlags?: number; // bit 0 = military, per readsb's aircraft DB
 };
 
 function mapReadsb(json: { ac?: AcRecord[] }): Aircraft[] {
@@ -71,18 +81,20 @@ function mapReadsb(json: { ac?: AcRecord[] }): Aircraft[] {
           ? a.alt_geom
           : typeof a.alt_baro === "number"
             ? a.alt_baro
-            : 0;
+            : null;
       return {
         icao24: String(a.hex ?? "").trim(),
         callsign: String(a.flight ?? "").trim(),
         lat: a.lat as number,
         lon: a.lon as number,
-        altM: altFt * FT_TO_M,
+        altM: altFt != null ? altFt * FT_TO_M : null,
         registration: a.r ?? null,
         aircraftType: a.t ?? null,
         typeDesc: a.desc ?? null,
         track: a.track ?? null,
         velocityMs: typeof a.gs === "number" ? a.gs * KT_TO_MS : null,
+        adsbCategory: a.category ?? null,
+        military: ((a.dbFlags ?? 0) & 1) === 1,
       };
     });
 }
@@ -107,38 +119,79 @@ export async function fetchAircraftNear(
 }
 
 export type HexLookup = {
+  found: boolean; // upstream answered and the hex was airborne
+  unavailable: boolean; // upstream error/outage — no verdict either way
   aircraftType: string | null;
   typeDesc: string | null;
   registration: string | null;
+  lat: number | null;
+  lon: number | null;
+  altM: number | null;
+  track: number | null;
+  adsbCategory: string | null;
+  military: boolean;
 };
 
-// Resolve type/registration for a single hex from airplanes.live. Used at capture
-// time when the polled candidate arrived without type metadata: the airframe is
-// directly overhead, so a live hex query reliably finds it.
+const HEX_EMPTY: HexLookup = {
+  found: false,
+  unavailable: false,
+  aircraftType: null,
+  typeDesc: null,
+  registration: null,
+  lat: null,
+  lon: null,
+  altM: null,
+  track: null,
+  adsbCategory: null,
+  military: false,
+};
+
+// Resolve identity + live position for a single hex from airplanes.live. Used at
+// capture time to (a) backfill type/registration when the polled candidate lacked
+// them and (b) verify server-side that the claimed aircraft really is airborne
+// where the client says it is. Distinguishes "upstream says not airborne" (found:
+// false) from "upstream unreachable" (unavailable: true) so verification can be
+// strict on the former and lenient on the latter.
 export async function lookupLiveByHex(hex: string | null): Promise<HexLookup> {
   const h = (hex ?? "").trim();
-  const empty: HexLookup = { aircraftType: null, typeDesc: null, registration: null };
-  if (!h) return empty;
+  if (!h) return HEX_EMPTY;
 
   try {
     const res = await undiciFetch(
       `https://api.airplanes.live/v2/hex/${encodeURIComponent(h)}`,
       { dispatcher },
     );
-    if (!res.ok) return empty;
+    if (!res.ok) return { ...HEX_EMPTY, unavailable: true };
     const json = (await res.json()) as { ac?: AcRecord[] };
-    const rec = (json.ac ?? []).find((a) => a.t);
+    const rec =
+      (json.ac ?? []).find((a) => typeof a.lat === "number" && a.t) ??
+      (json.ac ?? []).find((a) => typeof a.lat === "number") ??
+      (json.ac ?? [])[0];
     if (rec) {
+      const altFt =
+        typeof rec.alt_geom === "number"
+          ? rec.alt_geom
+          : typeof rec.alt_baro === "number"
+            ? rec.alt_baro
+            : null;
       return {
+        found: true,
+        unavailable: false,
         aircraftType: rec.t ?? null,
         typeDesc: rec.desc ?? null,
         registration: rec.r ?? null,
+        lat: typeof rec.lat === "number" ? rec.lat : null,
+        lon: typeof rec.lon === "number" ? rec.lon : null,
+        altM: altFt != null ? altFt * FT_TO_M : null,
+        track: typeof rec.track === "number" ? rec.track : null,
+        adsbCategory: rec.category ?? null,
+        military: ((rec.dbFlags ?? 0) & 1) === 1,
       };
     }
   } catch {
-    /* fall through to empty */
+    return { ...HEX_EMPTY, unavailable: true };
   }
-  return empty;
+  return HEX_EMPTY;
 }
 
 // Re-exported so callers can dedupe by distance if needed.

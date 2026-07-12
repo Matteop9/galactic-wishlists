@@ -46,7 +46,12 @@ export default function Comments({
   }
 
   async function remove(id: string) {
-    await supabase.from("comments").delete().eq("id", id);
+    if (!window.confirm("Delete this comment?")) return;
+    const { error } = await supabase.from("comments").delete().eq("id", id);
+    if (error) {
+      setErr("Could not delete comment.");
+      return;
+    }
     load();
   }
 
@@ -57,7 +62,7 @@ export default function Comments({
 
   async function add() {
     const text = body.trim();
-    if (!text || !currentUserId) return;
+    if (!text || !currentUserId || busy) return;
     setBusy(true);
     setErr(null);
     const res = await addComment(sightingId, text);
@@ -147,7 +152,10 @@ export default function Comments({
                   }}
                   maxLength={500}
                   placeholder="Add a comment…"
-                  onKeyDown={(e) => e.key === "Enter" && add()}
+                  onKeyDown={(e) => {
+                    // isComposing: Enter confirms an IME composition, not a submit
+                    if (e.key === "Enter" && !e.nativeEvent.isComposing) add();
+                  }}
                   className="flex-1 rounded-md border border-paper-edge bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-sky"
                 />
                 <button

@@ -33,7 +33,7 @@ const MEDAL = ["🥇", "🥈", "🥉"];
 export default function LeaderboardBoard({ currentUserId }: { currentUserId: string | null }) {
   const [metric, setMetric] = useState<(typeof METRICS)[number]["key"]>("spots");
   const [window, setWindow] = useState<(typeof WINDOWS)[number]["key"]>("all");
-  const [data, setData] = useState<{ key: string; rows: Row[] } | null>(null);
+  const [data, setData] = useState<{ key: string; rows: Row[]; failed: boolean } | null>(null);
 
   const active = METRICS.find((m) => m.key === metric)!;
   const win = active.windowed ? window : "all";
@@ -44,8 +44,9 @@ export default function LeaderboardBoard({ currentUserId }: { currentUserId: str
     let cancelled = false;
     createClient()
       .rpc("leaderboard", { p_metric: m, p_window: w })
-      .then(({ data: d }) => {
-        if (!cancelled) setData({ key, rows: (d as Row[]) ?? [] });
+      .then(({ data: d, error }) => {
+        // A failed query must not render as "no spotters yet".
+        if (!cancelled) setData({ key, rows: (d as Row[]) ?? [], failed: Boolean(error) });
       });
     return () => {
       cancelled = true;
@@ -85,6 +86,10 @@ export default function LeaderboardBoard({ currentUserId }: { currentUserId: str
       <div className="mt-5 overflow-hidden rounded-lg border border-paper-edge">
         {loading ? (
           <p className="px-4 py-6 text-center text-sm text-ink-faint">Loading…</p>
+        ) : data?.failed ? (
+          <p className="px-4 py-6 text-center text-sm text-stamp">
+            Couldn&apos;t load the board — try again in a moment.
+          </p>
         ) : rows.length === 0 ? (
           <p className="px-4 py-6 text-center text-sm text-ink-faint">No spotters on the board yet.</p>
         ) : (

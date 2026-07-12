@@ -20,7 +20,9 @@ export default function ShareButton({ id, className = "" }: { id: string; classN
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
       } catch {
-        /* ignore */
+        // No share sheet, no clipboard (insecure context / old browser) —
+        // fall back to the prompt dialog so the tap never silently does nothing.
+        window.prompt("Copy this link:", url);
       }
     }
   }

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MLMap, Marker as MLMarker, Popup as MLPopup } from "maplibre-gl";
+import type { MapKind } from "@/lib/aircraftTypes";
 
 // A read-only situational map: what's overhead right now, where you'd point.
 // It never captures — tapping a plane only tracks it and hands back to the camera.
@@ -17,17 +18,23 @@ export type MapAircraft = {
   track: number | null;
   bearing: number;
   distanceKm: number;
+  kind: MapKind; // icon shape: heli / light / narrow / wide
+  isNew: boolean; // this type would be a new catch for the viewer
 };
 
 type Props = {
   observer: { lat: number; lon: number };
   aircraft: MapAircraft[];
   lockedId: string | null;
+  heading: number | null; // device compass — drives the field-of-view cone
   rangeKm?: number;
   onSelect: (icao24: string) => void;
 };
 
-const BRAND = { ink: "#20262b", sky: "#0e7c86", stamp: "#b5402e", paper: "#f2ebdc" };
+const BRAND = { ink: "#20262b", sky: "#0e7c86", stamp: "#b5402e", paper: "#f2ebdc", brass: "#b98a2e" };
+// Mirror the capture logic's HEADING_TOL (spot page) — the cone IS the window
+// the camera would accept a target in, so what you see is what you can catch.
+const FOV_HALF_ANGLE = 22;
 // CARTO Positron — light vector basemap, free with attribution (already credited on /attributions).
 const STYLE_URL = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
@@ -35,48 +42,119 @@ function esc(s: string) {
   return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
 }
 
-// Polygon approximating a circle of `radiusKm` around (lat, lon).
-function circle(lat: number, lon: number, radiusKm: number, points = 72): number[][] {
+// Destination point `distKm` from (lat, lon) along bearing `brngDeg`.
+function destPoint(lat: number, lon: number, brngDeg: number, distKm: number): number[] {
   const R = 6371;
   const latR = (lat * Math.PI) / 180;
   const lonR = (lon * Math.PI) / 180;
-  const dr = radiusKm / R;
+  const dr = distKm / R;
+  const brng = (brngDeg * Math.PI) / 180;
+  const lat2 = Math.asin(
+    Math.sin(latR) * Math.cos(dr) + Math.cos(latR) * Math.sin(dr) * Math.cos(brng),
+  );
+  const lon2 =
+    lonR +
+    Math.atan2(
+      Math.sin(brng) * Math.sin(dr) * Math.cos(latR),
+      Math.cos(dr) - Math.sin(latR) * Math.sin(lat2),
+    );
+  return [(lon2 * 180) / Math.PI, (lat2 * 180) / Math.PI];
+}
+
+// Polygon approximating a circle of `radiusKm` around (lat, lon).
+function circle(lat: number, lon: number, radiusKm: number, points = 72): number[][] {
   const ring: number[][] = [];
   for (let i = 0; i <= points; i++) {
-    const brng = (i / points) * 2 * Math.PI;
-    const lat2 = Math.asin(
-      Math.sin(latR) * Math.cos(dr) + Math.cos(latR) * Math.sin(dr) * Math.cos(brng),
-    );
-    const lon2 =
-      lonR +
-      Math.atan2(
-        Math.sin(brng) * Math.sin(dr) * Math.cos(latR),
-        Math.cos(dr) - Math.sin(latR) * Math.sin(lat2),
-      );
-    ring.push([(lon2 * 180) / Math.PI, (lat2 * 180) / Math.PI]);
+    ring.push(destPoint(lat, lon, (i / points) * 360, radiusKm));
   }
   return ring;
 }
 
-function planeEl(rotation: number, color: string, scale: number): HTMLButtonElement {
+// Field-of-view wedge: observer apex, arc at `lengthKm`, ±halfAngle around heading.
+function fovSector(
+  lat: number,
+  lon: number,
+  headingDeg: number,
+  halfAngle: number,
+  lengthKm: number,
+): number[][] {
+  const ring: number[][] = [[lon, lat]];
+  for (let a = headingDeg - halfAngle; a <= headingDeg + halfAngle; a += 4) {
+    ring.push(destPoint(lat, lon, a, lengthKm));
+  }
+  ring.push(destPoint(lat, lon, headingDeg + halfAngle, lengthKm));
+  ring.push([lon, lat]);
+  return ring;
+}
+
+const EMPTY_FEATURE: GeoJSON.Feature = {
+  type: "Feature",
+  geometry: { type: "Polygon", coordinates: [] },
+  properties: {},
+};
+
+// One silhouette per kind, all nose-up in a 24×24 viewBox. Size differences do
+// most of the talking: a widebody reads bigger than a Cessna at a glance.
+const GLYPH_SIZE: Record<MapKind, number> = { heli: 24, light: 19, narrow: 26, wide: 34 };
+
+function glyphSvg(kind: MapKind, color: string): string {
+  const outline = `fill="${color}" stroke="${BRAND.paper}" stroke-width="0.7"`;
+  switch (kind) {
+    case "heli":
+      // Rotor cross over a stubby fuselage + tail boom.
+      return (
+        `<path d="M12 6.6c1.9 0 3.1 1.4 3.1 3.3 0 1.5-.9 2.7-2.1 3.1l.5 5.6 2.5 1.3v1.4l-3.4-.7-3.4.7v-1.4l2.5-1.3.5-5.6c-1.2-.4-2.1-1.6-2.1-3.1 0-1.9 1.2-3.3 3.1-3.3z" ${outline}/>` +
+        `<g stroke="${color}" stroke-width="1.7" stroke-linecap="round" opacity="0.95">` +
+        `<line x1="4.5" y1="2.5" x2="19.5" y2="17.5"/><line x1="19.5" y1="2.5" x2="4.5" y2="17.5"/></g>`
+      );
+    case "light":
+      // High straight wing well forward — small GA / bizjet.
+      return (
+        `<path d="M12 2.4c.55 0 1 .5 1 1.1v3l9 1v2.1l-9 .3-.4 7.6 2.7 1.7v1.4l-3.3-.8-3.3.8v-1.4l2.7-1.7-.4-7.6-9-.3V7.5l9-1v-3c0-.6.45-1.1 1-1.1z" ${outline}/>`
+      );
+    case "wide":
+      // Longer fuselage, deeper swept wing + bigger tail.
+      return (
+        `<path d="M12 1.6c.75 0 1.25.75 1.25 1.7v5.5l9.35 6v2.2l-9.35-3v4.6l2.9 2.2v1.7L12 21.4l-4.15 1.1v-1.7l2.9-2.2v-4.6l-9.35 3v-2.2l9.35-6V3.3c0-.95.5-1.7 1.25-1.7z" ${outline}/>`
+      );
+    default:
+      // Narrowbody — the original SkyDex jet.
+      return (
+        `<path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" ${outline}/>`
+      );
+  }
+}
+
+function planeMarkup(kind: MapKind, rotation: number, color: string, scale: number): string {
+  const size = GLYPH_SIZE[kind] * scale;
+  return (
+    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" ` +
+    `style="transform:rotate(${rotation}deg);filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.4));">` +
+    `${glyphSvg(kind, color)}</svg>`
+  );
+}
+
+function planeEl(kind: MapKind, rotation: number, color: string, scale: number): HTMLButtonElement {
   const el = document.createElement("button");
   el.type = "button";
   el.style.cssText = "background:none;border:none;padding:0;margin:0;cursor:pointer;line-height:0;";
-  const size = 26 * scale;
-  el.innerHTML =
-    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" ` +
-    `style="transform:rotate(${rotation}deg);filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.4));">` +
-    `<path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" ` +
-    `fill="${color}" stroke="${BRAND.paper}" stroke-width="0.7"/></svg>`;
+  el.innerHTML = planeMarkup(kind, rotation, color, scale);
   return el;
 }
 
-export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, onSelect }: Props) {
+export default function SpotMap({
+  observer,
+  aircraft,
+  lockedId,
+  heading,
+  rangeKm = 40,
+  onSelect,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MLMap | null>(null);
   const mlRef = useRef<typeof import("maplibre-gl") | null>(null);
   const obsMarkerRef = useRef<MLMarker | null>(null);
-  const planesRef = useRef<Record<string, { marker: MLMarker; el: HTMLButtonElement }>>({});
+  const planesRef = useRef<Record<string, { marker: MLMarker; el: HTMLButtonElement; sig: string }>>({});
   const popupRef = useRef<MLPopup | null>(null);
   const readyRef = useRef(false);
 
@@ -87,6 +165,22 @@ export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, on
   onSelectRef.current = onSelect;
   const observerRef = useRef(observer);
   observerRef.current = observer;
+  const headingRef = useRef(heading);
+  headingRef.current = heading;
+
+  function fovData(): GeoJSON.Feature {
+    const o = observerRef.current;
+    const h = headingRef.current;
+    if (h == null) return EMPTY_FEATURE;
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [fovSector(o.lat, o.lon, h, FOV_HALF_ANGLE, rangeKm * 0.45)],
+      },
+      properties: {},
+    };
+  }
 
   // Init once.
   useEffect(() => {
@@ -128,6 +222,22 @@ export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, on
           id: "range-line",
           source: "range",
           paint: { "line-color": BRAND.sky, "line-opacity": 0.5, "line-width": 1.5, "line-dasharray": [3, 2] },
+        });
+
+        // Field-of-view cone — where the phone is pointing, sized to the
+        // capture heading tolerance. Empty until the compass reports.
+        map.addSource("fov", { type: "geojson", data: fovData() });
+        map.addLayer({
+          type: "fill",
+          id: "fov-fill",
+          source: "fov",
+          paint: { "fill-color": BRAND.brass, "fill-opacity": 0.18 },
+        });
+        map.addLayer({
+          type: "line",
+          id: "fov-line",
+          source: "fov",
+          paint: { "line-color": BRAND.brass, "line-opacity": 0.6, "line-width": 1 },
         });
 
         const dot = document.createElement("div");
@@ -198,11 +308,13 @@ export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, on
       seen.add(a.icao24);
       const rot = a.track ?? a.bearing ?? 0;
       const locked = a.icao24 === lockedId;
-      const color = locked ? BRAND.stamp : BRAND.ink;
+      // Tracking wins, then "this would be a new catch for you" in brass.
+      const color = locked ? BRAND.stamp : a.isNew ? BRAND.brass : BRAND.ink;
       const scale = locked ? 1.4 : 1;
+      const sig = `${a.kind}|${rot}|${color}|${scale}`;
       const existing = planes[a.icao24];
       if (!existing) {
-        const el = planeEl(rot, color, scale);
+        const el = planeEl(a.kind, rot, color, scale);
         el.title = a.registration || a.callsign || a.icao24;
         el.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -211,17 +323,13 @@ export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, on
         const marker = new maplibregl.Marker({ element: el, anchor: "center" })
           .setLngLat([a.lon, a.lat])
           .addTo(map);
-        planes[a.icao24] = { marker, el };
+        planes[a.icao24] = { marker, el, sig };
       } else {
         existing.marker.setLngLat([a.lon, a.lat]);
-        const svg = existing.el.querySelector("svg");
-        if (svg) {
-          const size = 26 * scale;
-          svg.setAttribute("width", String(size));
-          svg.setAttribute("height", String(size));
-          svg.style.transform = `rotate(${rot}deg)`;
+        if (existing.sig !== sig) {
+          existing.el.innerHTML = planeMarkup(a.kind, rot, color, scale);
+          existing.sig = sig;
         }
-        existing.el.querySelector("path")?.setAttribute("fill", color);
       }
     }
 
@@ -252,6 +360,15 @@ export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, on
     });
   }, [observer, rangeKm]);
 
+  // Swing the field-of-view cone with the compass (and observer moves).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;
+    const src = map.getSource("fov") as { setData?: (d: unknown) => void } | undefined;
+    src?.setData?.(fovData());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [heading, observer, rangeKm]);
+
   function recenter() {
     mapRef.current?.flyTo({ center: [observer.lon, observer.lat], zoom: 9.5, duration: 600 });
   }
@@ -259,6 +376,14 @@ export default function SpotMap({ observer, aircraft, lockedId, rangeKm = 40, on
   return (
     <div className="absolute inset-0">
       <div ref={containerRef} className="h-full w-full" />
+      <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-1 rounded bg-ink/75 px-2.5 py-1.5 font-mono text-[10px] leading-4 text-paper">
+        <span>
+          <span style={{ color: BRAND.brass }}>✈</span> new for you
+        </span>
+        <span>
+          <span style={{ color: BRAND.stamp }}>✈</span> tracking
+        </span>
+      </div>
       <button
         type="button"
         onClick={recenter}

@@ -67,13 +67,107 @@ export const AIRCRAFT_TYPE_NAMES: Record<string, string> = {
   LJ45: "Learjet 45", LJ60: "Learjet 60", PC12: "Pilatus PC-12",
   PA28: "Piper PA-28", BE20: "Beechcraft King Air 200", BE9L: "Beechcraft King Air 90",
   // Helicopters
-  A109: "AgustaWestland AW109", A169: "Leonardo AW169", A189: "Leonardo AW189",
-  EC35: "Airbus H135", EC45: "Airbus H145",
+  A109: "AgustaWestland AW109", A119: "Leonardo AW119 Koala",
+  A139: "Leonardo AW139", A149: "Leonardo AW149",
+  A169: "Leonardo AW169", A189: "Leonardo AW189",
+  EC20: "Airbus H120", EC25: "Airbus H225 Super Puma", EC30: "Airbus H130",
+  EC35: "Airbus H135", EC45: "Airbus H145", EC55: "Airbus H155", EC75: "Airbus H175",
+  AS50: "Airbus H125", AS55: "Airbus AS355",
+  R22: "Robinson R22", R44: "Robinson R44", R66: "Robinson R66",
+  B06: "Bell 206", B407: "Bell 407", B412: "Bell 412", B429: "Bell 429",
+  S76: "Sikorsky S-76", S92: "Sikorsky S-92",
   // Military / warbirds / classics
-  F16: "General Dynamics F-16", P51: "North American P-51 Mustang",
+  F16: "General Dynamics F-16", F15: "McDonnell Douglas F-15 Eagle",
+  F18: "Boeing F/A-18 Hornet", F35: "Lockheed Martin F-35 Lightning II",
+  EUFI: "Eurofighter Typhoon", HAWK: "BAE Hawk", A10: "Fairchild A-10 Thunderbolt II",
+  C17: "Boeing C-17 Globemaster III", C30J: "Lockheed C-130J Super Hercules",
+  C5M: "Lockheed C-5M Super Galaxy", K35R: "Boeing KC-135 Stratotanker",
+  P8: "Boeing P-8 Poseidon", V22: "Bell Boeing V-22 Osprey",
+  TEX2: "Beechcraft T-6 Texan II", H60: "Sikorsky UH-60 Black Hawk",
+  P51: "North American P-51 Mustang",
   SPIT: "Supermarine Spitfire", LANC: "Avro Lancaster", VULC: "Avro Vulcan",
   CONC: "Aérospatiale/BAC Concorde",
+  // Special freighters
+  A3ST: "Airbus Beluga", A337: "Airbus BelugaXL", BLCF: "Boeing 747 Dreamlifter",
 };
+
+// ---- Category taxonomy — mirrors the CHECK constraint on aircraft_types ----
+// Single source of truth for classifying a type code, used at capture time (to
+// register new types with the right category → rarity floor) and on the spot
+// map (icon shape per kind). Military trumps helicopter (an H60 is military).
+
+export type AircraftCategory =
+  | "widebody" | "narrowbody" | "regional" | "business jet"
+  | "general aviation" | "freighter" | "helicopter" | "military" | "vintage";
+
+const CATEGORY_SETS: Record<AircraftCategory, string> = {
+  widebody:
+    "A306 A310 A332 A333 A338 A339 A343 A345 A346 A359 A35K A388 " +
+    "B744 B748 B762 B763 B764 B772 B77L B773 B77W B778 B779 B788 B789 B78X MD11",
+  narrowbody:
+    "A19N A20N A21N A318 A319 A320 A321 BCS1 BCS3 " +
+    "B712 B733 B734 B735 B736 B737 B738 B739 B37M B38M B39M B3XM B752 B753",
+  regional:
+    "E135 E145 E170 E175 E75L E190 E195 E290 E295 " +
+    "CRJ2 CRJ7 CRJ9 CRJX AT43 AT45 AT46 AT72 AT75 AT76 " +
+    "DH8A DH8B DH8C DH8D SF34 SB20",
+  "business jet":
+    "C25A C25B C68A CL35 CL60 GLEX GL7T GL5T E55P E50P " +
+    "F2TH FA7X FA8X GLF4 GLF5 GLF6 LJ45 LJ60",
+  "general aviation": "C172 C152 PA28 PC12 PC7 BE20 BE9L SR22 DA40 DA42 TBM9",
+  freighter: "B74F B77F AN12 A124 A225 IL76 A3ST A337 BLCF",
+  helicopter:
+    "A109 A119 A139 A149 A169 A189 EC20 EC25 EC30 EC35 EC45 EC55 EC75 " +
+    "AS50 AS55 R22 R44 R66 B06 B407 B412 B429 S76 S92",
+  military:
+    "A400 B52 C130 C30J C17 C5M K35R P8 V22 TU95 " +
+    "F15 F16 F18 F35 EUFI HAWK A10 TEX2 H60",
+  vintage:
+    "B17 B722 B741 B742 B743 DC3 DC10 L101 MD82 MD83 MD88 MD90 " +
+    "P51 SPIT LANC VULC CONC",
+};
+
+const CATEGORY_BY_CODE: Record<string, AircraftCategory> = {};
+for (const [cat, codes] of Object.entries(CATEGORY_SETS) as [AircraftCategory, string][]) {
+  for (const code of codes.split(/\s+/)) CATEGORY_BY_CODE[code] = cat;
+}
+
+/** Curated category for an ICAO type code, or null when uncurated. */
+export function aircraftCategory(code: string | null): AircraftCategory | null {
+  if (!code) return null;
+  return CATEGORY_BY_CODE[code.toUpperCase()] ?? null;
+}
+
+// ---- Map icon kind — the visual class a plane marker takes on the spot map ----
+
+export type MapKind = "heli" | "light" | "narrow" | "wide";
+
+// Heavy military transports/tankers read as widebodies on the map.
+const HEAVY_MILITARY = new Set(["A400", "C130", "C30J", "C17", "C5M", "K35R", "B52", "TU95", "P8"]);
+
+/**
+ * Icon class for a type code, falling back to the live feed's ADS-B emitter
+ * category (A1 light … A5 heavy, A7 rotorcraft) for uncurated codes.
+ */
+export function mapKind(code: string | null, adsbCategory?: string | null): MapKind {
+  const cat = aircraftCategory(code);
+  if (cat) {
+    switch (cat) {
+      case "helicopter": return "heli";
+      case "widebody":
+      case "freighter": return "wide";
+      case "business jet":
+      case "general aviation": return "light";
+      case "military": return HEAVY_MILITARY.has(code!.toUpperCase()) ? "wide" : "light";
+      default: return "narrow"; // narrowbody, regional, vintage
+    }
+  }
+  const a = (adsbCategory ?? "").toUpperCase();
+  if (a === "A7") return "heli";
+  if (a === "A1" || a === "A2") return "light";
+  if (a === "A5") return "wide";
+  return "narrow";
+}
 
 // Leading-manufacturer prefixes stripped to get the short display name (e.g.
 // "Airbus A320neo" → "A320neo", "Boeing 737-800" → "737-800"). Regional/GA brands

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Saira_Condensed, Source_Serif_4, IBM_Plex_Mono, Caveat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import "./globals.css";
 import TopNav from "@/components/TopNav";
@@ -31,16 +32,29 @@ const caveat = Caveat({
   weight: ["500", "600"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://skydex-two.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "SkyDex — the authentic plane-spotting logbook",
   description:
     "Photograph a real aircraft you can actually see, we verify you genuinely saw it, and it becomes a card in your scrapbook.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "SkyDex", statusBarStyle: "default" },
+  openGraph: {
+    title: "SkyDex — the authentic plane-spotting logbook",
+    description:
+      "Photograph a real aircraft you can actually see, we verify you genuinely saw it, and it becomes a card in your scrapbook.",
+    siteName: "SkyDex",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: "#0E7C86",
+  // Required for env(safe-area-inset-*) to resolve in standalone/PWA mode —
+  // without it the tab bar sits under the iPhone home indicator.
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
@@ -53,8 +67,13 @@ export default async function RootLayout({
       lang="en"
       className={`${saira.variable} ${sourceSerif.variable} ${plexMono.variable} ${caveat.variable} h-full antialiased`}
     >
-      {/* pad the page bottom so content + footer clear the fixed tab bar */}
-      <body className={`flex min-h-full flex-col ${user ? "pb-[68px]" : ""}`}>
+      {/* pad the page bottom so content + footer clear the fixed tab bar,
+          including the safe-area growth the bar itself gets on notched phones */}
+      <body
+        className={`flex min-h-full flex-col ${
+          user ? "pb-[calc(68px+env(safe-area-inset-bottom))]" : ""
+        }`}
+      >
         <TopNav />
         <div className="flex flex-1 flex-col">{children}</div>
         <GuideModal />
@@ -69,6 +88,7 @@ export default async function RootLayout({
           </div>
         </footer>
         {user && <MobileTabBar handle={handle} />}
+        <Analytics />
       </body>
     </html>
   );

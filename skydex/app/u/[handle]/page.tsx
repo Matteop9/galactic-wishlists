@@ -100,7 +100,10 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
   const isOwner = viewer.user?.id === profile.id;
   const featuredIds: string[] = profile.featured_sighting_ids ?? [];
 
-  const [{ data: rows }, { data: statRows }, { data: typeData }, { data: featRows }] =
+  // Rarest catches probe per tier (rarest first) — derived from the user's whole
+  // history, not just the 60 recent rows below, so an old legendary never drops off.
+  const TIERS = ["legendary", "epic", "rare", "uncommon", "common"] as const;
+  const [{ data: rows }, { data: statRows }, { data: typeData }, { data: featRows }, rareTiers] =
     await Promise.all([
       supabase
         .from("feed_sightings")
@@ -113,6 +116,17 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
       featuredIds.length
         ? supabase.from("feed_sightings").select(COLS).in("id", featuredIds)
         : Promise.resolve({ data: [] as Row[] }),
+      Promise.all(
+        TIERS.map((tier) =>
+          supabase
+            .from("feed_sightings")
+            .select(COLS)
+            .eq("user_id", profile.id)
+            .eq("rarity", tier)
+            .order("created_at", { ascending: false })
+            .limit(2),
+        ),
+      ),
     ]);
 
   const typeName = new Map(
@@ -139,8 +153,9 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
     year: "numeric",
   }).toUpperCase();
 
-  // Two rarest verified catches for the headline strip.
-  const rarest = [...sightings]
+  // Two rarest catches for the headline strip (tiers already probed rarest-first).
+  const rarest = rareTiers
+    .flatMap(({ data }) => ((data ?? []) as Row[]).map(toSighting))
     .sort((a, b) => (RARITY_RANK[b.rarity] ?? 0) - (RARITY_RANK[a.rarity] ?? 0))
     .slice(0, 2);
 

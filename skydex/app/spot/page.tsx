@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { angularDiff } from "@/lib/geo";
+import { mapKind } from "@/lib/aircraftTypes";
+import { createClient } from "@/lib/supabase/client";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
 import SpotMap from "@/components/SpotMap";
 
@@ -13,12 +15,14 @@ type Candidate = {
   typeDesc: string | null;
   lat: number;
   lon: number;
-  altM: number;
+  altM: number | null;
   distanceKm: number;
   bearing: number;
-  elevation: number;
+  elevation: number | null;
   track: number | null;
   velocityMs: number | null;
+  adsbCategory: string | null;
+  military: boolean;
 };
 
 // Phone compasses drift; keep the cone wide (the proposal notes 10–20°).
@@ -28,7 +32,7 @@ const PITCH_TOL = 22;
 export default function SpotPage() {
   const [phase, setPhase] = useState<"idle" | "active">("idle");
   const [error, setError] = useState<string | null>(null);
-  const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
+  const [coords, setCoords] = useState<{ lat: number; lon: number; alt: number | null } | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const [pitch, setPitch] = useState<number | null>(null);
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -37,12 +41,17 @@ export default function SpotPage() {
   const [lockedId, setLockedId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<DiscoveryResult | null>(null);
+  // Type codes this user has already caught — colours the map's "new for you"
+  // markers. null until loaded; re-fetched after each capture.
+  const [collectedTypes, setCollectedTypes] = useState<Set<string> | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const minimapRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const trackRef = useRef<MediaStreamTrack | null>(null);
+  const geoWatchRef = useRef<number | null>(null);
+  const orientEventRef = useRef<string | null>(null);
   const [zoom, setZoom] = useState(1);
   // Non-null = device supports native (optical) zoom; null = digital-crop fallback.
   const [zoomCaps, setZoomCaps] = useState<{ min: number; max: number; step: number } | null>(null);
@@ -70,11 +79,31 @@ export default function SpotPage() {
         const granted = await DOE.requestPermission();
         if (granted !== "granted") setError("Motion access denied — targeting won't work.");
       }
-      window.addEventListener("deviceorientation", onOrient, true);
+      // Android's plain deviceorientation alpha is relative to whatever way the
+      // phone was pointing at page load, not north — use the absolute variant
+      // where it exists (iOS supplies webkitCompassHeading instead).
+      const orientEvent =
+        "ondeviceorientationabsolute" in window
+          ? "deviceorientationabsolute"
+          : "deviceorientation";
+      orientEventRef.current = orientEvent;
+      window.addEventListener(orientEvent, onOrient as EventListener, true);
 
       if (!navigator.geolocation) throw new Error("No geolocation on this device.");
-      navigator.geolocation.watchPosition(
-        (pos) => setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      geoWatchRef.current = navigator.geolocation.watchPosition(
+        (pos) => {
+          const { latitude, longitude, altitude } = pos.coords;
+          // Only produce a new coords object when we've genuinely moved (~11 m);
+          // the poll effects key on this object, so a fresh one per GPS fix would
+          // restart the 6 s interval on every fix.
+          setCoords((prev) =>
+            prev &&
+            Math.abs(prev.lat - latitude) < 1e-4 &&
+            Math.abs(prev.lon - longitude) < 1e-4
+              ? prev
+              : { lat: latitude, lon: longitude, alt: altitude },
+          );
+        },
         (err) => setError(err.message),
         { enableHighAccuracy: true, maximumAge: 5000 },
       );
@@ -110,10 +139,19 @@ export default function SpotPage() {
     async function poll() {
       try {
         const res = await fetch(
-          `/api/flights?lat=${coords!.lat}&lon=${coords!.lon}&radiusKm=40`,
+          `/api/flights?lat=${coords!.lat}&lon=${coords!.lon}&radiusKm=40${
+            coords!.alt != null ? `&alt=${Math.round(coords!.alt)}` : ""
+          }`,
         );
         const json = await res.json();
-        if (!cancelled && Array.isArray(json.candidates)) setCandidates(json.candidates);
+        if (!cancelled && Array.isArray(json.candidates)) {
+          const list = json.candidates as Candidate[];
+          setCandidates(list);
+          // Drop the lock when the tracked plane leaves range.
+          setLockedId((id) =>
+            id && !list.some((c) => c.icao24 === id) ? null : id,
+          );
+        }
       } catch {
         /* transient */
       }
@@ -126,6 +164,34 @@ export default function SpotPage() {
     };
   }, [coords]);
 
+  // Own collection (distinct type codes) for the map's new-catch colouring.
+  // Progressive enhancement: if this fails, markers just stay ink.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data } = await supabase
+          .from("sightings")
+          .select("aircraft_type")
+          .eq("user_id", user.id)
+          .not("aircraft_type", "is", null);
+        if (!cancelled && data) {
+          setCollectedTypes(new Set(data.map((r) => r.aircraft_type as string)));
+        }
+      } catch {
+        /* non-essential */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [result]); // a fresh capture may have added a type
+
   // Map view: poll ALL aircraft in a wider radius (not just the capture cone).
   useEffect(() => {
     if (!coords || view !== "map") return;
@@ -133,7 +199,9 @@ export default function SpotPage() {
     async function poll() {
       try {
         const res = await fetch(
-          `/api/flights?lat=${coords!.lat}&lon=${coords!.lon}&radiusKm=80&all=1`,
+          `/api/flights?lat=${coords!.lat}&lon=${coords!.lon}&radiusKm=80&all=1${
+            coords!.alt != null ? `&alt=${Math.round(coords!.alt)}` : ""
+          }`,
         );
         const json = await res.json();
         if (!cancelled && Array.isArray(json.candidates)) setMapAircraft(json.candidates);
@@ -174,10 +242,20 @@ export default function SpotPage() {
     }
   }, [zoom, zoomCaps, phase]);
 
-  // Stop camera tracks when leaving the page.
+  // Release every sensor when leaving the page: camera tracks, the GPS watch,
+  // and the compass listener (otherwise they keep firing after client-side nav,
+  // holding the OS location indicator on and setting state on a dead component).
   useEffect(
-    () => () => streamRef.current?.getTracks().forEach((t) => t.stop()),
-    [],
+    () => () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      if (geoWatchRef.current != null) {
+        navigator.geolocation.clearWatch(geoWatchRef.current);
+      }
+      if (orientEventRef.current) {
+        window.removeEventListener(orientEventRef.current, onOrient as EventListener, true);
+      }
+    },
+    [onOrient],
   );
 
   function applyZoom(v: number) {
@@ -190,16 +268,12 @@ export default function SpotPage() {
     }
   }
 
-  // Reset the lock if the tracked plane drifts out of range.
-  useEffect(() => {
-    if (lockedId && !candidates.some((c) => c.icao24 === lockedId)) setLockedId(null);
-  }, [candidates, lockedId]);
-
   // Is the camera pointing at this aircraft (within the tolerance cone)?
   function inCone(c: Candidate) {
     return (
       heading != null &&
       pitch != null &&
+      c.elevation != null &&
       angularDiff(heading, c.bearing) <= HEADING_TOL &&
       Math.abs(pitch - c.elevation) <= PITCH_TOL
     );
@@ -216,8 +290,8 @@ export default function SpotPage() {
           .sort(
             (a, b) =>
               angularDiff(heading, a.bearing) +
-              Math.abs(pitch - a.elevation) -
-              (angularDiff(heading, b.bearing) + Math.abs(pitch - b.elevation)),
+              Math.abs(pitch - (a.elevation ?? 0)) -
+              (angularDiff(heading, b.bearing) + Math.abs(pitch - (b.elevation ?? 0))),
           )[0] ?? null
       : null;
   const target = lockedCandidate ?? autoMatch;
@@ -273,15 +347,16 @@ export default function SpotPage() {
           aircraftType: target.aircraftType,
           typeDesc: target.typeDesc,
           altM: target.altM,
+          obsAltM: coords?.alt,
           bearing: target.bearing,
           elevation: target.elevation,
-          // Plane position + ground track — used server-side to verify which leg
-          // of the route the aircraft is actually flying (lib/route.ts).
+          // Plane position + ground track at capture time (context for the
+          // server's own live-feed verification).
           planeLat: target.lat,
           planeLon: target.lon,
           track: target.track,
-          verified: true,
-          rarity: "common",
+          // NOTE: verified/rarity are decided server-side; nothing the client
+          // sends here can assert them.
         }),
       );
       const res = await fetch("/api/sightings", { method: "POST", body: fd });
@@ -419,7 +494,14 @@ export default function SpotPage() {
           (coords ? (
             <SpotMap
               observer={coords}
-              aircraft={mapAircraft}
+              heading={heading}
+              aircraft={mapAircraft.map((c) => ({
+                ...c,
+                kind: mapKind(c.aircraftType, c.adsbCategory),
+                isNew: Boolean(
+                  c.aircraftType && collectedTypes && !collectedTypes.has(c.aircraftType),
+                ),
+              }))}
               lockedId={lockedId}
               onSelect={(id) => {
                 setLockedId(id);

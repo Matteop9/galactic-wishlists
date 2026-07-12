@@ -20,7 +20,13 @@
 import { fetch as undiciFetch, Agent } from "undici";
 
 // Force IPv4 — mirrors lib/aircraft.ts (Vercel egress can't always reach advertised IPv6).
-const dispatcher = new Agent({ connect: { family: 4, timeout: 10_000 } });
+// headers/body timeouts too: connect.timeout only covers the handshake, and a stalled
+// response would otherwise hang the capture route toward the function timeout.
+const dispatcher = new Agent({
+  connect: { family: 4, timeout: 10_000 },
+  headersTimeout: 10_000,
+  bodyTimeout: 10_000,
+});
 
 const BASE = "https://fr24api.flightradar24.com/api";
 
@@ -49,7 +55,7 @@ export type Fr24Flight = {
   vspeedFpm: number | null;
 };
 
-const EMPTY: Fr24Flight = {
+export const EMPTY_FR24: Fr24Flight = {
   aircraftType: null,
   registration: null,
   callsign: null,
@@ -96,34 +102,57 @@ function mapRecord(r: Fr24PositionRecord): Fr24Flight {
   };
 }
 
+async function lookupFr24Live(filter: string): Promise<Fr24Flight> {
+  const headers = authHeaders();
+  if (!headers) return EMPTY_FR24;
+
+  try {
+    const res = await undiciFetch(`${BASE}/live/flight-positions/full?${filter}`, {
+      dispatcher,
+      headers,
+    });
+    if (!res.ok) return EMPTY_FR24;
+    const json = (await res.json()) as { data?: Fr24PositionRecord[] };
+    const rec = json.data?.[0];
+    return rec ? mapRecord(rec) : EMPTY_FR24;
+  } catch {
+    return EMPTY_FR24;
+  }
+}
+
 /**
  * Look up the authoritative FR24 record for an airborne aircraft by registration.
- * Returns EMPTY (all nulls) on missing token, no match, or any error.
+ * Returns EMPTY_FR24 (all nulls) on missing token, no match, or any error.
  */
 export async function lookupFr24ByRegistration(
   registration: string | null,
 ): Promise<Fr24Flight> {
   const reg = (registration ?? "").trim();
-  const headers = authHeaders();
-  if (!reg || !headers) return EMPTY;
-
-  try {
-    const res = await undiciFetch(
-      `${BASE}/live/flight-positions/full?registrations=${encodeURIComponent(reg)}`,
-      { dispatcher, headers },
-    );
-    if (!res.ok) return EMPTY;
-    const json = (await res.json()) as { data?: Fr24PositionRecord[] };
-    const rec = json.data?.[0];
-    return rec ? mapRecord(rec) : EMPTY;
-  } catch {
-    return EMPTY;
-  }
+  if (!reg) return EMPTY_FR24;
+  return lookupFr24Live(`registrations=${encodeURIComponent(reg)}`);
 }
 
 /**
+ * Same lookup keyed by ATC callsign — the fallback when the live feed had no
+ * registration for the airframe (without this, reg-less captures get no FR24
+ * enrichment at all: no route, no operator, no reg backfill).
+ */
+export async function lookupFr24ByCallsign(
+  callsign: string | null,
+): Promise<Fr24Flight> {
+  const cs = (callsign ?? "").trim();
+  if (!cs) return EMPTY_FR24;
+  return lookupFr24Live(`callsigns=${encodeURIComponent(cs)}`);
+}
+
+// Airline names never change mid-month; cache per instance so repeat captures of
+// the same carrier stop costing a credit each (Fluid Compute reuses instances).
+const airlineNameCache = new Map<string, { name: string | null; at: number }>();
+const AIRLINE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
+/**
  * Resolve an airline's display name from its ICAO code (e.g. "DLH" → "Lufthansa").
- * 1 credit. Returns null on missing token / no match / error.
+ * 1 credit on cache miss. Returns null on missing token / no match / error.
  */
 export async function lookupFr24AirlineName(
   icaoCode: string | null,
@@ -132,6 +161,9 @@ export async function lookupFr24AirlineName(
   const headers = authHeaders();
   if (!code || !headers) return null;
 
+  const cached = airlineNameCache.get(code);
+  if (cached && Date.now() - cached.at < AIRLINE_CACHE_TTL_MS) return cached.name;
+
   try {
     const res = await undiciFetch(
       `${BASE}/static/airlines/${encodeURIComponent(code)}/light`,
@@ -139,7 +171,9 @@ export async function lookupFr24AirlineName(
     );
     if (!res.ok) return null;
     const json = (await res.json()) as { name?: string };
-    return json.name ?? null;
+    const name = json.name ?? null;
+    airlineNameCache.set(code, { name, at: Date.now() });
+    return name;
   } catch {
     return null;
   }

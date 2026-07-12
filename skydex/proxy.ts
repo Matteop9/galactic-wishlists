@@ -48,18 +48,29 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Require a username before using the core app.
+  // Require a username before using the core app. The positive result is cached
+  // in a cookie (keyed to the user id) — a per-request DB query in the proxy is
+  // exactly what the Next docs warn against, and handles are never un-set.
   if (user && NEEDS_HANDLE.some((p) => path === p || path.startsWith(p + "/"))) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("handle")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (!profile?.handle) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/settings";
-      url.searchParams.set("setup", "1");
-      return NextResponse.redirect(url);
+    if (request.cookies.get("sd-has-handle")?.value !== user.id) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("handle")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (!profile?.handle) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/settings";
+        url.searchParams.set("setup", "1");
+        return NextResponse.redirect(url);
+      }
+      response.cookies.set("sd-has-handle", user.id, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: true,
+        maxAge: 60 * 60 * 24 * 30,
+        path: "/",
+      });
     }
   }
 
@@ -67,8 +78,10 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Run on everything except static assets and image files.
+  // Run on everything except static assets, image files, metadata routes, and
+  // /api/* — API routes do their own auth, and the polled /api/flights was
+  // paying a Supabase auth round-trip on every call.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!api/|_next/static|_next/image|favicon\\.ico|manifest\\.webmanifest|icon|apple-icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

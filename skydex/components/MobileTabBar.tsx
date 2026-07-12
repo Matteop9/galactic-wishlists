@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 const sv = "h-[22px] w-[22px]";
 
-// Field-use primary nav: a thumb-reachable bottom bar on mobile only. Icons
-// mirror the desktop NavLinks set, plus a Profile entry.
+// The single primary nav (all viewports): a thumb-reachable fixed bottom bar
+// with the core destinations plus a Profile entry.
 const ICONS: Record<string, React.ReactNode> = {
   "/spot": (
     <svg className={sv} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
@@ -51,12 +51,16 @@ export default function MobileTabBar({ handle }: { handle: string | null }) {
   const pathname = usePathname();
   const profileHref = handle ? `/u/${handle}` : "/settings";
 
+  // `also`: routes that belong to a tab without being under its href —
+  // the Books/Liveries collections live in the Scrapbook, account pages under
+  // Profile. Without this, those pages leave no tab lit; and matching bare
+  // "/u/" lit Profile on *anyone's* profile, not just your own.
   const tabs = [
-    { key: "/spot", href: "/spot", label: "Spot" },
-    { key: "/scrapbook", href: "/scrapbook", label: "Scrapbook" },
-    { key: "/feed", href: "/feed", label: "Feed" },
-    { key: "/leaderboards", href: "/leaderboards", label: "Boards" },
-    { key: "profile", href: profileHref, label: "Profile" },
+    { key: "/spot", href: "/spot", label: "Spot", also: [] as string[] },
+    { key: "/scrapbook", href: "/scrapbook", label: "Scrapbook", also: ["/books", "/liveries"] },
+    { key: "/feed", href: "/feed", label: "Feed", also: [] as string[] },
+    { key: "/leaderboards", href: "/leaderboards", label: "Boards", also: [] as string[] },
+    { key: "profile", href: profileHref, label: "Profile", also: ["/settings", "/profile"] },
   ];
 
   return (
@@ -69,7 +73,7 @@ export default function MobileTabBar({ handle }: { handle: string | null }) {
           const active =
             pathname === t.href ||
             pathname.startsWith(`${t.href}/`) ||
-            (t.key === "profile" && pathname.startsWith("/u/"));
+            t.also.some((p) => pathname === p || pathname.startsWith(`${p}/`));
           return (
             <Link
               key={t.key}

@@ -32,11 +32,24 @@ const BANNED = [
   "spunk",
 ];
 
-// Lowercase, fold common leetspeak to letters, then strip everything that isn't
-// a letter — turning "S.h_1 t" into "shit".
+// Cyrillic/Greek letters that render identically to Latin ones. Without this,
+// stripping non-[a-z] *deletes* a homoglyph instead of folding it — one swapped
+// letter ("fuсk" with Cyrillic с) used to bypass the entire list.
+const HOMOGLYPHS: Record<string, string> = {
+  а: "a", е: "e", о: "o", р: "p", с: "c", х: "x", у: "y", і: "i", ѕ: "s",
+  ј: "j", ԁ: "d", ɡ: "g", ν: "v", α: "a", β: "b", ε: "e", ι: "i", κ: "k",
+  ο: "o", ρ: "p", τ: "t", υ: "u",
+};
+
+// Lowercase, decompose accents/fullwidth forms (NFKD), fold homoglyphs and common
+// leetspeak to letters, then strip everything that isn't a letter — turning
+// "S.h_1 t" (or "ѕhіt") into "shit".
 function collapse(text: string): string {
   return text
     .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "") // combining marks left by NFKD
+    .replace(/[^\x00-\x7f]/g, (ch) => HOMOGLYPHS[ch] ?? "")
     .replace(/[4@]/g, "a")
     .replace(/3/g, "e")
     .replace(/[1!|]/g, "i")

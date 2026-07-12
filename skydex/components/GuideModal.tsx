@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useDialog } from "@/components/useDialog";
 
 const SEEN_KEY = "skydex_guide_seen";
+
+// Only auto-open where onboarding makes sense — not on legal pages or a shared
+// card link someone landed on from outside.
+const AUTO_OPEN_ROUTES = ["/", "/spot", "/scrapbook", "/feed"];
 
 const STEPS: [string, string][] = [
   ["Find a plane", "Spot an aircraft you can actually see overhead — near an airport or flight path works best."],
@@ -14,13 +20,20 @@ const STEPS: [string, string][] = [
 
 export default function GuideModal() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (!localStorage.getItem(SEEN_KEY)) setOpen(true);
+    let raf: number | null = null;
+    if (!localStorage.getItem(SEEN_KEY) && AUTO_OPEN_ROUTES.includes(pathname)) {
+      raf = requestAnimationFrame(() => setOpen(true));
+    }
     const handler = () => setOpen(true);
     window.addEventListener("skydex:open-guide", handler);
-    return () => window.removeEventListener("skydex:open-guide", handler);
-  }, []);
+    return () => {
+      if (raf != null) cancelAnimationFrame(raf);
+      window.removeEventListener("skydex:open-guide", handler);
+    };
+  }, [pathname]);
 
   function close() {
     localStorage.setItem(SEEN_KEY, "1");
@@ -29,10 +42,21 @@ export default function GuideModal() {
 
   if (!open) return null;
 
+  return <GuideDialog onClose={close} />;
+}
+
+function GuideDialog({ onClose }: { onClose: () => void }) {
+  const dialogRef = useDialog(onClose);
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4"
-      onClick={close}
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label="How SkyDex works"
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4 outline-none"
+      onClick={onClose}
     >
       <div
         className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-lg border-2 border-ink bg-paper p-6 shadow-2xl"
@@ -62,7 +86,7 @@ export default function GuideModal() {
           ))}
         </ol>
 
-        <button onClick={close} className="sd-btn sd-btn--capture mt-6 w-full justify-center">
+        <button onClick={onClose} className="sd-btn sd-btn--capture mt-6 w-full justify-center">
           Start spotting
         </button>
       </div>

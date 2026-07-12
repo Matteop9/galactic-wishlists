@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import SectionShell from "@/components/SectionShell";
 import { createClient } from "@/lib/supabase/server";
@@ -63,8 +64,17 @@ export default async function ReportsPage() {
               </div>
               {r.reason && <p className="mt-2 text-sm text-ink">{r.reason}</p>}
               <p className="mt-2 font-mono text-[11px] text-ink-faint">
-                by @{r.profiles?.handle ?? "spotter"} · {r.target_type} {r.target_id.slice(0, 8)} ·{" "}
-                {new Date(r.created_at).toLocaleString("en-GB")}
+                by @{r.profiles?.handle ?? "spotter"} ·{" "}
+                {r.target_type === "sighting" ? (
+                  <Link href={`/s/${r.target_id}`} className="text-sky hover:underline">
+                    open sighting {r.target_id.slice(0, 8)}
+                  </Link>
+                ) : (
+                  <>
+                    {r.target_type} {r.target_id.slice(0, 8)}
+                  </>
+                )}{" "}
+                · {new Date(r.created_at).toLocaleString("en-GB")}
               </p>
             </li>
           ))}
