@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.4",
+    date: "2026-07-12",
+    changes: [
+      "Map colours got smarter — gold now means everything about that plane is new for you (type, airline, livery), green means something is, black means you've caught it all before. Tap a plane to see exactly what's new.",
+      "Special liveries stand out on the map — airframes wearing one get a dashed gold ring, and the tap card names the livery.",
+    ],
+  },
+  {
     version: "0.3.3",
     date: "2026-07-12",
     changes: [

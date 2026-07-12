@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { angularDiff } from "@/lib/geo";
 import { mapKind } from "@/lib/aircraftTypes";
+import { airlineFromCallsign } from "@/lib/airlines";
+import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
 import SpotMap from "@/components/SpotMap";
@@ -41,9 +43,16 @@ export default function SpotPage() {
   const [lockedId, setLockedId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<DiscoveryResult | null>(null);
-  // Type codes this user has already caught — colours the map's "new for you"
-  // markers. null until loaded; re-fetched after each capture.
-  const [collectedTypes, setCollectedTypes] = useState<Set<string> | null>(null);
+  // What this user has already caught, across the dimensions knowable on the
+  // map: type codes, airline brands, and (normalised) registrations for the
+  // livery check. Colours the markers gold/green/ink. null until loaded;
+  // re-fetched after each capture. (Airports are NOT knowable pre-capture —
+  // routes only come from FR24 at capture time.)
+  const [collection, setCollection] = useState<{
+    types: Set<string>;
+    airlines: Set<string>;
+    regs: Set<string>;
+  } | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const minimapRef = useRef<HTMLVideoElement>(null);
@@ -164,7 +173,7 @@ export default function SpotPage() {
     };
   }, [coords]);
 
-  // Own collection (distinct type codes) for the map's new-catch colouring.
+  // Own collection for the map's new-catch colouring.
   // Progressive enhancement: if this fails, markers just stay ink.
   useEffect(() => {
     let cancelled = false;
@@ -177,11 +186,16 @@ export default function SpotPage() {
         if (!user) return;
         const { data } = await supabase
           .from("sightings")
-          .select("aircraft_type")
-          .eq("user_id", user.id)
-          .not("aircraft_type", "is", null);
+          .select("aircraft_type, airline, registration")
+          .eq("user_id", user.id);
         if (!cancelled && data) {
-          setCollectedTypes(new Set(data.map((r) => r.aircraft_type as string)));
+          setCollection({
+            types: new Set(data.map((r) => r.aircraft_type as string).filter(Boolean)),
+            airlines: new Set(data.map((r) => r.airline as string).filter(Boolean)),
+            regs: new Set(
+              data.map((r) => normalizeReg(r.registration as string | null)).filter(Boolean),
+            ),
+          });
         }
       } catch {
         /* non-essential */
@@ -190,7 +204,35 @@ export default function SpotPage() {
     return () => {
       cancelled = true;
     };
-  }, [result]); // a fresh capture may have added a type
+  }, [result]); // a fresh capture may have added a type/airline/livery
+
+  // Newness across the dimensions knowable pre-capture. "all" = every dimension
+  // this plane has is new for you (gold); "some" = at least one (green);
+  // "none" = complete dupe (ink). Unknowable dimensions don't count against gold.
+  function newness(c: Candidate): { level: "all" | "some" | "none"; bits: string[]; liveryName: string | null } {
+    const sl = specialLivery(c.registration);
+    if (!collection) return { level: "none", bits: [], liveryName: sl?.livery ?? null };
+    const bits: string[] = [];
+    const dims: boolean[] = [];
+    if (c.aircraftType) {
+      const n = !collection.types.has(c.aircraftType);
+      dims.push(n);
+      if (n) bits.push("type");
+    }
+    const brand = airlineFromCallsign(c.callsign);
+    if (brand) {
+      const n = !collection.airlines.has(brand);
+      dims.push(n);
+      if (n) bits.push("airline");
+    }
+    if (sl) {
+      const n = !collection.regs.has(normalizeReg(c.registration));
+      dims.push(n);
+      if (n) bits.push("livery");
+    }
+    const level = dims.length && dims.every(Boolean) ? "all" : bits.length ? "some" : "none";
+    return { level, bits, liveryName: sl?.livery ?? null };
+  }
 
   // Map view: poll ALL aircraft in a wider radius (not just the capture cone).
   useEffect(() => {
@@ -495,13 +537,16 @@ export default function SpotPage() {
             <SpotMap
               observer={coords}
               heading={heading}
-              aircraft={mapAircraft.map((c) => ({
-                ...c,
-                kind: mapKind(c.aircraftType, c.adsbCategory),
-                isNew: Boolean(
-                  c.aircraftType && collectedTypes && !collectedTypes.has(c.aircraftType),
-                ),
-              }))}
+              aircraft={mapAircraft.map((c) => {
+                const n = newness(c);
+                return {
+                  ...c,
+                  kind: mapKind(c.aircraftType, c.adsbCategory),
+                  newness: n.level,
+                  newBits: n.bits,
+                  liveryName: n.liveryName,
+                };
+              })}
               lockedId={lockedId}
               onSelect={(id) => {
                 setLockedId(id);

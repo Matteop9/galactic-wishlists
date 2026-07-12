@@ -2,6 +2,15 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.4 — 2026-07-12
+
+Map newness colouring, round 2 (user feedback on v0.3.3's single-dimension gold).
+
+### Changed
+- **Marker colour is now graded across every dimension knowable pre-capture** (`app/spot/page.tsx` `newness()` + `components/SpotMap.tsx`): **gold** = all of type / airline / special livery are new for the viewer; **green** (`#3e7a5a`, mirrors `--color-rarity-uncommon`) = at least one is; **ink** = complete dupe; tracking red still wins. Airline is derived client-side via `airlineFromCallsign`; livery via `specialLivery(registration)`. Unknowable dimensions don't count against gold. **Airports deliberately excluded** — routes only become known at capture time via FR24 (the live feed has no origin/destination, and pre-fetching routes for a mapful of planes would burn ~9 credits each).
+- **Special-livery airframes get a dashed brass ring** around their marker (CSS outline, rotation-safe), and the tap popup names the livery (`✦ <name>`) plus lists exactly which dimensions are new ("NEW FOR YOU: TYPE · AIRLINE"). Legend updated (all new / something new / tracking / special livery).
+- Own-collection fetch widened from type codes to `{aircraft_type, airline, registration}` (same own-rows RLS path; registrations normalised for the livery check).
+
 ## v0.3.3 — 2026-07-12
 
 Rarity overhaul part 1 + spot-map upgrades, driven by the in-app feedback backlog (all three 2026-07-11 items + review of the 2026-06-16 items, three of which were already shipped and are now marked resolved).

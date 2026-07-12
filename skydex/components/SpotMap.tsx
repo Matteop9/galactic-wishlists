@@ -19,7 +19,11 @@ export type MapAircraft = {
   bearing: number;
   distanceKm: number;
   kind: MapKind; // icon shape: heli / light / narrow / wide
-  isNew: boolean; // this type would be a new catch for the viewer
+  // How much of this plane is uncaught for the viewer, across the dimensions
+  // knowable pre-capture (type / airline / special livery):
+  newness: "all" | "some" | "none"; // gold / green / ink
+  newBits: string[]; // which dimensions are new, for the popup
+  liveryName: string | null; // special-livery name, when the airframe wears one
 };
 
 type Props = {
@@ -31,7 +35,15 @@ type Props = {
   onSelect: (icao24: string) => void;
 };
 
-const BRAND = { ink: "#20262b", sky: "#0e7c86", stamp: "#b5402e", paper: "#f2ebdc", brass: "#b98a2e" };
+// green mirrors --color-rarity-uncommon: "some of this plane is new for you".
+const BRAND = {
+  ink: "#20262b",
+  sky: "#0e7c86",
+  stamp: "#b5402e",
+  paper: "#f2ebdc",
+  brass: "#b98a2e",
+  green: "#3e7a5a",
+};
 // Mirror the capture logic's HEADING_TOL (spot page) — the cone IS the window
 // the camera would accept a target in, so what you see is what you can catch.
 const FOV_HALF_ANGLE = 22;
@@ -134,10 +146,25 @@ function planeMarkup(kind: MapKind, rotation: number, color: string, scale: numb
   );
 }
 
-function planeEl(kind: MapKind, rotation: number, color: string, scale: number): HTMLButtonElement {
+// Special-livery airframes get a dashed brass ring around the marker,
+// independent of the fill colour (CSS outline follows the border-radius).
+function applyLiveryRing(el: HTMLButtonElement, special: boolean) {
+  el.style.borderRadius = "9999px";
+  el.style.outline = special ? `1.5px dashed ${BRAND.brass}` : "none";
+  el.style.outlineOffset = "2px";
+}
+
+function planeEl(
+  kind: MapKind,
+  rotation: number,
+  color: string,
+  scale: number,
+  special: boolean,
+): HTMLButtonElement {
   const el = document.createElement("button");
   el.type = "button";
   el.style.cssText = "background:none;border:none;padding:0;margin:0;cursor:pointer;line-height:0;";
+  applyLiveryRing(el, special);
   el.innerHTML = planeMarkup(kind, rotation, color, scale);
   return el;
 }
@@ -275,9 +302,19 @@ export default function SpotMap({
     const sub = [a.typeDesc, `${a.distanceKm} km`].filter(Boolean).join(" · ");
     const box = document.createElement("div");
     box.style.cssText = "font-family:system-ui,sans-serif;min-width:150px;";
+    const liveryLine = a.liveryName
+      ? `<div style="font-size:12px;color:${BRAND.brass};margin:0 0 2px;">✦ ${esc(a.liveryName)}</div>`
+      : "";
+    const newLine = a.newBits.length
+      ? `<div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;` +
+        `color:${a.newness === "all" ? BRAND.brass : BRAND.green};margin:0 0 8px;">` +
+        `New for you: ${esc(a.newBits.join(" · "))}</div>`
+      : "";
     box.innerHTML =
       `<div style="font-weight:700;color:${BRAND.ink};">${esc(label)}</div>` +
-      `<div style="font-size:12px;color:#4a5560;margin:2px 0 8px;">${esc(sub)}</div>`;
+      `<div style="font-size:12px;color:#4a5560;margin:2px 0 ${liveryLine || newLine ? "4px" : "8px"};">${esc(sub)}</div>` +
+      liveryLine +
+      newLine;
     const btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = "Track & aim →";
@@ -308,13 +345,21 @@ export default function SpotMap({
       seen.add(a.icao24);
       const rot = a.track ?? a.bearing ?? 0;
       const locked = a.icao24 === lockedId;
-      // Tracking wins, then "this would be a new catch for you" in brass.
-      const color = locked ? BRAND.stamp : a.isNew ? BRAND.brass : BRAND.ink;
+      const special = a.liveryName != null;
+      // Tracking wins; then gold = everything about it is new for you,
+      // green = something is, ink = complete dupe.
+      const color = locked
+        ? BRAND.stamp
+        : a.newness === "all"
+          ? BRAND.brass
+          : a.newness === "some"
+            ? BRAND.green
+            : BRAND.ink;
       const scale = locked ? 1.4 : 1;
-      const sig = `${a.kind}|${rot}|${color}|${scale}`;
+      const sig = `${a.kind}|${rot}|${color}|${scale}|${special}`;
       const existing = planes[a.icao24];
       if (!existing) {
-        const el = planeEl(a.kind, rot, color, scale);
+        const el = planeEl(a.kind, rot, color, scale, special);
         el.title = a.registration || a.callsign || a.icao24;
         el.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -328,6 +373,7 @@ export default function SpotMap({
         existing.marker.setLngLat([a.lon, a.lat]);
         if (existing.sig !== sig) {
           existing.el.innerHTML = planeMarkup(a.kind, rot, color, scale);
+          applyLiveryRing(existing.el, special);
           existing.sig = sig;
         }
       }
@@ -378,10 +424,16 @@ export default function SpotMap({
       <div ref={containerRef} className="h-full w-full" />
       <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-1 rounded bg-ink/75 px-2.5 py-1.5 font-mono text-[10px] leading-4 text-paper">
         <span>
-          <span style={{ color: BRAND.brass }}>✈</span> new for you
+          <span style={{ color: BRAND.brass }}>✈</span> all new for you
+        </span>
+        <span>
+          <span style={{ color: "#5ea87f" }}>✈</span> something new
         </span>
         <span>
           <span style={{ color: BRAND.stamp }}>✈</span> tracking
+        </span>
+        <span>
+          <span style={{ color: BRAND.brass }}>◌</span> special livery
         </span>
       </div>
       <button
