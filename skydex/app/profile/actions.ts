@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { containsProfanity } from "@/lib/profanity";
+import { fetchUserSightings, PROFILE_PAGE_SIZE } from "@/lib/profileSightings";
+import type { Sighting } from "@/components/SightingCard";
 
 export type ProfileState = { error?: string; ok?: boolean };
 
@@ -130,6 +132,24 @@ export async function toggleFavourite(
   if (error) return { error: error.message };
 
   return { ids: next };
+}
+
+/**
+ * Next page of a user's public sighting history (profile "Load more").
+ * feed_sightings is publicly readable, so no auth check is needed.
+ */
+export async function loadMoreSightings(
+  userId: string,
+  offset: number,
+): Promise<{ sightings?: Sighting[]; hasMore?: boolean; error?: string }> {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
+    return { error: "Bad request." };
+  }
+  const off = Math.floor(Number(offset));
+  if (!Number.isFinite(off) || off < 0 || off > 100_000) return { error: "Bad request." };
+
+  const supabase = await createClient();
+  return fetchUserSightings(supabase, userId, off, PROFILE_PAGE_SIZE);
 }
 
 /** Permanently delete the signed-in user via the delete-account Edge Function. */

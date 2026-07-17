@@ -7,29 +7,14 @@ import { getViewer } from "@/lib/auth";
 import { type Sighting } from "@/components/SightingCard";
 import { RARITY_RANK, RARITY_COLOR } from "@/lib/rarity";
 import { airportName } from "@/lib/airports";
+import {
+  PROFILE_PAGE_SIZE,
+  SIGHTING_COLS as COLS,
+  type SightingRow as Row,
+  makeSightingMapper,
+} from "@/lib/profileSightings";
 
 export const dynamic = "force-dynamic";
-
-const COLS =
-  "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, user_id";
-
-type Row = {
-  id: string;
-  captured_at: string;
-  callsign: string | null;
-  registration: string | null;
-  aircraft_type: string | null;
-  airline: string | null;
-  altitude_m: number | null;
-  rarity: string;
-  verified: boolean;
-  photo_path: string | null;
-  handle: string | null;
-  origin: string | null;
-  destination: string | null;
-  avatar_seed: string | null;
-  is_admin: boolean | null;
-};
 
 type Stats = {
   spots_all: number; spots_all_rank: number | null;
@@ -103,14 +88,19 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
   // Rarest catches probe per tier (rarest first) — derived from the user's whole
   // history, not just the 60 recent rows below, so an old legendary never drops off.
   const TIERS = ["legendary", "epic", "rare", "uncommon", "common"] as const;
-  const [{ data: rows }, { data: statRows }, { data: typeData }, { data: featRows }, rareTiers] =
-    await Promise.all([
+  const [
+    { data: rows, count: totalCount },
+    { data: statRows },
+    { data: typeData },
+    { data: featRows },
+    rareTiers,
+  ] = await Promise.all([
       supabase
         .from("feed_sightings")
-        .select(COLS)
+        .select(COLS, { count: "exact" })
         .eq("user_id", profile.id)
         .order("created_at", { ascending: false })
-        .limit(60),
+        .limit(PROFILE_PAGE_SIZE),
       supabase.rpc("profile_stats", { p_user: profile.id }),
       supabase.from("aircraft_types").select("code, display_name"),
       featuredIds.length
@@ -129,19 +119,10 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
       ),
     ]);
 
-  const typeName = new Map(
-    ((typeData ?? []) as { code: string; display_name: string | null }[]).map((t) => [
-      t.code,
-      t.display_name ?? t.code,
-    ]),
+  const toSighting = makeSightingMapper(
+    supabase,
+    (typeData ?? []) as { code: string; display_name: string | null }[],
   );
-  const toSighting = (r: Row): Sighting => ({
-    ...r,
-    aircraft_type: r.aircraft_type ? typeName.get(r.aircraft_type) ?? r.aircraft_type : null,
-    photo_url: r.photo_path
-      ? supabase.storage.from("sightings").getPublicUrl(r.photo_path).data.publicUrl
-      : null,
-  });
 
   const sightings = ((rows ?? []) as Row[]).map(toSighting);
   const featById = new Map(((featRows ?? []) as Row[]).map((r) => [r.id, toSighting(r)]));
@@ -252,71 +233,51 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
         </section>
       )}
 
-      {/* favourites */}
-      {featured.length > 0 && (
-        <section className="mt-6">
+      {/* favourites tray + medals/stats + paged history (pin state is client-side) */}
+      <ProfileSightings
+        initialSightings={sightings}
+        featuredSightings={featured}
+        isOwner={isOwner}
+        userId={profile.id}
+        total={totalCount ?? sightings.length}
+      >
+        {/* medals (placeholder until achievements ship) */}
+        <section className="mt-8">
           <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink-soft">
-            Favourites
+            Medals
           </h2>
-          <ProfileSightings sightings={featured} featuredIds={featuredIds} isOwner={false} />
+          <div className="mt-3 rounded-lg border border-dashed border-paper-edge px-4 py-6 text-center font-mono text-xs text-ink-faint">
+            Medals are coming soon — earn them by topping the boards and hitting milestones.
+          </div>
         </section>
-      )}
 
-      {/* medals (placeholder until achievements ship) */}
-      <section className="mt-8">
-        <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink-soft">
-          Medals
-        </h2>
-        <div className="mt-3 rounded-lg border border-dashed border-paper-edge px-4 py-6 text-center font-mono text-xs text-ink-faint">
-          Medals are coming soon — earn them by topping the boards and hitting milestones.
-        </div>
-      </section>
-
-      {/* stats */}
-      <section className="mt-8">
-        <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink-soft">
-          Stats <span className="font-mono text-xs normal-case text-ink-faint">· value · rank</span>
-        </h2>
-        {stats ? (
-          <>
-            <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-ink-faint">Spots</p>
-            <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <StatTile label="All time" value={stats.spots_all} rank={stats.spots_all_rank} />
-              <StatTile label="This month" value={stats.spots_month} rank={stats.spots_month_rank} />
-              <StatTile label="This week" value={stats.spots_week} rank={stats.spots_week_rank} />
-              <StatTile label="Today" value={stats.spots_today} rank={stats.spots_today_rank} />
-            </div>
-            <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-ink-faint">Collection</p>
-            <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <StatTile label="Types" value={stats.types} rank={stats.types_rank} />
-              <StatTile label="Carriers" value={stats.airlines} rank={stats.airlines_rank} />
-              <StatTile label="Airports" value={stats.airports} rank={stats.airports_rank} />
-              <StatTile label="Rarity" value={stats.rarity} rank={stats.rarity_rank} />
-            </div>
-          </>
-        ) : (
-          <p className="mt-3 text-sm text-ink-faint">No verified sightings yet.</p>
-        )}
-      </section>
-
-      {/* all sightings */}
-      <section className="mt-8">
-        <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink-soft">
-          {isOwner ? "Your sightings" : "Sightings"}
-        </h2>
-        {isOwner && featured.length < 3 && sightings.length > 0 && (
-          <p className="mt-1 text-xs text-ink-faint">
-            Tap the ☆ on a card to feature it on your profile (up to 3).
-          </p>
-        )}
-        <div className="mt-3">
-          {sightings.length === 0 ? (
-            <p className="text-sm text-ink-faint">No sightings yet.</p>
+        {/* stats */}
+        <section className="mt-8">
+          <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink-soft">
+            Stats <span className="font-mono text-xs normal-case text-ink-faint">· value · rank</span>
+          </h2>
+          {stats ? (
+            <>
+              <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-ink-faint">Spots</p>
+              <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <StatTile label="All time" value={stats.spots_all} rank={stats.spots_all_rank} />
+                <StatTile label="This month" value={stats.spots_month} rank={stats.spots_month_rank} />
+                <StatTile label="This week" value={stats.spots_week} rank={stats.spots_week_rank} />
+                <StatTile label="Today" value={stats.spots_today} rank={stats.spots_today_rank} />
+              </div>
+              <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-ink-faint">Collection</p>
+              <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <StatTile label="Types" value={stats.types} rank={stats.types_rank} />
+                <StatTile label="Carriers" value={stats.airlines} rank={stats.airlines_rank} />
+                <StatTile label="Airports" value={stats.airports} rank={stats.airports_rank} />
+                <StatTile label="Rarity" value={stats.rarity} rank={stats.rarity_rank} />
+              </div>
+            </>
           ) : (
-            <ProfileSightings sightings={sightings} featuredIds={featuredIds} isOwner={isOwner} />
+            <p className="mt-3 text-sm text-ink-faint">No verified sightings yet.</p>
           )}
-        </div>
-      </section>
+        </section>
+      </ProfileSightings>
     </main>
   );
 }

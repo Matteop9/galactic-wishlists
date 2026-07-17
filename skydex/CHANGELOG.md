@@ -2,9 +2,9 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
-## Unreleased
+## v0.3.6 — 2026-07-17
 
-Profile page overhaul (feedback 2026-07-17): easier favourite pinning + full history loads.
+Profile page overhaul + rarity overhaul part 2 + community-review thresholds tightened (feedback 2026-07-17) + map key relocation/legibility (feedback 2026-07-12).
 
 ### Added
 - **Full history now loads on profiles.** The page previously hard-capped at the 60 most recent sightings with no way to see older ones. It now loads 24 up front and a **Load more (N remaining)** button pages through everything via a new `loadMoreSightings` server action (`app/profile/actions.ts`), with a "showing X of Y" counter in the section header (Y from an exact count on `feed_sightings`). Shared query/mapper logic extracted to `lib/profileSightings.ts` (used by both the page and the action).
@@ -12,11 +12,13 @@ Profile page overhaul (feedback 2026-07-17): easier favourite pinning + full his
 ### Changed
 - **Pinning favourites is now instant and obvious** (`components/ProfileSightings.tsx` rewrite). The tiny ☆ overlay (which overlapped the VERIFIED stamp, popped `alert()`s, and forced a full `router.refresh()` per tap) is replaced by a full-width **"☆ Pin to profile" / "★ Pinned — tap to unpin"** button under every card. Pins update optimistically — the Favourites tray at the top reflects the change immediately, no page reload — and revert with an inline toast if the server rejects. The tray shows a **n/3 pinned** counter, lets owners unpin directly from it (previously read-only, so you had to hunt for the starred card in history), and shows a hint box when empty. The component now owns Favourites + history in one client island (medals/stats render between as children) so both stay in sync.
 
-## v0.3.6 — 2026-07-17
+### Changed — rarity overhaul part 2: measured tiers are LIVE (DB-side, no deploy needed; closes the 2026-07-11 rarity feedback, now marked resolved)
+- **Snapshot stopped at 15/48 rounds by choice** (7h from Sat 12 Jul + ~1h from Thu 17 Jul; 9,333 distinct airframes, 447 usable types). Thresholds recalibrated for the truncated window: `--common=120 --uncommon=30 --rare=5 --epic=2` → 15 common / 36 uncommon / 145 rare / 112 epic / 139 legendary across observed types. Sanity-checked: commons are the A320/737 families + C172/PA-28 trainers + 787-9/777-300ER/A350; the legendary tail is genuinely one-off (DC-3, Ka-27, C-27J, Gulfstream II, H60…).
+- **DB migration `measured_rarity_lookup`:** new `measured_rarity(code, tier)` reference table (RLS deny-all — internal data read only by the RPC) + `register_aircraft_type()` v2: a type's FIRST capture now lands on its measured tier instead of the flat `'rare'` default; unmeasured types still default rare; category floors still only lift. Chosen over pre-inserting ~370 placeholder rows so the Type Book isn't flooded with raw ICAO codes.
+- **DB migration `rarity_retier_from_snapshot`:** re-tiered the 93 existing universe rows from measurement (floors applied; demotions allowed — measurement wins), seeded `measured_rarity` (447 rows, `ZZZZ` excluded), promoted universe types absent from the snapshot to ≥ rare, and backfilled per-sighting rarity. Sightings moved from 172 common / 105 uncommon / 24 rare to 219 / 56 / 29 / **1 legendary**. Verified end-to-end: registering P28A → common (was rare-by-default), KA27 → legendary, unmeasured XX99 → rare.
+- **`scripts/rarity-apply.mjs`** now emits the `measured_rarity` seed alongside the re-tier SQL and filters the `ZZZZ` unknown-type code.
 
-Community-review thresholds tightened (feedback 2026-07-17) + map key relocation/legibility (feedback 2026-07-12).
-
-### Changed
+### Changed — community review + map key
 - **Flag threshold lowered to net-2** (migration `review_net2_flag_and_endorse_retire`): `review_vote` now flags a photo into the admin queue when `no − yes ≥ 2` (was 3). Retroactively backfilled — the 9 photos already sitting at net-2 were flagged, hidden from public surfaces, and given owner warnings, joining the `/reports` admin queue.
 - **Endorse-retire at net-2**: `review_next` no longer serves photos with `yes − no ≥ 2` — the community has approved them, so reviewer effort goes only to photos that still need eyes (91 photos retired at migration time). They can still be flagged later only if already-cast votes shift, and admin `cleared` immunity is unchanged.
 - Copy/comments updated (`app/review/page.tsx` subtitle, `ReviewQueue.tsx`, `app/reports/page.tsx`).

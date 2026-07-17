@@ -15,6 +15,9 @@ export const RELEASES: Release[] = [
     version: "0.3.6",
     date: "2026-07-17",
     changes: [
+      "Your whole logbook now loads on your profile — history used to stop silently at the 60 most recent catches; now a Load more button pages through everything, with a running 'showing X of Y' count.",
+      "Pinning favourites is finally easy: a clear Pin to profile button under every card (no more hunting for the tiny star), pins appear in your Favourites tray instantly, and you can unpin straight from the tray. The tray shows how many of your 3 slots are used.",
+      "Rarity is now measured from real skies — as promised in 0.3.3, every aircraft type has been re-graded from a live snapshot of European air traffic (9,000+ airframes observed). Your collection and past sightings have been re-tiered: A320s are properly common, and that DC-3 is officially legendary.",
       "Community review verdicts land faster: two net no-votes now send a photo to the admins (was three), and two net yes-votes approve it — approved photos leave the review queue for good, so your reviews always count on photos that still need eyes.",
       "The map key moved to the top-right and now shows the real marker shapes — filled plane silhouettes in gold/green/black plus the dashed special-livery ring — so the colours actually read against the map.",
     ],
