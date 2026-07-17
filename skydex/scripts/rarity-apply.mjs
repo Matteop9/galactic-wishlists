@@ -105,6 +105,13 @@ end
 where code not in (${rows.map((r) => `'${r.code.replace(/'/g, "")}'`).join(",")})
   and rarity_rank(rarity) < rarity_rank('rare');
 
+-- Curated pins (rarity_overrides) always win over measurement — applied last
+-- so re-running the snapshot→apply cycle never clobbers them.
+update public.aircraft_types at
+set rarity = o.tier
+from public.rarity_overrides o
+where at.code = o.code and at.rarity is distinct from o.tier;
+
 -- Denormalised per-sighting rarity follows the universe.
 update public.sightings s
 set rarity = at.rarity

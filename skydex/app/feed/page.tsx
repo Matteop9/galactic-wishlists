@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import Link from "next/link";
 import SectionShell from "@/components/SectionShell";
 import SightingBrowser from "@/components/SightingBrowser";
 import { createClient } from "@/lib/supabase/server";
@@ -10,6 +11,12 @@ export const dynamic = "force-dynamic";
 
 const COLS =
   "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm";
+
+// Popular window: sightings from the last 30 days, so old winners age out.
+// (Module-level helper — the page is force-dynamic, so this runs per request.)
+function popularCutoff(): string {
+  return new Date(Date.now() - 30 * 86400_000).toISOString();
+}
 
 type FeedRow = {
   id: string;
@@ -35,19 +42,29 @@ type FeedRow = {
   vspeed_fpm: number | null;
 };
 
-export default async function FeedPage() {
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string }>;
+}) {
+  const sort = (await searchParams).sort === "popular" ? "popular" : "recent";
   const { user, isAdmin } = await getViewer();
   const devMode = isAdmin && (await cookies()).get("skydex_dev")?.value === "1";
 
   const supabase = await createClient();
   // Dev mode (admin only) reads the RLS-respecting view that includes unverified
   // sightings; everyone else reads the privacy-safe verified-only feed view.
+  // Popular = last 30 days ordered by reaction count (view column).
+  let query = supabase.from(devMode ? "all_sightings" : "feed_sightings").select(COLS);
+  query =
+    sort === "popular"
+      ? query
+          .gte("created_at", popularCutoff())
+          .order("reaction_count", { ascending: false })
+          .order("created_at", { ascending: false })
+      : query.order("created_at", { ascending: false });
   const [{ data }, { data: typeData }] = await Promise.all([
-    supabase
-      .from(devMode ? "all_sightings" : "feed_sightings")
-      .select(COLS)
-      .order("created_at", { ascending: false })
-      .limit(devMode ? 100 : 50),
+    query.limit(devMode ? 100 : 50),
     supabase.from("aircraft_types").select("code, display_name"),
   ]);
 
@@ -88,13 +105,32 @@ export default async function FeedPage() {
   return (
     <SectionShell
       title="Global feed"
-      subtitle="Verified sightings from spotters around the world. Tap Comments to join in."
+      subtitle={
+        sort === "popular"
+          ? "Most-loved sightings from the last 30 days. Tap Comments to join in."
+          : "Verified sightings from spotters around the world. Tap Comments to join in."
+      }
     >
-      {/* feed scope chips — Following/Nearby are upcoming */}
+      {/* feed scope chips — Latest/Popular sort; Following/Nearby are upcoming */}
       <div className="-mt-3 mb-6 flex gap-2">
-        <span className="rounded-full border border-ink bg-ink px-3.5 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper">
-          Latest
-        </span>
+        {(
+          [
+            ["Latest", "recent", "/feed"],
+            ["Popular", "popular", "/feed?sort=popular"],
+          ] as const
+        ).map(([label, key, href]) => (
+          <Link
+            key={key}
+            href={href}
+            className={`rounded-full border px-3.5 py-1.5 font-display text-xs font-semibold uppercase tracking-wide ${
+              sort === key
+                ? "border-ink bg-ink text-paper"
+                : "border-paper-edge text-ink-soft hover:border-ink"
+            }`}
+          >
+            {label}
+          </Link>
+        ))}
         {["Following", "Nearby"].map((c) => (
           <span
             key={c}

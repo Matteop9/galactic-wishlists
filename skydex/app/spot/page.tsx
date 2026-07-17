@@ -269,9 +269,9 @@ export default function SpotPage() {
   }, [mapAircraft, view]);
 
   // Predicted rarity for a map plane: RPC tier lifted by the same category
-  // floors the DB applies at registration (helicopter ≥ uncommon, military
-  // ≥ rare, vintage ≥ epic) — category from the curated map, falling back to
-  // live ADS-B hints exactly like /api/sightings does.
+  // floors the DB applies at registration (helicopter/widebody ≥ uncommon,
+  // military ≥ rare, vintage ≥ epic) — category from the curated map, falling
+  // back to live ADS-B hints exactly like /api/sightings does.
   function mapRarity(c: Candidate): Rarity | null {
     const code = c.aircraftType?.toUpperCase();
     if (!code) return null;
@@ -281,7 +281,10 @@ export default function SpotPage() {
       aircraftCategory(code) ??
       (c.military ? "military" : c.adsbCategory?.toUpperCase() === "A7" ? "helicopter" : null);
     const floor: Rarity =
-      cat === "vintage" ? "epic" : cat === "military" ? "rare" : cat === "helicopter" ? "uncommon" : "common";
+      cat === "vintage" ? "epic"
+      : cat === "military" ? "rare"
+      : cat === "helicopter" || cat === "widebody" ? "uncommon"
+      : "common";
     return RARITY_RANK[floor] > RARITY_RANK[base] ? floor : base;
   }
 

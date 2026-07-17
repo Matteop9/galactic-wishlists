@@ -1,6 +1,11 @@
-// Deterministic SkyDex avatars: 12 motifs × 8 palettes × 3 treatments = 288.
-// Minted on the fly from a seed (the user's handle) so they're stable per person
-// with nothing to store. Ported from files/avatar/build_avatars.py.
+// SkyDex avatars, minted on the fly from a seed string — nothing stored but the seed.
+// Two seed kinds (feedback 2026-07-17 — customisable icons):
+//  - structured "c:<motif>:<bg>:<fg>:<treatment>": explicit user picks — 12 motifs ×
+//    free bg/fg colour pairs from AVATAR_COLORS (bg ≠ fg) × 3 treatments.
+//  - anything else (legacy random strings / handles): FNV-1a hash into
+//    12 motifs × 8 curated palette pairs × 3 treatments, exactly as before —
+//    existing avatars render bit-identically until their owner re-saves.
+// Originally ported from files/avatar/build_avatars.py.
 
 const GLYPHS: Record<string, string> = {
   airliner: `<path d="M50 18 L54 44 L84 58 L84 64 L54 56 L52 74 L62 82 L62 86 L50 82 L38 86 L38 82 L48 74 L46 56 L16 64 L16 58 L46 44 Z" fill="{C}"/>`,
@@ -17,7 +22,7 @@ const GLYPHS: Record<string, string> = {
   globe: `<circle cx="50" cy="50" r="28" fill="none" stroke="{C}" stroke-width="4"/><g fill="none" stroke="{C}" stroke-width="3"><path d="M22 50 L78 50"/><ellipse cx="50" cy="50" rx="13" ry="28"/><path d="M28 36 Q50 44 72 36"/><path d="M28 64 Q50 56 72 64"/></g>`,
 };
 
-// [bg, glyph colour]
+// [bg, glyph colour] — legacy curated pairs, still used verbatim for hash seeds.
 const PALETTES: [string, string][] = [
   ["#F2EBDC", "#20262B"],
   ["#20262B", "#F2EBDC"],
@@ -29,7 +34,28 @@ const PALETTES: [string, string][] = [
   ["#2E5E86", "#E2EEF7"],
 ];
 
-const TREATMENTS = ["solid", "roundel", "stamp"] as const;
+export const TREATMENTS = ["solid", "roundel", "stamp"] as const;
+
+// The pickable colour inventory (the palette bg list, in order). Structured
+// seeds index into this for BOTH background and glyph — any pair goes except
+// bg === fg. Append-only: indices are persisted in avatar_seed.
+export const AVATAR_COLORS = [
+  "#F2EBDC", // cream
+  "#20262B", // ink
+  "#0E7C86", // teal
+  "#CDE5E6", // pale blue
+  "#B5402E", // red
+  "#B98A2E", // brass
+  "#3E7A5A", // green
+  "#2E5E86", // blue
+] as const;
+
+// Editor-prefill equivalents: nearest AVATAR_COLORS index for each legacy
+// palette's glyph colour (dark glyphs → ink, light → cream, #0A5D64 → teal).
+// Rendering of legacy seeds keeps the exact pair — this is prefill only.
+const PALETTE_FG_EQUIV = [1, 0, 0, 2, 0, 1, 0, 0];
+
+export const AVATAR_SEED_RE = /^c:(\d{1,2}):(\d{1,2}):(\d{1,2}):(\d{1,2})$/;
 
 function background(treatment: string, bg: string, glyph: string): string {
   const base = `<rect width="100" height="100" rx="22" fill="${bg}"/>`;
@@ -59,15 +85,59 @@ function hash(s: string): number {
   return h >>> 0;
 }
 
-const MOTIFS = Object.keys(GLYPHS);
+export const MOTIFS = Object.keys(GLYPHS);
 
-/** Deterministic avatar SVG markup for a seed (e.g. a username). */
-export function avatarSvg(seed: string, size = 32): string {
+export type AvatarParts = {
+  motif: number; // 0..MOTIFS.length-1
+  bg: number; // 0..AVATAR_COLORS.length-1
+  fg: number; // 0..AVATAR_COLORS.length-1, ≠ bg
+  treatment: number; // 0..TREATMENTS.length-1
+  colors: [string, string]; // exact [bg, glyph] used to render (legacy pairs verbatim)
+};
+
+export function composeAvatarSeed(motif: number, bg: number, fg: number, treatment: number): string {
+  return `c:${motif}:${bg}:${fg}:${treatment}`;
+}
+
+/** True when the given structured-seed indices are all in range and bg ≠ fg. */
+export function validAvatarParts(motif: number, bg: number, fg: number, treatment: number): boolean {
+  return (
+    motif >= 0 && motif < MOTIFS.length &&
+    bg >= 0 && bg < AVATAR_COLORS.length &&
+    fg >= 0 && fg < AVATAR_COLORS.length &&
+    bg !== fg &&
+    treatment >= 0 && treatment < TREATMENTS.length
+  );
+}
+
+/** Decode any seed into parts: structured seeds verbatim, everything else hashed. */
+export function avatarParts(seed: string): AvatarParts {
+  const m = AVATAR_SEED_RE.exec(seed);
+  if (m) {
+    const [motif, bg, fg, treatment] = [+m[1], +m[2], +m[3], +m[4]];
+    if (validAvatarParts(motif, bg, fg, treatment)) {
+      return { motif, bg, fg, treatment, colors: [AVATAR_COLORS[bg], AVATAR_COLORS[fg]] };
+    }
+  }
   const h = hash(seed || "skydex");
-  const motif = MOTIFS[h % MOTIFS.length];
-  const [bg, glyph] = PALETTES[(h >>> 4) % PALETTES.length];
-  const treatment = TREATMENTS[(h >>> 8) % TREATMENTS.length];
-  const body = background(treatment, bg, glyph);
-  const g = GLYPHS[motif].replace(/\{C\}/g, glyph);
+  const motif = h % MOTIFS.length;
+  const paletteIdx = (h >>> 4) % PALETTES.length;
+  const treatment = (h >>> 8) % TREATMENTS.length;
+  // bg/fg are editor-prefill approximations; colors carries the exact pair.
+  return {
+    motif,
+    bg: paletteIdx,
+    fg: PALETTE_FG_EQUIV[paletteIdx],
+    treatment,
+    colors: PALETTES[paletteIdx],
+  };
+}
+
+/** Deterministic avatar SVG markup for a seed (structured pick or legacy string). */
+export function avatarSvg(seed: string, size = 32): string {
+  const p = avatarParts(seed);
+  const [bg, glyph] = p.colors;
+  const body = background(TREATMENTS[p.treatment], bg, glyph);
+  const g = GLYPHS[MOTIFS[p.motif]].replace(/\{C\}/g, glyph);
   return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="avatar">${body}${g}</svg>`;
 }

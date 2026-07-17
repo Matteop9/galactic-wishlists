@@ -6,6 +6,7 @@ import "./globals.css";
 import TopNav from "@/components/TopNav";
 import MobileTabBar from "@/components/MobileTabBar";
 import GuideModal from "@/components/GuideModal";
+import WeeklyReview from "@/components/WeeklyReview";
 import { getViewer } from "@/lib/auth";
 import { CURRENT_VERSION } from "@/lib/releases";
 
@@ -77,6 +78,7 @@ export default async function RootLayout({
         <TopNav />
         <div className="flex flex-1 flex-col">{children}</div>
         <GuideModal />
+        {user && <WeeklyReview userId={user.id} />}
         <footer className="border-t border-paper-edge">
           <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-5 py-4 font-mono text-xs text-ink-faint">
             <span>SkyDex · v{CURRENT_VERSION}</span>

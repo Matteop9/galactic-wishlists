@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { containsProfanity } from "@/lib/profanity";
+import { AVATAR_SEED_RE, validAvatarParts } from "@/lib/avatar";
 import { fetchUserSightings, PROFILE_PAGE_SIZE } from "@/lib/profileSightings";
 import type { Sighting } from "@/components/SightingCard";
 
@@ -62,8 +63,13 @@ export async function updateAvatar(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
 
-  const s = (seed ?? "").trim().slice(0, 64);
-  if (!s) return { error: "Invalid avatar." };
+  // Only structured picker seeds are accepted now — indices in range, bg ≠ fg.
+  // (Legacy hash seeds stay valid in the DB; they just can't be re-saved.)
+  const s = (seed ?? "").trim();
+  const m = AVATAR_SEED_RE.exec(s);
+  if (!m || !validAvatarParts(+m[1], +m[2], +m[3], +m[4])) {
+    return { error: "Invalid avatar." };
+  }
 
   const { data: prof } = await supabase
     .from("profiles")

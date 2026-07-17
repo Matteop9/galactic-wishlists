@@ -12,6 +12,16 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.9",
+    date: "2026-07-17",
+    changes: [
+      "The feed now has a Popular tab — the most-reacted sightings from the last 30 days. Great pictures rise to the top; the chronological Latest feed is still the default.",
+      "Weekly review: from Monday morning, your first visit of the week greets you with a card of last week's spotting — spots, new types, airlines, your rank, and your catch of the week.",
+      "Avatars are now fully customisable: pick your icon, background colour, icon colour and ring style directly in Settings instead of shuffling blind. Existing avatars are untouched until you re-save.",
+      "Rarity got hand-tuned pins on top of the measured tiers: the A380 and 747-400 are locked at rare, the Spitfire at legendary, and widebodies are never graded common. Existing sightings re-graded to match.",
+    ],
+  },
+  {
     version: "0.3.8",
     date: "2026-07-17",
     changes: [

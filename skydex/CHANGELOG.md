@@ -2,6 +2,29 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.9 — 2026-07-17
+
+Three feedback items — popular feed toggle (2026-06-16), weekly review pop-up + customisable avatars (2026-07-17) — plus the curated rarity pins that had accumulated under Unreleased.
+
+### Added — popular feed toggle
+- **`/feed?sort=popular`**: sightings captured in the last 30 days ordered by reaction count (tie-break recency), so old winners age out of the window. The static "Latest" chip row is now two `<Link>` pills (Latest/Popular); subtitle changes accordingly (`app/feed/page.tsx`, searchParams-Promise pattern from `app/books/page.tsx`). Completes the sort-toggle half of the 2026-06-16 feedback — capture-of-the-day remains backlog.
+- **DB migration `add_reaction_count_to_feed_views`**: `reaction_count` appended as the LAST column of `feed_sightings` + `all_sightings` via a lateral count over `reactions` (public-read under RLS, existing `reactions_sighting_idx`, all consumers select explicit columns so nothing else changes).
+
+### Added — weekly review pop-up
+- **New `components/WeeklyReview.tsx`**, mounted in `app/layout.tsx` for signed-in users: from Monday, the first visit of the week (on `/`, `/scrapbook`, `/feed` — never `/spot`) opens a card reviewing the previous Mon–Sun: spots, new types, distinct airlines, overall rank (`profile_stats`), and the rarest catch (photo + rarity stamp, links to `/s/{id}`). All week numbers computed client-side from the user's own sightings rows under RLS — zero DB changes (`profile_stats`' week window is current-week and reads ~0 on Monday).
+- Gating: `localStorage["skydex_weekly_seen"] = <local date of this week's Monday>` (local-time Monday math, no `toISOString()` date shift); onboarding (`GuideModal`) always wins first; empty weeks stamp silently instead of nagging; query errors retry next visit. Dev hook: `window.dispatchEvent(new Event("skydex:open-weekly-review"))` ignores the stamp.
+
+### Added — customisable avatars
+- **Structured avatar seeds, zero schema change** (`lib/avatar.ts`): `c:<motif>:<bg>:<fg>:<treatment>` — 12 icons × free background/icon colour picks from the 8 brand colours (only guard: bg ≠ fg) × 3 ring styles = 2,016 combos. Anything else hashes exactly as before — **verified byte-identical on 506 legacy seeds** (old vs new module compiled side by side), so nobody's avatar changes until they re-save. Legacy palettes map to nearest-equivalent picker prefills only.
+- **`components/AvatarEditor.tsx` rebuilt**: live preview + icon grid (12 mini-avatars in the currently picked colours), background/icon colour swatch rows (the swatch matching the other pick is disabled), style segmented control, Shuffle kept. Changed-detection compares decoded parts, not strings, so re-saving an identical look doesn't burn the daily save.
+- **`updateAvatar` hardened** (`app/profile/actions.ts`): only valid structured seeds accepted (regex + range + bg ≠ fg) — closes the previous any-64-char-string hole. Once-a-day limit kept.
+
+### Changed — rarity overrides + widebody floor (DB-side, live immediately; folded from Unreleased)
+- **DB migration `rarity_overrides_and_widebody_floor`:** new `rarity_overrides(code, tier, note)` table (RLS deny-all, same pattern as `measured_rarity`) seeded with three pins — **A380 → rare**, **747-400 → rare**, **Spitfire → legendary** — that win over measurement everywhere: the live universe, first captures (`register_aircraft_type()` v3 checks overrides before measured), and future re-measurement runs (`scripts/rarity-apply.mjs` now applies overrides last in its generated SQL). Plus **widebody joins the category floors** (`rarity_floor('widebody') = 'uncommon'`): a widebody catch is never common — lifts 777-300ER / 787-9 / A350-900 from their measured common. Sightings backfilled: 219/57/30/1 → 160 common / 106 uncommon / 40 rare / 1 legendary (59 widebody catches ↑ uncommon, 10 A380/744 catches ↑ rare).
+- **DB migration `predict_rarity_respects_overrides`:** the v0.3.8 map-popup RPC now checks `rarity_overrides` first (`coalesce(override, universe, measured, 'rare')`) so pins show correctly even for types nobody has captured yet.
+- **`app/spot/page.tsx` `mapRarity()`** client floor mirror gains widebody ≥ uncommon (needs a deploy to reach users, but the RPC already returns floored tiers for every registered type, so the map is correct for all current cases without it).
+- Measured narrowbody demotions deliberately kept (737-700 → rare etc.) — honest European scarcity is the point of the overhaul.
+
 ## v0.3.8 — 2026-07-17
 
 Map rarity on tap + rare/epic/legendary glow (completes the 2026-07-17 map feedback item; its first half — the key move — shipped in v0.3.6).
