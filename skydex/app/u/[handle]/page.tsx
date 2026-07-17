@@ -209,7 +209,8 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
 
       {/* avatar overlaps the band; handle + meta + edit */}
       <div className="flex items-end gap-4 px-1">
-        <span className="-mt-10 shrink-0 rounded-full border-4 border-paper bg-paper shadow-[0_4px_10px_rgba(32,38,43,0.2)]">
+        {/* relative z-10 so the avatar paints above the band's absolute layers */}
+        <span className="relative z-10 -mt-10 shrink-0 rounded-full border-4 border-paper bg-paper shadow-[0_4px_10px_rgba(32,38,43,0.2)]">
           <Avatar seed={profile.avatar_seed ?? profile.handle} admin={Boolean(profile.is_admin)} size={78} />
         </span>
         <div className="min-w-0 flex-1 pb-1">
