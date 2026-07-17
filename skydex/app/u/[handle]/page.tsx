@@ -166,11 +166,12 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
             backgroundSize: "18px 18px",
           }}
         />
-        {/* home-base watermark */}
+        {/* home-base watermark — bottom-right, clear of the avatar (bottom-left)
+            and the plane (top-right) */}
         {profile.home_airport && (
           <span
             aria-hidden
-            className="absolute left-5 top-2.5 select-none font-display text-5xl font-bold uppercase tracking-[0.18em] text-paper/15"
+            className="absolute bottom-3 right-28 select-none font-display text-4xl font-bold uppercase tracking-[0.18em] text-paper/15"
           >
             {profile.home_airport}
           </span>
