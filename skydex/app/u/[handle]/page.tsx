@@ -153,15 +153,54 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8">
-      {/* cover band — teal gradient with a faint oversized plane glyph */}
+      {/* cover band — a flight chart: dotted grid, dashed route arcing to a
+          plane top-right, home-base code stamped top-left. Bottom-left stays
+          clear for the overlapping avatar. */}
       <div className="relative h-28 overflow-hidden rounded-xl bg-gradient-to-r from-sky to-sky-deep">
+        {/* faint chart-paper dot grid */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage: "radial-gradient(var(--color-paper) 1px, transparent 1px)",
+            backgroundSize: "18px 18px",
+          }}
+        />
+        {/* home-base watermark */}
+        {profile.home_airport && (
+          <span
+            aria-hidden
+            className="absolute left-5 top-2.5 select-none font-display text-5xl font-bold uppercase tracking-[0.18em] text-paper/15"
+          >
+            {profile.home_airport}
+          </span>
+        )}
+        {/* dashed route line, climbing towards the plane */}
         <svg
           aria-hidden
-          className="absolute right-7 top-5 rotate-[18deg] opacity-25"
-          width="130"
-          height="130"
+          className="absolute inset-0 h-full w-full"
+          viewBox="0 0 640 112"
+          preserveAspectRatio="none"
+          fill="none"
+        >
+          <path
+            d="M-10 100 C 170 96, 380 78, 566 34"
+            stroke="var(--color-paper)"
+            strokeOpacity="0.4"
+            strokeWidth="2"
+            strokeDasharray="1.5 9"
+            strokeLinecap="round"
+          />
+        </svg>
+        {/* the plane, on the route, fully inside the band */}
+        <svg
+          aria-hidden
+          className="absolute right-6 top-2.5 rotate-[62deg]"
+          width="58"
+          height="58"
           viewBox="0 0 64 64"
           fill="var(--color-paper)"
+          fillOpacity="0.65"
         >
           <path d="M32 8 l3.5 21 l25 10 l0 5 l-25 -6.5 l-2.5 12 l7 5.5 l0 3 l-8 -2.5 l-8 2.5 l0 -3 l7 -5.5 l-2.5 -12 l-25 6.5 l0 -5 l25 -10 z" />
         </svg>

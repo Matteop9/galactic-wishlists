@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.12",
+    date: "2026-07-17",
+    changes: [
+      "The profile banner got a proper design: a flight-chart look with a dotted grid, a dashed route climbing to the plane (now fully in frame), and your home airport stamped as a watermark — no more empty teal slab.",
+    ],
+  },
+  {
     version: "0.3.11",
     date: "2026-07-17",
     changes: [

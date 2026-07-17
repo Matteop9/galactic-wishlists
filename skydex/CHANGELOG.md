@@ -2,6 +2,13 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.12 — 2026-07-17
+
+Follow-up to the v0.3.11 profile-banner report: the "overlap" turned out to be a design complaint (empty teal slab, plane glyph cropped at the edge), not layout.
+
+### Changed
+- **`app/u/[handle]/page.tsx` cover band redesigned** as a flight chart: faint radial-gradient dot grid, home-airport code watermark top-left (`text-paper/15`, only when set), dashed route line (`preserveAspectRatio="none"` SVG so it spans all widths) climbing to the plane glyph — now smaller, rotated along the route, and fully inside the band (was `130px` at `right-7 top-5`, clipped). Bottom-left kept clear for the overlapping avatar.
+
 ## v0.3.11 — 2026-07-17
 
 Feedback batch (2026-07-17 chat): scrapbook airport atlas + KPI recentring, type dropdowns + cleaner search, photo retake, PWA top safe-area fix, share-your-book, WhatsApp unfurl fix, and an app-wide photo/handle consistency pass (now a standing convention in AGENTS.md).
