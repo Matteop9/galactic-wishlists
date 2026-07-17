@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 
 // Community photo review: random anonymous photos from other spotters, one
 // question — can you actually see an aircraft? All the trust rules live in the
-// review_* RPCs (standing, daily cap, one vote per photo, net-3 flagging);
+// review_* RPCs (standing, daily cap, one vote per photo, net-2 flagging,
+// net-2 endorsement retiring a photo from the pool);
 // this component is just the card and the two buttons.
 
 type Eligibility = {

@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.6",
+    date: "2026-07-17",
+    changes: [
+      "Community review verdicts land faster: two net no-votes now send a photo to the admins (was three), and two net yes-votes approve it — approved photos leave the review queue for good, so your reviews always count on photos that still need eyes.",
+      "The map key moved to the top-right and now shows the real marker shapes — filled plane silhouettes in gold/green/black plus the dashed special-livery ring — so the colours actually read against the map.",
+    ],
+  },
+  {
     version: "0.3.5",
     date: "2026-07-12",
     changes: [

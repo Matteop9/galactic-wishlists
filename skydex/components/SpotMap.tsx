@@ -146,6 +146,21 @@ function planeMarkup(kind: MapKind, rotation: number, color: string, scale: numb
   );
 }
 
+// Legend swatch: the real narrowbody glyph at key size, so the key shows
+// exactly what the map draws (paper outline included — it carries the
+// legibility against the dark key background).
+function LegendGlyph({ color }: { color: string }) {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      aria-hidden
+      dangerouslySetInnerHTML={{ __html: glyphSvg("narrow", color) }}
+    />
+  );
+}
+
 // Special-livery airframes get a dashed brass ring around the marker,
 // independent of the fill colour (CSS outline follows the border-radius).
 function applyLiveryRing(el: HTMLButtonElement, special: boolean) {
@@ -422,18 +437,32 @@ export default function SpotMap({
   return (
     <div className="absolute inset-0">
       <div ref={containerRef} className="h-full w-full" />
-      <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-1 rounded bg-ink/75 px-2.5 py-1.5 font-mono text-[10px] leading-4 text-paper">
-        <span>
-          <span style={{ color: BRAND.brass }}>✈</span> all new for you
+      <div className="pointer-events-none absolute right-3 top-3 flex flex-col gap-1.5 rounded bg-ink/85 px-2.5 py-2 font-mono text-[11px] leading-4 text-paper">
+        <span className="flex items-center gap-1.5">
+          <LegendGlyph color={BRAND.brass} /> all new for you
         </span>
-        <span>
-          <span style={{ color: "#5ea87f" }}>✈</span> something new
+        <span className="flex items-center gap-1.5">
+          <LegendGlyph color={BRAND.green} /> something new
         </span>
-        <span>
-          <span style={{ color: BRAND.stamp }}>✈</span> tracking
+        <span className="flex items-center gap-1.5">
+          <LegendGlyph color={BRAND.ink} /> already collected
         </span>
-        <span>
-          <span style={{ color: BRAND.brass }}>◌</span> special livery
+        <span className="flex items-center gap-1.5">
+          <LegendGlyph color={BRAND.stamp} /> tracking
+        </span>
+        <span className="flex items-center gap-1.5">
+          <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden>
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+              fill="none"
+              stroke={BRAND.brass}
+              strokeWidth="2"
+              strokeDasharray="4 3"
+            />
+          </svg>
+          special livery
         </span>
       </div>
       <button

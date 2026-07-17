@@ -40,7 +40,7 @@ export default async function ReportsPage() {
 
   const reports = (data ?? []) as unknown as ReportRow[];
 
-  // Community-flagged photos awaiting an admin verdict (3 net no-votes).
+  // Community-flagged photos awaiting an admin verdict (2 net no-votes).
   const { data: flaggedData } = await supabase
     .from("sightings")
     .select("id, photo_path, registration, aircraft_type, review_flagged_at, user_id")

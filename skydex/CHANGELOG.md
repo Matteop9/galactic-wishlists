@@ -2,6 +2,31 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## Unreleased
+
+Profile page overhaul (feedback 2026-07-17): easier favourite pinning + full history loads.
+
+### Added
+- **Full history now loads on profiles.** The page previously hard-capped at the 60 most recent sightings with no way to see older ones. It now loads 24 up front and a **Load more (N remaining)** button pages through everything via a new `loadMoreSightings` server action (`app/profile/actions.ts`), with a "showing X of Y" counter in the section header (Y from an exact count on `feed_sightings`). Shared query/mapper logic extracted to `lib/profileSightings.ts` (used by both the page and the action).
+
+### Changed
+- **Pinning favourites is now instant and obvious** (`components/ProfileSightings.tsx` rewrite). The tiny ☆ overlay (which overlapped the VERIFIED stamp, popped `alert()`s, and forced a full `router.refresh()` per tap) is replaced by a full-width **"☆ Pin to profile" / "★ Pinned — tap to unpin"** button under every card. Pins update optimistically — the Favourites tray at the top reflects the change immediately, no page reload — and revert with an inline toast if the server rejects. The tray shows a **n/3 pinned** counter, lets owners unpin directly from it (previously read-only, so you had to hunt for the starred card in history), and shows a hint box when empty. The component now owns Favourites + history in one client island (medals/stats render between as children) so both stay in sync.
+
+## v0.3.6 — 2026-07-17
+
+Community-review thresholds tightened (feedback 2026-07-17) + map key relocation/legibility (feedback 2026-07-12).
+
+### Changed
+- **Flag threshold lowered to net-2** (migration `review_net2_flag_and_endorse_retire`): `review_vote` now flags a photo into the admin queue when `no − yes ≥ 2` (was 3). Retroactively backfilled — the 9 photos already sitting at net-2 were flagged, hidden from public surfaces, and given owner warnings, joining the `/reports` admin queue.
+- **Endorse-retire at net-2**: `review_next` no longer serves photos with `yes − no ≥ 2` — the community has approved them, so reviewer effort goes only to photos that still need eyes (91 photos retired at migration time). They can still be flagged later only if already-cast votes shift, and admin `cleared` immunity is unchanged.
+- Copy/comments updated (`app/review/page.tsx` subtitle, `ReviewQueue.tsx`, `app/reports/page.tsx`).
+
+- **Spot-map key moved to the top-right** (`components/SpotMap.tsx`) — it was stacked under the zoom buttons (both were top-left). Nothing else occupies the map's top-right in map view (tracking banners are camera-only; Recenter is bottom-right).
+- **Key swatches are now the real marker glyphs**: each row renders the actual filled narrowbody SVG (with the paper outline the map markers carry) instead of a thin ✈ text character, fixing the "thin colours against the black background" complaint. The special-livery row shows the dashed brass ring as drawn. Added an "already collected" (ink) row so all three newness grades are keyed; slightly larger text (11px) and a slightly more opaque backing panel.
+
+### Notes
+- Thresholds are deliberately tight for the current 3-reviewer userbase; **scaling them back up (and revisiting the daily cap + 5-sighting standing) as more users join is on the backlog** (feedback row logged 2026-07-17).
+
 ## v0.3.5 — 2026-07-12
 
 Centre Spot button + community photo review (feedback 2026-07-12).
