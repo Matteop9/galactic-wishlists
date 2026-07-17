@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { type Sighting } from "@/components/SightingCard";
 import SightingBrowser from "@/components/SightingBrowser";
 import ProgressWheel from "@/components/ProgressWheel";
-import AirportCode from "@/components/AirportCode";
+import AirportAtlas from "@/components/AirportAtlas";
 import { RARITY_TIERS, RARITY_RANK, RARITY_COLOR } from "@/lib/rarity";
 import { SPECIAL_LIVERIES, SPECIAL_LIVERIES_COUNT, normalizeReg } from "@/lib/specialLiveries";
 
@@ -88,18 +88,23 @@ export default async function ScrapbookPage() {
     }
   }
 
-  // Airports collected, by leg — counted per code, sorted most-seen first.
+  // Airports collected — one merged tally across both route legs, keeping the
+  // departure/destination split per airport for the atlas chips.
   // (No universe to tick off against: the airport list is too large to seed.)
-  const airportCounts = (key: "origin" | "destination") => {
-    const counts = new Map<string, number>();
-    for (const r of rows) {
-      const code = r[key];
-      if (code) counts.set(code, (counts.get(code) ?? 0) + 1);
+  const airportTally = new Map<string, { dep: number; dest: number }>();
+  for (const r of rows) {
+    if (r.origin) {
+      const t = airportTally.get(r.origin) ?? { dep: 0, dest: 0 };
+      t.dep++;
+      airportTally.set(r.origin, t);
     }
-    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-  };
-  const departures = airportCounts("origin");
-  const destinations = airportCounts("destination");
+    if (r.destination) {
+      const t = airportTally.get(r.destination) ?? { dep: 0, dest: 0 };
+      t.dest++;
+      airportTally.set(r.destination, t);
+    }
+  }
+  const airports = [...airportTally.entries()].map(([code, t]) => ({ code, ...t }));
 
   if (rows.length === 0) {
     return (
@@ -149,7 +154,7 @@ export default async function ScrapbookPage() {
 
       {/* hero — completion is the front-and-centre of the scrapbook */}
       <div className="mt-6 rounded-lg border border-paper-edge bg-paper-deep p-5">
-        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-5 sm:justify-start">
+        <div className="flex flex-wrap items-center justify-evenly gap-x-6 gap-y-5">
           <ProgressWheel value={collectedTypes.size} total={types.length} label="Types" />
           <ProgressWheel value={collectedAirlines.size} total={airlines.length} label="Carriers" />
           <Link href="/liveries" className="transition-opacity hover:opacity-80">
@@ -160,7 +165,7 @@ export default async function ScrapbookPage() {
               color="var(--color-brass)"
             />
           </Link>
-          <div className="text-center sm:text-left">
+          <div className="text-center">
             <div className="font-display text-3xl font-bold text-ink">{rows.length}</div>
             <div className="font-mono text-[11px] uppercase tracking-wide text-ink-soft">
               Sightings
@@ -216,28 +221,15 @@ export default async function ScrapbookPage() {
         ))}
       </div>
 
-      {/* Airports seen — no universe to tick off, so shown as a tally, not a book */}
-      {([
-        { label: "Departures", data: departures },
-        { label: "Destinations", data: destinations },
-      ] as const).map(({ label, data }) =>
-        data.length > 0 ? (
-          <div key={label} className="mt-6">
-            <p className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
-              {label} <span className="text-ink-soft">· {data.length}</span>
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {data.map(([code, count]) => (
-                <AirportCode
-                  key={code}
-                  code={code}
-                  count={count}
-                  className="rounded-md border border-sky bg-sky-tint px-2.5 py-1 font-mono text-xs font-semibold text-sky-deep"
-                />
-              ))}
-            </div>
-          </div>
-        ) : null,
+      {/* Airports seen — no universe to tick off, so shown as an atlas tally,
+          grouped continent → country → airport. Tap a chip for dep/dest split. */}
+      {airports.length > 0 && (
+        <>
+          <h2 className="mt-9 border-b border-paper-edge pb-1.5 font-display text-sm font-semibold uppercase tracking-[0.08em] text-ink-soft">
+            Airports <span className="font-mono text-xs font-normal text-ink-faint">· {airports.length}</span>
+          </h2>
+          <AirportAtlas airports={airports} />
+        </>
       )}
 
       {/* Cards */}

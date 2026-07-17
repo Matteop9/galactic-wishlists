@@ -12,6 +12,19 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.11",
+    date: "2026-07-17",
+    changes: [
+      "Share your book: every profile now has a public, read-only book at /u/yourname/books — send it to anyone and they can browse your verified collection, cover photos included. A Share book button lives on your books page.",
+      "Shared links now unfurl as proper picture cards in WhatsApp and friends — including catches shared straight from the capture screen, which previously showed a bare link until they were verified.",
+      "Retake: fumbled the shot? The capture screen now has a Retake button that deletes the catch and drops you straight back on the camera.",
+      "The scrapbook's airport list became an atlas: airports are grouped by continent and country with drop-downs and totals at every level — tap an airport for its name and departure/destination split.",
+      "Cards and the feed swapped the wall of type pills for a compact type dropdown with counts, a tighter search box, and a live result count.",
+      "Tapping any photo, anywhere — feed, scrapbook, books, profiles, weekly review, capture screen — now opens the same full sighting card, with the spotter's name always linking to their profile.",
+      "Fixed the status bar overlapping the top of the page (most visible on the profile banner) when SkyDex is installed to your home screen.",
+    ],
+  },
+  {
     version: "0.3.10",
     date: "2026-07-17",
     changes: [

@@ -45,14 +45,15 @@ function zuluDateTime(iso: string): string | null {
     : `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${zuluTime(iso)}`;
 }
 
-export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () => void }) {
+// The card's info block — reg headline, type · airline, linked spotter, and the
+// mono spec grid. Shared with the Lightbox so "the same card and info" shows
+// everywhere a sighting opens (UI convention — see AGENTS.md). `dark` restyles
+// it for the Lightbox's ink backdrop.
+export function SightingSpecs({ s, dark = false }: { s: Sighting; dark?: boolean }) {
   const airline = s.airline ?? airlineFromCallsign(s.callsign);
   const livery = specialLivery(s.registration);
   const altFt = s.altitude_m != null ? Math.round(s.altitude_m / 0.3048) : null;
   const flightNo = s.flight_no || s.callsign;
-  const wetLease = Boolean(
-    s.painted_as && s.operating_as && s.painted_as !== s.operating_as,
-  );
   // Flight state at the moment of capture (from FR24): climb/cruise/descent + speed.
   const phase =
     s.vspeed_fpm != null
@@ -65,6 +66,87 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
   const eta = s.eta ? zuluTime(s.eta) : null;
   const seen = zuluDateTime(s.captured_at) ?? s.captured_at;
 
+  const c = dark
+    ? { head: "text-paper", sub: "text-paper/70", rule: "border-paper/25", strong: "text-paper" }
+    : { head: "text-ink", sub: "text-ink-soft", rule: "border-paper-edge", strong: "text-ink" };
+
+  return (
+    <>
+      <div className={`font-display text-2xl font-bold tracking-wide ${c.head}`}>
+        {s.registration || s.callsign || "Unknown"}
+      </div>
+      <div className={`font-serif text-sm ${c.sub}`}>
+        {[s.aircraft_type, airline].filter(Boolean).join(" · ") || "—"}
+      </div>
+      {s.handle ? (
+        <Link
+          href={`/u/${s.handle}`}
+          className="mb-2.5 flex items-center gap-1.5 hover:underline"
+        >
+          <Avatar seed={s.avatar_seed ?? s.handle} admin={Boolean(s.is_admin)} size={18} />
+          <span className="font-mono text-xs text-sky">@{s.handle}</span>
+        </Link>
+      ) : (
+        <div className="mb-2.5" />
+      )}
+      <div className={`grid gap-0.5 border-t pt-2.5 font-mono text-[11px] ${c.rule} ${c.sub}`}>
+        {flightNo && (
+          <div>
+            FLIGHT&nbsp;&nbsp;<b className={`font-semibold ${c.strong}`}>{flightNo}</b>
+          </div>
+        )}
+        {altFt != null && (
+          <div>
+            ALT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <b className={`font-semibold ${c.strong}`}>{altFt.toLocaleString()} ft</b>
+          </div>
+        )}
+        {phase && (
+          <div>
+            PHASE&nbsp;&nbsp;
+            <b className={`font-semibold ${c.strong}`}>
+              {phase}
+              {s.gspeed_kt != null ? ` · ${s.gspeed_kt} kt` : ""}
+            </b>
+          </div>
+        )}
+        {(s.origin || s.destination) && (
+          <div className="flex items-center gap-1.5">
+            ROUTE&nbsp;&nbsp;
+            <b className={`font-semibold ${c.strong}`}>
+              {s.origin ? <AirportCode code={s.origin} /> : "—"}
+              {" → "}
+              {s.destination ? <AirportCode code={s.destination} /> : "—"}
+            </b>
+          </div>
+        )}
+        {eta && (
+          <div>
+            ETA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b className={`font-semibold ${c.strong}`}>{eta}</b>
+          </div>
+        )}
+        <div>
+          RARITY&nbsp;&nbsp;
+          <b className={`font-semibold uppercase ${c.strong}`}>{s.rarity}</b>
+        </div>
+        {livery && (
+          <div>
+            LIVERY&nbsp;&nbsp;<b className="font-semibold text-brass">{livery.livery}</b>
+          </div>
+        )}
+        <div>
+          SEEN&nbsp;&nbsp;&nbsp;&nbsp;<b className={`font-semibold ${c.strong}`}>{seen}</b>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () => void }) {
+  const livery = specialLivery(s.registration);
+  const wetLease = Boolean(
+    s.painted_as && s.operating_as && s.painted_as !== s.operating_as,
+  );
   const rarityColor = RARITY_COLOR[s.rarity] ?? "var(--color-paper-edge)";
 
   return (
@@ -138,72 +220,7 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
       </div>
 
       <div className="px-4 pb-4 pt-3">
-        <div className="font-display text-2xl font-bold tracking-wide text-ink">
-          {s.registration || s.callsign || "Unknown"}
-        </div>
-        <div className="font-serif text-sm text-ink-soft">
-          {[s.aircraft_type, airline].filter(Boolean).join(" · ") || "—"}
-        </div>
-        {s.handle ? (
-          <Link
-            href={`/u/${s.handle}`}
-            className="mb-2.5 flex items-center gap-1.5 hover:underline"
-          >
-            <Avatar seed={s.avatar_seed ?? s.handle} admin={Boolean(s.is_admin)} size={18} />
-            <span className="font-mono text-xs text-sky">@{s.handle}</span>
-          </Link>
-        ) : (
-          <div className="mb-2.5" />
-        )}
-        <div className="grid gap-0.5 border-t border-paper-edge pt-2.5 font-mono text-[11px] text-ink-soft">
-          {flightNo && (
-            <div>
-              FLIGHT&nbsp;&nbsp;<b className="font-semibold text-ink">{flightNo}</b>
-            </div>
-          )}
-          {altFt != null && (
-            <div>
-              ALT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <b className="font-semibold text-ink">{altFt.toLocaleString()} ft</b>
-            </div>
-          )}
-          {phase && (
-            <div>
-              PHASE&nbsp;&nbsp;
-              <b className="font-semibold text-ink">
-                {phase}
-                {s.gspeed_kt != null ? ` · ${s.gspeed_kt} kt` : ""}
-              </b>
-            </div>
-          )}
-          {(s.origin || s.destination) && (
-            <div className="flex items-center gap-1.5">
-              ROUTE&nbsp;&nbsp;
-              <b className="font-semibold text-ink">
-                {s.origin ? <AirportCode code={s.origin} /> : "—"}
-                {" → "}
-                {s.destination ? <AirportCode code={s.destination} /> : "—"}
-              </b>
-            </div>
-          )}
-          {eta && (
-            <div>
-              ETA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b className="font-semibold text-ink">{eta}</b>
-            </div>
-          )}
-          <div>
-            RARITY&nbsp;&nbsp;
-            <b className="font-semibold uppercase text-ink">{s.rarity}</b>
-          </div>
-          {livery && (
-            <div>
-              LIVERY&nbsp;&nbsp;<b className="font-semibold text-brass">{livery.livery}</b>
-            </div>
-          )}
-          <div>
-            SEEN&nbsp;&nbsp;&nbsp;&nbsp;<b className="font-semibold text-ink">{seen}</b>
-          </div>
-        </div>
+        <SightingSpecs s={s} />
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import SectionShell from "@/components/SectionShell";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth";
 import { resolveReport, resolvePhotoFlag } from "@/app/actions/admin";
+import SightingPhoto from "@/components/SightingPhoto";
+import { type Sighting } from "@/components/SightingCard";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +45,9 @@ export default async function ReportsPage() {
   // Community-flagged photos awaiting an admin verdict (2 net no-votes).
   const { data: flaggedData } = await supabase
     .from("sightings")
-    .select("id, photo_path, registration, aircraft_type, review_flagged_at, user_id")
+    .select(
+      "id, photo_path, registration, aircraft_type, review_flagged_at, user_id, captured_at, callsign, airline, altitude_m, rarity, verified, origin, destination, flight_no, eta, gspeed_kt, vspeed_fpm",
+    )
     .eq("review_status", "flagged")
     .order("review_flagged_at", { ascending: true })
     .limit(50);
@@ -67,7 +71,7 @@ export default async function ReportsPage() {
     votes.set(v.sighting_id as string, e);
   }
   const flagged: (FlaggedRow & { user_id: string })[] = flaggedRaw.map((f) => ({
-    ...(f as FlaggedRow & { user_id: string }),
+    ...(f as unknown as FlaggedRow & { user_id: string }),
     profiles: { handle: handleById.get(f.user_id as string) ?? null },
   }));
 
@@ -88,29 +92,45 @@ export default async function ReportsPage() {
                 <li key={f.id} className="rounded-lg border border-stamp/50 p-4">
                   <div className="flex flex-wrap items-start gap-4">
                     {photoUrl && (
-                      <a
-                        href={photoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Open full-size photo in a new tab"
-                        className="group relative shrink-0"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={photoUrl}
-                          alt="Flagged capture photo — click to open full size"
-                          className="h-28 w-40 rounded object-cover transition-opacity group-hover:opacity-80"
-                        />
-                        <span className="absolute bottom-1 right-1 rounded bg-ink/70 px-1.5 py-0.5 font-mono text-[10px] text-paper opacity-0 transition-opacity group-hover:opacity-100">
-                          Open full size
-                        </span>
-                      </a>
+                      <div className="shrink-0">
+                        <SightingPhoto
+                          sighting={{
+                            ...(f as unknown as Sighting),
+                            handle: f.profiles?.handle ?? null,
+                            photo_url: photoUrl,
+                          }}
+                          className="block"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={photoUrl}
+                            alt="Flagged capture photo"
+                            className="h-28 w-40 rounded object-cover transition-opacity hover:opacity-80"
+                          />
+                        </SightingPhoto>
+                        {/* moderation needs the untouched original too */}
+                        <a
+                          href={photoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 block font-mono text-[10px] text-ink-faint underline decoration-dotted hover:text-sky"
+                        >
+                          Open raw file
+                        </a>
+                      </div>
                     )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-ink">
                         {[f.registration, f.aircraft_type].filter(Boolean).join(" · ") ||
                           "Unknown aircraft"}{" "}
-                        — by @{f.profiles?.handle ?? "spotter"}
+                        — by{" "}
+                        {f.profiles?.handle ? (
+                          <Link href={`/u/${f.profiles.handle}`} className="text-sky hover:underline">
+                            @{f.profiles.handle}
+                          </Link>
+                        ) : (
+                          "@spotter"
+                        )}
                       </p>
                       <p className="mt-1 font-mono text-[11px] text-ink-faint">
                         {v.no} no · {v.yes} yes · flagged{" "}
@@ -180,7 +200,15 @@ export default async function ReportsPage() {
               </div>
               {r.reason && <p className="mt-2 text-sm text-ink">{r.reason}</p>}
               <p className="mt-2 font-mono text-[11px] text-ink-faint">
-                by @{r.profiles?.handle ?? "spotter"} ·{" "}
+                by{" "}
+                {r.profiles?.handle ? (
+                  <Link href={`/u/${r.profiles.handle}`} className="text-sky hover:underline">
+                    @{r.profiles.handle}
+                  </Link>
+                ) : (
+                  "@spotter"
+                )}{" "}
+                ·{" "}
                 {r.target_type === "sighting" ? (
                   <Link href={`/s/${r.target_id}`} className="text-sky hover:underline">
                     open sighting {r.target_id.slice(0, 8)}

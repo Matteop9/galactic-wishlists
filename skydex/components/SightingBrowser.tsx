@@ -36,10 +36,14 @@ export default function SightingBrowser({
   const [type, setType] = useState<string | null>(null);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
 
-  const types = useMemo(
-    () => [...new Set(items.map((s) => s.aircraft_type).filter(Boolean) as string[])].sort(),
-    [items],
-  );
+  // Distinct types with per-type counts — powers the filter dropdown.
+  const typeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const s of items) {
+      if (s.aircraft_type) counts.set(s.aircraft_type, (counts.get(s.aircraft_type) ?? 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [items]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -75,30 +79,52 @@ export default function SightingBrowser({
         : "border-paper-edge bg-transparent text-ink-soft hover:border-ink"
     }`;
 
+  const q = query.trim();
+
   return (
     <div>
-      <input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search registration, callsign, type, airline, spotter…"
-        className="w-full rounded-md border border-paper-edge bg-paper-deep px-3 py-2.5 font-mono text-sm text-ink outline-none focus:border-sky"
-      />
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button onClick={() => setType(null)} className={pill(!type)}>
-          All types
-        </button>
-        {types.map((t) => (
-          <button key={t} onClick={() => setType(t === type ? null : t)} className={pill(type === t)}>
-            {t}
-          </button>
-        ))}
+      {/* toolbar — search, type dropdown, verified toggle on one compact row */}
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search reg, callsign, airline, spotter…"
+          className="min-w-0 flex-1 basis-48 rounded-md border border-paper-edge bg-paper-deep px-3 py-2 font-mono text-sm text-ink outline-none focus:border-sky"
+        />
+        <span className="relative">
+          <select
+            value={type ?? ""}
+            onChange={(e) => setType(e.target.value || null)}
+            aria-label="Filter by aircraft type"
+            className="appearance-none rounded-md border border-paper-edge bg-paper-deep py-2 pl-3 pr-8 font-display text-xs font-semibold uppercase tracking-wide text-ink-soft outline-none focus:border-sky"
+          >
+            <option value="">All types · {items.length}</option>
+            {typeCounts.map(([t, n]) => (
+              <option key={t} value={t}>
+                {t} · {n}
+              </option>
+            ))}
+          </select>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-soft"
+          >
+            ▾
+          </span>
+        </span>
         {showVerifiedToggle && (
           <button onClick={() => setVerifiedOnly((v) => !v)} className={pill(verifiedOnly)}>
             Verified only
           </button>
         )}
       </div>
+
+      <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-ink-faint">
+        {filtered.length} {filtered.length === 1 ? "sighting" : "sightings"}
+        {type ? ` · ${type}` : ""}
+        {q ? ` matching “${q}”` : ""}
+      </p>
 
       {filtered.length === 0 ? (
         <p className="mt-6 text-sm text-ink-faint">No sightings match.</p>

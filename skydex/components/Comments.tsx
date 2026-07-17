@@ -103,21 +103,25 @@ export default function Comments({
           {comments.map((c) => (
             <div key={c.id} className="flex items-start justify-between gap-2 text-sm">
               <div className="flex items-start gap-2">
-                <Avatar
-                  seed={c.profiles?.avatar_seed ?? c.profiles?.handle}
-                  admin={Boolean(c.profiles?.is_admin)}
-                  size={20}
-                />
-                <div>
-                  {c.profiles?.handle ? (
-                    <Link href={`/u/${c.profiles.handle}`} className="font-mono text-xs text-sky hover:underline">
-                      @{c.profiles.handle}
-                    </Link>
-                  ) : (
+                {c.profiles?.handle ? (
+                  <Link
+                    href={`/u/${c.profiles.handle}`}
+                    className="flex shrink-0 items-center gap-2 hover:underline"
+                  >
+                    <Avatar
+                      seed={c.profiles.avatar_seed ?? c.profiles.handle}
+                      admin={Boolean(c.profiles.is_admin)}
+                      size={20}
+                    />
+                    <span className="font-mono text-xs text-sky">@{c.profiles.handle}</span>
+                  </Link>
+                ) : (
+                  <span className="flex shrink-0 items-center gap-2">
+                    <Avatar seed={c.profiles?.avatar_seed ?? c.profiles?.handle} admin={false} size={20} />
                     <span className="font-mono text-xs text-sky">@spotter</span>
-                  )}{" "}
-                  <span className="text-ink">{c.body}</span>
-                </div>
+                  </span>
+                )}
+                <span className="text-ink">{c.body}</span>
               </div>
               <span className="flex shrink-0 items-center gap-2">
                 {currentUserId && c.user_id !== currentUserId && (

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ShareButton from "@/components/ShareButton";
+import SightingPhoto from "@/components/SightingPhoto";
+import { type Sighting } from "@/components/SightingCard";
 import { useDialog } from "@/components/useDialog";
 
 export type DiscoveryResult = {
@@ -17,6 +19,7 @@ export type DiscoveryResult = {
   rarity: string;
   discoveries: { type: boolean; airline: boolean; origin: boolean; destination: boolean };
   specialLivery: string | null; // livery name when this airframe is a known special livery
+  sighting: Sighting; // the saved row — feeds the standard Lightbox on photo tap
 };
 
 type Popularity = {
@@ -31,11 +34,15 @@ type Popularity = {
 export default function DiscoveryMoment({
   result,
   onClose,
+  onRetake,
 }: {
   result: DiscoveryResult;
   onClose: () => void;
+  /** Delete this just-saved catch and return to the camera. */
+  onRetake?: () => Promise<void>;
 }) {
   const [pop, setPop] = useState<Popularity | null>(null);
+  const [retaking, setRetaking] = useState(false);
   const dialogRef = useDialog(onClose);
 
   // Just-in-time: the screen renders instantly, the numbers fill in a beat later.
@@ -103,8 +110,9 @@ export default function DiscoveryMoment({
           </p>
         )}
 
-        <div
-          className={`relative mt-3 overflow-hidden rounded-lg bg-gradient-to-b from-[#9FC0D4] to-[#DFE6E0] ${
+        <SightingPhoto
+          sighting={result.sighting}
+          className={`relative mt-3 block w-full overflow-hidden rounded-lg bg-gradient-to-b from-[#9FC0D4] to-[#DFE6E0] text-left ${
             result.specialLivery ? "sd-livery border-[3px]" : ""
           }`}
         >
@@ -118,7 +126,7 @@ export default function DiscoveryMoment({
             alt={result.rarity}
             className="absolute left-3 top-3 h-16 w-16"
           />
-        </div>
+        </SightingPhoto>
 
         <div className="mt-3 text-center">
           <div className="font-display text-2xl font-bold tracking-wide text-ink">{result.label}</div>
@@ -168,6 +176,24 @@ export default function DiscoveryMoment({
             Spot another
           </button>
         </div>
+
+        {onRetake && (
+          <button
+            onClick={async () => {
+              if (!window.confirm("Delete this catch and return to the camera?")) return;
+              setRetaking(true);
+              try {
+                await onRetake();
+              } finally {
+                setRetaking(false);
+              }
+            }}
+            disabled={retaking}
+            className="mx-auto mt-3 block font-mono text-[11px] uppercase tracking-wide text-ink-faint underline decoration-dotted underline-offset-2 hover:text-stamp disabled:opacity-60"
+          >
+            {retaking ? "Removing…" : "Retake — delete this catch"}
+          </button>
+        )}
       </div>
     </div>
   );

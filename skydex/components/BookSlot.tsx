@@ -4,15 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDialog } from "@/components/useDialog";
 import { setBookCover } from "@/app/books/actions";
+import { type Sighting } from "@/components/SightingCard";
+import SightingPhoto from "@/components/SightingPhoto";
 
-// One ruled slot in a book. Collected slots with more than one photo open a
-// picker on tap — choose which shot fronts the slot (feedback 2026-07-17).
+// One ruled slot in a book. Tapping a collected slot's photo opens the standard
+// enriched Lightbox (app-wide convention — see AGENTS.md); owners with more
+// than one photo get a separate "⋯" button to choose which shot fronts the
+// slot. readOnly renders the shared (public) book: no picker, view only.
 
 export type Slot = {
   key: string;
   label: string;
   rarity: string | null;
   photo: string | null;
+  // The sighting behind the cover photo — feeds the Lightbox. Null for empty slots.
+  cover: Sighting | null;
   // Every photo the owner has of this slot, newest first (empty for viewers
   // of empty slots). id feeds setBookCover; url renders the picker grid.
   options: { id: string; url: string }[];
@@ -22,9 +28,11 @@ export type Slot = {
 export default function BookSlot({
   slot,
   kind,
+  readOnly = false,
 }: {
   slot: Slot;
   kind: "type" | "airline" | "rarity";
+  readOnly?: boolean;
 }) {
   const [picking, setPicking] = useState(false);
   // Rarity book slots are type slots — covers save under "type" so both books agree.
@@ -47,39 +55,48 @@ export default function BookSlot({
     );
   }
 
-  const pickable = slot.options.length > 1;
+  const pickable = !readOnly && slot.options.length > 1;
+
+  const photo = (
+    <span className="relative block aspect-[4/3] overflow-hidden">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={slot.photo} alt={slot.label} className="h-full w-full object-cover" />
+      {slot.rarity && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={`/stamps/${slot.rarity}.svg`}
+          alt={slot.rarity}
+          className="absolute bottom-1 right-1 h-8 w-8"
+        />
+      )}
+    </span>
+  );
+
   return (
     <>
-      <button
-        type="button"
-        onClick={pickable ? () => setPicking(true) : undefined}
-        disabled={!pickable}
-        title={pickable ? "Choose which photo fronts this slot" : undefined}
-        className={`overflow-hidden rounded-lg border border-paper-edge bg-white text-left shadow-[0_4px_12px_rgba(32,38,43,0.1)] ${
-          pickable ? "cursor-pointer transition-shadow hover:shadow-[0_6px_16px_rgba(32,38,43,0.2)]" : "cursor-default"
-        }`}
-      >
-        <div className="relative aspect-[4/3] overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={slot.photo} alt={slot.label} className="h-full w-full object-cover" />
-          {slot.rarity && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={`/stamps/${slot.rarity}.svg`}
-              alt={slot.rarity}
-              className="absolute bottom-1 right-1 h-8 w-8"
-            />
-          )}
-          {pickable && (
-            <span className="absolute left-1 top-1 rounded bg-ink/70 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide text-paper">
-              {slot.options.length} photos
-            </span>
-          )}
-        </div>
+      <div className="relative overflow-hidden rounded-lg border border-paper-edge bg-white shadow-[0_4px_12px_rgba(32,38,43,0.1)] transition-shadow hover:shadow-[0_6px_16px_rgba(32,38,43,0.2)]">
+        {slot.cover ? (
+          <SightingPhoto sighting={slot.cover} className="block w-full text-left">
+            {photo}
+          </SightingPhoto>
+        ) : (
+          photo
+        )}
+        {pickable && (
+          <button
+            type="button"
+            onClick={() => setPicking(true)}
+            title="Choose which photo fronts this slot"
+            aria-label={`Choose photo for ${slot.label} (${slot.options.length} available)`}
+            className="absolute left-1 top-1 z-10 rounded bg-ink/70 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wide text-paper hover:bg-ink"
+          >
+            ⋯ {slot.options.length} photos
+          </button>
+        )}
         <div className="px-2 py-1.5 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-ink">
           {slot.label}
         </div>
-      </button>
+      </div>
       {picking && (
         <CoverPicker
           slot={slot}

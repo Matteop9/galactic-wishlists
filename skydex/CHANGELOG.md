@@ -2,6 +2,25 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.11 — 2026-07-17
+
+Feedback batch (2026-07-17 chat): scrapbook airport atlas + KPI recentring, type dropdowns + cleaner search, photo retake, PWA top safe-area fix, share-your-book, WhatsApp unfurl fix, and an app-wide photo/handle consistency pass (now a standing convention in AGENTS.md).
+
+### Added
+- **`lib/airports.ts` reshaped**: `AIRPORTS` values are now `{name, country, continent}` (`airportInfo()` added; `airportName`/`AIRPORTS_LIST` signatures unchanged). Taste calls documented in the file: Turkey → Europe, Egypt → Africa, Mexico/Panama → North America.
+- **`components/AirportAtlas.tsx`**: continent → country → airport accordion (nested native `<details>`, LiveryChecklist pattern) with totals at each level; unknown codes fall into an "Other" bucket. Replaces the flat Departures/Destinations chip walls on `/scrapbook` (merged tally, per-chip ↑dep/↓dest via `AirportCode`'s new `detail` prop).
+- **Retake** (`components/DiscoveryMoment.tsx` + `app/spot/page.tsx`): confirm-guarded "Retake — delete this catch" button reuses `deleteSighting` (photo + row) and returns to the live camera. Known side effects: type/airline universe upserts persist; retake consumes a rate-limit slot.
+- **Share your book**: book building extracted to `lib/bookBuilder.ts`, page chrome to `components/BookView.tsx`; new public read-only route **`app/u/[handle]/books`** sourced from `feed_sightings` (verified-only, GPS-free) with `generateMetadata` + `opengraph-image.tsx` (progress + cover strip). `BookSlot` gains `readOnly`; `ShareButton` gains `path`/`title`/`label` props; "Share book" button on `/books`.
+- **DB migration `book_covers_public_read`**: SELECT policy opened to everyone (cover *choices* only — photos were already public); writes stay owner-only.
+- **DB migration `shared_sightings_view`**: like `feed_sightings` but without the `verified` filter (flagged photos still hidden, no GPS columns) — `/s/[id]` + its OG image now read it, so unverified catches shared from the capture screen unfurl properly (this was the WhatsApp bare-link bug). Verified copy on page/OG is now conditional.
+
+### Changed
+- **Consistency pass (photo → same card, handle → profile link; convention added to AGENTS.md)**: card info block extracted as `SightingSpecs` (shared, `dark` variant); `Lightbox` now renders it (full FLIGHT/ALT/PHASE/ROUTE/ETA/RARITY/LIVERY/SEEN + linked spotter + photo swap); new `components/SightingPhoto.tsx` (+ `SightingCardZoom`) lets server components open it. Adopted in: `BookSlot` (photo tap = card; cover picker moved to a "⋯ N photos" corner button), profile `RareCatch`, `WeeklyReview` catch-of-the-week (select widened to full card columns), `DiscoveryMoment` photo, `/s/[id]` (zoomable + type display name), admin `/reports` thumbs (raw-file link kept for moderation). Handle links fixed in `/reports`, `LeaderboardBoard` + `Comments` (avatar now inside the link). `ReviewQueue` documented as the deliberate anonymous exception.
+- **`components/SightingBrowser.tsx`**: type pill wall → native `<select>` with per-type counts, compact search + result-count line (covers scrapbook Cards and `/feed` in one change).
+- **`/scrapbook` hero**: KPI wheels `justify-evenly` at all breakpoints (was left-clumped on sm+).
+- **`components/TopNav.tsx`**: `pt-[env(safe-area-inset-top)]` — first top safe-area handling (bottom-only before), fixes the status bar overlapping the header/profile banner in installed-PWA mode.
+- **`/u/[handle]` metadata**: description + OG/twitter card added (was title-only).
+
 ## v0.3.10 — 2026-07-17
 
 Books page: pick your cover photo + a real Rarity book (feedback 2026-07-17 chat — cover was hardcoded to the latest shot, and the Rarity tab rendered identically to the Type tab).

@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import ProfileSightings from "@/components/ProfileSightings";
+import SightingPhoto from "@/components/SightingPhoto";
 import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth";
 import { type Sighting } from "@/components/SightingCard";
@@ -29,7 +29,14 @@ type Stats = {
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
-  return { title: `@${handle} — SkyDex` };
+  const title = `@${handle} — SkyDex`;
+  const description = `@${handle}'s plane-spotting profile — verified catches, rarest finds and collection stats on SkyDex.`;
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { card: "summary", title, description },
+  };
 }
 
 function StatTile({ label, value, rank }: { label: string; value: number; rank: number | null }) {
@@ -43,30 +50,32 @@ function StatTile({ label, value, rank }: { label: string; value: number; rank: 
 }
 
 // Compact "rarest catch" tile — rarity rail + reg + tier label, photo if any.
+// Opens the standard enriched Lightbox, like every other sighting photo.
 function RareCatch({ s }: { s: Sighting }) {
   const color = RARITY_COLOR[s.rarity] ?? "var(--color-paper-edge)";
   return (
-    <Link
-      href={`/s/${s.id}`}
-      className="relative block overflow-hidden rounded-lg border-2 bg-paper-deep transition-transform hover:-translate-y-0.5"
-      style={{ borderColor: color }}
-    >
-      <span aria-hidden className="absolute inset-y-0 left-0 z-10 w-1.5" style={{ background: color }} />
-      <div className="relative h-[70px] bg-gradient-to-b from-[#9FC0D4] via-[#C4D6DF] to-[#DFE6E0]">
-        {s.photo_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={s.photo_url} alt="" className="h-full w-full object-cover" />
-        )}
-      </div>
-      <div className="px-2.5 py-1.5">
-        <div className="font-display text-base font-bold leading-none text-ink">
-          {s.registration || s.callsign || "Unknown"}
-        </div>
-        <div className="mt-1 font-mono text-[9px] uppercase tracking-wide" style={{ color }}>
-          {s.rarity}
-        </div>
-      </div>
-    </Link>
+    <SightingPhoto sighting={s} className="block w-full text-left transition-transform hover:-translate-y-0.5">
+      <span
+        className="relative block overflow-hidden rounded-lg border-2 bg-paper-deep"
+        style={{ borderColor: color }}
+      >
+        <span aria-hidden className="absolute inset-y-0 left-0 z-10 w-1.5" style={{ background: color }} />
+        <span className="relative block h-[70px] bg-gradient-to-b from-[#9FC0D4] via-[#C4D6DF] to-[#DFE6E0]">
+          {s.photo_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={s.photo_url} alt="" className="h-full w-full object-cover" />
+          )}
+        </span>
+        <span className="block px-2.5 py-1.5">
+          <span className="block font-display text-base font-bold leading-none text-ink">
+            {s.registration || s.callsign || "Unknown"}
+          </span>
+          <span className="mt-1 block font-mono text-[9px] uppercase tracking-wide" style={{ color }}>
+            {s.rarity}
+          </span>
+        </span>
+      </span>
+    </SightingPhoto>
   );
 }
 

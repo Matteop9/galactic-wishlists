@@ -131,6 +131,9 @@ export default function ReviewQueue() {
     <div>
       <div className="overflow-hidden rounded-lg border border-paper-edge bg-ink">
         {photoUrl && (
+          // Deliberately NOT wrapped in SightingPhoto (the app-wide "photo opens
+          // the card" convention): reviews are anonymous, and the card would
+          // reveal the spotter. See AGENTS.md § UI conventions.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={photoUrl}

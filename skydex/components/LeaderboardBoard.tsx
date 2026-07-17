@@ -104,17 +104,26 @@ export default function LeaderboardBoard({ currentUserId }: { currentUserId: str
                   <span className="w-7 shrink-0 text-center font-display text-sm font-bold tabular-nums text-ink-soft">
                     {r.rank <= 3 ? MEDAL[r.rank - 1] : r.rank}
                   </span>
-                  <Avatar seed={r.avatar_seed ?? r.handle} admin={Boolean(r.is_admin)} size={26} />
-                  <span className="flex-1 truncate font-mono text-sm text-ink">
-                    {r.handle ? (
-                      <Link href={`/u/${r.handle}`} className="hover:underline">
+                  {r.handle ? (
+                    <Link
+                      href={`/u/${r.handle}`}
+                      className="flex min-w-0 flex-1 items-center gap-3 hover:underline"
+                    >
+                      <Avatar seed={r.avatar_seed ?? r.handle} admin={Boolean(r.is_admin)} size={26} />
+                      <span className="truncate font-mono text-sm text-ink">
                         @{r.handle}
-                      </Link>
-                    ) : (
-                      "@spotter"
-                    )}
-                    {me && <span className="ml-1 text-sky">· you</span>}
-                  </span>
+                        {me && <span className="ml-1 text-sky">· you</span>}
+                      </span>
+                    </Link>
+                  ) : (
+                    <>
+                      <Avatar seed={r.avatar_seed ?? r.handle} admin={Boolean(r.is_admin)} size={26} />
+                      <span className="flex-1 truncate font-mono text-sm text-ink">
+                        @spotter
+                        {me && <span className="ml-1 text-sky">· you</span>}
+                      </span>
+                    </>
+                  )}
                   <span className="font-display text-lg font-bold tabular-nums text-ink">
                     {r.value}
                     <span className="ml-1 font-mono text-[10px] uppercase tracking-wide text-ink-faint">

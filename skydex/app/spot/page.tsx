@@ -8,6 +8,7 @@ import { RARITY_RANK, type Rarity } from "@/lib/rarity";
 import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
+import { deleteSighting } from "@/app/actions/admin";
 import SpotMap from "@/components/SpotMap";
 
 type Candidate = {
@@ -471,6 +472,12 @@ export default function SpotPage() {
         rarity: s.rarity ?? "common",
         discoveries: json.discoveries ?? { type: false, airline: false, origin: false, destination: false },
         specialLivery: json.specialLivery ?? null,
+        // The saved row, card-shaped — powers the standard Lightbox on photo tap.
+        sighting: {
+          ...s,
+          aircraft_type: json.typeName ?? s.aircraft_type ?? null,
+          photo_url: json.photoUrl ?? null,
+        },
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save sighting.");
@@ -645,7 +652,17 @@ export default function SpotPage() {
 
       {error && <p className="mt-3 text-sm text-stamp">{error}</p>}
 
-      {result && <DiscoveryMoment result={result} onClose={() => setResult(null)} />}
+      {result && (
+        <DiscoveryMoment
+          result={result}
+          onClose={() => setResult(null)}
+          onRetake={async () => {
+            const res = await deleteSighting(result.id);
+            if (res.ok) setResult(null);
+            else window.alert(res.error ?? "Could not remove — try again.");
+          }}
+        />
+      )}
 
       {/* live nearby list — tap one to track only that aircraft */}
       <h2 className="mt-8 font-display text-xl font-semibold uppercase tracking-wide text-ink-soft">

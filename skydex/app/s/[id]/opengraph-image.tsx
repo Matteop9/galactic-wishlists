@@ -9,8 +9,10 @@ export default async function Image({ params }: { params: Promise<{ id: string }
   const { id } = await params;
   const supabase = await createClient();
   const { data } = await supabase
-    .from("feed_sightings")
-    .select("registration, callsign, aircraft_type, airline, rarity, origin, destination, photo_path")
+    .from("shared_sightings")
+    .select(
+      "registration, callsign, aircraft_type, airline, rarity, origin, destination, photo_path, verified",
+    )
     .eq("id", id)
     .maybeSingle();
 
@@ -32,7 +34,9 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           <div style={{ width: 630, height: 630, background: "#9FC0D4" }} />
         )}
         <div style={{ display: "flex", flexDirection: "column", flex: 1, padding: "64px 54px" }}>
-          <div style={{ fontSize: 32, color: "#B5402E", letterSpacing: 4 }}>VERIFIED SIGHTING</div>
+          <div style={{ fontSize: 32, color: "#B5402E", letterSpacing: 4 }}>
+            {data?.verified ? "VERIFIED SIGHTING" : "SIGHTING"}
+          </div>
           <div style={{ fontSize: 104, fontWeight: 700, color: "#20262B", marginTop: 8 }}>{reg}</div>
           <div style={{ fontSize: 40, color: "#4A5560", marginTop: 8 }}>{sub}</div>
           {route ? (

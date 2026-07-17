@@ -4,6 +4,12 @@
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
+# UI conventions (binding for every update)
+
+1. **Every sighting photo opens the same card.** Any rendered sighting photo, on any page, must open the shared enriched Lightbox on tap — use `components/SightingPhoto.tsx` (wraps any thumbnail; `SightingCardZoom` for standalone cards) or `SightingCard`'s `onOpen`. The info shown comes from the shared `SightingSpecs` block in `components/SightingCard.tsx` — never hand-roll a second detail view.
+2. **Every handle links to the profile.** Any rendered `@handle` must be a `<Link href={/u/${handle}}>`, with the avatar *inside* the link so avatar + handle are one target (see `SightingSpecs` for the canonical markup).
+3. **Exceptions must be commented at the render site.** Only deliberate exceptions are allowed (e.g. `ReviewQueue` photos stay anonymous by design), and each carries a comment explaining why it opts out.
+
 # Pushing an update (release runbook)
 
 SkyDex is the Next.js app in this folder, live at **skydex-two.vercel.app** (Vercel project `skydex`, linked via `.vercel/project.json`; Supabase project `skydex`, id `iwfgwokchloeiyelpbec`).

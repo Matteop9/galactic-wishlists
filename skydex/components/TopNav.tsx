@@ -5,8 +5,10 @@ import UserMenu from "@/components/UserMenu";
 export default async function TopNav() {
   const { user, handle, avatarSeed, isAdmin } = await getViewer();
 
+  // The safe-area-inset-top padding keeps the paper header under the status bar
+  // in standalone/PWA mode (viewportFit: "cover") — it is 0 in a regular browser tab.
   return (
-    <header className="border-b-2 border-ink bg-paper">
+    <header className="border-b-2 border-ink bg-paper pt-[env(safe-area-inset-top)]">
       <nav className="mx-auto flex max-w-3xl flex-nowrap items-center justify-between gap-2 px-5 py-3">
         <Link href="/" aria-label="SkyDex — home" className="shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}

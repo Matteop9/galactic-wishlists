@@ -9,10 +9,13 @@ import { airportName } from "@/lib/airports";
 export default function AirportCode({
   code,
   count,
+  detail,
   className = "",
 }: {
   code: string;
   count?: number;
+  /** Extra text revealed alongside the name when open (e.g. "↑3 dep · ↓5 dest"). */
+  detail?: string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -24,14 +27,14 @@ export default function AirportCode({
   return (
     <button
       type="button"
-      title={name}
+      title={detail ? `${name} · ${detail}` : name}
       onClick={(e) => {
         e.stopPropagation();
         setOpen((o) => !o);
       }}
       className={`${className} underline decoration-dotted underline-offset-2 hover:text-sky`}
     >
-      {open ? `${code} · ${name}${suffix}` : `${code}${suffix}`}
+      {open ? `${code} · ${name}${detail ? ` · ${detail}` : ""}${suffix}` : `${code}${suffix}`}
     </button>
   );
 }

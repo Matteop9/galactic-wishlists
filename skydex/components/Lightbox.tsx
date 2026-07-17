@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { type Sighting } from "@/components/SightingCard";
-import AirportCode from "@/components/AirportCode";
-import { airlineFromCallsign } from "@/lib/airlines";
+import { type Sighting, SightingSpecs } from "@/components/SightingCard";
 import { useDialog } from "@/components/useDialog";
 
 type RefPhoto = { src: string | null; link: string | null; photographer: string | null };
@@ -33,9 +31,6 @@ export default function Lightbox({
       cancelled = true;
     };
   }, [sighting.registration]);
-
-  const airline = sighting.airline ?? airlineFromCallsign(sighting.callsign);
-  const meta = [sighting.aircraft_type, airline].filter(Boolean).join("  ·  ");
 
   const hasRef = Boolean(ref?.src);
   const big = swapped ? ref?.src : sighting.photo_url;
@@ -83,18 +78,12 @@ export default function Lightbox({
         )
       )}
 
-      <div className="mt-4 text-center text-paper">
-        <div className="font-display text-2xl font-bold">
-          {sighting.registration || sighting.callsign || "Sighting"}
-        </div>
-        {meta && <div className="mt-1 font-mono text-sm text-paper/70">{meta}</div>}
-        {(sighting.origin || sighting.destination) && (
-          <div className="mt-1 flex items-center justify-center gap-1.5 font-mono text-sm text-paper/70">
-            {sighting.origin ? <AirportCode code={sighting.origin} /> : "—"}
-            {" → "}
-            {sighting.destination ? <AirportCode code={sighting.destination} /> : "—"}
-          </div>
-        )}
+      {/* the same card info as everywhere else — shared spec block, dark variant */}
+      <div
+        className="mt-4 w-full max-w-sm text-left"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <SightingSpecs s={sighting} dark />
       </div>
 
       {hasRef && (

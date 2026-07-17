@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { RARITY_RANK } from "@/lib/rarity";
 import { useDialog } from "@/components/useDialog";
+import SightingPhoto from "@/components/SightingPhoto";
 
 // Monday-morning weekly review (feedback 2026-07-17): a once-a-week card
 // summarising the PREVIOUS Mon–Sun week, shown on the first visit on/after
@@ -27,6 +28,15 @@ type WeekRow = {
   photo_path: string | null;
   registration: string | null;
   callsign: string | null;
+  // Extra card fields so the catch-of-the-week opens the full Lightbox info.
+  verified: boolean;
+  altitude_m: number | null;
+  origin: string | null;
+  destination: string | null;
+  flight_no: string | null;
+  eta: string | null;
+  gspeed_kt: number | null;
+  vspeed_fpm: number | null;
 };
 
 type Summary = {
@@ -76,7 +86,9 @@ export default function WeeklyReview({ userId }: { userId: string }) {
       const [weekRes, priorRes, statsRes, typesRes] = await Promise.all([
         supabase
           .from("sightings")
-          .select("id, captured_at, aircraft_type, airline, rarity, photo_path, registration, callsign")
+          .select(
+            "id, captured_at, aircraft_type, airline, rarity, photo_path, registration, callsign, verified, altitude_m, origin, destination, flight_no, eta, gspeed_kt, vspeed_fpm",
+          )
           .eq("user_id", userId)
           .gte("captured_at", lastMonday.toISOString())
           .lt("captured_at", thisMonday.toISOString()),
@@ -207,11 +219,11 @@ function WeeklyReviewDialog({ summary, onClose }: { summary: Summary; onClose: (
         </div>
 
         {r && (
-          <a
-            href={`/s/${r.id}`}
-            className="mt-4 block overflow-hidden rounded-lg border border-paper-edge"
+          <SightingPhoto
+            sighting={{ ...r, aircraft_type: r.typeName ?? r.aircraft_type, photo_url: r.photoUrl }}
+            className="mt-4 block w-full overflow-hidden rounded-lg border border-paper-edge text-left"
           >
-            <div className="relative bg-gradient-to-b from-[#9FC0D4] to-[#DFE6E0]">
+            <span className="relative block bg-gradient-to-b from-[#9FC0D4] to-[#DFE6E0]">
               {r.photoUrl && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={r.photoUrl} alt="" className="h-36 w-full object-cover" />
@@ -222,16 +234,16 @@ function WeeklyReviewDialog({ summary, onClose }: { summary: Summary; onClose: (
                 alt={r.rarity}
                 className="absolute left-3 top-3 h-14 w-14"
               />
-            </div>
-            <div className="flex items-baseline justify-between gap-2 px-3 py-2">
+            </span>
+            <span className="flex items-baseline justify-between gap-2 px-3 py-2">
               <span className="font-display font-bold text-ink">
                 {r.registration || r.callsign || "—"}
               </span>
               <span className="truncate font-serif text-xs text-ink-soft">
                 {r.typeName ?? ""}
               </span>
-            </div>
-          </a>
+            </span>
+          </SightingPhoto>
         )}
         <p className="mt-1.5 text-center font-mono text-[10px] uppercase tracking-wide text-ink-faint">
           Catch of the week
