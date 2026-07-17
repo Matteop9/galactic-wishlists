@@ -24,6 +24,7 @@ export type MapAircraft = {
   newness: "all" | "some" | "none"; // gold / green / ink
   newBits: string[]; // which dimensions are new, for the popup
   liveryName: string | null; // special-livery name, when the airframe wears one
+  rarity: string | null; // predicted rarity tier — null until the lookup lands
 };
 
 type Props = {
@@ -44,6 +45,18 @@ const BRAND = {
   brass: "#b98a2e",
   green: "#3e7a5a",
 };
+// Rarity display (mirrors the --color-rarity-* tokens in app/globals.css).
+// Rare and above get a halo glow around the marker; the glow colour IS the
+// tier, independent of the newness fill.
+const RARITY_HEX: Record<string, string> = {
+  common: "#6e7a6a",
+  uncommon: "#3e7a5a",
+  rare: "#2e5e86",
+  epic: "#6a3e86",
+  legendary: "#b98a2e",
+};
+const GLOW_TIERS = new Set(["rare", "epic", "legendary"]);
+
 // Mirror the capture logic's HEADING_TOL (spot page) — the cone IS the window
 // the camera would accept a target in, so what you see is what you can catch.
 const FOV_HALF_ANGLE = 22;
@@ -137,11 +150,20 @@ function glyphSvg(kind: MapKind, color: string): string {
   }
 }
 
-function planeMarkup(kind: MapKind, rotation: number, color: string, scale: number): string {
+function planeMarkup(
+  kind: MapKind,
+  rotation: number,
+  color: string,
+  scale: number,
+  glow: string | null,
+): string {
   const size = GLYPH_SIZE[kind] * scale;
+  const filter = glow
+    ? `drop-shadow(0 0 3px ${glow}) drop-shadow(0 0 7px ${glow})`
+    : "drop-shadow(0 1px 1.5px rgba(0,0,0,.4))";
   return (
     `<svg width="${size}" height="${size}" viewBox="0 0 24 24" ` +
-    `style="transform:rotate(${rotation}deg);filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.4));">` +
+    `style="transform:rotate(${rotation}deg);filter:${filter};">` +
     `${glyphSvg(kind, color)}</svg>`
   );
 }
@@ -149,13 +171,14 @@ function planeMarkup(kind: MapKind, rotation: number, color: string, scale: numb
 // Legend swatch: the real narrowbody glyph at key size, so the key shows
 // exactly what the map draws (paper outline included — it carries the
 // legibility against the dark key background).
-function LegendGlyph({ color }: { color: string }) {
+function LegendGlyph({ color, glow }: { color: string; glow?: string }) {
   return (
     <svg
       width="15"
       height="15"
       viewBox="0 0 24 24"
       aria-hidden
+      style={glow ? { filter: `drop-shadow(0 0 2px ${glow}) drop-shadow(0 0 4px ${glow})` } : undefined}
       dangerouslySetInnerHTML={{ __html: glyphSvg("narrow", color) }}
     />
   );
@@ -175,12 +198,13 @@ function planeEl(
   color: string,
   scale: number,
   special: boolean,
+  glow: string | null,
 ): HTMLButtonElement {
   const el = document.createElement("button");
   el.type = "button";
   el.style.cssText = "background:none;border:none;padding:0;margin:0;cursor:pointer;line-height:0;";
   applyLiveryRing(el, special);
-  el.innerHTML = planeMarkup(kind, rotation, color, scale);
+  el.innerHTML = planeMarkup(kind, rotation, color, scale, glow);
   return el;
 }
 
@@ -317,6 +341,13 @@ export default function SpotMap({
     const sub = [a.typeDesc, `${a.distanceKm} km`].filter(Boolean).join(" · ");
     const box = document.createElement("div");
     box.style.cssText = "font-family:system-ui,sans-serif;min-width:150px;";
+    // Predicted rarity chip — what tier this type would land on if captured.
+    const rarityLine = a.rarity
+      ? `<div style="margin:0 0 4px;"><span style="display:inline-block;font-size:10px;font-weight:700;` +
+        `letter-spacing:.06em;text-transform:uppercase;color:${BRAND.paper};` +
+        `background:${RARITY_HEX[a.rarity] ?? BRAND.ink};border-radius:4px;padding:2px 7px;">` +
+        `${esc(a.rarity)}</span></div>`
+      : "";
     const liveryLine = a.liveryName
       ? `<div style="font-size:12px;color:${BRAND.brass};margin:0 0 2px;">✦ ${esc(a.liveryName)}</div>`
       : "";
@@ -327,7 +358,8 @@ export default function SpotMap({
       : "";
     box.innerHTML =
       `<div style="font-weight:700;color:${BRAND.ink};">${esc(label)}</div>` +
-      `<div style="font-size:12px;color:#4a5560;margin:2px 0 ${liveryLine || newLine ? "4px" : "8px"};">${esc(sub)}</div>` +
+      `<div style="font-size:12px;color:#4a5560;margin:2px 0 ${rarityLine || liveryLine || newLine ? "4px" : "8px"};">${esc(sub)}</div>` +
+      rarityLine +
       liveryLine +
       newLine;
     const btn = document.createElement("button");
@@ -371,10 +403,13 @@ export default function SpotMap({
             ? BRAND.green
             : BRAND.ink;
       const scale = locked ? 1.4 : 1;
-      const sig = `${a.kind}|${rot}|${color}|${scale}|${special}`;
+      // Rare / epic / legendary glow in their tier colour (feedback 2026-07-17).
+      const glow =
+        a.rarity && GLOW_TIERS.has(a.rarity) ? RARITY_HEX[a.rarity] : null;
+      const sig = `${a.kind}|${rot}|${color}|${scale}|${special}|${glow}`;
       const existing = planes[a.icao24];
       if (!existing) {
-        const el = planeEl(a.kind, rot, color, scale, special);
+        const el = planeEl(a.kind, rot, color, scale, special, glow);
         el.title = a.registration || a.callsign || a.icao24;
         el.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -387,7 +422,7 @@ export default function SpotMap({
       } else {
         existing.marker.setLngLat([a.lon, a.lat]);
         if (existing.sig !== sig) {
-          existing.el.innerHTML = planeMarkup(a.kind, rot, color, scale);
+          existing.el.innerHTML = planeMarkup(a.kind, rot, color, scale, glow);
           applyLiveryRing(existing.el, special);
           existing.sig = sig;
         }
@@ -449,6 +484,9 @@ export default function SpotMap({
         </span>
         <span className="flex items-center gap-1.5">
           <LegendGlyph color={BRAND.stamp} /> tracking
+        </span>
+        <span className="flex items-center gap-1.5">
+          <LegendGlyph color={BRAND.ink} glow={RARITY_HEX.epic} /> glow = rare+
         </span>
         <span className="flex items-center gap-1.5">
           <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden>

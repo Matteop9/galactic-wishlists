@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { angularDiff } from "@/lib/geo";
-import { mapKind } from "@/lib/aircraftTypes";
+import { aircraftCategory, mapKind } from "@/lib/aircraftTypes";
 import { airlineFromCallsign } from "@/lib/airlines";
+import { RARITY_RANK, type Rarity } from "@/lib/rarity";
 import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
@@ -53,6 +54,11 @@ export default function SpotPage() {
     airlines: Set<string>;
     regs: Set<string>;
   } | null>(null);
+  // Pre-capture rarity per type code, from the predict_rarity RPC (universe
+  // tier → measured Europe-snapshot tier → rare). null-ish until fetched;
+  // markers simply don't glow / show rarity until it arrives.
+  const [typeRarity, setTypeRarity] = useState<Record<string, Rarity>>({});
+  const rarityRequestedRef = useRef<Set<string>>(new Set());
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const minimapRef = useRef<HTMLVideoElement>(null);
@@ -232,6 +238,51 @@ export default function SpotPage() {
     }
     const level = dims.length && dims.every(Boolean) ? "all" : bits.length ? "some" : "none";
     return { level, bits, liveryName: sl?.livery ?? null };
+  }
+
+  // Rarity tiers for whatever types are on the map, fetched once per code.
+  useEffect(() => {
+    if (view !== "map" || mapAircraft.length === 0) return;
+    const codes = Array.from(
+      new Set(
+        mapAircraft
+          .map((c) => c.aircraftType?.toUpperCase())
+          .filter((c): c is string => !!c),
+      ),
+    ).filter((c) => !rarityRequestedRef.current.has(c));
+    if (codes.length === 0) return;
+    codes.forEach((c) => rarityRequestedRef.current.add(c));
+    (async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc("predict_rarity", { p_codes: codes });
+      if (error || !data) {
+        // Transient failure — allow a retry on the next poll.
+        codes.forEach((c) => rarityRequestedRef.current.delete(c));
+        return;
+      }
+      setTypeRarity((prev) => {
+        const next = { ...prev };
+        for (const row of data as { code: string; tier: Rarity }[]) next[row.code] = row.tier;
+        return next;
+      });
+    })();
+  }, [mapAircraft, view]);
+
+  // Predicted rarity for a map plane: RPC tier lifted by the same category
+  // floors the DB applies at registration (helicopter ≥ uncommon, military
+  // ≥ rare, vintage ≥ epic) — category from the curated map, falling back to
+  // live ADS-B hints exactly like /api/sightings does.
+  function mapRarity(c: Candidate): Rarity | null {
+    const code = c.aircraftType?.toUpperCase();
+    if (!code) return null;
+    const base = typeRarity[code];
+    if (!base) return null;
+    const cat =
+      aircraftCategory(code) ??
+      (c.military ? "military" : c.adsbCategory?.toUpperCase() === "A7" ? "helicopter" : null);
+    const floor: Rarity =
+      cat === "vintage" ? "epic" : cat === "military" ? "rare" : cat === "helicopter" ? "uncommon" : "common";
+    return RARITY_RANK[floor] > RARITY_RANK[base] ? floor : base;
   }
 
   // Map view: poll ALL aircraft in a wider radius (not just the capture cone).
@@ -545,6 +596,7 @@ export default function SpotPage() {
                   newness: n.level,
                   newBits: n.bits,
                   liveryName: n.liveryName,
+                  rarity: mapRarity(c),
                 };
               })}
               lockedId={lockedId}

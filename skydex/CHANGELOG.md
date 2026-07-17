@@ -2,6 +2,19 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.8 — 2026-07-17
+
+Map rarity on tap + rare/epic/legendary glow (completes the 2026-07-17 map feedback item; its first half — the key move — shipped in v0.3.6).
+
+### Added
+- **Predicted rarity in the map popup** (`components/SpotMap.tsx` + `app/spot/page.tsx`): tapping a plane now shows a tier chip (colour = the `--color-rarity-*` token) predicting what the type would land on if captured. Prediction mirrors `register_aircraft_type()`: canonical `aircraft_types` tier when the type has been captured before, else the measured Europe-snapshot tier, else rare by construction — with the DB's category floors (helicopter ≥ uncommon, military ≥ rare, vintage ≥ epic) applied client-side from the curated category map, falling back to live ADS-B hints (military flag / `A7` rotorcraft) exactly like `/api/sightings`.
+- **Rare+ markers glow**: rare / epic / legendary aircraft get a two-layer CSS `drop-shadow` halo in their tier colour, independent of the newness fill (gold/green/ink) and the special-livery ring. New "glow = rare+" row in the map key.
+- **DB migration `predict_rarity_rpc`**: read-only SECURITY DEFINER `predict_rarity(p_codes text[]) → (code, tier)` (STABLE, `search_path=public`, input capped at 200 codes, `^[A-Z0-9]{2,4}$` filter) so `measured_rarity` stays RLS deny-all. Granted to `anon` + `authenticated`; verified over the REST path with the publishable key.
+- Client fetches tiers once per type code as the map polls (`typeRarity` cache + requested-set; failed batches retry on the next poll). No FR24 credits involved anywhere.
+
+### Feedback housekeeping
+- Marked resolved (already shipped): map key top-right + clearer key colours (v0.3.6), per-size/heli plane symbols (v0.3.3), observer facing direction + new-catch marker colouring (v0.3.3/v0.3.4), and — with this release — the 2026-07-17 map key/rarity/glow item.
+
 ## v0.3.7 — 2026-07-17
 
 Community-review removals are now hard deletes + admin queue photo zoom (feedback 2026-07-17).

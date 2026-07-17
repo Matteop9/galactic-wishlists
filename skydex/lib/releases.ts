@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.8",
+    date: "2026-07-17",
+    changes: [
+      "Tap a plane on the spot map to see how rare it would be before you catch it — every popup now shows a rarity chip, predicted from the same measured tiers your captures use.",
+      "Rare, epic and legendary aircraft now glow on the map in their tier colour, so the special stuff jumps out of the traffic at a glance. A 'glow = rare+' row was added to the map key.",
+    ],
+  },
+  {
     version: "0.3.7",
     date: "2026-07-17",
     changes: [
