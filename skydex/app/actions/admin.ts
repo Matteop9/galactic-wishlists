@@ -50,7 +50,9 @@ export async function resolveReport(id: string): Promise<AdminResult> {
 }
 
 /** Admin-only: uphold (approve=true) or overturn a community photo flag.
- *  The verdict itself is enforced in the resolve_photo_flag RPC (is_admin()). */
+ *  The verdict itself is enforced in the resolve_photo_flag RPC (is_admin()).
+ *  Upholding hard-deletes the sighting row, so the photo path is captured
+ *  first and the stored file removed after. */
 export async function resolvePhotoFlag(
   sightingId: string,
   approve: boolean,
@@ -61,14 +63,29 @@ export async function resolvePhotoFlag(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
 
+  let photoPath: string | null = null;
+  if (approve) {
+    const { data: row } = await supabase
+      .from("sightings")
+      .select("photo_path")
+      .eq("id", sightingId)
+      .maybeSingle();
+    photoPath = row?.photo_path ?? null;
+  }
+
   const { error } = await supabase.rpc("resolve_photo_flag", {
     p_sighting: sightingId,
     p_approve: approve,
   });
   if (error) return { error: error.message };
 
+  if (approve && photoPath) {
+    await supabase.storage.from("sightings").remove([photoPath]);
+  }
+
   revalidatePath("/reports");
   revalidatePath("/feed");
+  revalidatePath("/scrapbook");
   return { ok: true };
 }
 

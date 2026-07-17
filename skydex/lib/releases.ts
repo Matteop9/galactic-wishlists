@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.7",
+    date: "2026-07-17",
+    changes: [
+      "Community review verdicts now have real teeth: when an admin upholds a flag (the community agreed no aircraft was visible), the sighting is deleted outright — it no longer lingers in your books or completion wheels, and the photo itself is removed. You'll still see a notice on your Scrapbook explaining what happened.",
+      "Admins can now open a flagged photo full-size from the Reports queue before ruling on it.",
+    ],
+  },
+  {
     version: "0.3.6",
     date: "2026-07-17",
     changes: [

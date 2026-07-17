@@ -2,6 +2,23 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.7 — 2026-07-17
+
+Community-review removals are now hard deletes + admin queue photo zoom (feedback 2026-07-17).
+
+### Changed
+- **Upholding a photo flag now hard-deletes the sighting** (migration `photo_flag_upheld_hard_delete`). Previously `resolve_photo_flag(approve=true)` soft-hid it (`review_status = 'removed'`, `verified = false`) — the sighting dropped off leaderboards/profile stats but **still counted towards the owner's scrapbook completion wheels and Type/Airline/Rarity books** (those count any sighting with a photo, no `verified` filter). Now the row is deleted (comments/reactions/photo_reviews cascade) and the stored photo file is removed too (`resolvePhotoFlag` server action grabs `photo_path` before the RPC and calls `storage.remove` after, mirroring `deleteSighting`).
+- **`photo_warnings.sighting_id` FK changed CASCADE → SET NULL** (column now nullable): the owner's warning row must survive the delete — it powers the "deleted after community review" notice on their Scrapbook. The RPC marks the warning `upheld` *before* deleting the sighting.
+- Scrapbook warning copy updated for the upheld case ("N of your sightings were deleted after community review confirmed no aircraft was visible"); admin button relabelled "Approve — delete sighting" (`app/reports/page.tsx`).
+- Reject path unchanged: `cleared` + permanently immune from re-flagging, warning withdrawn.
+- No back-fill needed: zero rows had `review_status = 'removed'` at migration time (9 flagged awaiting verdict, untouched).
+
+### Added
+- **Flagged photos in the `/reports` admin queue open full-size in a new tab** (click the thumbnail; hover shows an "Open full size" cue) — you can now actually inspect a photo before ruling on it.
+
+### Dev
+- `.claude/launch.json`: `autoPort: true` on `skydex-dev` so a second session can start a preview without colliding on port 3000.
+
 ## v0.3.6 — 2026-07-17
 
 Profile page overhaul + rarity overhaul part 2 + community-review thresholds tightened (feedback 2026-07-17) + map key relocation/legibility (feedback 2026-07-12).

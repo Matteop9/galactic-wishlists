@@ -88,12 +88,23 @@ export default async function ReportsPage() {
                 <li key={f.id} className="rounded-lg border border-stamp/50 p-4">
                   <div className="flex flex-wrap items-start gap-4">
                     {photoUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={photoUrl}
-                        alt="Flagged capture photo"
-                        className="h-28 w-40 rounded object-cover"
-                      />
+                      <a
+                        href={photoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open full-size photo in a new tab"
+                        className="group relative shrink-0"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photoUrl}
+                          alt="Flagged capture photo — click to open full size"
+                          className="h-28 w-40 rounded object-cover transition-opacity group-hover:opacity-80"
+                        />
+                        <span className="absolute bottom-1 right-1 rounded bg-ink/70 px-1.5 py-0.5 font-mono text-[10px] text-paper opacity-0 transition-opacity group-hover:opacity-100">
+                          Open full size
+                        </span>
+                      </a>
                     )}
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-ink">
@@ -115,7 +126,7 @@ export default async function ReportsPage() {
                           }}
                         >
                           <button className="sd-btn sd-btn--capture !px-3 !py-1.5 !text-xs">
-                            Approve removal
+                            Approve — delete sighting
                           </button>
                         </form>
                         <form

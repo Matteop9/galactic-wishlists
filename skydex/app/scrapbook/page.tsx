@@ -142,7 +142,7 @@ export default async function ScrapbookPage() {
             {pendingWarnings > 0 &&
               ` ${pendingWarnings} of your photos ${pendingWarnings === 1 ? "was" : "were"} flagged by community review — other spotters couldn't see an aircraft in ${pendingWarnings === 1 ? "it" : "them"}. ${pendingWarnings === 1 ? "It's" : "They're"} hidden from the public feed while an admin takes a look.`}
             {upheldWarnings > 0 &&
-              ` ${upheldWarnings} ${upheldWarnings === 1 ? "photo was" : "photos were"} removed from the public feed after review.`}
+              ` ${upheldWarnings} of your ${upheldWarnings === 1 ? "sightings was" : "sightings were"} deleted after community review confirmed no aircraft was visible.`}
           </p>
         </div>
       )}
