@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.10",
+    date: "2026-07-17",
+    changes: [
+      "Books: you now choose which photo fronts each slot — collected slots with more than one shot show an 'N photos' badge; tap to pick your favourite. Your pick sticks (and applies to both the Type and Rarity books).",
+      "The Rarity book is now its own book: the same aircraft grouped into Common → Legendary sections with tier stamps and per-tier progress, instead of mirroring the Type book. The Type book is now alphabetical.",
+    ],
+  },
+  {
     version: "0.3.9",
     date: "2026-07-17",
     changes: [

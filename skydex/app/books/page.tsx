@@ -1,58 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { RARITY_RANK } from "@/lib/rarity";
+import { RARITY_TIERS } from "@/lib/rarity";
+import BookSlot, { type Slot } from "@/components/BookSlot";
 
 export const dynamic = "force-dynamic";
 
 type BookKind = "type" | "airline" | "rarity";
-
-type Slot = {
-  key: string;
-  label: string;
-  rarity: string | null;
-  photo: string | null;
-  verified: boolean;
-};
-
-// One ruled slot in the book. Collected = photo + small rarity stamp; empty =
-// dashed box with a diagonal hatch and a mono "NOT YET SPOTTED".
-function BookSlot({ slot }: { slot: Slot }) {
-  if (!slot.photo) {
-    return (
-      <div className="overflow-hidden rounded-lg border border-dashed border-paper-edge bg-paper-deep">
-        <div className="flex aspect-[4/3] items-center justify-center bg-[repeating-linear-gradient(45deg,rgba(216,201,168,0.3)_0_8px,transparent_8px_16px)]">
-          <span className="text-center font-mono text-[9px] uppercase leading-relaxed tracking-[0.1em] text-ink-faint">
-            Not yet
-            <br />
-            spotted
-          </span>
-        </div>
-        <div className="px-2 py-1.5 text-center font-mono text-[10px] uppercase tracking-wide text-ink-faint">
-          {slot.label}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="overflow-hidden rounded-lg border border-paper-edge bg-white shadow-[0_4px_12px_rgba(32,38,43,0.1)]">
-      <div className="relative aspect-[4/3] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={slot.photo} alt={slot.label} className="h-full w-full object-cover" />
-        {slot.rarity && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={`/stamps/${slot.rarity}.svg`}
-            alt={slot.rarity}
-            className="absolute bottom-1 right-1 h-8 w-8"
-          />
-        )}
-      </div>
-      <div className="px-2 py-1.5 text-center font-mono text-[10px] font-semibold uppercase tracking-wide text-ink">
-        {slot.label}
-      </div>
-    </div>
-  );
-}
 
 export default async function BooksPage({
   searchParams,
@@ -68,18 +21,20 @@ export default async function BooksPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const [{ data: sightingData }, { data: typeData }, { data: airlineData }] =
+  const [{ data: sightingData }, { data: typeData }, { data: airlineData }, { data: coverData }] =
     await Promise.all([
       supabase
         .from("sightings")
-        .select("aircraft_type, airline, rarity, photo_path, verified, captured_at")
+        .select("id, aircraft_type, airline, rarity, photo_path, verified, captured_at")
         .eq("user_id", user!.id)
         .order("captured_at", { ascending: false }),
       supabase.from("aircraft_types").select("code, display_name, name, rarity"),
       supabase.from("airlines").select("name"),
+      supabase.from("book_covers").select("kind, key, sighting_id").eq("user_id", user!.id),
     ]);
 
   const sightings = (sightingData ?? []) as {
+    id: string;
     aircraft_type: string | null;
     airline: string | null;
     rarity: string;
@@ -93,55 +48,98 @@ export default async function BooksPage({
     rarity: string;
   }[];
   const airlines = (airlineData ?? []) as { name: string }[];
+  const covers = (coverData ?? []) as { kind: string; key: string; sighting_id: string }[];
 
   const pub = (path: string | null) =>
     path ? supabase.storage.from("sightings").getPublicUrl(path).data.publicUrl : null;
 
-  // First photographed sighting per type / airline.
-  const typePhoto = new Map<string, string>();
-  const airlinePhoto = new Map<string, string>();
+  // Every photographed sighting per type / airline, newest first — feeds both
+  // the default cover (latest) and the tap-to-choose picker.
+  const typeOptions = new Map<string, { id: string; url: string }[]>();
+  const airlineOptions = new Map<string, { id: string; url: string }[]>();
+  const addOption = (map: Map<string, { id: string; url: string }[]>, key: string, opt: { id: string; url: string }) => {
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(opt);
+  };
   for (const s of sightings) {
     if (!s.photo_path) continue;
-    if (s.aircraft_type && !typePhoto.has(s.aircraft_type)) {
-      typePhoto.set(s.aircraft_type, pub(s.photo_path)!);
-    }
-    if (s.airline && !airlinePhoto.has(s.airline)) airlinePhoto.set(s.airline, pub(s.photo_path)!);
+    const opt = { id: s.id, url: pub(s.photo_path)! };
+    if (s.aircraft_type) addOption(typeOptions, s.aircraft_type, opt);
+    if (s.airline) addOption(airlineOptions, s.airline, opt);
   }
 
-  let slots: Slot[] = [];
+  // Chosen covers (kind+key → sighting id). Rarity book reuses the type covers.
+  const coverId = new Map<string, string>();
+  for (const c of covers) coverId.set(`${c.kind}:${c.key}`, c.sighting_id);
+
+  function makeSlot(
+    coverKind: "type" | "airline",
+    key: string,
+    label: string,
+    rarity: string | null,
+    options: { id: string; url: string }[],
+  ): Slot {
+    const chosen = coverId.get(`${coverKind}:${key}`);
+    const cover = (chosen && options.find((o) => o.id === chosen)) || options[0] || null;
+    return {
+      key,
+      label,
+      rarity,
+      photo: cover?.url ?? null,
+      options,
+      coverId: chosen && options.some((o) => o.id === chosen) ? chosen : null,
+    };
+  }
+
+  // Sections: the Type book is one alphabetical run; the Rarity book is the
+  // same universe grouped by tier (that's the difference between the two);
+  // the Airline book is alphabetical brands.
+  let sections: { heading: string | null; stamp: string | null; slots: Slot[] }[] = [];
   let title = "";
   if (kind === "airline") {
     title = "Airline Book";
-    slots = [...airlines]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((a) => ({
-        key: a.name,
-        label: a.name,
-        rarity: null,
-        photo: airlinePhoto.get(a.name) ?? null,
-        verified: airlinePhoto.has(a.name),
-      }));
+    sections = [
+      {
+        heading: null,
+        stamp: null,
+        slots: [...airlines]
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((a) => makeSlot("airline", a.name, a.name, null, airlineOptions.get(a.name) ?? [])),
+      },
+    ];
+  } else if (kind === "rarity") {
+    title = "Rarity Book";
+    sections = RARITY_TIERS.map((tier) => ({
+      heading: tier,
+      stamp: `/stamps/${tier}.svg`,
+      slots: types
+        .filter((t) => t.rarity === tier)
+        .sort((a, b) => (a.display_name ?? a.code).localeCompare(b.display_name ?? b.code))
+        .map((t) =>
+          makeSlot("type", t.code, t.display_name ?? t.name, t.rarity, typeOptions.get(t.code) ?? []),
+        ),
+    })).filter((s) => s.slots.length > 0);
   } else {
-    // type + rarity share the type universe; rarity just sorts/labels by tier.
-    title = kind === "rarity" ? "Rarity Book" : "Type Book";
-    slots = [...types]
-      .sort(
-        (a, b) =>
-          (RARITY_RANK[a.rarity] ?? 0) - (RARITY_RANK[b.rarity] ?? 0) ||
-          (a.display_name ?? a.code).localeCompare(b.display_name ?? b.code),
-      )
-      .map((t) => ({
-        key: t.code,
-        label: t.display_name ?? t.name,
-        rarity: t.rarity,
-        photo: typePhoto.get(t.code) ?? null,
-        verified: typePhoto.has(t.code),
-      }));
+    title = "Type Book";
+    sections = [
+      {
+        heading: null,
+        stamp: null,
+        slots: [...types]
+          .sort((a, b) => (a.display_name ?? a.code).localeCompare(b.display_name ?? b.code))
+          .map((t) =>
+            makeSlot("type", t.code, t.display_name ?? t.name, t.rarity, typeOptions.get(t.code) ?? []),
+          ),
+      },
+    ];
   }
 
-  const collected = slots.filter((s) => s.photo).length;
-  const pct = slots.length ? Math.round((collected / slots.length) * 100) : 0;
-  const shownSlots = missingOnly ? slots.filter((s) => !s.photo) : slots;
+  const allSlots = sections.flatMap((s) => s.slots);
+  const collected = allSlots.filter((s) => s.photo).length;
+  const pct = allSlots.length ? Math.round((collected / allSlots.length) * 100) : 0;
+  const shownSections = sections
+    .map((s) => ({ ...s, shown: missingOnly ? s.slots.filter((x) => !x.photo) : s.slots }))
+    .filter((s) => s.shown.length > 0);
 
   // Luggage-tag tab: squared, left dot coloured by book kind.
   const TABS: { k: BookKind; label: string; dot: string }[] = [
@@ -193,7 +191,7 @@ export default async function BooksPage({
       {/* progress + All/Missing filter */}
       <div className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-wide text-ink-soft">
         <span>
-          {collected} of {slots.length} collected
+          {collected} of {allSlots.length} collected
         </span>
         <span className="flex gap-1.5">
           {([
@@ -224,14 +222,36 @@ export default async function BooksPage({
 
       {/* the page */}
       <div className="mt-6 rounded-lg border border-paper-edge bg-paper p-4 shadow-inner sm:p-6">
-        {shownSlots.length === 0 ? (
+        {shownSections.length === 0 ? (
           <p className="py-8 text-center font-mono text-xs uppercase tracking-wide text-ink-faint">
             {missingOnly ? "Nothing missing — book complete." : "Nothing here yet."}
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {shownSlots.map((slot) => (
-              <BookSlot key={slot.key} slot={slot} />
+          <div className="flex flex-col gap-7">
+            {shownSections.map((section) => (
+              <section key={section.heading ?? "all"}>
+                {section.heading && (
+                  <div className="mb-3 flex items-center justify-between border-b border-paper-edge pb-1.5">
+                    <span className="flex items-center gap-2">
+                      {section.stamp && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={section.stamp} alt="" className="h-6 w-6" />
+                      )}
+                      <h2 className="font-display text-lg font-bold uppercase tracking-wide text-ink">
+                        {section.heading}
+                      </h2>
+                    </span>
+                    <span className="font-mono text-[11px] uppercase tracking-wide text-ink-faint">
+                      {section.slots.filter((s) => s.photo).length} of {section.slots.length}
+                    </span>
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  {section.shown.map((slot) => (
+                    <BookSlot key={slot.key} slot={slot} kind={kind} />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         )}

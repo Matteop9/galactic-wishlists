@@ -2,6 +2,18 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.10 — 2026-07-17
+
+Books page: pick your cover photo + a real Rarity book (feedback 2026-07-17 chat — cover was hardcoded to the latest shot, and the Rarity tab rendered identically to the Type tab).
+
+### Added
+- **DB migration `book_covers`**: `(user_id, kind 'type'|'airline', key, sighting_id, updated_at)` PK `(user_id, kind, key)`, sighting FK `ON DELETE CASCADE` (deleting the chosen sighting reverts the slot to latest-photo), RLS own-rows only (4 policies).
+- **`app/books/actions.ts` `setBookCover`**: validates ownership + photo presence + that the sighting actually matches the slot (`aircraft_type`/`airline` = key) before upserting; revalidates `/books`.
+- **`components/BookSlot.tsx`** (slot moved out of the page, now client): collected slots with >1 photo show an "N photos" badge and open a CoverPicker modal (grid of own shots, current highlighted, save → refresh; shared `useDialog`). Rarity-book slots save under kind `"type"` so Type/Rarity books always agree.
+
+### Changed
+- **`app/books/page.tsx`**: sightings query gains `id`; builds newest-first per-key photo options + reads `book_covers` (chosen cover if still valid, else latest). **Type book now alphabetical; Rarity book groups the same universe into tier sections** (Common → Legendary, tier stamp + heading + per-tier x/y count) — the two books are finally distinct. Airline book unchanged. All/Missing filter works within sections; empty sections hidden.
+
 ## v0.3.9 — 2026-07-17
 
 Three feedback items — popular feed toggle (2026-06-16), weekly review pop-up + customisable avatars (2026-07-17) — plus the curated rarity pins that had accumulated under Unreleased.
