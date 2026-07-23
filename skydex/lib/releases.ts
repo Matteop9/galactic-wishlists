@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.13",
+    date: "2026-07-23",
+    changes: [
+      "Feed reactions became votes: 🛫 for a great catch, 🛬 if it's not doing it for you, ❓ if you can't see the plane — one vote per sighting, tap again to clear. ❓ votes from established spotters count toward community review, so dud photos reach the admins straight from the feed.",
+      "The spot map's new-for-you colouring is fixed: planes from airlines and types you've already caught no longer light up as new. Gold and green now mean what they say.",
+    ],
+  },
+  {
     version: "0.3.12",
     date: "2026-07-17",
     changes: [

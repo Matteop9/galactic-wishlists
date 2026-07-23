@@ -2,6 +2,21 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.13 — 2026-07-23
+
+Two feedback items (in-app `feedback` table): the 3-button feed votes (2026-07-20) and the spot-map new-airline/type colouring fix (2026-07-23).
+
+### Changed — feed reactions → 3-button votes
+- **`lib/reactions.ts`**: 5-emoji `REACTIONS` → 3-vote `VOTES` (🛫 "Great catch" / 🛬 "Not feeling this one" / ❓ "Can't see the plane"); `ReactionState` shape unchanged so the feed page aggregation and `SightingBrowser` wiring needed no changes.
+- **`components/Reactions.tsx` rewritten**: mutually exclusive vote (one per user per sighting), tap again to clear, switch via atomic upsert on `(sighting_id, user_id)`; optimistic UI with full-state rollback. On a successful ❓ vote it fire-and-forgets `review_vote(sighting, false)` — the existing RPC enforces the 5-verified standing, 100/day cap, self-exclusion and net-2 flag rule, so feed ❓ votes and `/review` votes share the same `photo_reviews` tally (ineligible taps stay cosmetic). Leaving ❓ calls the new `review_unvote` (no-op once flagged — the flag stands for admin verdict). Selected styles: 🛫 `rarity-uncommon` green, 🛬 `stamp` red, ❓ `brass` amber. `/review` page and RPCs kept unchanged — both paths coexist.
+- **DB migration `reactions_three_vote_rework`**: dedupe to one row per `(sighting_id, user_id)` (keep earliest), collapse historical emojis to 🛫 (all five were positive-ish; keeps Popular counts), CHECK swapped to the 3-vote set, unique `(sighting_id, user_id, emoji)` → `(sighting_id, user_id)`, and a new own-rows UPDATE policy (the vote-switch upsert needs it).
+- **DB migration `review_unvote_rpc`**: SECURITY DEFINER `review_unvote(p_sighting)` — deletes the caller's `photo_reviews` row only while the sighting's `review_status` is still null.
+- **DB migration `feed_views_takeoff_reaction_count`**: `feed_sightings` + `all_sightings` lateral `reaction_count` now counts only 🛫, so the feed's Popular sort ranks by positive votes (🛬/❓ don't boost popularity). `shared_sightings` untouched.
+
+### Fixed — spot-map newness colouring
+- **`app/spot/page.tsx`**: the map's "new airline" check compared callsign-derived brands against stored FR24 operator names — two naming schemes that rarely match, so already-caught airlines showed as new forever. The collection query now also selects `callsign` and indexes BOTH the stored `airline` and `airlineFromCallsign(callsign)`, making the check symmetric with the candidate side (raw-code fallbacks match raw-code fallbacks). Type comparison uppercased on both sides (candidate feed casing isn't guaranteed). No visual changes.
+- Known limit noted, not fixed: the collection select has no `.limit()` (Supabase 1000-row default) — fine at ~440 sightings, pagination is a future point.
+
 ## v0.3.12 — 2026-07-17
 
 Follow-up to the v0.3.11 profile-banner report: the "overlap" turned out to be a design complaint (empty teal slab, plane glyph cropped at the edge), not layout.

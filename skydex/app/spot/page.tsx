@@ -193,12 +193,24 @@ export default function SpotPage() {
         if (!user) return;
         const { data } = await supabase
           .from("sightings")
-          .select("aircraft_type, airline, registration")
+          .select("aircraft_type, airline, registration, callsign")
           .eq("user_id", user.id);
         if (!cancelled && data) {
           setCollection({
-            types: new Set(data.map((r) => r.aircraft_type as string).filter(Boolean)),
-            airlines: new Set(data.map((r) => r.airline as string).filter(Boolean)),
+            types: new Set(
+              data.map((r) => (r.aircraft_type as string | null)?.toUpperCase()).filter(Boolean) as string[],
+            ),
+            // Stored airline is the FR24 operator name, but candidates only have a
+            // callsign — so index BOTH the stored name and the callsign-derived
+            // brand, making the newness check symmetric with newness() below.
+            airlines: new Set(
+              data
+                .flatMap((r) => [
+                  r.airline as string | null,
+                  airlineFromCallsign(r.callsign as string | null),
+                ])
+                .filter(Boolean) as string[],
+            ),
             regs: new Set(
               data.map((r) => normalizeReg(r.registration as string | null)).filter(Boolean),
             ),
@@ -222,7 +234,7 @@ export default function SpotPage() {
     const bits: string[] = [];
     const dims: boolean[] = [];
     if (c.aircraftType) {
-      const n = !collection.types.has(c.aircraftType);
+      const n = !collection.types.has(c.aircraftType.toUpperCase());
       dims.push(n);
       if (n) bits.push("type");
     }
