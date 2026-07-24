@@ -23,6 +23,10 @@ const VERIFY_MAX_DISTANCE_KM = 80; // plane must be plausibly visible
 // compasses drift. These block fabrication, not honest users.
 const VERIFY_HEADING_TOL = 60;
 const VERIFY_PITCH_TOL = 45;
+// Inside this range the pointing checks are skipped: a nearly-overhead aircraft
+// (low helicopters especially) swings its bearing/elevation faster than the
+// feed updates, and fraud is moot when the plane demonstrably is right there.
+const VERIFY_CLOSE_RANGE_M = 2000;
 
 // ---- Input validation helpers (meta is untrusted client JSON) ----
 function num(v: unknown, min: number, max: number): number | null {
@@ -166,6 +170,7 @@ export async function POST(request: Request) {
 
   const hasPhoto = photo instanceof File && photo.size > 0;
   let verified = false;
+  let verifyFailReason: string | null = null;
   if (hasPhoto && icao24 && lat != null && lon != null && live) {
     if (live.found && live.lat != null && live.lon != null) {
       const groundM = haversineMeters(lat, lon, live.lat, live.lon);
@@ -173,20 +178,30 @@ export async function POST(request: Request) {
       const liveElevation =
         live.altM != null ? elevationDeg(groundM, live.altM - obsAltM) : null;
       const nearEnough = groundM / 1000 <= VERIFY_MAX_DISTANCE_KM;
+      const close = groundM <= VERIFY_CLOSE_RANGE_M;
       const headingOk =
         heading != null && angularDiff(heading, liveBearing) <= VERIFY_HEADING_TOL;
       const pitchOk =
         pitch == null ||
         liveElevation == null ||
         Math.abs(pitch - liveElevation) <= VERIFY_PITCH_TOL;
-      verified = nearEnough && headingOk && pitchOk;
+      verified = nearEnough && (close || (headingOk && pitchOk));
+      if (!verified) {
+        verifyFailReason = !nearEnough
+          ? `distance ${Math.round(groundM / 1000)}km`
+          : !headingOk
+            ? `heading ${heading ?? "none"} vs ${Math.round(liveBearing)}`
+            : `pitch ${pitch} vs ${liveElevation == null ? "none" : Math.round(liveElevation)}`;
+      }
     } else if (live.unavailable) {
       // Upstream outage — no verdict either way. Don't punish an honest capture;
       // the photo + a moment-ago /api/flights match got them here.
       verified = true;
+    } else {
+      // live.found === false (or no position) with upstream healthy → the plane
+      // isn't airborne. That's a fabricated or stale capture: stays unverified.
+      verifyFailReason = live.found ? "no_position" : "not_airborne";
     }
-    // live.found === false with upstream healthy → the plane isn't airborne.
-    // That's a fabricated or stale capture: stays unverified.
   }
 
   // ---- FR24 enrichment (authoritative persisted card data) ----
@@ -340,6 +355,7 @@ export async function POST(request: Request) {
       vspeed_fpm: fr.vspeedFpm,
       rarity,
       verified,
+      verify_fail_reason: verifyFailReason,
     })
     .select()
     .single();

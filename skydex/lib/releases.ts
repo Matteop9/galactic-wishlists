@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.14",
+    date: "2026-07-24",
+    changes: [
+      "Close flybys now verify properly: aircraft passing within 2 km — low helicopters especially — used to fail the pointing check because a nearly-overhead plane moves faster than the flight feed updates. If it's demonstrably right there, your catch is verified. The two helicopter catches this had wrongly left unverified are now verified.",
+    ],
+  },
+  {
     version: "0.3.13",
     date: "2026-07-23",
     changes: [

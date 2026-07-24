@@ -2,6 +2,15 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.14 — 2026-07-24
+
+Investigation of @lgspotzplanez's unverified 15:53 S-76 catch: capture-time verification re-checks heading/pitch against a re-queried live position, and at close range (both misses were low helicopters ~130–360 m away) seconds of feed staleness swing the true bearing past the 60° tolerance. 385 photo sightings in 14 days, only these 2 misses — both this pattern.
+
+### Fixed — close-range verification
+- **`app/api/sightings/route.ts`**: new `VERIFY_CLOSE_RANGE_M = 2000` — when the live aircraft is within 2 km of the observer, the heading/pitch pointing checks are skipped (`verified = nearEnough && (close || (headingOk && pitchOk))`). Nearly-overhead geometry is dominated by feed-position staleness, and fabrication is moot when the plane demonstrably is right there. The 80 km distance cap still applies.
+- **Diagnosability**: unverified photo captures now record *why* in a new nullable `sightings.verify_fail_reason` column (`not_airborne`, `no_position`, `distance Nkm`, `heading X vs Y`, `pitch X vs Y`); null when verified. DB migration `sightings_verify_fail_reason`.
+- **Data fix**: the two wrongly-unverified helicopter sightings (R44 G-DDAD 2026-07-19, S76 G-FXVA 2026-07-24) retro-verified by one-off SQL — they now appear in the feed / profile / books.
+
 ## v0.3.13 — 2026-07-23
 
 Two feedback items (in-app `feedback` table): the 3-button feed votes (2026-07-20) and the spot-map new-airline/type colouring fix (2026-07-23).
