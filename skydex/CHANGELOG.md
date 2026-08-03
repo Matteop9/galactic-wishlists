@@ -2,6 +2,15 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.14 follow-up — 2026-08-03 (silent, no version bump)
+
+Email sign-up restored by request — deliberately quiet: no `lib/releases.ts` entry, home screen stays on v0.3.14.
+
+### Added — email magic-link sign-in back
+- **`app/login/actions.ts` recreated** (deleted in v0.3.2): `signInWithEmail` server action → `supabase.auth.signInWithOtp` (creates the user on first sign-in; profile row via existing trigger). Improvement over the old version: the `next` param is now validated server-side with the same same-origin check as the page and `/auth/callback`.
+- **`app/login/page.tsx`**: "or email" divider + magic-link form re-added below the Google button (sent-state panel, inline errors); kept the v0.3.2+ improvements (validated `next`, Google `pending` state). Copy updated; the "signed up by email before?" footnote removed. Google remains the primary path (no `autoFocus` on the email input).
+- **Manual step**: the Email provider must be enabled in Supabase Auth → Sign In / Providers (v0.3.2 listed disabling it as a manual step). Reminder: built-in Supabase SMTP is heavily rate-limited — custom SMTP is still on the pre-marketing blocker list.
+
 ## v0.3.14 — 2026-07-24
 
 Investigation of @lgspotzplanez's unverified 15:53 S-76 catch: capture-time verification re-checks heading/pitch against a re-queried live position, and at close range (both misses were low helicopters ~130–360 m away) seconds of feed staleness swing the true bearing past the 60° tolerance. 385 photo sightings in 14 days, only these 2 misses — both this pattern.
