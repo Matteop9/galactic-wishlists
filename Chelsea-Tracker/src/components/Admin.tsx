@@ -10,6 +10,7 @@ import {
 } from "@/lib/types";
 import { formatKickoff } from "@/lib/format";
 import { DEFAULT_TEMPLATE } from "@/lib/seed";
+import { AWAY_LEAD_DAYS, actionTime, downloadICS } from "@/lib/ics";
 
 export default function Admin({
   data,
@@ -23,6 +24,7 @@ export default function Admin({
   return (
     <div className="flex flex-col gap-4">
       <FeedbackSection data={data} currentMember={currentMember} patch={patch} />
+      <CalendarSection data={data} />
       <MembersSection data={data} patch={patch} />
       <GamesSection data={data} patch={patch} />
       <SettingsSection data={data} patch={patch} />
@@ -191,6 +193,62 @@ function FeedbackRow({
         </button>
       </div>
     </div>
+  );
+}
+
+/* ---------------- Calendar reminders ---------------- */
+
+function CalendarSection({ data }: { data: AppData }) {
+  const now = new Date();
+  const upcoming = data.games.filter((g) => actionTime(g) > now).length;
+  return (
+    <Section
+      title="Outlook reminders"
+      subtitle="Download deadlines as a calendar file (.ics)"
+    >
+      <p className="text-sm text-slate-600">
+        One reminder per game: <strong>home</strong> games when the apply
+        window opens, <strong>away</strong> games {AWAY_LEAD_DAYS} days{" "}
+        <em>before</em> the window opens (requests must be with Neil by then).
+        Reminders already in the past are left out.
+      </p>
+      <button
+        onClick={() => downloadICS(data)}
+        disabled={upcoming === 0}
+        className="mt-3 rounded-lg bg-chelsea px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+      >
+        ⬇ Download {upcoming} reminder{upcoming === 1 ? "" : "s"} (.ics)
+      </button>
+      <details className="mt-3 rounded-lg bg-slate-50 p-3">
+        <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+          How to import into Outlook
+        </summary>
+        <ol className="mt-2 list-decimal space-y-1.5 pl-5 text-sm text-slate-600">
+          <li>Download the .ics file with the button above.</li>
+          <li>
+            <strong>Outlook (web / new Outlook):</strong> Calendar → Add
+            calendar → <em>Upload from file</em> → choose the downloaded file.
+            Create/pick a calendar called &ldquo;Chelsea Tickets&rdquo; so it
+            stays separate from your work calendar.
+          </li>
+          <li>
+            <strong>Classic Outlook (desktop):</strong> File → Open &amp;
+            Export → Import/Export → <em>Import an iCalendar (.ics) file</em>{" "}
+            → choose <em>Import</em>.
+          </li>
+          <li>
+            <strong>Phone (Outlook app):</strong> easiest is to do the import
+            on the web (step 2) — the calendar syncs to your phone
+            automatically.
+          </li>
+          <li>
+            When deadlines change, delete the &ldquo;Chelsea Tickets&rdquo;
+            calendar (or the old events) and re-download + re-import —
+            importing twice creates duplicates.
+          </li>
+        </ol>
+      </details>
+    </Section>
   );
 }
 

@@ -6,16 +6,18 @@ import {
   AppData,
   Member,
   pendingCount,
+  plannedCount,
   successCount,
 } from "@/lib/types";
 import { initials } from "@/lib/ui";
 import Fixtures from "./Fixtures";
 import Overview from "./Overview";
+import Deadlines from "./Deadlines";
 import Admin from "./Admin";
 
 const MEMBER_KEY = "ct_member";
 
-type Tab = "fixtures" | "overview" | "settings";
+type Tab = "fixtures" | "overview" | "deadlines" | "settings";
 
 export default function App() {
   const [data, setData] = useState<AppData | null>(null);
@@ -166,7 +168,20 @@ export default function App() {
             Tickets won: {successCount(data, currentMember.id)}/
             {data.settings.maxGamesPerSeason}
             {pendingCount(data, currentMember.id) > 0 &&
-              ` · ${pendingCount(data, currentMember.id)} application(s) pending`}
+              ` · ${pendingCount(data, currentMember.id)} pending`}
+            {" · "}
+            <span
+              className={
+                plannedCount(data, currentMember.id) >
+                data.settings.maxGamesPerSeason
+                  ? "font-bold text-rose-300"
+                  : undefined
+              }
+            >
+              planning {plannedCount(data, currentMember.id)}
+              {plannedCount(data, currentMember.id) >
+                data.settings.maxGamesPerSeason && " ⚠ over limit"}
+            </span>
           </div>
         )}
         {/* Tabs */}
@@ -175,13 +190,14 @@ export default function App() {
             [
               ["fixtures", "Fixtures"],
               ["overview", "Everyone"],
+              ["deadlines", "Deadlines"],
               ["settings", "Settings"],
             ] as [Tab, string][]
           ).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`rounded-t-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`rounded-t-lg px-3 py-2 text-sm font-semibold transition-colors sm:px-4 ${
                 tab === key
                   ? "bg-slate-50 text-chelsea"
                   : "text-blue-100 hover:bg-white/10"
@@ -213,6 +229,9 @@ export default function App() {
         )}
         {tab === "overview" && (
           <Overview data={data} currentMember={currentMember} patch={patch} />
+        )}
+        {tab === "deadlines" && (
+          <Deadlines data={data} currentMember={currentMember} />
         )}
         {tab === "settings" && (
           <Admin data={data} currentMember={currentMember} patch={patch} />

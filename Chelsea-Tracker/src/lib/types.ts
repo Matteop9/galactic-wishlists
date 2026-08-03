@@ -1,4 +1,13 @@
-export type Interest = "definitely" | "interested" | "if_others" | "not";
+export type Interest =
+  | "definitely"
+  | "yes"
+  | "if_others"
+  | "maybe"
+  | "depends_time"
+  | "direct"
+  | "away"
+  | "busy"
+  | "not";
 export type Outcome = "pending" | "success" | "unsuccessful";
 export type HomeAway = "H" | "A";
 
@@ -63,8 +72,13 @@ export interface AppData {
 
 export const INTEREST_ORDER: Interest[] = [
   "definitely",
-  "interested",
+  "yes",
   "if_others",
+  "maybe",
+  "depends_time",
+  "direct",
+  "away",
+  "busy",
   "not",
 ];
 
@@ -73,10 +87,20 @@ export const INTEREST_META: Record<
   { label: string; short: string; symbol: string }
 > = {
   definitely: { label: "Definitely", short: "In!", symbol: "✓✓" },
-  interested: { label: "Interested", short: "Keen", symbol: "✓" },
-  if_others: { label: "If others go", short: "If others", symbol: "?" },
+  yes: { label: "Yes", short: "Yes", symbol: "✓" },
+  if_others: { label: "If others are", short: "If others", symbol: "?" },
+  maybe: { label: "Maybe", short: "Maybe", symbol: "~" },
+  depends_time: { label: "Depends on time", short: "Time?", symbol: "⏱" },
+  // Buying directly from the club (cup/midweek games) — no supporters club
+  // slot used, so excluded from the email pre-tick and the planning count.
+  direct: { label: "Apply direct", short: "Direct", symbol: "D" },
+  away: { label: "Away", short: "Away", symbol: "✈" },
+  busy: { label: "Busy", short: "Busy", symbol: "⛔" },
   not: { label: "Not interested", short: "Out", symbol: "✗" },
 };
+
+/** Interest levels that count as a firm intention to go. */
+export const KEEN_INTERESTS: Interest[] = ["definitely", "yes"];
 
 export const OUTCOME_META: Record<Outcome, { label: string }> = {
   pending: { label: "Applied — awaiting result" },
@@ -126,4 +150,33 @@ export function pendingCount(data: AppData, memberId: string): number {
     const r = getResponse(data, g.id, memberId);
     return r.applied && r.outcome === "pending";
   }).length;
+}
+
+/**
+ * Games a member is on course to attend: tickets won + applications pending
+ * + firm votes (Definitely/Yes) not yet applied for. Used to warn when
+ * someone is planning past the season limit.
+ */
+export function plannedCount(data: AppData, memberId: string): number {
+  return data.games.filter((g) => {
+    const r = getResponse(data, g.id, memberId);
+    if (r.outcome === "success") return true;
+    if (r.applied && r.outcome === "pending") return true;
+    return (
+      !r.applied && r.interest !== null && KEEN_INTERESTS.includes(r.interest)
+    );
+  }).length;
+}
+
+/** Migrate documents written by older app versions. */
+export function normalizeData(data: AppData): AppData {
+  if (!data.feedback) data.feedback = [];
+  for (const gameId of Object.keys(data.responses)) {
+    for (const memberId of Object.keys(data.responses[gameId])) {
+      const r = data.responses[gameId][memberId];
+      // v0.1.x had a 4-level scale with "interested".
+      if ((r.interest as string) === "interested") r.interest = "yes";
+    }
+  }
+  return data;
 }

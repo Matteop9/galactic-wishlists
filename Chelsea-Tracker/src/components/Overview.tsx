@@ -5,14 +5,22 @@ import {
   AppData,
   Game,
   INTEREST_META,
+  KEEN_INTERESTS,
   Member,
   Outcome,
   PatchFn,
   getResponse,
   pendingCount,
+  plannedCount,
   successCount,
 } from "@/lib/types";
-import { formatKickoff, orderStatus, STATUS_STYLES } from "@/lib/format";
+import {
+  formatKickoff,
+  formatWindowPoint,
+  groupDeadline,
+  orderStatus,
+  STATUS_STYLES,
+} from "@/lib/format";
 import { INTEREST_STYLES, OUTCOME_STYLES, initials } from "@/lib/ui";
 import { buildEmailBody, buildEmailSubject, buildMailto } from "@/lib/email";
 
@@ -27,10 +35,17 @@ export default function Overview({
 }) {
   const [dialogGameId, setDialogGameId] = useState<string | null>(null);
   const [showPast, setShowPast] = useState(false);
+  const [sortBy, setSortBy] = useState<"kickoff" | "deadline">("kickoff");
 
   const members = data.members.filter((m) => m.active);
   const todayISO = new Date().toISOString().slice(0, 10);
-  const games = data.games.filter((g) => showPast || g.date >= todayISO);
+  const games = data.games
+    .filter((g) => showPast || g.date >= todayISO)
+    .sort((a, b) =>
+      sortBy === "deadline"
+        ? groupDeadline(a).localeCompare(groupDeadline(b))
+        : a.date.localeCompare(b.date)
+    );
   const pastCount = data.games.length - data.games.filter((g) => g.date >= todayISO).length;
   const dialogGame = data.games.find((g) => g.id === dialogGameId) ?? null;
 
@@ -60,14 +75,29 @@ export default function Overview({
           <span className="inline-block h-3 w-3 rounded-full border border-sky-400 ring-2 ring-sky-400 ring-offset-1" />
           Applied
         </span>
-        {pastCount > 0 && (
-          <button
-            onClick={() => setShowPast((v) => !v)}
-            className="ml-auto underline"
-          >
-            {showPast ? "Hide" : "Show"} past games
-          </button>
-        )}
+        <span className="ml-auto flex items-center gap-2">
+          <label className="flex items-center gap-1">
+            Sort:
+            <select
+              value={sortBy}
+              onChange={(e) =>
+                setSortBy(e.target.value as "kickoff" | "deadline")
+              }
+              className="rounded border border-slate-200 bg-white px-1 py-0.5 text-[11px]"
+            >
+              <option value="kickoff">Kickoff date</option>
+              <option value="deadline">Deadline</option>
+            </select>
+          </label>
+          {pastCount > 0 && (
+            <button
+              onClick={() => setShowPast((v) => !v)}
+              className="underline"
+            >
+              {showPast ? "Hide" : "Show"} past games
+            </button>
+          )}
+        </span>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -120,6 +150,12 @@ export default function Overview({
                     </div>
                     <div className="text-[11px] text-slate-400">
                       {formatKickoff(game.date)}
+                      {sortBy === "deadline" && (
+                        <span className="block text-amber-700">
+                          {game.homeAway === "A" ? "to Neil by " : "apply by "}
+                          {formatWindowPoint(groupDeadline(game))}
+                        </span>
+                      )}
                     </div>
                   </td>
                   {members.map((m) => {
@@ -197,6 +233,34 @@ export default function Overview({
               })}
               <td />
             </tr>
+            <tr className="border-t border-slate-200 bg-slate-50">
+              <td className="sticky left-0 z-10 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+                Planning to go
+                <span className="block text-[10px] font-normal text-slate-400">
+                  won + pending + Definitely/Yes votes
+                </span>
+              </td>
+              {members.map((m) => {
+                const planned = plannedCount(data, m.id);
+                const over = planned > data.settings.maxGamesPerSeason;
+                return (
+                  <td key={m.id} className="px-1 py-2 text-center">
+                    <span
+                      className={`text-xs font-bold ${
+                        over ? "text-rose-600" : "text-slate-700"
+                      }`}
+                      title={`${m.name} is planning ${planned} game${
+                        planned === 1 ? "" : "s"
+                      }${over ? " — OVER the season limit!" : ""}`}
+                    >
+                      {planned}
+                      {over && " ⚠"}
+                    </span>
+                  </td>
+                );
+              })}
+              <td />
+            </tr>
           </tfoot>
         </table>
       </div>
@@ -236,10 +300,7 @@ function ApplyDialog({
     const s = new Set<string>();
     for (const m of members) {
       const r = getResponse(data, game.id, m.id);
-      if (
-        (r.interest === "definitely" || r.interest === "interested") &&
-        !r.applied
-      ) {
+      if (r.interest && KEEN_INTERESTS.includes(r.interest) && !r.applied) {
         s.add(m.id);
       }
     }

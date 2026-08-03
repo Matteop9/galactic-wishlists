@@ -1,5 +1,5 @@
 import { del, list, put } from "@vercel/blob";
-import { AppData } from "./types";
+import { AppData, normalizeData } from "./types";
 import { seedData } from "./seed";
 
 // Every write creates a NEW blob (timestamped pathname) instead of overwriting
@@ -32,7 +32,7 @@ export async function readData(): Promise<StoreResult> {
   if (!hasBlob()) {
     const g = globalThis as GlobalWithMemory;
     if (!g.__ctMemory) g.__ctMemory = seedData();
-    return { data: g.__ctMemory, persistent: false };
+    return { data: normalizeData(g.__ctMemory), persistent: false };
   }
   const versions = await listVersions();
   if (versions.length === 0) {
@@ -45,9 +45,7 @@ export async function readData(): Promise<StoreResult> {
   });
   if (!res.ok) throw new Error(`Failed to read data blob (${res.status})`);
   const data = (await res.json()) as AppData;
-  // Older documents may predate newer fields.
-  if (!data.feedback) data.feedback = [];
-  return { data, persistent: true };
+  return { data: normalizeData(data), persistent: true };
 }
 
 export async function writeData(data: AppData): Promise<void> {

@@ -186,21 +186,26 @@ function GameCard({
       {game.notes && (
         <p className="mt-0.5 text-xs text-amber-700">{game.notes}</p>
       )}
+      {game.homeAway === "A" && (
+        <p className="mt-1 text-xs font-medium text-amber-700">
+          ✈ Away game — requests must be with Neil before the window opens.
+        </p>
+      )}
       <p className="mt-1 text-xs text-slate-500">
-        Apply window: {formatWindowPoint(game.orderOpen)} →{" "}
+        Club window: {formatWindowPoint(game.orderOpen)} →{" "}
         {formatWindowPoint(game.orderClose)}
       </p>
 
       {/* Interest picker */}
       {currentMember && (
-        <div className="mt-3 grid grid-cols-4 gap-1.5">
+        <div className="mt-3 grid grid-cols-3 gap-1.5">
           {INTEREST_ORDER.map((level) => {
             const selected = myResponse?.interest === level;
             return (
               <button
                 key={level}
                 onClick={() => setInterest(level)}
-                className={`rounded-lg border px-1 py-2 text-xs font-semibold transition-colors ${
+                className={`rounded-lg border px-0.5 py-2 text-[11px] font-semibold leading-tight transition-colors ${
                   selected ? INTEREST_STYLES[level] : INTEREST_IDLE_STYLE
                 }`}
               >

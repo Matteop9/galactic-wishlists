@@ -35,9 +35,36 @@ export interface OrderStatus {
   label: string;
 }
 
+/**
+ * The date the GROUP must act by: away requests must reach the secretary
+ * before the window opens; home applications just need to beat the close.
+ */
+export function groupDeadline(game: Game): string {
+  return game.homeAway === "A" ? game.orderOpen : game.orderClose;
+}
+
 export function orderStatus(game: Game, now: Date = new Date()): OrderStatus {
   const open = new Date(game.orderOpen);
   const close = new Date(game.orderClose);
+
+  // Away games: requests must be with the club secretary BEFORE the order
+  // window opens, so the group's deadline is the open time, not the close.
+  if (game.homeAway === "A") {
+    if (now >= open) return { key: "closed", label: "Closed — window opened" };
+    const hoursLeft = (open.getTime() - now.getTime()) / 3_600_000;
+    if (hoursLeft <= 48) {
+      const label =
+        hoursLeft <= 1.5
+          ? `Send to Neil — ${Math.max(1, Math.round(hoursLeft * 60))} min left`
+          : `Send to Neil — ${Math.round(hoursLeft)} hrs left`;
+      return { key: "closing", label };
+    }
+    return {
+      key: "open",
+      label: `Send to Neil by ${formatWindowPoint(game.orderOpen)}`,
+    };
+  }
+
   if (now < open) return { key: "upcoming", label: `Opens ${formatWindowPoint(game.orderOpen)}` };
   if (now > close) return { key: "closed", label: "Window closed" };
   const hoursLeft = (close.getTime() - now.getTime()) / 3_600_000;

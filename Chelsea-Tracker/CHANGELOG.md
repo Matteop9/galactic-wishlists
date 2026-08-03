@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0 — 2026-08-03
+
+Implements the group's first round of feedback (from the in-app board) plus two live requests:
+
+- **Interest scale expanded to 9 options** (Matteo): Definitely / Yes / If others are / Maybe / Depends on time / Apply direct / Away / Busy / Not interested. Existing "Interested" votes migrate to "Yes" automatically.
+- **"Apply direct"** (Matteo): for cup/midweek games bought straight from the club — excluded from the email pre-tick and the 8-game planning count.
+- **"Not interested" is now red** (Harry).
+- **Planning total** (Matteo): new "Planning to go" row in the Everyone grid (won + pending + Definitely/Yes votes) and in the header — red with ⚠ when over the season limit.
+- **Away deadline shift** (Matteo): away games now count down to the window OPEN (requests must be with Neil beforehand) and show as closed once it opens; amber note on away cards.
+- **Outlook reminders** (Matteo): Settings → "Outlook reminders" downloads an .ics — home games at window open, away games 3 days before open — with step-by-step import instructions. Past reminders excluded.
+- **Deadlines tab** (Matteo): day-by-day agenda of every deadline grouped by month, plus a sort-by-deadline option on the Everyone grid.
+
 ## 0.1.0 — 2026-08-03
 
 Initial release, live at https://chelsea-tracker.vercel.app
