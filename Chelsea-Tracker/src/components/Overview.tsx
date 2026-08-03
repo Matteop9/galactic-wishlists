@@ -61,16 +61,21 @@ export default function Overview({
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
         <span className="font-semibold text-slate-600">Key:</span>
-        {(Object.keys(INTEREST_META) as (keyof typeof INTEREST_META)[]).map(
-          (k) => (
-            <span key={k} className="flex items-center gap-1">
-              <span
-                className={`inline-block h-3 w-3 rounded-full border ${INTEREST_STYLES[k]}`}
-              />
-              {INTEREST_META[k].label}
-            </span>
-          )
-        )}
+        {(
+          [
+            ["definitely", "Going (✓✓ definitely · ✓ yes)"],
+            ["maybe", "Maybe (? if others · ~ maybe · ⏱ time)"],
+            ["direct", "Apply direct (D)"],
+            ["not", "Not going (✗ no · ✈ away · ⛔ busy)"],
+          ] as [keyof typeof INTEREST_STYLES, string][]
+        ).map(([k, label]) => (
+          <span key={k} className="flex items-center gap-1">
+            <span
+              className={`inline-block h-3 w-3 rounded-full border ${INTEREST_STYLES[k]}`}
+            />
+            {label}
+          </span>
+        ))}
         <span className="flex items-center gap-1">
           <span className="inline-block h-3 w-3 rounded-full border border-sky-400 ring-2 ring-sky-400 ring-offset-1" />
           Applied

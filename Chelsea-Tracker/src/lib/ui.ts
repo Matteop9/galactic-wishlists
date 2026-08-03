@@ -1,15 +1,20 @@
 import { Interest, Outcome } from "./types";
 
-/** Filled button / chip styles per interest level. */
+/**
+ * Filled button / chip styles per interest level.
+ * Four colour families only (group's request): green = positive,
+ * orange = maybe/TBC, blue = apply direct, red = not going.
+ * The symbols distinguish levels within a family.
+ */
 export const INTEREST_STYLES: Record<Interest, string> = {
   definitely: "bg-emerald-600 text-white border-emerald-600",
-  yes: "bg-green-500 text-white border-green-500",
-  if_others: "bg-teal-400 text-teal-950 border-teal-400",
+  yes: "bg-emerald-500 text-white border-emerald-500",
+  if_others: "bg-amber-400 text-amber-950 border-amber-400",
   maybe: "bg-amber-400 text-amber-950 border-amber-400",
-  depends_time: "bg-orange-400 text-orange-950 border-orange-400",
-  direct: "bg-indigo-500 text-white border-indigo-500",
-  away: "bg-sky-400 text-sky-950 border-sky-400",
-  busy: "bg-slate-400 text-white border-slate-400",
+  depends_time: "bg-amber-400 text-amber-950 border-amber-400",
+  direct: "bg-blue-500 text-white border-blue-500",
+  away: "bg-rose-400 text-white border-rose-400",
+  busy: "bg-rose-400 text-white border-rose-400",
   not: "bg-rose-600 text-white border-rose-600",
 };
 
