@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 — 2026-08-03
+
+- Flattened the palette to exactly four colours — every option in a family now uses the identical shade (green, orange, blue, red); only the symbol differs.
+
 ## 0.2.1 — 2026-08-03
 
 - Simplified interest colours to four families (group's request): green = going (Definitely/Yes), orange = maybe/TBC (If others / Maybe / Depends on time), blue = Apply direct, red = not going (Away / Busy / Not interested — Not interested darkest). Symbols unchanged and still distinguish levels within a family; Everyone-tab legend condensed to the four families.

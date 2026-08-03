@@ -8,13 +8,13 @@ import { Interest, Outcome } from "./types";
  */
 export const INTEREST_STYLES: Record<Interest, string> = {
   definitely: "bg-emerald-600 text-white border-emerald-600",
-  yes: "bg-emerald-500 text-white border-emerald-500",
+  yes: "bg-emerald-600 text-white border-emerald-600",
   if_others: "bg-amber-400 text-amber-950 border-amber-400",
   maybe: "bg-amber-400 text-amber-950 border-amber-400",
   depends_time: "bg-amber-400 text-amber-950 border-amber-400",
   direct: "bg-blue-500 text-white border-blue-500",
-  away: "bg-rose-400 text-white border-rose-400",
-  busy: "bg-rose-400 text-white border-rose-400",
+  away: "bg-rose-600 text-white border-rose-600",
+  busy: "bg-rose-600 text-white border-rose-600",
   not: "bg-rose-600 text-white border-rose-600",
 };
 
