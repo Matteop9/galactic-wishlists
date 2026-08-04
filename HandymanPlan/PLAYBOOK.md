@@ -33,6 +33,8 @@ Its three structural problems (all solvable, none optional):
 
 **Tax residency follows:** 183+ days anywhere = tax resident there (worldwide income, but also main-residence reliefs). This interacts with Jersey status — get one proper cross-border tax consultation before committing. Treat it like a €500 survey on the whole strategy.
 
+**⚡ But read §9 first — the Italian passport play may make most of this section irrelevant for him** (and changes Maddie's best route too).
+
 ## 3. Country cheat sheet
 
 Planning figures for cheap (€10–100k) resale property, 2026. "Buy/Sell %" are all-in transaction cost planning numbers (the app's presets). Note: the app also ships a Croatia preset (3% transfer tax, CGT-exempt after 2 years held) — it's the one country that did *not* get a dedicated research pass, so verify it before relying on it.
@@ -106,9 +108,52 @@ From people who've done it (renovating couples' accounts, forums, a Houzz survey
 
 ## 8. Suggested first move
 
-A trial run before the full nomad life: **one project, deliberately imperfect conditions.** Two candidate shapes —
+**Step 0 — before anything else: verify the Italian citizenship chain (§9).** It costs nothing to check the family documents against the new two-generation test, and the answer reshapes every other decision (visas, tax, even whether to marry first). Start Maddie's cohabitation paper trail (joint lease, joint accounts, joint bills) at the same time — the partner-recognition clocks in §9 run on evidence like that.
+
+Then a trial run before the full nomad life: **one project, deliberately imperfect conditions.** Two candidate shapes —
 
 - **Ireland first:** no visa clock at all, English-speaking, learn the full buy-renovate-sell cycle end-to-end (accepting thinner margins and 33% CGT), then go continental with a proven playbook; or
-- **Portugal first:** D7 visa (the cheapest residency in Western Europe), become tax resident (unlocking resident IMT + reinvestment relief), and do a Guarda/Castelo Branco district house as the pilot.
+- **Portugal first:** D7 visa (the cheapest residency in Western Europe) — or free movement if the passport comes through — become tax resident (unlocking resident IMT + reinvestment relief), do a Guarda/Castelo Branco district house as the pilot, and lean on the family furniture connection (§11) from day one. Portugal is also the easiest country in Europe to regularise Maddie as an unmarried partner (§9).
 
 Either way: cheap house, structurally sound, cosmetic-to-medium scope, 12–18 months, and treat everything you get wrong as tuition. The tracker's Journal tab is for exactly that.
+
+## 9. The Italian passport play (researched Aug 2026)
+
+⚠️ **The rules changed hard in 2025 — check eligibility before assuming it.** Law 74/2025 (the "Tajani reform", in force 28 Mar 2025) capped citizenship by descent at **two generations**: you qualify automatically only if **(a)** a parent or grandparent **born in Italy held *only* Italian citizenship at the time of your birth** (an ancestor who naturalised British before then breaks the chain — consulates demand documentary non-naturalisation proof), or **(b)** an Italian-citizen parent lived in Italy for 2+ continuous years before your birth. Great-grandparent lines no longer qualify. The Constitutional Court upheld the law (Sentence 63/2026) but referred its retroactivity to the **CJEU in July 2026** (Order 147/2026, ruling expected ~late 2027) — so if your chain fails today, keep the documents assembled and watch that case. Fallback: descendants of an Italian-born parent/grandparent can reportedly **naturalise after ~2 years' legal residence in Italy** (+ B1 Italian) — confirm scope with a lawyer.
+
+**Process from Jersey:** the file goes through the **Italian Consulate General, London** (Channel Islands are in its district): Prenot@mi booking (slots drop Mon/Wed 17:00 UK time), full civil-status document chain + non-naturalisation search, FCDO apostilles + certified translations, **€600 non-refundable fee per adult** — so get a documentary pre-assessment before paying. Realistic end-to-end: **1.5–4 years** (the system is centralising to Rome through 2029; expect drift). Once recognised: register with AIRE immediately (legal duty, fines for not doing so).
+
+**What it unlocks for the plan:**
+- **No Schengen clock for him, ever** — live on-site through any renovation in any EU country.
+- **Work rights everywhere** — legally labour on your own sites, invoice, register as autónomo/ditta individuale. The side hustles in §11 become legal.
+- **Italy prima casa:** 2% purchase tax (vs 9%) on cadastral value with residence in the comune — but with a 5-year clawback unless you roll into a new main home within 12 months of selling. Made for chained live-in flips.
+- **Italy CGT:** main-residence exemption + the 5-year rule can make Italian live-in flips essentially CGT-free.
+- **Banking, utilities, healthcare (SSN), car registration** — all become trivial.
+- **Honest caveat:** most *tax* perks are **residence-based, not passport-based** (e.g. Spain's 19%-net vs 24%-gross landlord regime hinges on where you're tax-resident). The passport's value is the unrestricted *right to become resident* wherever the current project is.
+
+**Maddie's position (unmarried):** she stays on the 90/180 clock until a country issues her a card. As the **durable partner** of an EU citizen exercising free movement (Directive 2004/38), she gets a facilitated residence card with full work rights — easiest in **Portugal** (união de facto: 2 years' evidenced cohabitation) and **Spain** (registered pareja de hecho, or ~1 year's evidenced cohabitation), harder in France/Greece. **The trap: this does NOT work in Italy itself** — a "static" Italian who never exercised free movement can't invoke the Directive, and Italy's convivenza di fatto route is notoriously circular for partners without a permit. Workarounds: base in Portugal/Spain first (then return to Italy under the returning-citizen doctrine), or **marry** — marriage makes her an automatic family member everywhere *including* Italy, and opens Italian citizenship by marriage (3 years married living abroad, or 2 in Italy, + B1 Italian; a pending bill may abolish the abroad route, so file early). Note: an opposite-sex UK civil partnership is **not** recognised in Italy or Spain — for this purpose it's marriage or the durable-partner evidence route. **Start the paper trail now.**
+
+## 10. Exit strategy: sell, or Airbnb first?
+
+**Default: sell.** Capital recycling is the engine of this plan — a good rural short-let grosses €4–12k/yr (30–45% occupancy, brutally seasonal) and nets maybe €3–7k after 25–35% for management/cleaning/platform and tax, while selling a well-renovated house returns its capital *plus* profit in one event and funds the next two projects. Guest churn also wears out exactly the "just renovated" shine that earns the sale premium. And demand is the hard constraint: renovated houses let **only near an anchor** (coast within ~20 min, a national park, a heritage town, ski, the Shannon) — the deep-cheap villages where €15k houses live have effectively **zero** short-let demand. Those are resale-to-lifestyle-buyer plays, full stop.
+
+**But there are four good reasons to let first, and one great one:**
+1. **Italy is the great one:** gains are CGT-exempt after 5 years' ownership *and letting during the hold doesn't break the exemption* (26% inside 5 years). Cedolare secca taxes rent at a flat 21%. A renovated Italian house near the coast is worth materially more sold in year 6 than year 4 — letting runs out the clock while paying you.
+2. **Visa income:** rental income counts for Portugal D7 / Spain NLV / Italy elective residence — one held, income-producing property can *be* the visa evidence (only matters if the passport doesn't come through).
+3. **An anchor base:** one kept property = winter base, tool/furniture store, proof of address, and a Schengen home for Maddie's card application.
+4. **Licence scarcity:** where new STR licences are frozen (central Athens — where they're also *non-transferable on sale*, central Lisbon), an existing transferable licence adds resale value. Rural licences remain easy everywhere.
+
+**Country cheat-line:** 🇮🇹 hold to year 5 if lettable, else sell · 🇬🇷 sell (CGT suspended through 2026 — but 3+ sales in 2 years = taxed as business) · 🇮🇪 live-in flip and sell (33% CGT, STR needs planning permission nationwide since 2025) · 🇫🇷 sell to lifestyle buyers (taper useless short-term; DPE A–D required for lets by 2034; micro-BIC allowances gutted) · 🇵🇹 friendliest hold admin (AL open again since Nov 2024; non-resident AL tax ≈ 8.75% effective on gross) · 🇪🇸 hold only near demand anchors; being EU-tax-resident flips rental tax from 24%-on-gross to 19%-on-net · 🇧🇬 10% flat tax and easy licensing, but demand only in Veliko Tarnovo/coast/Bansko.
+
+**Rule of thumb** (the app's Deal tab now computes it): *years of net rent ≈ sale profit*. If that number is under ~4–5 years **and** there's a real CGT clock to run out (Italy), letting first earns its keep. Otherwise sell, bank it, roll on. STR licence, tax registration and co-host lines are in the Docs checklist.
+
+## 11. Your unfair advantages (family edition)
+
+**Maddie's parents — tilers.** The single most valuable trade to have in the family for this plan: tiling labour runs €25–60/m² across Europe, bathrooms and kitchens are what sell houses, and it's a skill learned by supervised repetition. Use them as: pre-trip apprenticeship (get both of you to "confident" before leaving — it's flagged on the Skills tab), tool-kit advice before you buy anything, remote quality control on photos, and — if they fancy a working holiday — flying trade labour for the big bathroom/kitchen pushes. Their trade habits (substrate prep, setting-out, waterproofing discipline) are exactly what separates amateur tiling from saleable tiling.
+
+**Your aunt — furniture company in Portugal.** Portugal's furniture cluster (Paços de Ferreira, "Capital do Móvel", ~30 min from Porto) is one of Europe's cheapest quality-furniture sources — labour costs ~45% below the EU average and factories sell direct. Family trade access plausibly means 20–40% below already-cheap factory prices, plus B-stock/ex-display (perfect staging stock) and custom sizes. Use it four ways, in order of certainty:
+1. **Furnish your own flips** — in Spain/Portugal/Greece holiday markets, *furnished sale is the norm* (table stakes you can supply at trade cost); in Italy, houses customarily sell stripped bare — kitchen included — so a furnished + fitted-kitchen flip is a genuine differentiator for exactly the foreign buyers who pay best. Staging evidence: ~1–10% price uplift and materially faster sales (industry data; treat big claims skeptically). ~€4k of trade furniture supporting a 3–5% premium + 2 months' faster sale is worth €6–12k per flip.
+2. **Furniture packs for landlords/Airbnb hosts** — an established business on the costas/Algarve (2-bed packs retail €6–9k; Portuguese trade cost ~€3–4.5k landed → €2–4k gross margin per pack). Needs a van, storage and presence in an expat hotspot — which live-in flipping provides.
+3. **Home staging service** for other sellers/agents (€350–900 consults + €150–400/room/month rental; young market outside the big cities).
+4. **Blinds/persianas supply-and-fit** — every southern renovation needs them; pairs with the tiling-family site skills.
+Logistics: EU single market = no customs. Factory delivery or your own van makes Portuguese furniture worth trucking to Spain (always) and Italy (usually); for Greece, buy basics locally and reserve Portugal for high-value pieces. **Legal note:** all of these need work rights — see §9. As non-EU tourists you can't lawfully run them; with the passport (him) and a family-member card (her), you can.

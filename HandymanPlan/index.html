@@ -177,6 +177,7 @@
 
 // ---------- constants ----------
 const LS_KEY = 'hmp_data_v1';
+const SEED_VERSION = 2; // bump when SKILL_SEED gains new entries so existing data adopts them
 
 const STAGES = [
   {id:'scouting',   label:'Scouting',    c:'grey'},
@@ -184,11 +185,12 @@ const STAGES = [
   {id:'offer',      label:'Offer made',  c:'purple'},
   {id:'buying',     label:'Buying',      c:'amber'},
   {id:'renovating', label:'Renovating',  c:'accent'},
+  {id:'letting',    label:'Letting',     c:'olive'},
   {id:'selling',    label:'Selling',     c:'teal'},
   {id:'sold',       label:'Sold',        c:'green'},
   {id:'dropped',    label:'Dropped',     c:'red'},
 ];
-const STAGE_COLORS = {grey:['var(--grey-soft)','var(--grey)'],blue:['var(--blue-soft)','var(--blue)'],purple:['var(--purple-soft)','var(--purple)'],amber:['var(--amber-soft)','var(--amber)'],accent:['var(--accent-soft)','var(--accent)'],teal:['var(--teal-soft)','var(--teal)'],green:['var(--green-soft)','var(--green)'],red:['var(--red-soft)','var(--red)']};
+const STAGE_COLORS = {grey:['var(--grey-soft)','var(--grey)'],blue:['var(--blue-soft)','var(--blue)'],purple:['var(--purple-soft)','var(--purple)'],amber:['var(--amber-soft)','var(--amber)'],accent:['var(--accent-soft)','var(--accent)'],olive:['var(--olive-soft)','var(--olive)'],teal:['var(--teal-soft)','var(--teal)'],green:['var(--green-soft)','var(--green)'],red:['var(--red-soft)','var(--red)']};
 
 // Country presets: default % costs are editable per-property. Rough planning
 // figures for cheap resale property — always verify locally before an offer.
@@ -232,6 +234,9 @@ const DOC_TEMPLATE = [
   'Renovation permits applied for',
   'Renovation permits granted',
   'Habitability / occupancy certificate (if required)',
+  'LET (if letting): STR licence / registration obtained (AL, CIN, VUT…)',
+  'LET (if letting): rental income tax registration done',
+  'LET (if letting): co-host / cleaner / key-holder arranged',
   'SALE: agent engaged & listing live',
   'SALE: energy certificate current for listing',
   'SALE: completion & tax filings done',
@@ -257,7 +262,7 @@ const SKILL_SEED = [
  {p:'Core DIY', t:'Painting & decorating', w:'The highest-ROI skill: 80% prep, 20% paint. You will do this on every single property.', r:[['Phil Beckwith, pro decorator (YT)','https://www.youtube.com/channel/UCzITowRxX9CUjj_2ul0l5IA'],['Charlie DIYte (YT)','https://www.youtube.com/@CharlieDIYte/videos'],['Alison — Home Improvement (free)','https://alison.com/course/introduction-to-home-improvement']]},
  {p:'Core DIY', t:'Wall repair & filling', w:'Cracks, holes, blown plaster patches — the daily bread of doing up old houses.', r:[['Ultimate Handyman (YT)','https://www.youtube.com/channel/UCH9zMYoqgPgAIZQ0rx6dB4w'],['Charlie DIYte (YT)','https://www.youtube.com/@CharlieDIYte/videos']]},
  {p:'Core DIY', t:'Plastering & skimming (incl. lime)', w:'Hard to master, huge labour saving. Old stone walls want LIME, not gypsum — gypsum skim is for boards and modern walls; learn both.', r:[['Plastering for beginners (YT)','https://www.youtube.com/watch?v=UvWkwOs4HEE'],['Mike Wye — lime how-to playlist','https://www.youtube.com/playlist?list=PLDsLFaFYHSkSciK3aw6521UZ-F-bnPzyT'],['Kirk Giordano plastering (YT)','https://www.youtube.com/channel/UCZ1wkNnjD06gYLeDFRW7hNQ']]},
- {p:'Core DIY', t:'Tiling: walls & floors', w:'Bathrooms and kitchens sell houses. Setting-out (where the cuts fall), substrate prep and levelling systems are the real skills.', r:[['Walls & Floors how-to-tile series','https://www.wallsandfloors.co.uk/blog/watch-our-how-to-tile-videos/'],['Wickes — tile a bathroom wall (YT)','https://www.youtube.com/watch?v=eRWYk7vA9AA'],['Proper DIY (YT)','https://www.youtube.com/@ProperDIY']]},
+ {p:'Core DIY', t:'Tiling: walls & floors', w:'Bathrooms and kitchens sell houses. Setting-out (where the cuts fall), substrate prep and levelling systems are the real skills. Family cheat code: apprentice with Maddie’s parents before the trip — real-site reps beat any video.', r:[['Walls & Floors how-to-tile series','https://www.wallsandfloors.co.uk/blog/watch-our-how-to-tile-videos/'],['Wickes — tile a bathroom wall (YT)','https://www.youtube.com/watch?v=eRWYk7vA9AA'],['Proper DIY (YT)','https://www.youtube.com/@ProperDIY']]},
  {p:'Core DIY', t:'Grouting, silicone & caulking', w:'Cheap, easy, transforms tired bathrooms — the classic first-weekend win. Perfect beads make a reno look "finished" to buyers.', r:[['Charlie DIYte (YT)','https://www.youtube.com/@CharlieDIYte/videos'],['Ultimate Handyman (YT)','https://www.youtube.com/channel/UCH9zMYoqgPgAIZQ0rx6dB4w']]},
  {p:'Core DIY', t:'Flooring: laminate & LVT', w:'Fast, forgiving, dramatic before/after. Subfloor prep and levelling compound (continental floors are uneven screed) are the real skill.', r:[['Laminate for beginners — full guide (YT)','https://www.youtube.com/watch?v=2iM76oLzKqY'],['Wickes how-to library (YT)','https://www.youtube.com/user/wickesvideo/videos']]},
  {p:'Core DIY', t:'Stud walls & plasterboard', w:'Reconfigure layouts and build insulated linings — the standard way to insulate solid masonry internally.', r:[['Gosforth Handyman (YT)','https://www.youtube.com/c/GosforthHandyman'],['Ultimate Handyman (YT)','https://www.youtube.com/channel/UCH9zMYoqgPgAIZQ0rx6dB4w']]},
@@ -277,13 +282,14 @@ const SKILL_SEED = [
  {p:'Finishing Trades', t:'Repointing stone & brick (lime mortar)', w:'Cement pointing kills old walls — lime is almost always correct on pre-war masonry. Slow, cheap, very learnable, and exposed stone is what buyers pay for.', r:[['Mike Haduck — repointing stone playlist','https://www.youtube.com/playlist?list=PLDrfNaY9xgYE0DaJIAAbfR_XddIZyzAwo'],['SPAB knowledge base','https://www.spab.org.uk/advice/knowledge-base'],['Heritage House — why lime','https://www.heritage-house.org/']]},
  {p:'Finishing Trades', t:'Exterior painting & woodcare', w:'Shutters, gates, fascias — huge visual value. Use breathable mineral/limewash paints on old render, never plastic paints on lime.', r:[['Phil Beckwith (YT)','https://www.youtube.com/channel/UCzITowRxX9CUjj_2ul0l5IA'],['Mike Wye — breathable paints FAQ','https://mikewye.co.uk/faqs/']]},
  {p:'Finishing Trades', t:'Landscaping basics', w:'Clearing, gravel, a level terrace and six plants can add thousands — outdoor space is a major selling point in the south.', r:[['Garden Ninja (YT)','https://www.youtube.com/channel/UCuhMHrXyf2bvga2Mq0DJvwQ'],['The Restoration Couple (YT)','https://www.youtube.com/@TheRestorationCouple']]},
- {p:'Finishing Trades', t:'Staging & interior styling', w:'Sell the dream: light, declutter, one styled vignette per room — with furniture you already have.', r:[['Stage your home for free (YT)','https://www.youtube.com/watch?v=rxpLTYAFxg8']]},
+ {p:'Finishing Trades', t:'Staging & interior styling', w:'Sell the dream: light, declutter, one styled vignette per room — with furniture you already have. Bonus edge: trade-price stock via the family furniture company in Portugal.', r:[['Stage your home for free (YT)','https://www.youtube.com/watch?v=rxpLTYAFxg8']]},
  {p:'Finishing Trades', t:'Property photography', w:'Listings live or die on photos, especially in slow rural markets where you must outshine the agents’ phone snaps.', r:[['Full real-estate photography course (YT)','https://www.youtube.com/watch?v=k1txx3cc9lg'],['RE photography playlist','https://www.youtube.com/playlist?list=PLHypqxOXA74QjO5K8HbyQNhmp8g7ZGlPe']]},
  // ---- Project & Sale ----
  {p:'Project & Sale', t:'Renovation budgeting & contingency', w:'Costed schedule of works BEFORE every offer; 15–25% contingency (20–30% on old stone); track spend weekly. (This app is the tool — the habit is the skill.)', r:[['Homebuilding & Renovating (YT)','https://www.youtube.com/channel/UCnBQs4X0ZLg5-aLailTGbsw'],['Budget a renovation line-by-line (YT)','https://www.youtube.com/watch?v=2ziZFXaWZT0'],['Gosforth Handyman — what jobs cost (YT)','https://www.youtube.com/c/GosforthHandyman']]},
  {p:'Project & Sale', t:'Sequencing a renovation', w:'Watertight roof → structure → first fix → plaster → floors → second fix → decorate. Out of order costs double. Mind August closures in the south.', r:[['OpenLearn — project management (free)','https://www.open.edu/openlearn/money-business/leadership-management/project-management-the-start-the-project-journey/content-section-0'],['Skill Builder (YT)','https://www.youtube.com/@SkillBuilder']]},
  {p:'Project & Sale', t:'Getting & comparing quotes abroad', w:'Three quotes, written scope, stage payments tied to milestones, never large sums up front — in any language.', r:[['Gosforth Handyman — trade pricing (YT)','https://www.youtube.com/c/GosforthHandyman'],['Homebuilding & Renovating (YT)','https://www.youtube.com/channel/UCnBQs4X0ZLg5-aLailTGbsw']]},
  {p:'Project & Sale', t:'Snagging & quality control', w:'Walk every room with a checklist before paying final balances and before listing; assemble the handover pack (invoices, certificates, permits).', r:[['Snagging complete guide','https://www.propertysolvers.co.uk/articles/snagging/'],['47-point snagging checklist','https://apartment-checklist.com/uk/articles/snagging-checklist.html'],['Handover pack guide','https://www.bookabuilderuk.com/blog/renovation-handover-checklist-certificates-snagging']]},
+ {p:'Project & Sale', t:'Short-let hosting & guest operations', w:'Exit B for any flip: listing craft, pricing, remote co-hosting, guest ops. Rental income can also evidence passive-income visa thresholds — and needs an STR licence almost everywhere now.', r:[['Airbnb hosting resource centre','https://www.airbnb.com/resources/hosting-homes']]},
  {p:'Project & Sale', t:'Selling process & listing craft', w:'Agent vs private, pricing psychology, and the paperwork that must be ready (energy cert, conformity, permits) to sell fast.', r:[['Move iQ (YT)','https://www.youtube.com/channel/UC9jtWjaSUE1A0_D-ge2fltA'],['Property Hub (YT)','https://www.youtube.com/PropertyHubUK']]},
 ];
 
@@ -292,7 +298,7 @@ let db = null;
 let view = {tab:'dashboard', propId:null, propTab:'deal', skillFilter:'all'};
 
 function freshDb(){
-  return {version:1, people:['Me','Partner'], currency:'€',
+  return {version:1, seedVersion:SEED_VERSION, people:['Me','Partner'], currency:'€',
     properties:[], stays:[],
     skills: SKILL_SEED.map(s=>({id:uid(), phase:s.p, title:s.t, why:s.w,
       resources:s.r.map(x=>({label:x[0],url:x[1]})), status:[0,0], custom:false }))};
@@ -325,6 +331,14 @@ function normalize(d){
     if(seed && !s.custom && !s.resourcesCleared && seed.r.length && s.resources.length===0)
       s.resources = seed.r.map(x=>({label:x[0], url:x[1]}));
   });
+  // append seed skills shipped after the user's data was created (once per seed bump)
+  if((d.seedVersion||1) < SEED_VERSION){
+    const have = new Set(d.skills.map(s=>s.title));
+    SKILL_SEED.forEach(s=>{ if(!have.has(s.t))
+      d.skills.push({id:uid(), phase:s.p, title:s.t, why:s.w, resources:s.r.map(x=>({label:x[0],url:x[1]})), status:d.people.map(()=>0), custom:false});
+    });
+    d.seedVersion = SEED_VERSION;
+  }
   return d;
 }
 let _rev = 0; // revision of the data this tab last loaded or saved
@@ -397,7 +411,9 @@ function dealCalc(p){
   // realised (sold): everything actually paid should be in ledger/tasks; purchase price counted separately
   let realised = null;
   if(n(d.actualSale)>0){ realised = n(d.actualSale) - price - spent.total; }
-  return {price, buyCosts, reno, hold, allIn, target, sellCosts, profit, roi, breakeven, spent, realised};
+  const rent = n(d.rentMonthly);
+  const rentYield = (rent>0 && allIn>0) ? rent*12/allIn : null;
+  return {price, buyCosts, reno, hold, allIn, target, sellCosts, profit, roi, breakeven, spent, realised, rent, rentYield};
 }
 function taskStats(p){
   const ts=(p.rooms||[]).flatMap(r=>r.tasks);
@@ -573,8 +589,8 @@ function vDashboard(){
   let cashIn=0, projected=0, realised=0;
   db.properties.forEach(p=>{
     const c=dealCalc(p);
-    if(['buying','renovating','selling'].includes(p.stage)) cashIn += c.price + c.spent.total;
-    if(['buying','renovating','selling'].includes(p.stage) && c.profit!=null) projected += c.profit;
+    if(['buying','renovating','letting','selling'].includes(p.stage)) cashIn += c.price + c.spent.total;
+    if(['buying','renovating','letting','selling'].includes(p.stage) && c.profit!=null) projected += c.profit;
     if(p.stage==='sold' && c.realised!=null) realised += c.realised;
   });
   const confident = db.skills.reduce((a,s)=>a+s.status.filter(x=>x>=3).length,0);
@@ -582,7 +598,7 @@ function vDashboard(){
   const used = schengenUsed(new Date());
   const alerts=[];
   db.properties.forEach(p=>{
-    if(['renovating','selling'].includes(p.stage)){
+    if(['renovating','letting','selling'].includes(p.stage)){
       const c=dealCalc(p);
       if(c.reno>0 && c.spent.total > c.reno) alerts.push(`<div class="alert red">🔥 <b>${esc(p.name)}</b> renovation spend ${money(c.spent.total)} is over the ${money(c.reno)} budget.</div>`);
       if(!c.target) alerts.push(`<div class="alert">🎯 <b>${esc(p.name)}</b> has no target sale price — set one in the Deal tab to see projected profit.</div>`);
@@ -735,6 +751,17 @@ function vDeal(p){
     </table></div>
     <div class="small" style="margin-top:8px">💡 CGT on your profit varies hugely by country and residence — check the country note above and get local advice before you rely on a number.</div>
   </div>
+  ${c.rent>0?`<div class="panel">
+    <h3>Let scenario (exit B)</h3>
+    <div class="tablewrap"><table>
+      <tr><td>Net rent</td><td class="num money">${money(c.rent)}/mo</td><td class="small">${money(c.rent*12)}/yr</td></tr>
+      <tr><td>Gross yield on all-in</td><td class="num money">${pct(c.rentYield)}</td>
+        <td class="small ${c.rentYield>=0.08?'pos':c.rentYield>=0.05?'mid':'neg'}">${c.rentYield>=0.08?'✅ strong':c.rentYield>=0.05?'⚠️ workable':'🚫 selling likely beats letting'}</td></tr>
+      ${n(d.holdMonthly)?`<tr><td>Covers holding costs</td><td class="num money">${(c.rent/n(d.holdMonthly)).toFixed(1)}×</td><td></td></tr>`:''}
+      ${c.profit!=null&&c.profit>0?`<tr><td>Years of rent ≈ sale profit</td><td class="num money">${(c.profit/(c.rent*12)).toFixed(1)} yrs</td><td class="small">before tax, licence & wear costs</td></tr>`:''}
+    </table></div>
+    <div class="small" style="margin-top:8px">Letting first can pay you while a CGT clock runs (Italy: exempt after 5 yrs; France taper) and rental income can evidence passive-income visas — but check STR licensing and budget for guest wear. See PLAYBOOK.md.</div>
+  </div>`:''}
   <div class="panel">
     <h3>Actuals so far</h3>
     <div class="tablewrap"><table>
@@ -759,6 +786,7 @@ function editDeal(id){
     {key:'targetSale',label:'Target sale price',type:'number',value:d.targetSale,half:true},
     {key:'holdMonthly',label:'Holding cost / month',type:'number',value:d.holdMonthly,half:true,hint:'utilities, insurance, taxes'},
     {key:'holdMonths',label:'Months you\u2019ll hold',type:'number',value:d.holdMonths,half:true},
+    {key:'rentMonthly',label:'Let scenario: net rent / month',type:'number',value:d.rentMonthly,hint:'average month, net of platform fees & cleaning — leave blank if selling straight away'},
     {key:'actualSale',label:'Actual sale price (when sold)',type:'number',value:d.actualSale},
   ],v=>{ Object.keys(v).forEach(k=>d[k]=v[k]); commit(); });
 }

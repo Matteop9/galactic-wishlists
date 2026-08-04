@@ -1,5 +1,12 @@
 # Changelog — HandymanPlan
 
+## v0.2.0 — 2026-08-04
+
+Round 2: citizenship, exit strategy & family advantages (3-agent research sweep).
+
+- **App:** new **Letting** pipeline stage; Deal tab gains a **let-scenario calculator** (net monthly rent → annual income, gross yield on all-in with verdict, holding-cost coverage, years-of-rent ≈ sale-profit); docs checklist seeds STR licence / rental-tax / co-host items; new **Short-let hosting** skill (40 total) with a seed-version migration so existing data adopts it; Tiling and Staging skills note the family edges.
+- **PLAYBOOK.md:** three new sections — §9 *The Italian passport play* (post-Law 74/2025 two-generation rules, CJEU referral, London consulate process from Jersey, unmarried-partner routes per country, marriage effects), §10 *Sell vs Airbnb* (default-sell reasoning, Italy's hold-to-year-5 exception, country cheat-line, licence/tax/demand realities), §11 *Unfair advantages* (tiler in-laws, Portuguese furniture trade access: furnished exits, furniture packs, staging, blinds). §8 gains Step 0 (verify the citizenship chain first) and the Croatia-preset caveat added to §3.
+
 ## v0.1.1 — 2026-08-04
 
 Review round: 18 confirmed findings from a 27-agent adversarial review, all fixed.
