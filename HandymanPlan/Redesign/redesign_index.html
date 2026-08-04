@@ -348,30 +348,6 @@ footer{color:var(--muted);font-size:10.5px;letter-spacing:.08em;text-transform:u
   .panel h3{margin:0 -14px 12px;padding-left:14px;padding-right:14px}
   .tablewrap{margin:0 -14px;padding:0 14px}
 }
-
-/* ── lock screen (added: password gate) ─────────────────────────────────── */
-#lock{position:fixed;inset:0;z-index:200;background:var(--navy);display:flex;align-items:center;justify-content:center;padding:20px;
-  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
-  background-size:26px 26px}
-.lock-card{background:var(--panel);border:1px solid var(--ink);border-radius:var(--radius);box-shadow:10px 10px 0 rgba(0,0,0,.28);width:100%;max-width:370px;padding:26px}
-.lock-card .mark{font-family:var(--display);font-weight:800;font-size:15px;color:#fff;background:var(--accent);width:34px;height:34px;border-radius:2px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.lock-card h1{font-size:24px;margin-bottom:4px}
-.lock-card .sub{margin-bottom:16px}
-.lock-err{color:var(--red);font-size:12.5px;margin-top:8px;min-height:18px}
-.lock-rem{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);margin-top:12px;cursor:pointer}
-.lock-rem input{width:16px;height:16px;accent-color:var(--olive);cursor:pointer}
-
-/* ── playbook tab (added) ───────────────────────────────────────────────── */
-.mission .doc-row{align-items:flex-start;padding:10px 4px}
-.mission .doc-row input[type=checkbox]{margin-top:2px}
-.mission b{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.015em;display:block}
-.mission .small{display:block;margin-top:2px}
-.verdict{font-family:var(--mono);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-
-/* ── sync status (added) ────────────────────────────────────────────────── */
-.syncline{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
-.syncline.ok{color:var(--green)} .syncline.err{color:var(--red)} .syncline.mid{color:var(--amber)}
-
 </style>
 </head>
 <body>
@@ -383,28 +359,14 @@ footer{color:var(--muted);font-size:10.5px;letter-spacing:.08em;text-transform:u
     </div>
     <nav id="nav"></nav>
     <div class="sidefoot">
-      <div class="sidefoot-k">Job book &middot; v0.3.0</div>
+      <div class="sidefoot-k">Job book &middot; v0.1.1</div>
       <div class="sidefoot-v">Buy it, fix it, sell it, drive on.</div>
-      <div class="syncline" id="syncline"></div>
     </div>
   </div>
 </header>
 <main id="app"></main>
-<footer id="foot">Data lives in this browser only &mdash; export a JSON backup from the Data tab.</footer>
+<footer>Data lives in this browser only &mdash; export a JSON backup from the Data tab.</footer>
 <div id="modal-root"></div>
-<div id="lock" style="display:none">
-  <div class="lock-card">
-    <div class="mark">HP</div>
-    <h1>Site locked</h1>
-    <div class="sub">Crew only — enter the site password.</div>
-    <form onsubmit="tryUnlock(event)">
-      <div class="field"><label>Password</label><input type="password" id="lock-pw" autocomplete="current-password"></div>
-      <label class="lock-rem"><input type="checkbox" id="lock-rem"> Remember this device</label>
-      <div class="lock-err" id="lock-err"></div>
-      <div class="row" style="justify-content:flex-end;margin-top:6px"><button class="btn primary" type="submit">Unlock</button></div>
-    </form>
-  </div>
-</div>
 
 <script>
 /* ============================================================
@@ -414,7 +376,6 @@ footer{color:var(--muted);font-size:10.5px;letter-spacing:.08em;text-transform:u
 
 // ---------- constants ----------
 const LS_KEY = 'hmp_data_v1';
-const SEED_VERSION = 2; // bump when SKILL_SEED gains new entries so existing data adopts them
 
 const STAGES = [
   {id:'scouting',   label:'Scouting',    c:'grey'},
@@ -422,12 +383,11 @@ const STAGES = [
   {id:'offer',      label:'Offer made',  c:'purple'},
   {id:'buying',     label:'Buying',      c:'amber'},
   {id:'renovating', label:'Renovating',  c:'accent'},
-  {id:'letting',    label:'Letting',     c:'olive'},
   {id:'selling',    label:'Selling',     c:'teal'},
   {id:'sold',       label:'Sold',        c:'green'},
   {id:'dropped',    label:'Dropped',     c:'red'},
 ];
-const STAGE_COLORS = {grey:['var(--grey-soft)','var(--grey)'],blue:['var(--blue-soft)','var(--blue)'],purple:['var(--purple-soft)','var(--purple)'],amber:['var(--amber-soft)','var(--amber)'],accent:['var(--accent-soft)','var(--accent)'],olive:['var(--olive-soft)','var(--olive)'],teal:['var(--teal-soft)','var(--teal)'],green:['var(--green-soft)','var(--green)'],red:['var(--red-soft)','var(--red)']};
+const STAGE_COLORS = {grey:['var(--grey-soft)','var(--grey)'],blue:['var(--blue-soft)','var(--blue)'],purple:['var(--purple-soft)','var(--purple)'],amber:['var(--amber-soft)','var(--amber)'],accent:['var(--accent-soft)','var(--accent)'],teal:['var(--teal-soft)','var(--teal)'],green:['var(--green-soft)','var(--green)'],red:['var(--red-soft)','var(--red)']};
 
 // Country presets: default % costs are editable per-property. Rough planning
 // figures for cheap resale property — always verify locally before an offer.
@@ -471,25 +431,9 @@ const DOC_TEMPLATE = [
   'Renovation permits applied for',
   'Renovation permits granted',
   'Habitability / occupancy certificate (if required)',
-  'LET (if letting): STR licence / registration obtained (AL, CIN, VUT…)',
-  'LET (if letting): rental income tax registration done',
-  'LET (if letting): co-host / cleaner / key-holder arranged',
   'SALE: agent engaged & listing live',
   'SALE: energy certificate current for listing',
   'SALE: completion & tax filings done',
-];
-
-// Pre-trip mission checklist — the strategic to-dos from PLAYBOOK.md, tickable.
-const MISSION_SEED = [
- {t:'Verify the Italian citizenship chain', d:'Post-2025 test: an Italy-born parent or grandparent who held ONLY Italian citizenship at your birth (or a citizen parent with 2 yrs residence in Italy before it). Great-grandparent lines no longer qualify.'},
- {t:'Assemble the document chain before paying anything', d:'Birth/marriage certificates down the line + non-naturalisation proof (Home Office / National Archives search), apostilles, translations. The €600 London-consulate fee is non-refundable.'},
- {t:'Start Maddie’s cohabitation paper trail', d:'Joint lease, joint account, joint bills, dated photos. Portugal wants 2 years of evidence, Spain ~1 — the clock can already be running.'},
- {t:'Decide: marriage vs durable-partner route', d:'Marriage = automatic family member everywhere INCLUDING Italy, plus her own citizenship track (3 yrs married abroad + B1 Italian). Durable partner works in PT/ES but not in Italy itself.'},
- {t:'One-hour cross-border tax consultation', d:'Jersey (no CGT) × property-country rules × where you become tax-resident. The cheapest insurance on the whole plan.'},
- {t:'Tiling apprenticeship with Maddie’s parents', d:'Get both of you to Practiced before departure — €25–60/m² of labour saved on every bathroom and kitchen, forever.'},
- {t:'Price a 2-bed furniture pack at trade with the aunt', d:'Target under ~€4.5k landed. One phone call confirms the furnished-exit premium and the furniture-pack side hustle.'},
- {t:'Pick the pilot: Ireland vs Portugal', d:'Ireland = no visa clock, English, 33% CGT. Portugal = D7/free movement, easiest partner card, the aunt, cheap Guarda stock.'},
- {t:'Watch the CJEU ruling on Law 74/2025', d:'Expected ~late 2027. If the retroactivity falls, blocked descent lines may reopen — keep the documents assembled either way.'},
 ];
 
 // Pre-trip skills curriculum. Status per person: 0 none, 1 learning, 2 practiced, 3 confident.
@@ -512,7 +456,7 @@ const SKILL_SEED = [
  {p:'Core DIY', t:'Painting & decorating', w:'The highest-ROI skill: 80% prep, 20% paint. You will do this on every single property.', r:[['Phil Beckwith, pro decorator (YT)','https://www.youtube.com/channel/UCzITowRxX9CUjj_2ul0l5IA'],['Charlie DIYte (YT)','https://www.youtube.com/@CharlieDIYte/videos'],['Alison — Home Improvement (free)','https://alison.com/course/introduction-to-home-improvement']]},
  {p:'Core DIY', t:'Wall repair & filling', w:'Cracks, holes, blown plaster patches — the daily bread of doing up old houses.', r:[['Ultimate Handyman (YT)','https://www.youtube.com/channel/UCH9zMYoqgPgAIZQ0rx6dB4w'],['Charlie DIYte (YT)','https://www.youtube.com/@CharlieDIYte/videos']]},
  {p:'Core DIY', t:'Plastering & skimming (incl. lime)', w:'Hard to master, huge labour saving. Old stone walls want LIME, not gypsum — gypsum skim is for boards and modern walls; learn both.', r:[['Plastering for beginners (YT)','https://www.youtube.com/watch?v=UvWkwOs4HEE'],['Mike Wye — lime how-to playlist','https://www.youtube.com/playlist?list=PLDsLFaFYHSkSciK3aw6521UZ-F-bnPzyT'],['Kirk Giordano plastering (YT)','https://www.youtube.com/channel/UCZ1wkNnjD06gYLeDFRW7hNQ']]},
- {p:'Core DIY', t:'Tiling: walls & floors', w:'Bathrooms and kitchens sell houses. Setting-out (where the cuts fall), substrate prep and levelling systems are the real skills. Family cheat code: apprentice with Maddie’s parents before the trip — real-site reps beat any video.', r:[['Walls & Floors how-to-tile series','https://www.wallsandfloors.co.uk/blog/watch-our-how-to-tile-videos/'],['Wickes — tile a bathroom wall (YT)','https://www.youtube.com/watch?v=eRWYk7vA9AA'],['Proper DIY (YT)','https://www.youtube.com/@ProperDIY']]},
+ {p:'Core DIY', t:'Tiling: walls & floors', w:'Bathrooms and kitchens sell houses. Setting-out (where the cuts fall), substrate prep and levelling systems are the real skills.', r:[['Walls & Floors how-to-tile series','https://www.wallsandfloors.co.uk/blog/watch-our-how-to-tile-videos/'],['Wickes — tile a bathroom wall (YT)','https://www.youtube.com/watch?v=eRWYk7vA9AA'],['Proper DIY (YT)','https://www.youtube.com/@ProperDIY']]},
  {p:'Core DIY', t:'Grouting, silicone & caulking', w:'Cheap, easy, transforms tired bathrooms — the classic first-weekend win. Perfect beads make a reno look "finished" to buyers.', r:[['Charlie DIYte (YT)','https://www.youtube.com/@CharlieDIYte/videos'],['Ultimate Handyman (YT)','https://www.youtube.com/channel/UCH9zMYoqgPgAIZQ0rx6dB4w']]},
  {p:'Core DIY', t:'Flooring: laminate & LVT', w:'Fast, forgiving, dramatic before/after. Subfloor prep and levelling compound (continental floors are uneven screed) are the real skill.', r:[['Laminate for beginners — full guide (YT)','https://www.youtube.com/watch?v=2iM76oLzKqY'],['Wickes how-to library (YT)','https://www.youtube.com/user/wickesvideo/videos']]},
  {p:'Core DIY', t:'Stud walls & plasterboard', w:'Reconfigure layouts and build insulated linings — the standard way to insulate solid masonry internally.', r:[['Gosforth Handyman (YT)','https://www.youtube.com/c/GosforthHandyman'],['Ultimate Handyman (YT)','https://www.youtube.com/channel/UCH9zMYoqgPgAIZQ0rx6dB4w']]},
@@ -532,14 +476,13 @@ const SKILL_SEED = [
  {p:'Finishing Trades', t:'Repointing stone & brick (lime mortar)', w:'Cement pointing kills old walls — lime is almost always correct on pre-war masonry. Slow, cheap, very learnable, and exposed stone is what buyers pay for.', r:[['Mike Haduck — repointing stone playlist','https://www.youtube.com/playlist?list=PLDrfNaY9xgYE0DaJIAAbfR_XddIZyzAwo'],['SPAB knowledge base','https://www.spab.org.uk/advice/knowledge-base'],['Heritage House — why lime','https://www.heritage-house.org/']]},
  {p:'Finishing Trades', t:'Exterior painting & woodcare', w:'Shutters, gates, fascias — huge visual value. Use breathable mineral/limewash paints on old render, never plastic paints on lime.', r:[['Phil Beckwith (YT)','https://www.youtube.com/channel/UCzITowRxX9CUjj_2ul0l5IA'],['Mike Wye — breathable paints FAQ','https://mikewye.co.uk/faqs/']]},
  {p:'Finishing Trades', t:'Landscaping basics', w:'Clearing, gravel, a level terrace and six plants can add thousands — outdoor space is a major selling point in the south.', r:[['Garden Ninja (YT)','https://www.youtube.com/channel/UCuhMHrXyf2bvga2Mq0DJvwQ'],['The Restoration Couple (YT)','https://www.youtube.com/@TheRestorationCouple']]},
- {p:'Finishing Trades', t:'Staging & interior styling', w:'Sell the dream: light, declutter, one styled vignette per room — with furniture you already have. Bonus edge: trade-price stock via the family furniture company in Portugal.', r:[['Stage your home for free (YT)','https://www.youtube.com/watch?v=rxpLTYAFxg8']]},
+ {p:'Finishing Trades', t:'Staging & interior styling', w:'Sell the dream: light, declutter, one styled vignette per room — with furniture you already have.', r:[['Stage your home for free (YT)','https://www.youtube.com/watch?v=rxpLTYAFxg8']]},
  {p:'Finishing Trades', t:'Property photography', w:'Listings live or die on photos, especially in slow rural markets where you must outshine the agents’ phone snaps.', r:[['Full real-estate photography course (YT)','https://www.youtube.com/watch?v=k1txx3cc9lg'],['RE photography playlist','https://www.youtube.com/playlist?list=PLHypqxOXA74QjO5K8HbyQNhmp8g7ZGlPe']]},
  // ---- Project & Sale ----
  {p:'Project & Sale', t:'Renovation budgeting & contingency', w:'Costed schedule of works BEFORE every offer; 15–25% contingency (20–30% on old stone); track spend weekly. (This app is the tool — the habit is the skill.)', r:[['Homebuilding & Renovating (YT)','https://www.youtube.com/channel/UCnBQs4X0ZLg5-aLailTGbsw'],['Budget a renovation line-by-line (YT)','https://www.youtube.com/watch?v=2ziZFXaWZT0'],['Gosforth Handyman — what jobs cost (YT)','https://www.youtube.com/c/GosforthHandyman']]},
  {p:'Project & Sale', t:'Sequencing a renovation', w:'Watertight roof → structure → first fix → plaster → floors → second fix → decorate. Out of order costs double. Mind August closures in the south.', r:[['OpenLearn — project management (free)','https://www.open.edu/openlearn/money-business/leadership-management/project-management-the-start-the-project-journey/content-section-0'],['Skill Builder (YT)','https://www.youtube.com/@SkillBuilder']]},
  {p:'Project & Sale', t:'Getting & comparing quotes abroad', w:'Three quotes, written scope, stage payments tied to milestones, never large sums up front — in any language.', r:[['Gosforth Handyman — trade pricing (YT)','https://www.youtube.com/c/GosforthHandyman'],['Homebuilding & Renovating (YT)','https://www.youtube.com/channel/UCnBQs4X0ZLg5-aLailTGbsw']]},
  {p:'Project & Sale', t:'Snagging & quality control', w:'Walk every room with a checklist before paying final balances and before listing; assemble the handover pack (invoices, certificates, permits).', r:[['Snagging complete guide','https://www.propertysolvers.co.uk/articles/snagging/'],['47-point snagging checklist','https://apartment-checklist.com/uk/articles/snagging-checklist.html'],['Handover pack guide','https://www.bookabuilderuk.com/blog/renovation-handover-checklist-certificates-snagging']]},
- {p:'Project & Sale', t:'Short-let hosting & guest operations', w:'Exit B for any flip: listing craft, pricing, remote co-hosting, guest ops. Rental income can also evidence passive-income visa thresholds — and needs an STR licence almost everywhere now.', r:[['Airbnb hosting resource centre','https://www.airbnb.com/resources/hosting-homes']]},
  {p:'Project & Sale', t:'Selling process & listing craft', w:'Agent vs private, pricing psychology, and the paperwork that must be ready (energy cert, conformity, permits) to sell fast.', r:[['Move iQ (YT)','https://www.youtube.com/channel/UC9jtWjaSUE1A0_D-ge2fltA'],['Property Hub (YT)','https://www.youtube.com/PropertyHubUK']]},
 ];
 
@@ -548,9 +491,8 @@ let db = null;
 let view = {tab:'dashboard', propId:null, propTab:'deal', skillFilter:'all'};
 
 function freshDb(){
-  return {version:1, seedVersion:SEED_VERSION, people:['Me','Partner'], currency:'€',
+  return {version:1, people:['Me','Partner'], currency:'€',
     properties:[], stays:[],
-    missions: MISSION_SEED.map(m=>({id:uid(), title:m.t, detail:m.d, done:false})),
     skills: SKILL_SEED.map(s=>({id:uid(), phase:s.p, title:s.t, why:s.w,
       resources:s.r.map(x=>({label:x[0],url:x[1]})), status:[0,0], custom:false }))};
 }
@@ -561,7 +503,6 @@ function normalize(d){
   d.properties = Array.isArray(d.properties) ? d.properties : [];
   d.skills = Array.isArray(d.skills) ? d.skills : [];
   d.stays = Array.isArray(d.stays) ? d.stays : [];
-  d.missions = Array.isArray(d.missions) ? d.missions : MISSION_SEED.map(m=>({id:uid(), title:m.t, detail:m.d, done:false}));
   d.currency = d.currency || '€';
   d.skills.forEach(s=>{
     if(!Array.isArray(s.status)) s.status = [];
@@ -583,14 +524,6 @@ function normalize(d){
     if(seed && !s.custom && !s.resourcesCleared && seed.r.length && s.resources.length===0)
       s.resources = seed.r.map(x=>({label:x[0], url:x[1]}));
   });
-  // append seed skills shipped after the user's data was created (once per seed bump)
-  if((d.seedVersion||1) < SEED_VERSION){
-    const have = new Set(d.skills.map(s=>s.title));
-    SKILL_SEED.forEach(s=>{ if(!have.has(s.t))
-      d.skills.push({id:uid(), phase:s.p, title:s.t, why:s.w, resources:s.r.map(x=>({label:x[0],url:x[1]})), status:d.people.map(()=>0), custom:false});
-    });
-    d.seedVersion = SEED_VERSION;
-  }
   return d;
 }
 let _rev = 0; // revision of the data this tab last loaded or saved
@@ -619,10 +552,10 @@ function save(){
         return;
       } }
   }catch(e){}
-  _rev += 1; db.rev = _rev; db.updatedAt = Date.now();
+  _rev += 1; db.rev = _rev;
   localStorage.setItem(LS_KEY, JSON.stringify(db));
 }
-function commit(){ save(); render(); schedulePush(); }
+function commit(){ save(); render(); }
 
 // ---------- utils ----------
 function uid(){ return Math.random().toString(36).slice(2,9)+Math.random().toString(36).slice(2,5); }
@@ -663,9 +596,7 @@ function dealCalc(p){
   // realised (sold): everything actually paid should be in ledger/tasks; purchase price counted separately
   let realised = null;
   if(n(d.actualSale)>0){ realised = n(d.actualSale) - price - spent.total; }
-  const rent = n(d.rentMonthly);
-  const rentYield = (rent>0 && allIn>0) ? rent*12/allIn : null;
-  return {price, buyCosts, reno, hold, allIn, target, sellCosts, profit, roi, breakeven, spent, realised, rent, rentYield};
+  return {price, buyCosts, reno, hold, allIn, target, sellCosts, profit, roi, breakeven, spent, realised};
 }
 function taskStats(p){
   const ts=(p.rooms||[]).flatMap(r=>r.tasks);
@@ -809,7 +740,7 @@ function closeModal(){
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') requestCloseModal(); });
 
 // ---------- navigation ----------
-const TABS=[['dashboard','Dashboard'],['properties','Properties'],['skills','Skills'],['stays','Stays'],['playbook','Playbook'],['data','Data']];
+const TABS=[['dashboard','Dashboard'],['properties','Properties'],['skills','Skills'],['stays','Stays'],['data','Data']];
 function go(tab, propId, propTab){
   view.tab=tab;
   if(propId!==undefined) view.propId=propId;
@@ -831,9 +762,7 @@ function render(){
   else if(view.tab==='property') app.innerHTML=vProperty();
   else if(view.tab==='skills') app.innerHTML=vSkills();
   else if(view.tab==='stays') app.innerHTML=vStays();
-  else if(view.tab==='playbook') app.innerHTML=vPlaybook();
   else if(view.tab==='data') app.innerHTML=vData();
-  if(window._syncState) syncStatus(window._syncState);
 }
 
 // ---------- dashboard ----------
@@ -843,8 +772,8 @@ function vDashboard(){
   let cashIn=0, projected=0, realised=0;
   db.properties.forEach(p=>{
     const c=dealCalc(p);
-    if(['buying','renovating','letting','selling'].includes(p.stage)) cashIn += c.price + c.spent.total;
-    if(['buying','renovating','letting','selling'].includes(p.stage) && c.profit!=null) projected += c.profit;
+    if(['buying','renovating','selling'].includes(p.stage)) cashIn += c.price + c.spent.total;
+    if(['buying','renovating','selling'].includes(p.stage) && c.profit!=null) projected += c.profit;
     if(p.stage==='sold' && c.realised!=null) realised += c.realised;
   });
   const confident = db.skills.reduce((a,s)=>a+s.status.filter(x=>x>=3).length,0);
@@ -852,7 +781,7 @@ function vDashboard(){
   const used = schengenUsed(new Date());
   const alerts=[];
   db.properties.forEach(p=>{
-    if(['renovating','letting','selling'].includes(p.stage)){
+    if(['renovating','selling'].includes(p.stage)){
       const c=dealCalc(p);
       if(c.reno>0 && c.spent.total > c.reno) alerts.push(`<div class="alert red">🔥 <b>${esc(p.name)}</b> renovation spend ${money(c.spent.total)} is over the ${money(c.reno)} budget.</div>`);
       if(!c.target) alerts.push(`<div class="alert">🎯 <b>${esc(p.name)}</b> has no target sale price — set one in the Deal tab to see projected profit.</div>`);
@@ -1005,17 +934,6 @@ function vDeal(p){
     </table></div>
     <div class="small" style="margin-top:8px">💡 CGT on your profit varies hugely by country and residence — check the country note above and get local advice before you rely on a number.</div>
   </div>
-  ${c.rent>0?`<div class="panel">
-    <h3>Let scenario (exit B)</h3>
-    <div class="tablewrap"><table>
-      <tr><td>Net rent</td><td class="num money">${money(c.rent)}/mo</td><td class="small">${money(c.rent*12)}/yr</td></tr>
-      <tr><td>Gross yield on all-in</td><td class="num money">${pct(c.rentYield)}</td>
-        <td class="small ${c.rentYield>=0.08?'pos':c.rentYield>=0.05?'mid':'neg'}">${c.rentYield>=0.08?'✅ strong':c.rentYield>=0.05?'⚠️ workable':'🚫 selling likely beats letting'}</td></tr>
-      ${n(d.holdMonthly)?`<tr><td>Covers holding costs</td><td class="num money">${(c.rent/n(d.holdMonthly)).toFixed(1)}×</td><td></td></tr>`:''}
-      ${c.profit!=null&&c.profit>0?`<tr><td>Years of rent ≈ sale profit</td><td class="num money">${(c.profit/(c.rent*12)).toFixed(1)} yrs</td><td class="small">before tax, licence & wear costs</td></tr>`:''}
-    </table></div>
-    <div class="small" style="margin-top:8px">Letting first can pay you while a CGT clock runs (Italy: exempt after 5 yrs; France taper) and rental income can evidence passive-income visas — but check STR licensing and budget for guest wear. See PLAYBOOK.md.</div>
-  </div>`:''}
   <div class="panel">
     <h3>Actuals so far</h3>
     <div class="tablewrap"><table>
@@ -1040,7 +958,6 @@ function editDeal(id){
     {key:'targetSale',label:'Target sale price',type:'number',value:d.targetSale,half:true},
     {key:'holdMonthly',label:'Holding cost / month',type:'number',value:d.holdMonthly,half:true,hint:'utilities, insurance, taxes'},
     {key:'holdMonths',label:'Months you\u2019ll hold',type:'number',value:d.holdMonths,half:true},
-    {key:'rentMonthly',label:'Let scenario: net rent / month',type:'number',value:d.rentMonthly,hint:'average month, net of platform fees & cleaning — leave blank if selling straight away'},
     {key:'actualSale',label:'Actual sale price (when sold)',type:'number',value:d.actualSale},
   ],v=>{ Object.keys(v).forEach(k=>d[k]=v[k]); commit(); });
 }
@@ -1397,93 +1314,6 @@ function editStay(id){
   },{deleteLabel:'Delete',onDelete:()=>{ db.stays=db.stays.filter(x=>x.id!==id); commit(); }});
 }
 
-// ---------- playbook ----------
-function vPlaybook(){
-  const done = db.missions.filter(m=>m.done).length;
-  return `
-  <h1>Playbook</h1>
-  <div class="sub">The strategy, condensed. Tick off the missions; the long version with sources lives in <b>PLAYBOOK.md</b>. Facts researched Aug 2026 — rules drift, verify before money moves. None of this is legal or tax advice.</div>
-
-  <div class="cards">
-    <div class="stat"><div class="k">Missions done</div><div class="v">${done}<span style="font-size:15px;color:var(--muted)">/${db.missions.length}</span></div><div class="d">the pre-trip strategic to-dos</div></div>
-    <div class="stat"><div class="k">His Schengen clock</div><div class="v" style="font-size:19px;line-height:1.25;margin-top:10px">90/180 → none</div><div class="d">if the Italian passport lands</div></div>
-    <div class="stat"><div class="k">Her cleanest route</div><div class="v" style="font-size:19px;line-height:1.25;margin-top:10px">PT card / marriage</div><div class="d">durable partner fails in Italy itself</div></div>
-    <div class="stat"><div class="k">Default exit</div><div class="v" style="font-size:19px;line-height:1.25;margin-top:10px">Sell</div><div class="d">except Italy: hold to year 5 if lettable</div></div>
-  </div>
-
-  <div class="panel mission">
-    <h3>Mission checklist</h3>
-    ${db.missions.map(m=>`<div class="doc-row ${m.done?'done':''}">
-      <input type="checkbox" ${m.done?'checked':''} onchange="toggleMission('${m.id}')">
-      <span class="dtl grow" onclick="toggleMission('${m.id}')"><b>${esc(m.title)}</b><span class="small">${esc(m.detail)}</span></span>
-    </div>`).join('')}
-  </div>
-
-  <h2>The Italian passport play</h2>
-  <div class="panel">
-    <h3>Checked Aug 2026 — Law 74/2025</h3>
-    <div class="kv">
-      <span class="k">The test</span><span>Two generations max: an Italy-born parent or grandparent who held <b>only</b> Italian citizenship when you were born — or a citizen parent with 2 continuous years' residence in Italy before your birth. An ancestor who naturalised British first breaks the chain.</span>
-      <span class="k">The process</span><span>Italian Consulate General, London (covers Jersey). Prenot@mi slots drop Mon/Wed 17:00 UK. Full document chain + non-naturalisation search, apostilled and translated. Realistically 1.5–4 years.</span>
-      <span class="k">The cost</span><span>€600 per adult, <b>non-refundable</b> — pre-assess the chain before booking anything.</span>
-      <span class="k">The unlock</span><span>No Schengen clock, work rights everywhere (the side hustles become legal), prima casa 2% purchase tax, Italy's main-residence/5-year CGT exemptions, easy banking and healthcare.</span>
-      <span class="k">The risk</span><span>The two-generation cap was upheld in court but its retroactivity sits at the <b>CJEU</b> (ruling ~late 2027). Fallback: naturalise after ~2 years' residence in Italy + B1 Italian.</span>
-    </div>
-  </div>
-
-  <h2>Maddie: from 90/180 to full rights</h2>
-  <div class="panel">
-    <h3>Unmarried routes need evidence — start the paper trail now</h3>
-    <div class="kv">
-      <span class="k">Portugal</span><span>Friendliest: união de facto after 2 years' evidenced cohabitation → family-member card with full work rights.</span>
-      <span class="k">Spain</span><span>Registered pareja de hecho, or ~1 year's evidenced cohabitation → tarjeta de familiar.</span>
-      <span class="k">Italy trap</span><span>The durable-partner route <b>does not work in Italy itself</b> (a "static" Italian can't invoke EU free movement). Base in PT/ES first, or marry.</span>
-      <span class="k">Marriage</span><span>Makes her an automatic family member everywhere including Italy, and opens Italian citizenship (3 yrs married abroad, or 2 resident in Italy, + B1). An opposite-sex UK civil partnership is <b>not</b> recognised in Italy or Spain.</span>
-    </div>
-  </div>
-
-  <h2>Sell, or let first?</h2>
-  <div class="panel">
-    <h3>Default: sell. Rural lets gross €4–12k/yr and only work near an anchor</h3>
-    <div class="tablewrap"><table>
-      <tr><th>Country</th><th>Verdict</th></tr>
-      <tr><td>🇮🇹 Italy</td><td><span class="verdict pos">Hold to year 5 if lettable</span> <span class="small">— CGT-exempt after 5 yrs, letting doesn't break it; rent taxed flat 21%</span></td></tr>
-      <tr><td>🇬🇷 Greece</td><td><span class="verdict">Sell</span> <span class="small">— CGT suspended through 2026, but 3+ sales in 2 yrs = taxed as a business</span></td></tr>
-      <tr><td>🇮🇪 Ireland</td><td><span class="verdict">Live-in flip, sell</span> <span class="small">— 33% CGT, STR needs planning permission nationwide since 2025</span></td></tr>
-      <tr><td>🇫🇷 France</td><td><span class="verdict">Sell to lifestyle buyers</span> <span class="small">— taper useless short-term; lets need DPE A–D by 2034; micro-BIC gutted</span></td></tr>
-      <tr><td>🇵🇹 Portugal</td><td><span class="verdict mid">Friendliest hold</span> <span class="small">— AL open again; non-resident AL tax ≈ 8.75% effective on gross</span></td></tr>
-      <tr><td>🇪🇸 Spain</td><td><span class="verdict mid">Hold near anchors only</span> <span class="small">— EU tax residence flips rental tax from 24%-gross to 19%-net</span></td></tr>
-      <tr><td>🇧🇬 Bulgaria</td><td><span class="verdict">Sell</span> <span class="small">— 10% flat tax and easy licences, but demand only in V. Tarnovo / coast / Bansko</span></td></tr>
-    </table></div>
-    <div class="small" style="margin-top:10px">Rule of thumb (the Deal tab computes it): if <b>years of net rent ≈ sale profit</b> is under ~4–5 and a real CGT clock is running, letting earns its keep. One kept property can also be the visa-income anchor and winter base. Budget 25–35% of gross for management + cleaning when underwriting any hold.</div>
-  </div>
-
-  <h2>Family edges</h2>
-  <div class="panel">
-    <h3>Use them — they are the margin</h3>
-    <div class="kv">
-      <span class="k">The tilers</span><span>Maddie's parents: pre-trip apprenticeship (→ Skills tab), tool-kit advice, photo QC from afar, flying trade labour for bathroom pushes. €25–60/m² saved wherever you tile.</span>
-      <span class="k">The furniture co.</span><span>The aunt, Portugal (Paços de Ferreira cluster): trade prices ~20–40% under factory-direct. In order of certainty: ① furnish your own flips (furnished sale is the norm in ES/PT/GR; in Italy a furnished + fitted-kitchen exit is a differentiator), ② furniture packs for landlords (2-bed packs retail €6–9k vs ~€3–4.5k trade), ③ staging services, ④ blinds supply-and-fit. Truck it to Spain always, Italy usually, Greece no.</span>
-      <span class="k">The catch</span><span>All of it needs work rights — passport (him) + family-member card (her). As non-EU tourists none of it is legal.</span>
-    </div>
-  </div>
-
-  <h2>Country numbers</h2>
-  <div class="panel">
-    <h3>Planning presets — the Deal tab applies these per property</h3>
-    <div class="tablewrap"><table>
-      <tr><th>Country</th><th class="num">Buy ~%</th><th class="num">Sell ~%</th><th>Clock</th><th>Field notes</th></tr>
-      ${COUNTRIES.filter(c=>c.name!=='Other').map(c=>`<tr>
-        <td style="white-space:nowrap">${c.flag} <b>${esc(c.name)}</b></td>
-        <td class="num money">${c.buyPct}%</td><td class="num money">${c.sellPct}%</td>
-        <td>${c.schengen?'<span class="small">Schengen</span>':'<span class="verdict pos">No clock</span>'}</td>
-        <td class="small">${esc(c.note)}</td>
-      </tr>`).join('')}
-    </table></div>
-  </div>`;
-}
-function toggleMission(id){ const m=db.missions.find(x=>x.id===id); if(m){ m.done=!m.done; commit(); } }
-
 // ---------- data ----------
 function vData(){
   return `
@@ -1493,15 +1323,6 @@ function vData(){
     <h3>People</h3>
     <div class="small" style="margin-bottom:8px">Names used on tasks and skill tracking.</div>
     <div class="row">${db.people.map((p,i)=>`<button class="btn" onclick="renamePerson(${i})">${esc(p)} ✏️</button>`).join('')}</div>
-  </div>
-  <div class="panel">
-    <h3>Cloud sync & password</h3>
-    <div class="small">Status: <span class="syncline" id="data-sync"></span></div>
-    <div class="small" style="margin-top:8px">${CLOUD
-      ? 'Hosted mode: every save pushes a timestamped version to the cloud store (last 50 versions kept — nothing is ever overwritten). Both phones see the same data; if you both save at the exact same moment, the last save wins.'
-      : 'Local file mode: nothing touches the network. Host this folder on Vercel to sync between your two phones.'}</div>
-    <div class="small" style="margin-top:4px">The password gate keeps casual eyes out — it’s a curtain, not a vault. On Vercel, change the password with the APP_PASSWORD environment variable.</div>
-    <div class="row" style="margin-top:10px"><button class="btn tiny" onclick="sessionStorage.removeItem('hmp_pass');localStorage.removeItem('hmp_pass_rem');passKey=null;showLock()">Lock this device</button></div>
   </div>
   <div class="panel">
     <h3>Backup</h3>
@@ -1586,103 +1407,9 @@ function loadDemo(){
   commit();
 }
 
-// ---------- lock & cloud sync ----------
-const CLOUD = /^https?:$/.test(location.protocol);
-const PASS_HASH = 'b2a68545e923545504132917c20a4ebde0f77412981528ee64413d304a74391a'; // sha-256 of the site password (curtain, not vault)
-let passKey = null;
-
-async function sha256hex(t){
-  if(!(window.crypto && crypto.subtle)) return null;
-  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
-  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-}
-function lockErr(m){ const e=document.getElementById('lock-err'); if(e) e.textContent=m||''; }
-function showLock(){ document.getElementById('lock').style.display='flex'; const i=document.getElementById('lock-pw'); if(i) i.focus(); }
-function hideLock(){ document.getElementById('lock').style.display='none'; }
-
-async function verifyPass(pw){
-  if(CLOUD){
-    try{
-      const r = await fetch('/api/state', {headers:{'x-pass':pw}});
-      if(r.status===401) return {ok:false, msg:'Wrong password.'};
-      return {ok:true, res:r}; // 200 = state, 404 = empty store, 503 = blob not configured
-    }catch(e){ /* network down while hosted — fall through to the local check */ }
-  }
-  const h = await sha256hex(pw);
-  const ok = h ? h===PASS_HASH : pw==='Barney';
-  return ok ? {ok:true} : {ok:false, msg:'Wrong password.'};
-}
-async function tryUnlock(e){
-  if(e) e.preventDefault();
-  const pw = document.getElementById('lock-pw').value;
-  const remember = document.getElementById('lock-rem').checked;
-  lockErr('');
-  const v = await verifyPass(pw);
-  if(!v.ok){ lockErr(v.msg); return; }
-  passKey = pw;
-  sessionStorage.setItem('hmp_pass', pw);
-  if(remember) localStorage.setItem('hmp_pass_rem', pw);
-  hideLock();
-  afterUnlock(v.res);
-}
-async function autoUnlock(){
-  const stored = sessionStorage.getItem('hmp_pass') || localStorage.getItem('hmp_pass_rem');
-  if(!stored){ showLock(); return; }
-  const v = await verifyPass(stored);
-  if(v.ok){ passKey = stored; hideLock(); afterUnlock(v.res); }
-  else{ sessionStorage.removeItem('hmp_pass'); localStorage.removeItem('hmp_pass_rem'); showLock(); }
-}
-function afterUnlock(res){
-  if(!CLOUD){ syncStatus('local'); return; }
-  if(res && res.ok) res.json().then(adoptRemote).catch(()=>syncStatus('error'));
-  else if(res && res.status===404) pushCloud();
-  else if(res && res.status===503) syncStatus('nostore');
-  else pullCloud();
-}
-
-function syncStatus(state){
-  const map = {synced:['ok','Synced '+new Date().toTimeString().slice(0,5)], pending:['mid','Saving…'],
-    offline:['mid','Offline — local only'], error:['err','Sync error'], nostore:['mid','Cloud not configured'], local:['','Local file mode']};
-  const [cls,txt] = map[state]||['',''];
-  window._syncState = state; window._syncText = txt;
-  ['syncline','data-sync'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.className='syncline '+cls; el.textContent=txt; } });
-}
-function adoptRemote(remote){
-  try{ remote = normalize(remote); }catch(e){ syncStatus('error'); return; }
-  const lr = db.rev||0, rr = remote.rev||0;
-  if(rr>lr || (rr===lr && (remote.updatedAt||0)>(db.updatedAt||0))){
-    db = remote; _rev = rr;
-    localStorage.setItem(LS_KEY, JSON.stringify(db));
-    render();
-  } else if(lr>rr){ pushCloud(); return; }
-  syncStatus('synced');
-}
-let _pushT = null;
-function schedulePush(){ if(!CLOUD||!passKey) return; clearTimeout(_pushT); _pushT=setTimeout(pushCloud, 1500); syncStatus('pending'); }
-async function pushCloud(){
-  if(!CLOUD||!passKey) return;
-  try{
-    const r = await fetch('/api/state', {method:'POST', headers:{'x-pass':passKey,'content-type':'application/json'}, body:JSON.stringify(db)});
-    syncStatus(r.status===503 ? 'nostore' : r.ok ? 'synced' : 'error');
-  }catch(e){ syncStatus('offline'); }
-}
-async function pullCloud(){
-  if(!CLOUD||!passKey) return;
-  try{
-    const r = await fetch('/api/state', {headers:{'x-pass':passKey}});
-    if(r.ok) adoptRemote(await r.json());
-    else if(r.status===404) pushCloud();
-    else syncStatus(r.status===503 ? 'nostore' : 'error');
-  }catch(e){ syncStatus('offline'); }
-}
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && CLOUD && passKey) pullCloud(); });
-
 // ---------- boot ----------
 db = load();
 render();
-if(CLOUD) document.getElementById('foot').textContent = 'Synced to the cloud when online — a local copy stays in this browser; export JSON backups from the Data tab.';
-syncStatus(CLOUD ? 'offline' : 'local');
-autoUnlock();
 // another tab saved: refresh (deferred while a modal is open — save()'s rev guard covers that case)
 window.addEventListener('storage', e=>{
   if(e.key!==LS_KEY) return;

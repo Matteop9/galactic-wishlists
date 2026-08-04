@@ -2,9 +2,11 @@
 
 End-to-end tracker for a **buy → live in → renovate → sell** journey around Europe, plus a pre-trip skills curriculum. Personal project.
 
+**Live at [handymanplan.vercel.app](https://handymanplan.vercel.app)** — password-gated (ask Barney), with shared cloud data: both phones see the same state (versioned Vercel Blob store, last 50 saves kept).
+
 ## What it is
 
-One self-contained HTML file — no build, no dependencies, works offline. Open [index.html](index.html) in any browser (double-click is fine; no server needed).
+One self-contained HTML file — works offline too: open [index.html](index.html) straight from disk and it runs in local-only mode (localStorage + JSON export/import). Hosted on Vercel it adds the password gate (server-checked) and automatic sync. Design follows the "Site Notebook" brief in [Redesign/](Redesign/redesign_REDESIGN.md).
 
 ### Tabs
 
@@ -20,11 +22,14 @@ One self-contained HTML file — no build, no dependencies, works offline. Open 
 | — Journal | Dated project diary |
 | **Skills** | The pre-trip curriculum ([SKILLS.md](SKILLS.md)) as an interactive tracker — 40 skills across 6 phases, per-person progress (Not started → Learning → Practiced → Confident), free learning links |
 | **Stays** | Schengen 90/180 rolling-window calculator — log entries/exits, see days used, days left, and how long you could stay if you entered today |
-| **Data** | Rename people, JSON export/import (backup + sync between devices), demo data, wipe |
+| **Playbook** | The strategy in-app: a tickable mission checklist (citizenship chain, paper trail, tax consult, tiling apprenticeship…), the Italian passport play, Maddie's routes, the sell-vs-let verdict table, family edges, and country numbers |
+| **Data** | Rename people, sync status + lock-this-device, JSON export/import, demo data, wipe |
 
-### Data
+### Data & deployment
 
-Everything lives in browser `localStorage` (key `hmp_data_v1`). **Export a JSON backup regularly** from the Data tab — that file is also how you sync between two phones/laptops.
+Local truth lives in browser `localStorage` (key `hmp_data_v1`); hosted, every save also pushes a timestamped JSON version to a **private Vercel Blob store** via [api/state.js](api/state.js) (password checked server-side; last 50 versions kept, so history is recoverable). Two people saving in the same instant = last write wins. **Still export a JSON backup occasionally** from the Data tab.
+
+Deploy: `vercel deploy --prod --yes` from this folder (project `handymanplan`, Blob store `handymanplan-data` already linked). Change the password by setting the `APP_PASSWORD` env var in Vercel — the default lives in the code of a public repo, so treat the gate as a curtain, not a vault.
 
 ## Companion docs
 

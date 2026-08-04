@@ -1,5 +1,15 @@
 # Changelog — HandymanPlan
 
+## v0.3.0 — 2026-08-04
+
+Redesign, Playbook tab, password gate, cloud sync — LIVE at handymanplan.vercel.app.
+
+- **"Site Notebook" redesign** applied per the brief in `Redesign/` — navy sidebar (bottom rail on mobile), bone-paper + blueprint grid, mono uppercase micro-labels, Bricolage Grotesque figures, safety-orange signal, hard offset card shadows, HP stamp favicon.
+- **Playbook tab** — the strategy in-app: tickable 9-item mission checklist (persisted + synced), passport play, Maddie's routes, sell-vs-let verdict table, family edges, country numbers.
+- **Password gate** — lock screen ("Barney"), remember-this-device, lock-this-device button; verified server-side when hosted, hash-compared locally in file mode. A curtain, not a vault.
+- **Cloud sync** — new `api/state.js` on Vercel Blob (private store `handymanplan-data`): every save pushes a timestamped version (last 50 kept), pull on unlock/focus, cross-device last-write-wins with rev+timestamp tie-break. Offline/file mode unchanged and fully functional.
+- Deployed via Vercel CLI: project `handymanplan`, production alias handymanplan.vercel.app.
+
 ## v0.2.0 — 2026-08-04
 
 Round 2: citizenship, exit strategy & family advantages (3-agent research sweep).
