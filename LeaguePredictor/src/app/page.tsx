@@ -17,7 +17,15 @@ export default async function Home() {
 
   if (!session) {
     return (
-      <div className="py-8">
+      <div className="relative -mx-4 -mt-8 overflow-hidden px-4 pb-8 pt-16">
+        {/* floodlight bloom + pitch geometry hero (spot-on-hero-bg.svg) */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/spot-on-hero-bg.svg"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 -z-10 h-full w-full object-cover"
+        />
         <div className="mx-auto max-w-2xl text-center">
           <TargetMark className="mx-auto mb-4 text-primary" size={44} />
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary">
@@ -80,10 +88,10 @@ export default async function Home() {
 
       {leagues.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-border bg-surface/50 p-10 text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/spot-on-illo-no-leagues.svg" alt="" aria-hidden className="mx-auto mb-4 h-28 w-auto" />
           <p className="font-display text-lg font-bold">No leagues yet</p>
-          <p className="mt-1 text-sm text-muted">
-            Create one and invite your mates, or join with an invite code.
-          </p>
+          <p className="mt-1 text-sm text-muted">Start one. Someone has to.</p>
         </div>
       ) : (
         <ul className="mt-6 grid gap-3 sm:grid-cols-2">

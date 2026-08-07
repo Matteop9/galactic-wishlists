@@ -70,11 +70,12 @@ html {
   color-scheme: dark;
 }
 
+/* App pages sit on the ambient 22px dot grid (7%); the floodlight bloom is
+   reserved for the landing hero (spot-on-hero-bg.svg) per the brand kit. */
 body {
   background: var(--bg);
-  background-image:
-    radial-gradient(1200px 600px at 80% -10%, rgba(61, 219, 217, 0.05), transparent 60%),
-    radial-gradient(900px 500px at 10% 110%, rgba(198, 250, 63, 0.04), transparent 60%);
+  background-image: url('/spot-on-ambient-tile.svg');
+  background-repeat: repeat;
   color: var(--text);
   font-family: var(--font-body), system-ui, sans-serif;
   min-height: 100dvh;

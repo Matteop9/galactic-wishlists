@@ -13,7 +13,8 @@ export default function DiffChip({ diff, missing = false }: { diff: number; miss
       </span>
     );
   }
-  const tone = diff <= 3 ? 'bg-close-bg text-close' : 'bg-off-bg text-off';
+  // brand kit: 0 = celebration, 1–4 amber, 5+ red
+  const tone = diff <= 4 ? 'bg-close-bg text-close' : 'bg-off-bg text-off';
   return (
     <span
       className={`inline-flex min-w-14 items-center justify-center rounded-full px-2 py-0.5 font-num text-xs font-bold tabular ${tone}`}

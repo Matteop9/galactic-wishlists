@@ -142,11 +142,15 @@ async function Leaderboard({
 }) {
   const standingsByComp: Record<string, ApiTableRow[]> = {};
   const scorersByComp: Record<string, ApiScorer[]> = {};
+  const seasonStarts: string[] = [];
+  const seasonEnds: string[] = [];
   await Promise.all(
     competitionIds.map(async (cid) => {
       const [standings, scorers] = await Promise.all([getStandings(cid), getScorers(cid)]);
       standingsByComp[String(cid)] = standings.table;
       scorersByComp[String(cid)] = scorers;
+      if (standings.season?.startDate) seasonStarts.push(standings.season.startDate);
+      if (standings.season?.endDate) seasonEnds.push(standings.season.endDate);
     }),
   );
 
@@ -157,8 +161,69 @@ async function Leaderboard({
 
   const ranked = withRanks(scoreLeague(competitionIds, members, standingsByComp, scorersByComp));
 
+  // Date-based checks, NOT playedGames: pre-season the API serves last season's
+  // final table (38 played) as a placeholder, which would fool a games-played test.
+  const tables = Object.values(standingsByComp);
+  const earliestStart = [...seasonStarts].sort()[0];
+  const latestEnd = [...seasonEnds].sort().pop();
+  const seasonStarted = earliestStart
+    ? Date.now() >= new Date(earliestStart).getTime()
+    : tables.some((t) => t.some((r) => r.playedGames > 0));
+  const seasonComplete =
+    tables.length > 0 &&
+    tables.every((t) => t.length > 0 && t.every((r) => r.playedGames >= 2 * (t.length - 1))) &&
+    (latestEnd ? Date.now() >= new Date(latestEnd).getTime() : false);
+
+  // locked but the season hasn't kicked off — a scoreboard of placeholder standings
+  // is meaningless, so show the countdown state instead (brand kit: "waiting" illo)
+  if (!seasonStarted) {
+    const kickOff = [...seasonStarts].sort()[0];
+    return (
+      <div className="mt-8 rounded-xl border border-border bg-surface p-10 text-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/spot-on-illo-waiting.svg" alt="" aria-hidden className="mx-auto mb-4 h-32 w-auto" />
+        <p className="font-display text-xl font-extrabold">Predictions locked.</p>
+        <p className="mt-1 text-sm text-muted">
+          {kickOff
+            ? `Kick-off ${new Date(kickOff).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}. `
+            : ''}
+          Everyone’s picks are public now — size up the competition.
+        </p>
+        <ul className="mx-auto mt-6 flex max-w-sm flex-col gap-2">
+          {Object.keys(predictions).map((userId) => (
+            <li key={userId}>
+              <Link
+                href={`/leagues/${leagueId}/p/${userId}`}
+                className="block rounded-lg border border-border bg-surface-2/60 px-4 py-2 text-sm font-semibold hover:border-muted transition-colors"
+              >
+                {nameById.get(userId) ?? 'Unknown'}’s picks
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  const winner = seasonComplete && ranked[0]?.complete ? ranked[0] : null;
+
   return (
     <div className="mt-8">
+      {winner && (
+        <div className="mb-6 flex flex-col items-center gap-2 rounded-xl border border-spot/40 bg-spot-bg/40 p-8 text-center sm:flex-row sm:gap-6 sm:text-left">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/spot-on-illo-winner.svg" alt="" aria-hidden className="h-28 w-auto" />
+          <div>
+            <p className="font-display text-2xl font-extrabold">
+              {nameById.get(winner.userId) ?? 'Unknown'} called it.
+            </p>
+            <p className="mt-1 text-sm text-muted">
+              Season done — <span className="font-num font-bold text-spot">{winner.total} points</span>. Lowest score
+              wins, and that was the lowest score.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="overflow-x-auto rounded-xl border border-border">
         <table className="w-full min-w-[480px] bg-surface text-sm">
           <thead>

@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #0B0F12; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  a { color: #C6FA3F; text-decoration: none; }
+  a:hover { color: #E4FF9B; text-decoration: underline; }
+  @keyframes so-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+</style>
+</helmet>
+
+<div style="background:#0B0F12;color:#F2F5F7;font-family:'IBM Plex Sans',system-ui,sans-serif;padding:0 0 96px">
+
+  <div style="position:relative;overflow:hidden;background:radial-gradient(120% 90% at 50% -20%, rgba(198,250,63,.18), rgba(11,15,18,0) 62%), radial-gradient(70% 60% at 88% 115%, rgba(61,219,217,.12), rgba(11,15,18,0) 60%), #0B0F12;border-bottom:1px solid #2A343D">
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(242,245,247,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(242,245,247,.05) 1px, transparent 1px);background-size:64px 64px;mask-image:radial-gradient(80% 70% at 50% 30%, #000, transparent 75%)"></div>
+    <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(242,245,247,.10)"></div>
+    <div style="position:absolute;left:50%;top:50%;width:340px;height:340px;margin:-170px 0 0 -170px;border:1px solid rgba(242,245,247,.10);border-radius:50%"></div>
+    <div style="position:relative;max-width:1180px;margin:0 auto;padding:96px 40px 88px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:44px">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="none" style="color:#C6FA3F;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="currentColor"></circle></svg>
+        <span style="font:800 26px/1 Archivo,sans-serif;letter-spacing:-.03em;text-transform:uppercase">Spot<span style="color:#C6FA3F">&#8202;On</span></span>
+      </div>
+      <div style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.22em;text-transform:uppercase;color:#8A99A6;margin-bottom:22px">Brand &amp; asset kit &#183; v1</div>
+      <h1 style="margin:0;font:900 clamp(48px,7vw,96px)/0.94 Archivo,sans-serif;letter-spacing:-.045em;text-transform:uppercase;max-width:16ch;text-wrap:balance">{{ strapline }}</h1>
+      <p style="margin:26px 0 0;max-width:56ch;font:400 18px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">Predict the whole table before a ball is kicked. One point for every position you&#8217;re off, five back if you call the top scorer. Lowest score wins &#8212; and zero is the whole point.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:36px">
+        <span style="padding:9px 16px;border-radius:999px;background:#C6FA3F;color:#0B0F12;font:600 14px/1 'IBM Plex Sans',sans-serif">Direction: modern broadcast, pushed</span>
+        <span style="padding:9px 16px;border-radius:999px;border:1px solid #2A343D;color:#8A99A6;font:500 14px/1 'IBM Plex Sans',sans-serif">Dark default &#183; light shipped</span>
+        <span style="padding:9px 16px;border-radius:999px;border:1px solid #2A343D;color:#8A99A6;font:500 14px/1 'IBM Plex Sans',sans-serif">9 assets</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1180px;margin:0 auto;padding:0 40px">
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">01</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Logo &amp; wordmark</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">The mark is a position marker with the dot dead centre &#8212; zero deviation, spot on. Offset the dot and you have the whole scoring system in one shape: it is the same geometry that drives the diff chips.</p>
+      <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:20px">
+        <div style="display:grid;place-items:center;min-height:280px;padding:40px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="display:flex;align-items:center;gap:20px">
+            <svg viewBox="0 0 24 24" width="78" height="78" fill="none" style="color:#C6FA3F;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="currentColor"></circle></svg>
+            <span style="font:800 62px/1 Archivo,sans-serif;letter-spacing:-.04em;text-transform:uppercase">Spot<span style="color:#C6FA3F">&#8202;On</span></span>
+          </div>
+        </div>
+        <div style="display:grid;gap:20px">
+          <div style="display:grid;place-items:center;padding:28px;border:1px solid #2A343D;border-radius:16px;background:#F2F5F7">
+            <div style="display:flex;align-items:center;gap:12px;color:#0B0F12">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" style="display:block"><circle cx="12" cy="12" r="9" stroke="#0B0F12" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="#3F6B00"></circle></svg>
+              <span style="font:800 32px/1 Archivo,sans-serif;letter-spacing:-.04em;text-transform:uppercase">Spot&#8202;On</span>
+            </div>
+          </div>
+          <div style="display:grid;place-items:center;padding:28px;border:1px solid #2A343D;border-radius:16px;background:#C6FA3F">
+            <div style="display:flex;align-items:center;gap:12px;color:#0B0F12">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" style="color:#0B0F12;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="currentColor"></circle></svg>
+              <span style="font:800 32px/1 Archivo,sans-serif;letter-spacing:-.04em;text-transform:uppercase">Spot&#8202;On</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px">
+        <div style="padding:24px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:20px">Mark &#183; lockup rules</div>
+          <ul style="margin:0;padding-left:18px;font:400 14px/1.75 'IBM Plex Sans',sans-serif;color:#F2F5F7">
+            <li>Clear space = ring diameter &#247; 2 on all sides</li>
+            <li>Wordmark: Archivo 800, uppercase, &#8209;0.04em tracking</li>
+            <li>Hairspace between &#8220;Spot&#8221; and &#8220;On&#8221;, never a full space</li>
+            <li>Never outline, rotate or gradient the mark</li>
+          </ul>
+        </div>
+        <div style="padding:24px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:20px">Target variant &#183; hero &amp; loaders</div>
+          <div style="display:grid;place-items:center;height:104px">
+            <svg viewBox="0 0 64 64" width="84" height="84" fill="none" style="color:#C6FA3F;display:block"><circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="6"></circle><circle cx="32" cy="32" r="7.5" fill="currentColor"></circle><path d="M32 2v7M32 55v7M2 32h7M55 32h7" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path></svg>
+          </div>
+        </div>
+        <div style="padding:24px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:20px">The dot system</div>
+          <div style="display:flex;align-items:center;justify-content:space-around;height:104px">
+            <div style="text-align:center">
+              <svg viewBox="0 0 24 24" width="46" height="46" fill="none" style="color:#C6FA3F;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="currentColor"></circle></svg>
+              <div style="margin-top:10px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">0</div>
+            </div>
+            <div style="text-align:center">
+              <svg viewBox="0 0 24 24" width="46" height="46" fill="none" style="color:#F5A623;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="9.4" r="3.2" fill="currentColor" stroke="#141A1F" stroke-width="1.6"></circle></svg>
+              <div style="margin-top:10px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">3</div>
+            </div>
+            <div style="text-align:center">
+              <svg viewBox="0 0 24 24" width="46" height="46" fill="none" style="color:#FF5C5C;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="14.6" r="3.2" fill="currentColor" stroke="#141A1F" stroke-width="1.6"></circle></svg>
+              <div style="margin-top:10px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">7</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">02</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Favicon &amp; app icon</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">Below 32px the ring thickens to 12.5% of the box and the dot grows to 22% &#8212; the small sizes are a separate drawing, not a scale-down.</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:36px;padding:32px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+        <div style="text-align:center">
+          <svg viewBox="0 0 32 32" width="112" height="112" fill="none" style="display:block;border-radius:25px"><rect width="32" height="32" rx="7" fill="#0B0F12"></rect><circle cx="16" cy="16" r="9.5" stroke="#C6FA3F" stroke-width="4"></circle><circle cx="16" cy="16" r="3.6" fill="#C6FA3F"></circle></svg>
+          <div style="margin-top:12px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">512 app icon</div>
+        </div>
+        <div style="text-align:center">
+          <svg viewBox="0 0 32 32" width="48" height="48" fill="none" style="display:block;border-radius:11px"><rect width="32" height="32" rx="7" fill="#0B0F12"></rect><circle cx="16" cy="16" r="9.5" stroke="#C6FA3F" stroke-width="4"></circle><circle cx="16" cy="16" r="3.6" fill="#C6FA3F"></circle></svg>
+          <div style="margin-top:12px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">48</div>
+        </div>
+        <div style="text-align:center">
+          <svg viewBox="0 0 32 32" width="32" height="32" fill="none" style="display:block;border-radius:7px"><rect width="32" height="32" rx="7" fill="#0B0F12"></rect><circle cx="16" cy="16" r="9.5" stroke="#C6FA3F" stroke-width="4"></circle><circle cx="16" cy="16" r="3.6" fill="#C6FA3F"></circle></svg>
+          <div style="margin-top:12px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">32</div>
+        </div>
+        <div style="text-align:center">
+          <svg viewBox="0 0 32 32" width="16" height="16" fill="none" style="display:block;border-radius:4px"><rect width="32" height="32" rx="7" fill="#0B0F12"></rect><circle cx="16" cy="16" r="9.5" stroke="#C6FA3F" stroke-width="4"></circle><circle cx="16" cy="16" r="3.6" fill="#C6FA3F"></circle></svg>
+          <div style="margin-top:12px;font:500 11px/1 'IBM Plex Mono',monospace;color:#8A99A6">16</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin-left:auto;padding:9px 14px;border-radius:10px;background:#1D252C;border:1px solid #2A343D">
+          <svg viewBox="0 0 32 32" width="16" height="16" fill="none" style="display:block;border-radius:4px"><rect width="32" height="32" rx="7" fill="#0B0F12"></rect><circle cx="16" cy="16" r="9.5" stroke="#C6FA3F" stroke-width="4"></circle><circle cx="16" cy="16" r="3.6" fill="#C6FA3F"></circle></svg>
+          <span style="font:400 13px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">Spot On &#8212; call the table</span>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">03</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Colour</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">Neutral, near-achromatic surfaces so 24 club crests can sit on them without a fight. One electric primary that doubles as the &#8220;spot on&#8221; celebration, a teal accent for live/informational states, and a warm-to-hot ramp for how wrong you were.</p>
+
+      <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:14px">Dark &#183; default</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:12px">
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#0B0F12"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#0B0F12</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#141A1F"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">surface</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#141A1F</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#1D252C"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">surface-2</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#1D252C</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#2A343D"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">line</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#2A343D</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#F2F5F7"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">text &#183; 16.4:1</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#F2F5F7</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#8A99A6"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">muted &#183; 6.9:1</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#8A99A6</div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#C6FA3F"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">primary</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#C6FA3F</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#3DDBD9"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">accent</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#3DDBD9</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#2C3D0E;display:grid;place-items:center"><span style="font:600 15px/1 'IBM Plex Mono',monospace;color:#C6FA3F">&#9679; spot on</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">spot-on / bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#C6FA3F / #2C3D0E</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#3D2E0B;display:grid;place-items:center"><span style="font:600 15px/1 'IBM Plex Mono',monospace;color:#F5A623">&#9650;3 close</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">close / bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#F5A623 / #3D2E0B</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#3D1414;display:grid;place-items:center"><span style="font:600 15px/1 'IBM Plex Mono',monospace;color:#FF5C5C">&#9660;11 way off</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">way-off / bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">#FF5C5C / #3D1414</div></div>
+        </div>
+        <div style="border:1px solid #2A343D;border-radius:12px;overflow:hidden;background:#141A1F">
+          <div style="height:78px;background:#0B0F12;display:grid;place-items:center;padding:0 12px"><span style="font:600 15px/1 'IBM Plex Sans',sans-serif;color:#C6FA3F">Aa 8.4:1</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif">primary on bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#8A99A6">AA large + body</div></div>
+        </div>
+      </div>
+
+      <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin:34px 0 14px">Light</div>
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;padding:16px;border-radius:16px;background:#F4F6F4">
+        <div style="border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#F4F6F4"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#F4F6F4</div></div>
+        </div>
+        <div style="border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#FFFFFF;border-bottom:1px solid #D3DAD5"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">surface</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#FFFFFF</div></div>
+        </div>
+        <div style="border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#E9EDEA"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">surface-2</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#E9EDEA</div></div>
+        </div>
+        <div style="border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#56616A"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">muted &#183; 6.4:1</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#56616A</div></div>
+        </div>
+        <div style="border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#B7EE2E"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">primary</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#B7EE2E</div></div>
+        </div>
+        <div style="border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#0E7C7B"></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">accent &#183; 4.9:1</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#0E7C7B</div></div>
+        </div>
+        <div style="grid-column:span 2;border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#EAF7C4;display:grid;place-items:center"><span style="font:600 15px/1 'IBM Plex Mono',monospace;color:#3F6B00">&#9679; spot on &#183; 5.6:1</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">spot-on / bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#3F6B00 / #EAF7C4</div></div>
+        </div>
+        <div style="grid-column:span 2;border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#FBEDD2;display:grid;place-items:center"><span style="font:600 15px/1 'IBM Plex Mono',monospace;color:#8A5200">&#9650;3 close &#183; 5.7:1</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">close / bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#8A5200 / #FBEDD2</div></div>
+        </div>
+        <div style="grid-column:span 2;border:1px solid #D3DAD5;border-radius:12px;overflow:hidden;background:#FFFFFF">
+          <div style="height:70px;background:#FADCDA;display:grid;place-items:center"><span style="font:600 15px/1 'IBM Plex Mono',monospace;color:#B3261E">&#9660;11 way off &#183; 5.4:1</span></div>
+          <div style="padding:12px"><div style="font:600 12px/1.4 'IBM Plex Sans',sans-serif;color:#0B0F12">way-off / bg</div><div style="font:400 11px/1.4 'IBM Plex Mono',monospace;color:#56616A">#B3261E / #FADCDA</div></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Flat token list ships as <a href="assets/spot-on-tokens.css">assets/spot-on-tokens.css</a> &#8212; <span style="font-family:'IBM Plex Mono',monospace">--color-spot-on</span>, <span style="font-family:'IBM Plex Mono',monospace">--color-close</span>, <span style="font-family:'IBM Plex Mono',monospace">--color-way-off</span> and the rest, scoped to <span style="font-family:'IBM Plex Mono',monospace">[data-theme]</span>.</div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">04</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Type</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div style="padding:28px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px">
+            <span style="font:700 20px/1 Archivo,sans-serif">Archivo</span>
+            <span style="font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">display &#183; 700 / 800 / 900</span>
+          </div>
+          <div style="font:900 64px/0.95 Archivo,sans-serif;letter-spacing:-.045em;text-transform:uppercase">Spot on</div>
+          <div style="font:800 44px/1 Archivo,sans-serif;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:#C6FA3F;margin-top:14px">0 12 37 148</div>
+          <p style="margin:18px 0 0;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Headlines, hero numbers, scores over 24px. Grotesque with a slight condensation &#8212; broadcast without being a sports-channel clich&#233;.</p>
+        </div>
+        <div style="padding:28px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px">
+            <span style="font:600 20px/1 'IBM Plex Sans',sans-serif">IBM Plex Sans</span>
+            <span style="font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">UI &#183; 400 / 500 / 600</span>
+          </div>
+          <div style="font:600 26px/1.3 'IBM Plex Sans',sans-serif">Manchester City</div>
+          <div style="font:400 26px/1.3 'IBM Plex Sans',sans-serif;color:#8A99A6">Nottingham Forest</div>
+          <div style="font:500 26px/1.3 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;margin-top:10px">01 02 03 &#8226; 0123456789</div>
+          <p style="margin:18px 0 0;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Tables, forms, body. Set <span style="font-family:'IBM Plex Mono',monospace">font-variant-numeric: tabular-nums</span> on every column of figures; IBM Plex Mono 500 for scores and diff chips so digits never jitter as the table updates.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px">
+        <div style="padding:18px;border:1px solid #2A343D;border-radius:12px;background:#141A1F"><div style="font:900 30px/1 Archivo,sans-serif;letter-spacing:-.04em;text-transform:uppercase">Display</div><div style="margin-top:8px;font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">Archivo 900 &#183; 48&#8211;96 / -0.045em</div></div>
+        <div style="padding:18px;border:1px solid #2A343D;border-radius:12px;background:#141A1F"><div style="font:800 22px/1 Archivo,sans-serif;letter-spacing:-.03em">Heading</div><div style="margin-top:8px;font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">Archivo 800 &#183; 24&#8211;32 / -0.03em</div></div>
+        <div style="padding:18px;border:1px solid #2A343D;border-radius:12px;background:#141A1F"><div style="font:400 16px/1.5 'IBM Plex Sans',sans-serif">Body copy</div><div style="margin-top:8px;font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">Plex Sans 400 &#183; 16 / 1.6</div></div>
+        <div style="padding:18px;border:1px solid #2A343D;border-radius:12px;background:#141A1F"><div style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6">Label</div><div style="margin-top:8px;font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">Plex Mono 500 &#183; 11&#8211;12 / .16em</div></div>
+      </div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">05</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Backgrounds</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">Floodlight bloom plus pitch geometry, all CSS &#8212; no image to ship. The ambient variant drops the bloom to a 22px dot grid at 7% so it can sit under a table without competing.</p>
+      <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px">
+        <div style="position:relative;overflow:hidden;border:1px solid #2A343D;border-radius:16px;min-height:300px;background:radial-gradient(120% 90% at 50% -15%, rgba(198,250,63,.20), rgba(11,15,18,0) 60%), radial-gradient(70% 60% at 85% 115%, rgba(61,219,217,.14), rgba(11,15,18,0) 60%), #0B0F12">
+          <div style="position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(242,245,247,.10)"></div>
+          <div style="position:absolute;left:50%;top:50%;width:200px;height:200px;margin:-100px 0 0 -100px;border:1px solid rgba(242,245,247,.10);border-radius:50%"></div>
+          <div style="position:absolute;left:0;top:50%;width:90px;height:150px;margin-top:-75px;border:1px solid rgba(242,245,247,.08);border-left:0"></div>
+          <div style="position:relative;padding:44px;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px">
+            <div style="font:900 42px/1 Archivo,sans-serif;letter-spacing:-.04em;text-transform:uppercase;max-width:12ch">{{ strapline }}</div>
+            <div style="margin-top:16px;font:400 15px/1.5 'IBM Plex Sans',sans-serif;color:#8A99A6">Hero &#183; 1440&#215;760 &#183; text sits bottom-left, bloom top-centre</div>
+          </div>
+        </div>
+        <div style="display:grid;gap:20px">
+          <div style="border:1px solid #2A343D;border-radius:16px;min-height:140px;background-color:#0B0F12;background-image:radial-gradient(circle, rgba(242,245,247,.07) 1px, transparent 1px);background-size:22px 22px;display:flex;align-items:flex-end;padding:18px"><span style="font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">ambient &#183; 22px dot grid @ 7%</span></div>
+          <div style="border:1px solid #2A343D;border-radius:16px;min-height:140px;background-color:#0B0F12;background-image:repeating-linear-gradient(115deg, rgba(242,245,247,.045) 0 1px, transparent 1px 9px);display:flex;align-items:flex-end;padding:18px"><span style="font:400 12px/1 'IBM Plex Mono',monospace;color:#8A99A6">ambient alt &#183; mown-pitch hatch</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">06</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Illustrations</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">One rule for all three: flat geometry drawn with the mark&#8217;s ring, dot and 3px stroke. Transparent backgrounds, single accent, no faces, no gradients.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <div style="padding:24px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="display:grid;place-items:center;height:190px">
+            <svg viewBox="0 0 220 160" width="220" height="160" fill="none">
+              <path d="M110 20v10M84 28l5 9M136 28l-5 9" stroke="#C6FA3F" stroke-width="3" stroke-linecap="round"></path>
+              <circle cx="110" cy="56" r="19" stroke="#C6FA3F" stroke-width="6"></circle>
+              <circle cx="110" cy="56" r="7" fill="#C6FA3F"></circle>
+              <rect x="82" y="98" width="56" height="46" rx="4" fill="#C6FA3F"></rect>
+              <rect x="20" y="82" width="56" height="62" rx="4" fill="#2A343D"></rect>
+              <rect x="144" y="66" width="56" height="78" rx="4" fill="#1D252C"></rect>
+              <text x="110" y="130" text-anchor="middle" fill="#0B0F12" style="font:800 26px Archivo, sans-serif">0</text>
+              <text x="48" y="122" text-anchor="middle" fill="#8A99A6" style="font:800 20px Archivo, sans-serif">34</text>
+              <text x="172" y="112" text-anchor="middle" fill="#8A99A6" style="font:800 20px Archivo, sans-serif">61</text>
+            </svg>
+          </div>
+          <div style="font:600 15px/1.4 'IBM Plex Sans',sans-serif">Winner</div>
+          <div style="margin-top:6px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Shortest bar wins. The podium is inverted on purpose &#8212; low is good.</div>
+        </div>
+        <div style="padding:24px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="display:grid;place-items:center;height:190px">
+            <svg viewBox="0 0 220 160" width="220" height="160" fill="none">
+              <rect x="26" y="30" width="168" height="26" rx="6" stroke="#2A343D" stroke-width="2" stroke-dasharray="7 6"></rect>
+              <rect x="26" y="66" width="168" height="26" rx="6" stroke="#2A343D" stroke-width="2" stroke-dasharray="7 6"></rect>
+              <rect x="26" y="102" width="168" height="26" rx="6" stroke="#2A343D" stroke-width="2" stroke-dasharray="7 6"></rect>
+              <circle cx="110" cy="79" r="26" fill="#0B0F12"></circle>
+              <circle cx="110" cy="79" r="20" stroke="#C6FA3F" stroke-width="5"></circle>
+              <path d="M110 71v16M102 79h16" stroke="#C6FA3F" stroke-width="5" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div style="font:600 15px/1.4 'IBM Plex Sans',sans-serif">No leagues yet</div>
+          <div style="margin-top:6px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Three ghost rows waiting for a table. &#8220;Start one. Someone has to.&#8221;</div>
+        </div>
+        <div style="padding:24px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+          <div style="display:grid;place-items:center;height:190px">
+            <svg viewBox="0 0 220 160" width="220" height="160" fill="none">
+              <path d="M110 16v128" stroke="#2A343D" stroke-width="2" stroke-dasharray="8 7"></path>
+              <circle cx="110" cy="80" r="52" stroke="#2A343D" stroke-width="2"></circle>
+              <path d="M110 28a52 52 0 0 1 44 24" stroke="#C6FA3F" stroke-width="6" stroke-linecap="round"></path>
+              <circle cx="110" cy="80" r="18" stroke="#C6FA3F" stroke-width="5"></circle>
+              <circle cx="110" cy="80" r="6.5" fill="#C6FA3F"></circle>
+              <path d="M14 44h26M14 116h26M180 44h26M180 116h26" stroke="#1D252C" stroke-width="3" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div style="font:600 15px/1.4 'IBM Plex Sans',sans-serif">Waiting for the season</div>
+          <div style="margin-top:6px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Centre circle as a countdown arc. &#8220;Predictions locked. 11 days to kick-off.&#8221;</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">07&#8211;08</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">Share cards</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">Both templates are one composition: mark top-left, league name as the loudest thing on the card, avatar stack, then the invite line. Shown at 50% and 30%.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+        <div>
+          <div style="width:600px;height:315px;overflow:hidden;border:1px solid #2A343D;border-radius:14px">
+            <div style="width:1200px;height:630px;transform:scale(.5);transform-origin:top left;position:relative;overflow:hidden;background:radial-gradient(100% 90% at 15% -10%, rgba(198,250,63,.20), rgba(11,15,18,0) 58%), #0B0F12;padding:72px 80px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="position:absolute;right:-120px;top:50%;width:520px;height:520px;margin-top:-260px;border:1px solid rgba(242,245,247,.09);border-radius:50%"></div>
+              <div style="position:absolute;right:60px;top:50%;width:260px;height:260px;margin-top:-130px;border:1px solid rgba(242,245,247,.09);border-radius:50%"></div>
+              <div style="position:relative;display:flex;align-items:center;gap:16px">
+                <svg viewBox="0 0 24 24" width="44" height="44" fill="none" style="color:#C6FA3F;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="currentColor"></circle></svg>
+                <span style="font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em;text-transform:uppercase;color:#F2F5F7">Spot&#8202;On</span>
+              </div>
+              <div style="position:relative">
+                <div style="font:500 20px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:#C6FA3F;margin-bottom:22px">You&#8217;ve been invited</div>
+                <div style="font:900 86px/0.95 Archivo,sans-serif;letter-spacing:-.045em;text-transform:uppercase;color:#F2F5F7;max-width:14ch">{{ leagueName }}</div>
+              </div>
+              <div style="position:relative;display:flex;align-items:center;justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:20px">
+                  <div style="display:flex">
+                    <div style="width:56px;height:56px;border-radius:50%;background:#1D252C;border:3px solid #0B0F12;display:grid;place-items:center;font:600 20px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">JM</div>
+                    <div style="width:56px;height:56px;border-radius:50%;background:#1D252C;border:3px solid #0B0F12;margin-left:-16px;display:grid;place-items:center;font:600 20px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">AK</div>
+                    <div style="width:56px;height:56px;border-radius:50%;background:#1D252C;border:3px solid #0B0F12;margin-left:-16px;display:grid;place-items:center;font:600 20px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">RS</div>
+                    <div style="width:56px;height:56px;border-radius:50%;background:#1D252C;border:3px solid #0B0F12;margin-left:-16px;display:grid;place-items:center;font:600 20px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">DP</div>
+                    <div style="width:56px;height:56px;border-radius:50%;background:#C6FA3F;border:3px solid #0B0F12;margin-left:-16px;display:grid;place-items:center;font:600 18px/1 'IBM Plex Sans',sans-serif;color:#0B0F12">+2</div>
+                  </div>
+                  <span style="font:400 22px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">6 playing &#183; Premier League</span>
+                </div>
+                <span style="font:400 22px/1 'IBM Plex Mono',monospace;color:#8A99A6">spot-on.vercel.app</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6">07 &#183; OG card 1200&#215;630</div>
+        </div>
+        <div>
+          <div style="width:324px;height:405px;overflow:hidden;border:1px solid #2A343D;border-radius:14px">
+            <div style="width:1080px;height:1350px;transform:scale(.3);transform-origin:top left;position:relative;overflow:hidden;background:radial-gradient(90% 60% at 50% -5%, rgba(198,250,63,.20), rgba(11,15,18,0) 55%), #0B0F12;padding:90px 80px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="position:absolute;left:50%;bottom:-260px;width:620px;height:620px;margin-left:-310px;border:1px solid rgba(242,245,247,.09);border-radius:50%"></div>
+              <div style="position:relative;display:flex;align-items:center;gap:18px">
+                <svg viewBox="0 0 24 24" width="56" height="56" fill="none" style="color:#C6FA3F;display:block"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle><circle cx="12" cy="12" r="3.2" fill="currentColor"></circle></svg>
+                <span style="font:800 42px/1 Archivo,sans-serif;letter-spacing:-.03em;text-transform:uppercase;color:#F2F5F7">Spot&#8202;On</span>
+              </div>
+              <div style="position:relative">
+                <div style="font:500 26px/1 'IBM Plex Mono',monospace;letter-spacing:.2em;text-transform:uppercase;color:#C6FA3F;margin-bottom:30px">Invitation</div>
+                <div style="font:900 118px/0.92 Archivo,sans-serif;letter-spacing:-.045em;text-transform:uppercase;color:#F2F5F7">{{ leagueName }}</div>
+                <div style="margin-top:36px;font:400 34px/1.45 'IBM Plex Sans',sans-serif;color:#8A99A6">Call the final table, first to last, before the season starts. Lowest score wins.</div>
+              </div>
+              <div style="position:relative">
+                <div style="display:flex;margin-bottom:40px">
+                  <div style="width:78px;height:78px;border-radius:50%;background:#1D252C;border:4px solid #0B0F12;display:grid;place-items:center;font:600 28px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">JM</div>
+                  <div style="width:78px;height:78px;border-radius:50%;background:#1D252C;border:4px solid #0B0F12;margin-left:-22px;display:grid;place-items:center;font:600 28px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">AK</div>
+                  <div style="width:78px;height:78px;border-radius:50%;background:#1D252C;border:4px solid #0B0F12;margin-left:-22px;display:grid;place-items:center;font:600 28px/1 'IBM Plex Sans',sans-serif;color:#F2F5F7">RS</div>
+                  <div style="width:78px;height:78px;border-radius:50%;background:#C6FA3F;border:4px solid #0B0F12;margin-left:-22px;display:grid;place-items:center;font:600 26px/1 'IBM Plex Sans',sans-serif;color:#0B0F12">+3</div>
+                </div>
+                <div style="padding:34px;border-radius:20px;background:#C6FA3F;color:#0B0F12;font:800 42px/1 Archivo,sans-serif;letter-spacing:-.02em;text-align:center">Join the league</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6">08 &#183; Invite 1080&#215;1350</div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:12px">
+        <span style="font:600 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F;letter-spacing:.16em">09</span>
+        <h2 style="margin:0;font:800 32px/1 Archivo,sans-serif;letter-spacing:-.03em">UI mood board</h2>
+      </div>
+      <p style="margin:0 0 28px;max-width:64ch;font:400 16px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6;text-wrap:pretty">Rows are 56px on mobile, separated by 1px lines rather than cards. Colour appears only where it carries meaning: the score, the diff, the leader.</p>
+
+      <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start">
+        <div style="border:1px solid #2A343D;border-radius:16px;background:#141A1F;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #2A343D">
+            <div>
+              <div style="font:700 18px/1.2 Archivo,sans-serif;letter-spacing:-.02em">{{ leagueName }}</div>
+              <div style="margin-top:4px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">Premier League &#183; matchweek 24</div>
+            </div>
+            <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:999px;background:#1D252C;font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#3DDBD9"><span style="width:6px;height:6px;border-radius:50%;background:#3DDBD9;animation:so-pulse 2s ease-in-out infinite"></span>Live</span>
+          </div>
+          <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 20px;background:#1A2216;border-bottom:1px solid #2A343D">
+            <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#C6FA3F">1</span>
+            <div style="display:flex;align-items:center;gap:12px;min-width:0">
+              <span style="width:32px;height:32px;border-radius:50%;background:#C6FA3F;color:#0B0F12;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif;flex:none">JM</span>
+              <div style="min-width:0">
+                <div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Jordan M.</div>
+                <div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">4 spot on &#183; Haaland &#8722;5</div>
+              </div>
+            </div>
+            <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums;color:#C6FA3F">34</span>
+          </div>
+          <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 20px;border-bottom:1px solid #2A343D">
+            <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#8A99A6">2</span>
+            <div style="display:flex;align-items:center;gap:12px;min-width:0">
+              <span style="width:32px;height:32px;border-radius:50%;background:#1D252C;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif;flex:none">AK</span>
+              <div style="min-width:0">
+                <div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif">Amrit K.</div>
+                <div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">2 spot on</div>
+              </div>
+            </div>
+            <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums">41</span>
+          </div>
+          <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 20px;border-bottom:1px solid #2A343D">
+            <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#8A99A6">3</span>
+            <div style="display:flex;align-items:center;gap:12px;min-width:0">
+              <span style="width:32px;height:32px;border-radius:50%;background:#1D252C;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif;flex:none">RS</span>
+              <div style="min-width:0">
+                <div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif">Rhian S.</div>
+                <div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">1 spot on</div>
+              </div>
+            </div>
+            <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums">58</span>
+          </div>
+          <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 20px">
+            <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#8A99A6">4</span>
+            <div style="display:flex;align-items:center;gap:12px;min-width:0">
+              <span style="width:32px;height:32px;border-radius:50%;background:#1D252C;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif;flex:none">DP</span>
+              <div style="min-width:0">
+                <div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif">Danny P.</div>
+                <div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#FF5C5C">Relegation pick is 2nd. Bold.</div>
+              </div>
+            </div>
+            <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums">96</span>
+          </div>
+        </div>
+
+        <div style="display:grid;gap:20px">
+          <div style="padding:22px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+            <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:18px">Diff chips</div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#2C3D0E;color:#C6FA3F;font:500 13px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums">&#9679; spot on</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#3D2E0B;color:#F5A623;font:500 13px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums">&#9650; 3</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#3D2E0B;color:#F5A623;font:500 13px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums">&#9660; 2</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#3D1414;color:#FF5C5C;font:500 13px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums">&#9660; 7</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#3D1414;color:#FF5C5C;font:500 13px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums">&#9650; 11</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#1D252C;color:#8A99A6;font:500 13px/1 'IBM Plex Mono',monospace">&#8212;</span>
+            </div>
+            <div style="margin-top:14px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">0 = &#9679; and the celebration colour. 1&#8211;4 amber, 5+ red. Never colour the team name itself &#8212; the crest already brings colour.</div>
+          </div>
+
+          <div style="padding:22px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+            <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:18px">Prediction editor &#183; drag rows</div>
+            <div style="display:grid;gap:8px">
+              <div style="display:grid;grid-template-columns:20px 26px 26px 1fr auto;gap:12px;align-items:center;padding:11px 12px;border-radius:10px;background:#1D252C;border:1px solid #2A343D">
+                <svg viewBox="0 0 12 20" width="12" height="20" style="display:block"><g fill="#8A99A6"><circle cx="3" cy="4" r="1.6"></circle><circle cx="9" cy="4" r="1.6"></circle><circle cx="3" cy="10" r="1.6"></circle><circle cx="9" cy="10" r="1.6"></circle><circle cx="3" cy="16" r="1.6"></circle><circle cx="9" cy="16" r="1.6"></circle></g></svg>
+                <span style="font:500 14px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A99A6">01</span>
+                <span style="width:26px;height:26px;border-radius:6px;background:#2A343D"></span>
+                <span style="font:600 15px/1 'IBM Plex Sans',sans-serif">Arsenal</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:#2C3D0E;color:#C6FA3F;font:500 12px/1 'IBM Plex Mono',monospace">&#9679;</span>
+              </div>
+              <div style="display:grid;grid-template-columns:20px 26px 26px 1fr auto;gap:12px;align-items:center;padding:11px 12px;border-radius:10px;background:#242E37;border:1px solid #C6FA3F;box-shadow:0 12px 28px rgba(0,0,0,.45)">
+                <svg viewBox="0 0 12 20" width="12" height="20" style="display:block"><g fill="#C6FA3F"><circle cx="3" cy="4" r="1.6"></circle><circle cx="9" cy="4" r="1.6"></circle><circle cx="3" cy="10" r="1.6"></circle><circle cx="9" cy="10" r="1.6"></circle><circle cx="3" cy="16" r="1.6"></circle><circle cx="9" cy="16" r="1.6"></circle></g></svg>
+                <span style="font:500 14px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#C6FA3F">02</span>
+                <span style="width:26px;height:26px;border-radius:6px;background:#2A343D"></span>
+                <span style="font:600 15px/1 'IBM Plex Sans',sans-serif">Liverpool</span>
+                <span style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#8A99A6">dragging</span>
+              </div>
+              <div style="display:grid;grid-template-columns:20px 26px 26px 1fr auto;gap:12px;align-items:center;padding:11px 12px;border-radius:10px;background:#1D252C;border:1px solid #2A343D;opacity:.55">
+                <svg viewBox="0 0 12 20" width="12" height="20" style="display:block"><g fill="#8A99A6"><circle cx="3" cy="4" r="1.6"></circle><circle cx="9" cy="4" r="1.6"></circle><circle cx="3" cy="10" r="1.6"></circle><circle cx="9" cy="10" r="1.6"></circle><circle cx="3" cy="16" r="1.6"></circle><circle cx="9" cy="16" r="1.6"></circle></g></svg>
+                <span style="font:500 14px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A99A6">03</span>
+                <span style="width:26px;height:26px;border-radius:6px;background:#2A343D"></span>
+                <span style="font:600 15px/1 'IBM Plex Sans',sans-serif">Newcastle</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:#3D2E0B;color:#F5A623;font:500 12px/1 'IBM Plex Mono',monospace">&#9660; 2</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:22px;border:1px solid #2A343D;border-radius:16px;background:#141A1F">
+            <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:18px">Locked</div>
+            <div style="display:grid;grid-template-columns:20px 26px 26px 1fr auto;gap:12px;align-items:center;padding:11px 12px;border-radius:10px;background:#12181D;border:1px dashed #2A343D">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" style="display:block"><path d="M4.5 7V5a3.5 3.5 0 0 1 7 0v2" stroke="#8A99A6" stroke-width="1.6"></path><rect x="3" y="7" width="10" height="7" rx="2" fill="#8A99A6"></rect></svg>
+              <span style="font:500 14px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A99A6">04</span>
+              <span style="width:26px;height:26px;border-radius:6px;background:#1D252C"></span>
+              <span style="font:600 15px/1 'IBM Plex Sans',sans-serif;color:#8A99A6">Aston Villa</span>
+              <span style="font:400 11px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#8A99A6">locked</span>
+            </div>
+            <div style="margin-top:14px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Locked rows lose the handle, drop to muted text and gain a dashed edge. No greyed-out modal &#8212; the table stays readable, it just stops moving.</div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ showLightMode }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:20px;padding:22px;border-radius:16px;background:#F4F6F4">
+          <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#56616A;margin-bottom:16px">Same rows, light theme</div>
+          <div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start">
+            <div style="border:1px solid #D3DAD5;border-radius:14px;background:#FFFFFF;overflow:hidden">
+              <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 18px;background:#F3FAE0;border-bottom:1px solid #D3DAD5">
+                <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#3F6B00">1</span>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="width:32px;height:32px;border-radius:50%;background:#B7EE2E;color:#0B0F12;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif">JM</span>
+                  <div><div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif;color:#0B0F12">Jordan M.</div><div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#56616A">4 spot on &#183; Haaland &#8722;5</div></div>
+                </div>
+                <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums;color:#3F6B00">34</span>
+              </div>
+              <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 18px;border-bottom:1px solid #D3DAD5">
+                <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#56616A">2</span>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="width:32px;height:32px;border-radius:50%;background:#E9EDEA;color:#0B0F12;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif">AK</span>
+                  <div><div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif;color:#0B0F12">Amrit K.</div><div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#56616A">2 spot on</div></div>
+                </div>
+                <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums;color:#0B0F12">41</span>
+              </div>
+              <div style="display:grid;grid-template-columns:28px 1fr auto;gap:14px;align-items:center;padding:14px 18px">
+                <span style="font:500 13px/1 'IBM Plex Mono',monospace;color:#56616A">3</span>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="width:32px;height:32px;border-radius:50%;background:#E9EDEA;color:#0B0F12;display:grid;place-items:center;font:600 12px/1 'IBM Plex Sans',sans-serif">DP</span>
+                  <div><div style="font:600 15px/1.2 'IBM Plex Sans',sans-serif;color:#0B0F12">Danny P.</div><div style="margin-top:3px;font:400 12px/1 'IBM Plex Sans',sans-serif;color:#B3261E">Relegation pick is 2nd. Bold.</div></div>
+                </div>
+                <span style="font:800 26px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums;color:#0B0F12">96</span>
+              </div>
+            </div>
+            <div style="padding:20px;border:1px solid #D3DAD5;border-radius:14px;background:#FFFFFF">
+              <div style="display:flex;flex-wrap:wrap;gap:10px">
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#EAF7C4;color:#3F6B00;font:500 13px/1 'IBM Plex Mono',monospace">&#9679; spot on</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#FBEDD2;color:#8A5200;font:500 13px/1 'IBM Plex Mono',monospace">&#9650; 3</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#FADCDA;color:#B3261E;font:500 13px/1 'IBM Plex Mono',monospace">&#9660; 7</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:#E9EDEA;color:#56616A;font:500 13px/1 'IBM Plex Mono',monospace">&#8212;</span>
+              </div>
+              <div style="margin-top:16px;padding:14px 18px;border-radius:10px;background:#B7EE2E;color:#0B0F12;font:700 16px/1 Archivo,sans-serif;text-align:center">Lock my table</div>
+              <div style="margin-top:10px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#56616A">Light theme keeps the same geometry and swaps only tokens. Primary stays a fill, never a text colour, on white.</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section style="padding:72px 0 0">
+      <div style="padding:28px;border:1px solid #2A343D;border-radius:16px;background:#141A1F;display:grid;grid-template-columns:1fr 1fr;gap:32px">
+        <div>
+          <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:16px">Files in this project</div>
+          <ul style="margin:0;padding-left:18px;font:400 14px/1.9 'IBM Plex Sans',sans-serif">
+            <li><a href="assets/spot-on-mark.svg">spot-on-mark.svg</a> &#8212; currentColor, 24px grid</li>
+            <li><a href="assets/spot-on-target.svg">spot-on-target.svg</a> &#8212; hero / loader variant</li>
+            <li><a href="assets/spot-on-favicon.svg">spot-on-favicon.svg</a> &#8212; 32px, thickened</li>
+            <li><a href="assets/spot-on-app-icon.svg">spot-on-app-icon.svg</a> &#8212; 512 square</li>
+            <li><a href="assets/spot-on-tokens.css">spot-on-tokens.css</a> &#8212; light + dark vars</li>
+            <li><a href="assets/spot-on-hero-bg.svg">spot-on-hero-bg.svg</a> &#8212; 1440&#215;760, slice-safe</li>
+            <li><a href="assets/spot-on-ambient-tile.svg">spot-on-ambient-tile.svg</a> &#8212; 22px repeat</li>
+            <li><a href="assets/spot-on-illo-winner.svg">spot-on-illo-winner.svg</a></li>
+            <li><a href="assets/spot-on-illo-no-leagues.svg">spot-on-illo-no-leagues.svg</a></li>
+            <li><a href="assets/spot-on-illo-waiting.svg">spot-on-illo-waiting.svg</a></li>
+            <li><a href="Spot On — Share Cards.dc.html">Share card templates</a> &#8212; true-size OG + invite</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:#8A99A6;margin-bottom:16px">Voice, in three lines</div>
+          <div style="font:600 20px/1.5 'IBM Plex Sans',sans-serif;text-wrap:pretty">&#8220;Nailed it. Zero.&#8221;<br>&#8220;3 off &#8212; not bad.&#8221;<br><span style="color:#8A99A6">&#8220;Your top scorer is currently 14th. Bold.&#8221;</span></div>
+          <div style="margin-top:16px;font:400 13px/1.6 'IBM Plex Sans',sans-serif;color:#8A99A6">Short, dry, British. The app never congratulates you for a big number and never explains the joke.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;strapline&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Call the table.&quot;, &quot;Every spot counts.&quot;, &quot;Predict it. Then live with it.&quot;], &quot;default&quot;: &quot;Call the table.&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Copy&quot;},
+  &quot;leagueName&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;The Pub Table&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Copy&quot;},
+  &quot;showLightMode&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Sections&quot;}
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      strapline: this.props.strapline ?? "Call the table.",
+      leagueName: this.props.leagueName ?? "The Pub Table",
+      showLightMode: this.props.showLightMode ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

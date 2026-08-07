@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 760" width="1440" height="760" fill="none" preserveAspectRatio="xMidYMid slice">
+  <title>Spot On hero background</title>
+  <defs>
+    <radialGradient id="bloom" cx="50%" cy="-10%" r="72%">
+      <stop offset="0%" stop-color="#C6FA3F" stop-opacity=".20"></stop>
+      <stop offset="100%" stop-color="#0B0F12" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="teal" cx="85%" cy="112%" r="55%">
+      <stop offset="0%" stop-color="#3DDBD9" stop-opacity=".14"></stop>
+      <stop offset="100%" stop-color="#0B0F12" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="fade" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#fff" stop-opacity="1"></stop>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
+    </radialGradient>
+    <mask id="m"><rect width="1440" height="760" fill="url(#fade)"></rect></mask>
+  </defs>
+  <rect width="1440" height="760" fill="#0B0F12"></rect>
+  <rect width="1440" height="760" fill="url(#bloom)"></rect>
+  <rect width="1440" height="760" fill="url(#teal)"></rect>
+  <g mask="url(#m)" stroke="#F2F5F7" stroke-opacity=".10">
+    <path d="M0 380h1440M720 0v760"></path>
+    <circle cx="720" cy="380" r="140" fill="none"></circle>
+    <path d="M0 230h150v300H0M1440 230h-150v300h150" fill="none"></path>
+    <path d="M0 305h60v150H0M1440 305h-60v150h60" fill="none"></path>
+  </g>
+</svg>

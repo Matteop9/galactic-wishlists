@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22" width="22" height="22">
+  <title>Spot On ambient tile — 22px dot grid</title>
+  <rect width="22" height="22" fill="#0B0F12"></rect>
+  <circle cx="11" cy="11" r="1" fill="#F2F5F7" fill-opacity=".07"></circle>
+</svg>

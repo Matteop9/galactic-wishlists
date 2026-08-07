@@ -11,6 +11,7 @@ const body = IBM_Plex_Sans({ subsets: ['latin'], variable: '--font-body', weight
 const num = IBM_Plex_Mono({ subsets: ['latin'], variable: '--font-num', weight: ['500'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://spot-on-liart.vercel.app'),
   title: 'Spot On — call the table',
   description:
     'Predict the final league table with your mates. One point for every position you are off. Lowest score wins.',
@@ -18,6 +19,14 @@ export const metadata: Metadata = {
     icon: '/spot-on-favicon.svg',
     apple: '/spot-on-app-icon.svg',
   },
+  openGraph: {
+    siteName: 'Spot On',
+    title: 'Spot On — call the table',
+    description:
+      'Predict the final league table with your mates. One point for every position you are off. Lowest score wins.',
+    images: [{ url: '/api/og/default', width: 1200, height: 630 }],
+  },
+  twitter: { card: 'summary_large_image' },
 };
 
 async function logout() {
@@ -35,7 +44,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-center gap-2">
               <TargetMark className="text-primary" size={20} />
-              <span className="font-display text-lg font-extrabold tracking-tight">Spot On</span>
+              {/* brand kit: Archivo 800, uppercase, -0.04em, hairspace between the words */}
+              <span className="font-display text-lg font-extrabold uppercase tracking-[-0.04em]">
+                Spot{' '}On
+              </span>
             </Link>
             {session ? (
               <div className="flex items-center gap-3 text-sm">

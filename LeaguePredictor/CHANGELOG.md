@@ -1,5 +1,22 @@
 # Changelog — Spot On
 
+## v0.2.0 — 2026-08-07
+
+Design system v2 integrated (ClaudeDesign/ — brand kit, share cards, and 5 new assets):
+
+- **OG share cards** ported to `next/og` per the share-card spec: `/api/og/join/[code]`
+  renders the league invite card (name, competition chip, avatar-initial stack, +n
+  overflow) and `/api/og/default` the generic card; invite pages now render publicly
+  with sign-in CTAs so WhatsApp/iMessage/Slack unfurls get the card instead of a
+  redirect to the login page
+- **Season states** on the league page: locked-but-not-kicked-off shows the countdown
+  "waiting" illustration with links to everyone's picks (no more placeholder-data
+  leaderboard); season complete crowns the winner with the inverted-podium illustration
+- Hero floodlight background on the landing page, ambient 22px dot grid under app
+  pages, "no leagues yet" illustration with the kit's copy
+- Brand-kit corrections: wordmark is Archivo 800 uppercase with a hairspace,
+  diff chips now go amber 1–4 and red 5+ (was 4+)
+
 ## v0.1.1 — 2026-08-07
 
 Claude Design system integrated (from `Spot on design system.zip`):

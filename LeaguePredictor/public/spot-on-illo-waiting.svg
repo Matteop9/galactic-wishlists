@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 160" width="220" height="160" fill="none">
+  <title>Empty state — waiting for the season</title>
+  <path d="M110 16v128" stroke="#2A343D" stroke-width="2" stroke-dasharray="8 7"></path>
+  <circle cx="110" cy="80" r="52" stroke="#2A343D" stroke-width="2"></circle>
+  <path d="M110 28a52 52 0 0 1 44 24" stroke="#C6FA3F" stroke-width="6" stroke-linecap="round"></path>
+  <circle cx="110" cy="80" r="18" stroke="#C6FA3F" stroke-width="5"></circle>
+  <circle cx="110" cy="80" r="6.5" fill="#C6FA3F"></circle>
+  <path d="M14 44h26M14 116h26M180 44h26M180 116h26" stroke="#1D252C" stroke-width="3" stroke-linecap="round"></path>
+</svg>
