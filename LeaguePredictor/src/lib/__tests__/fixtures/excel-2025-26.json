@@ -1,0 +1,482 @@
+{
+ "p_table": [
+  {
+   "position": 1,
+   "shortName": "Arsenal"
+  },
+  {
+   "position": 2,
+   "shortName": "Man City"
+  },
+  {
+   "position": 3,
+   "shortName": "Man United"
+  },
+  {
+   "position": 4,
+   "shortName": "Aston Villa"
+  },
+  {
+   "position": 5,
+   "shortName": "Liverpool"
+  },
+  {
+   "position": 6,
+   "shortName": "Bournemouth"
+  },
+  {
+   "position": 7,
+   "shortName": "Sunderland"
+  },
+  {
+   "position": 8,
+   "shortName": "Brighton Hove"
+  },
+  {
+   "position": 9,
+   "shortName": "Brentford"
+  },
+  {
+   "position": 10,
+   "shortName": "Chelsea"
+  },
+  {
+   "position": 11,
+   "shortName": "Fulham"
+  },
+  {
+   "position": 12,
+   "shortName": "Newcastle"
+  },
+  {
+   "position": 13,
+   "shortName": "Everton"
+  },
+  {
+   "position": 14,
+   "shortName": "Leeds United"
+  },
+  {
+   "position": 15,
+   "shortName": "Crystal Palace"
+  },
+  {
+   "position": 16,
+   "shortName": "Nottingham"
+  },
+  {
+   "position": 17,
+   "shortName": "Tottenham"
+  },
+  {
+   "position": 18,
+   "shortName": "West Ham"
+  },
+  {
+   "position": 19,
+   "shortName": "Burnley"
+  },
+  {
+   "position": 20,
+   "shortName": "Wolverhampton"
+  }
+ ],
+ "c_table": [
+  {
+   "position": 1,
+   "shortName": "Coventry City"
+  },
+  {
+   "position": 2,
+   "shortName": "Ipswich Town"
+  },
+  {
+   "position": 3,
+   "shortName": "Millwall"
+  },
+  {
+   "position": 4,
+   "shortName": "Southampton"
+  },
+  {
+   "position": 5,
+   "shortName": "Middlesbrough"
+  },
+  {
+   "position": 6,
+   "shortName": "Hull City"
+  },
+  {
+   "position": 7,
+   "shortName": "Wrexham"
+  },
+  {
+   "position": 8,
+   "shortName": "Derby County"
+  },
+  {
+   "position": 9,
+   "shortName": "Norwich"
+  },
+  {
+   "position": 10,
+   "shortName": "Birmingham"
+  },
+  {
+   "position": 11,
+   "shortName": "Swansea"
+  },
+  {
+   "position": 12,
+   "shortName": "Bristol City"
+  },
+  {
+   "position": 13,
+   "shortName": "Sheffield Utd"
+  },
+  {
+   "position": 14,
+   "shortName": "Preston NE"
+  },
+  {
+   "position": 15,
+   "shortName": "QPR"
+  },
+  {
+   "position": 16,
+   "shortName": "Watford"
+  },
+  {
+   "position": 17,
+   "shortName": "Stoke"
+  },
+  {
+   "position": 18,
+   "shortName": "Portsmouth"
+  },
+  {
+   "position": 19,
+   "shortName": "Charlton"
+  },
+  {
+   "position": 20,
+   "shortName": "Blackburn"
+  },
+  {
+   "position": 21,
+   "shortName": "West Brom"
+  },
+  {
+   "position": 22,
+   "shortName": "Oxford United"
+  },
+  {
+   "position": 23,
+   "shortName": "Leicester City"
+  },
+  {
+   "position": 24,
+   "shortName": "Sheffield Wed"
+  }
+ ],
+ "p_scorers": [
+  {
+   "name": "Erling Haaland",
+   "goals": 27
+  },
+  {
+   "name": "Thiago Rodrigues",
+   "goals": 22
+  },
+  {
+   "name": "Antoine Semenyo",
+   "goals": 17
+  },
+  {
+   "name": "Ollie Watkins",
+   "goals": 16
+  },
+  {
+   "name": "João Pedro",
+   "goals": 15
+  },
+  {
+   "name": "Morgan Gibbs-White",
+   "goals": 15
+  },
+  {
+   "name": "Viktor Gyökeres",
+   "goals": 14
+  },
+  {
+   "name": "Dominic Calvert-Lewin",
+   "goals": 14
+  },
+  {
+   "name": "Danny Welbeck",
+   "goals": 13
+  },
+  {
+   "name": "Eli Kroupi",
+   "goals": 13
+  }
+ ],
+ "c_scorers": [
+  {
+   "name": "Zan Vipotnik",
+   "goals": 23
+  },
+  {
+   "name": "Oliver McBurnie",
+   "goals": 18
+  },
+  {
+   "name": "Haji Wright",
+   "goals": 17
+  },
+  {
+   "name": "Jack Clarke",
+   "goals": 16
+  },
+  {
+   "name": "Josh Windass",
+   "goals": 15
+  },
+  {
+   "name": "Joe Gelhardt",
+   "goals": 15
+  },
+  {
+   "name": "Morgan Whittaker",
+   "goals": 14
+  },
+  {
+   "name": "Tommy Conway",
+   "goals": 13
+  },
+  {
+   "name": "Brandon Thomas-Asante",
+   "goals": 13
+  },
+  {
+   "name": "Ellis Simms",
+   "goals": 13
+  }
+ ],
+ "predictions": {
+  "Dom": {
+   "prem": [
+    "Man City",
+    "Liverpool",
+    "Arsenal",
+    "Chelsea",
+    "Tottenham",
+    "Aston Villa",
+    "Man United",
+    "Newcastle",
+    "Brighton Hove",
+    "Everton",
+    "Nottingham",
+    "Crystal Palace",
+    "Bournemouth",
+    "Fulham",
+    "West Ham",
+    "Wolverhampton",
+    "Brentford",
+    "Sunderland",
+    "Leeds United",
+    "Burnley"
+   ],
+   "champ": [
+    "Ipswich Town",
+    "Leicester City",
+    "Southampton",
+    "Coventry City",
+    "Bristol City",
+    "Sheffield Utd",
+    "Birmingham",
+    "Middlesbrough",
+    "West Brom",
+    "Derby County",
+    "Millwall",
+    "Portsmouth",
+    "Swansea",
+    "Norwich",
+    "Blackburn",
+    "QPR",
+    "Wrexham",
+    "Charlton",
+    "Stoke",
+    "Hull City",
+    "Watford",
+    "Oxford United",
+    "Preston NE",
+    "Sheffield Wed"
+   ],
+   "pScorer": "Erling Haaland",
+   "cScorer": "Cameron Archer"
+  },
+  "Luke": {
+   "prem": [
+    "Liverpool",
+    "Chelsea",
+    "Man City",
+    "Arsenal",
+    "Aston Villa",
+    "Newcastle",
+    "Man United",
+    "Tottenham",
+    "Brighton Hove",
+    "Everton",
+    "Crystal Palace",
+    "Fulham",
+    "Nottingham",
+    "Bournemouth",
+    "West Ham",
+    "Brentford",
+    "Leeds United",
+    "Wolverhampton",
+    "Sunderland",
+    "Burnley"
+   ],
+   "champ": [
+    "Southampton",
+    "Ipswich Town",
+    "Leicester City",
+    "Birmingham",
+    "Coventry City",
+    "Sheffield Utd",
+    "Bristol City",
+    "Millwall",
+    "West Brom",
+    "Norwich",
+    "Middlesbrough",
+    "Stoke",
+    "Swansea",
+    "Portsmouth",
+    "Wrexham",
+    "Charlton",
+    "Derby County",
+    "Watford",
+    "Blackburn",
+    "QPR",
+    "Hull City",
+    "Preston NE",
+    "Sheffield Wed",
+    "Oxford United"
+   ],
+   "pScorer": "Mohamed Salah",
+   "cScorer": "Cameron Archer"
+  },
+  "Matteo": {
+   "prem": [
+    "Liverpool",
+    "Chelsea",
+    "Man City",
+    "Arsenal",
+    "Tottenham",
+    "Newcastle",
+    "Man United",
+    "Aston Villa",
+    "Brighton Hove",
+    "Everton",
+    "Bournemouth",
+    "Crystal Palace",
+    "Nottingham",
+    "West Ham",
+    "Fulham",
+    "Wolverhampton",
+    "Brentford",
+    "Leeds United",
+    "Burnley",
+    "Sunderland"
+   ],
+   "champ": [
+    "Ipswich Town",
+    "Sheffield Utd",
+    "Southampton",
+    "Leicester City",
+    "Bristol City",
+    "Millwall",
+    "Coventry City",
+    "Middlesbrough",
+    "Norwich",
+    "Watford",
+    "West Brom",
+    "Birmingham",
+    "Swansea",
+    "Blackburn",
+    "Hull City",
+    "Wrexham",
+    "QPR",
+    "Oxford United",
+    "Derby County",
+    "Stoke",
+    "Charlton",
+    "Portsmouth",
+    "Preston NE",
+    "Sheffield Wed"
+   ],
+   "pScorer": "Erling Haaland",
+   "cScorer": "Haji Wright"
+  },
+  "Will": {
+   "prem": [
+    "Liverpool",
+    "Man City",
+    "Chelsea",
+    "Arsenal",
+    "Aston Villa",
+    "Man United",
+    "Tottenham",
+    "Brighton Hove",
+    "Newcastle",
+    "Everton",
+    "Crystal Palace",
+    "Fulham",
+    "Nottingham",
+    "West Ham",
+    "Bournemouth",
+    "Sunderland",
+    "Brentford",
+    "Wolverhampton",
+    "Leeds United",
+    "Burnley"
+   ],
+   "champ": [
+    "Southampton",
+    "Ipswich Town",
+    "Sheffield Utd",
+    "Leicester City",
+    "Birmingham",
+    "Coventry City",
+    "Millwall",
+    "West Brom",
+    "Bristol City",
+    "Middlesbrough",
+    "Norwich",
+    "Wrexham",
+    "Derby County",
+    "Stoke",
+    "Swansea",
+    "Blackburn",
+    "QPR",
+    "Hull City",
+    "Charlton",
+    "Portsmouth",
+    "Watford",
+    "Oxford United",
+    "Sheffield Wed",
+    "Preston NE"
+   ],
+   "pScorer": "Erling Haaland",
+   "cScorer": "Jay Stansfield"
+  }
+ },
+ "expected_totals": {
+  "Will": 197,
+  "Dom": 211,
+  "Luke": 218,
+  "Matteo": 219
+ }
+}

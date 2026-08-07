@@ -1,0 +1,29 @@
+# Secrets — the football-data.org token lives in Key.txt AND inside Standings.xlsx Power Queries.
+# The parent repo has a PUBLIC remote: these must never be committed.
+Key.txt
+Standings.xlsx
+
+# env
+.env
+.env.*
+
+# dependencies / build
+node_modules/
+.next/
+out/
+
+# vercel
+.vercel
+
+# misc
+*.log
+.DS_Store
+
+# typescript / testing / debug
+*.tsbuildinfo
+next-env.d.ts
+/coverage
+npm-debug.log*
+
+.vercel
+.env*
