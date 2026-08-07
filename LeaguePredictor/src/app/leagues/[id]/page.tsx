@@ -176,7 +176,7 @@ async function Leaderboard({
           <tbody>
             {ranked.map((row) => (
               <tr key={row.userId} className="border-b border-border/50 last:border-0 hover:bg-surface-2/60 transition-colors">
-                <td className="px-4 py-3 font-display font-bold tabular">{row.complete ? row.rank : '—'}</td>
+                <td className="px-4 py-3 font-num font-bold tabular">{row.complete ? row.rank : '—'}</td>
                 <td className="px-4 py-3">
                   <Link href={`/leagues/${leagueId}/p/${row.userId}`} className="font-semibold hover:text-primary transition-colors">
                     {nameById.get(row.userId) ?? 'Unknown'}
@@ -184,7 +184,7 @@ async function Leaderboard({
                   {!row.complete && <span className="ml-2 text-xs italic text-muted">missing picks</span>}
                 </td>
                 {row.competitions.map((c) => (
-                  <td key={c.competitionId} className="px-4 py-3 text-right tabular">
+                  <td key={c.competitionId} className="px-4 py-3 text-right font-num tabular">
                     {c.submitted ? (
                       <>
                         {c.tablePoints}
@@ -195,7 +195,7 @@ async function Leaderboard({
                     )}
                   </td>
                 ))}
-                <td className="px-4 py-3 text-right font-display text-base font-extrabold tabular">
+                <td className="px-4 py-3 text-right font-num text-base font-extrabold tabular">
                   {row.complete ? row.total : '—'}
                 </td>
               </tr>

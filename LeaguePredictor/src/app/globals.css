@@ -1,20 +1,48 @@
 @import "tailwindcss";
 
-/* Placeholder theme — final palette/fonts arrive from Claude Design (see DESIGN_BRIEF.md).
-   Everything is wired through CSS variables so assets drop in without refactoring. */
-:root {
-  --bg: #0a1120;
-  --surface: #111a2d;
-  --surface-2: #182441;
-  --border: #24314f;
-  --text: #e9eefb;
-  --muted: #8ea0c0;
-  --primary: #2ee87e;
-  --primary-ink: #05240f;
-  --accent: #4cc9f0;
-  --spot: #2ee87e;
-  --close: #f5c84c;
-  --off: #f4795b;
+/* Spot On design system — tokens from Claude Design (spot-on-tokens.css).
+   Dark is the shipping default. Surfaces stay neutral so club crests
+   (the full rainbow) never clash. Points are bad: low is good, and
+   --spot is the brand's celebration colour. */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0f12;
+  --surface: #141a1f;
+  --surface-2: #1d252c;
+  --border: #2a343d;
+  --text: #f2f5f7;
+  --muted: #8a99a6;
+
+  --primary: #c6fa3f;
+  --primary-ink: #0b0f12;
+  --accent: #3ddbd9;
+
+  --spot: #c6fa3f;
+  --spot-bg: #2c3d0e;
+  --close: #f5a623;
+  --close-bg: #3d2e0b;
+  --off: #ff5c5c;
+  --off-bg: #3d1414;
+}
+
+[data-theme="light"] {
+  --bg: #f4f6f4;
+  --surface: #ffffff;
+  --surface-2: #e9edea;
+  --border: #d3dad5;
+  --text: #0b0f12;
+  --muted: #56616a;
+
+  --primary: #b7ee2e;
+  --primary-ink: #0b0f12;
+  --accent: #0e7c7b;
+
+  --spot: #3f6b00;
+  --spot-bg: #eaf7c4;
+  --close: #8a5200;
+  --close-bg: #fbedd2;
+  --off: #b3261e;
+  --off-bg: #fadcda;
 }
 
 @theme inline {
@@ -28,10 +56,14 @@
   --color-primary-ink: var(--primary-ink);
   --color-accent: var(--accent);
   --color-spot: var(--spot);
+  --color-spot-bg: var(--spot-bg);
   --color-close: var(--close);
+  --color-close-bg: var(--close-bg);
   --color-off: var(--off);
+  --color-off-bg: var(--off-bg);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
+  --font-num: var(--font-num);
 }
 
 html {
@@ -41,8 +73,8 @@ html {
 body {
   background: var(--bg);
   background-image:
-    radial-gradient(1200px 600px at 80% -10%, rgba(76, 201, 240, 0.07), transparent 60%),
-    radial-gradient(900px 500px at 10% 110%, rgba(46, 232, 126, 0.05), transparent 60%);
+    radial-gradient(1200px 600px at 80% -10%, rgba(61, 219, 217, 0.05), transparent 60%),
+    radial-gradient(900px 500px at 10% 110%, rgba(198, 250, 63, 0.04), transparent 60%);
   color: var(--text);
   font-family: var(--font-body), system-ui, sans-serif;
   min-height: 100dvh;
@@ -52,6 +84,7 @@ h1, h2, h3 {
   font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
 }
 
+/* Scores, positions and diffs read in IBM Plex Mono with lining figures */
 .tabular {
   font-variant-numeric: tabular-nums;
 }

@@ -1,5 +1,18 @@
 # Changelog — Spot On
 
+## v0.1.1 — 2026-08-07
+
+Claude Design system integrated (from `Spot on design system.zip`):
+
+- Palette swapped to the branded tokens: near-black `#0B0F12` bg, neutral surfaces,
+  electric lime `#C6FA3F` primary/celebration colour, teal accent, and the semantic
+  spot-on/close/way-off trio with dedicated chip backgrounds; light-theme tokens
+  included behind `[data-theme="light"]` (no toggle yet)
+- Type: Archivo (display) + IBM Plex Sans (UI) + IBM Plex Mono for every score,
+  position and diff number
+- Target-motif brand mark in the header and landing hero; SVG favicon + app icon
+  replace the scaffold defaults
+
 ## v0.1.0 — 2026-08-07
 
 First release, live at https://spot-on-liart.vercel.app

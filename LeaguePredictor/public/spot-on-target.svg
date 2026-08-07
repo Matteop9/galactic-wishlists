@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <title>Spot On target mark</title>
+  <circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="6"></circle>
+  <circle cx="32" cy="32" r="7.5" fill="currentColor"></circle>
+  <path d="M32 2v7M32 55v7M2 32h7M55 32h7" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+</svg>

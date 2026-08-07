@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none">
+  <title>Spot On mark</title>
+  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3"></circle>
+  <circle cx="12" cy="12" r="3.2" fill="currentColor"></circle>
+</svg>

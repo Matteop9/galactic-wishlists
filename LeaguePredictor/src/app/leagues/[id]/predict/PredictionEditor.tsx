@@ -298,7 +298,7 @@ function SortableRow({
           <circle cx="14" cy="16" r="1.7" />
         </svg>
       </button>
-      <span className="w-7 text-right font-display font-bold tabular text-muted">{index + 1}</span>
+      <span className="w-7 text-right font-num font-bold tabular text-muted">{index + 1}</span>
       <Crest src={team?.crest} alt="" size={20} />
       <span className="flex-1 truncate text-sm font-semibold">{team?.shortName ?? teamId}</span>
       <div className="flex gap-1">

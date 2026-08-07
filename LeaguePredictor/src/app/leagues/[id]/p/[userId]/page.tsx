@@ -91,8 +91,8 @@ export default async function PlayerDetailPage({
       <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
         <h1 className="text-3xl font-extrabold tracking-tight">{playerName}’s picks</h1>
         {locked && allIn && (
-          <p className="font-display text-2xl font-extrabold tabular">
-            {grandTotal} <span className="text-sm font-semibold text-muted">pts total</span>
+          <p className="font-num text-2xl font-extrabold tabular">
+            {grandTotal} <span className="font-body text-sm font-semibold text-muted">pts total</span>
           </p>
         )}
       </div>
@@ -116,7 +116,7 @@ export default async function PlayerDetailPage({
                 </h2>
                 {locked && tableScore && (
                   <p className="text-sm text-muted">
-                    <span className="font-display text-lg font-extrabold text-ink tabular">
+                    <span className="font-num text-lg font-extrabold text-ink tabular">
                       {tableScore.total + (scorer?.bonus ?? 0)}
                     </span>{' '}
                     pts
@@ -171,7 +171,7 @@ export default async function PlayerDetailPage({
                         const team = teamInfo.get(row.teamId);
                         return (
                           <tr key={row.teamId} className="border-b border-border/40 last:border-0">
-                            <td className="px-3 py-1.5 text-right font-semibold tabular text-muted">{row.predictedPos}</td>
+                            <td className="px-3 py-1.5 text-right font-num font-semibold tabular text-muted">{row.predictedPos}</td>
                             <td className="px-3 py-1.5">
                               <span className="flex items-center gap-2">
                                 <Crest src={team?.crest} alt="" size={18} />
@@ -180,7 +180,7 @@ export default async function PlayerDetailPage({
                             </td>
                             {locked && (
                               <>
-                                <td className="px-3 py-1.5 text-right tabular">{row.actualPos ?? '—'}</td>
+                                <td className="px-3 py-1.5 text-right font-num tabular">{row.actualPos ?? '—'}</td>
                                 <td className="px-3 py-1.5 text-right">
                                   <DiffChip diff={row.diff} missing={row.actualPos === null} />
                                 </td>

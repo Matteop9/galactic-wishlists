@@ -8,15 +8,15 @@ export default function DiffChip({ diff, missing = false }: { diff: number; miss
   }
   if (diff === 0) {
     return (
-      <span className="inline-flex min-w-14 items-center justify-center gap-1 rounded-full bg-spot/15 px-2 py-0.5 text-xs font-bold text-spot">
+      <span className="inline-flex min-w-14 items-center justify-center gap-1 rounded-full bg-spot-bg px-2 py-0.5 text-xs font-bold text-spot">
         ● spot on
       </span>
     );
   }
-  const tone = diff <= 3 ? 'bg-close/15 text-close' : 'bg-off/15 text-off';
+  const tone = diff <= 3 ? 'bg-close-bg text-close' : 'bg-off-bg text-off';
   return (
     <span
-      className={`inline-flex min-w-14 items-center justify-center rounded-full px-2 py-0.5 text-xs font-bold tabular ${tone}`}
+      className={`inline-flex min-w-14 items-center justify-center rounded-full px-2 py-0.5 font-num text-xs font-bold tabular ${tone}`}
     >
       {diff} off
     </span>

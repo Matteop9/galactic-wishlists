@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import { getMyLeagueIds } from '@/lib/leagues';
+import TargetMark from '@/components/TargetMark';
 
 async function goToJoin(formData: FormData) {
   'use server';
@@ -18,6 +19,7 @@ export default async function Home() {
     return (
       <div className="py-8">
         <div className="mx-auto max-w-2xl text-center">
+          <TargetMark className="mx-auto mb-4 text-primary" size={44} />
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-primary">
             Predict the table game
           </p>

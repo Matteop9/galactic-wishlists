@@ -1,17 +1,23 @@
 import type { Metadata } from 'next';
-import { Outfit, Inter } from 'next/font/google';
+import { Archivo, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { getSession, clearSessionCookie } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import TargetMark from '@/components/TargetMark';
 import './globals.css';
 
-const display = Outfit({ subsets: ['latin'], variable: '--font-display', weight: ['600', '700', '800'] });
-const body = Inter({ subsets: ['latin'], variable: '--font-body' });
+const display = Archivo({ subsets: ['latin'], variable: '--font-display', weight: ['700', '800'] });
+const body = IBM_Plex_Sans({ subsets: ['latin'], variable: '--font-body', weight: ['400', '500', '600'] });
+const num = IBM_Plex_Mono({ subsets: ['latin'], variable: '--font-num', weight: ['500'] });
 
 export const metadata: Metadata = {
   title: 'Spot On — call the table',
   description:
     'Predict the final league table with your mates. One point for every position you are off. Lowest score wins.',
+  icons: {
+    icon: '/spot-on-favicon.svg',
+    apple: '/spot-on-app-icon.svg',
+  },
 };
 
 async function logout() {
@@ -23,12 +29,12 @@ async function logout() {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${num.variable}`}>
       <body>
         <header className="border-b border-border bg-surface/70 backdrop-blur">
           <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-center gap-2">
-              <span className="inline-block h-3 w-3 rounded-full bg-primary shadow-[0_0_12px_var(--primary)]" />
+              <TargetMark className="text-primary" size={20} />
               <span className="font-display text-lg font-extrabold tracking-tight">Spot On</span>
             </Link>
             {session ? (
