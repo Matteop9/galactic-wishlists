@@ -184,6 +184,18 @@ export const setGameweekStatus = (id: string, status: string) =>
 export const createGameweek = (date: string) =>
   unwrap(supabase.rpc('create_gameweek', { p_date: date }))
 
+/** Toggle a gameweek's international-break mode. Break weeks have no club
+    football, so live polling goes off with it (and back on when undone). */
+export const setIntlBreak = (id: string, on: boolean) =>
+  unwrap(
+    supabase
+      .from('gameweeks')
+      .update({ is_international_break: on, live_enabled: !on })
+      .eq('id', id)
+      .select()
+      .single(),
+  )
+
 export const claimPlayer = (token: string) =>
   unwrap(supabase.rpc('claim_player', { claim_token: token }))
 

@@ -18,11 +18,15 @@ here first (or in the in-app feedback queue), then get ticked off per release.
       — note: an adjustment on the Test Weekend GW only shows in the sandbox, never in real standings
 - [x] Load more on pick history (profile) and GW history chart
 
+## Shipped in v0.4.0 (2026-08-10)
+
+- [x] Club badges for lower-league sides — TheSportsDB fallback resolved via `scripts/fetch-badges.ts` → `src/lib/badges.ts`; anything still unmatched keeps the initials chip
+- [x] International-break weeks — admin toggle per gameweek (sets `is_international_break`, turns live off), 🌍 chip everywhere, Enter Pick suggests sports with emoji instead of clubs; 4 historical break weeks back-tagged
+
 ## Backlog / deferred
 
 - [ ] Screenshot ingestion (deferred from v0.1 checklist)
 - [ ] Announcement graphic (deferred from v0.1 checklist)
-- [ ] Club badges for lower-league sides (only clubs with football-data.org crest ids show badges; the rest fall back to initials chips)
 - [ ] Feedback-driven items — see Admin → Feedback Queue
 
 ## Conventions

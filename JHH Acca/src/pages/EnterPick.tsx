@@ -13,8 +13,9 @@ import { useCountdown } from '../hooks/useCountdown'
 import RequireAuth from '../components/RequireAuth'
 import LiveBanner from '../components/LiveBanner'
 import TeamCombobox from '../components/TeamCombobox'
-import { Avatar, PageTitle, teamColor } from '../components/ui'
+import { Avatar, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
 import { gwDate, odds2, ukTime } from '../lib/format'
+import { SPORTS } from '../lib/teams'
 
 /* Enter Pick: any teammate can enter for their team (pair-scoped on the Test
    Weekend). Method segmented control, selection, second team iff BTTS, odds
@@ -41,6 +42,18 @@ function EnterPickInner() {
     queryFn: fetchTeamDictionary,
     staleTime: 10 * 60_000,
   })
+
+  // Break weeks suggest sports; normal weeks suggest clubs (never both).
+  const isBreak = !!gw?.is_international_break
+  const pickOptions = useMemo(() => {
+    const dict = teamDict ?? []
+    if (!isBreak) return dict.filter((o) => !SPORTS.has(o.name))
+    const used = dict.filter((o) => SPORTS.has(o.name))
+    const unused = [...SPORTS]
+      .filter((s) => !used.some((u) => u.name === s))
+      .map((name) => ({ name, uses: 0 }))
+    return [...used, ...unused]
+  }, [teamDict, isBreak])
 
   // Who can I pick for? season_team_members mapping if it exists, else my acca team.
   const myTeamPlayers = useMemo(() => {
@@ -143,6 +156,23 @@ function EnterPickInner() {
         doesn't count unless it's been posted in the group chat.
       </div>
 
+      {isBreak && (
+        <div
+          className="mb-3 flex items-start gap-2 rounded-[12px] border px-3.5 py-2.5 text-[11.5px]"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--color-jhp) 45%, transparent)',
+            background: 'rgba(87,184,240,0.07)',
+            color: 'var(--color-jhp)',
+          }}
+        >
+          <span className="pt-0.5"><IntlBreakChip /></span>
+          <span>
+            No club football this week — pick a <span className="font-bold">sport</span> instead
+            (NFL, boxing, the horses…). Odds rules as normal. No live scores on break weeks.
+          </span>
+        </div>
+      )}
+
       {!windowOpen && (
         <LiveBanner pulse={false}>
           Window is {gw.status === 'closed' || Date.now() >= new Date(gw.window_closes).getTime() ? 'closed' : `not open yet — opens ${ukTime(gw.window_opens)}`}
@@ -201,12 +231,14 @@ function EnterPickInner() {
       </div>
 
       <div className="mb-4">
-        <div className="overline mb-1.5">{method === 'BTTS' ? 'FIRST TEAM' : 'SELECTION'}</div>
+        <div className="overline mb-1.5">
+          {isBreak ? 'SPORT' : method === 'BTTS' ? 'FIRST TEAM' : 'SELECTION'}
+        </div>
         <TeamCombobox
           value={team}
           onChange={setTeam}
-          options={teamDict ?? []}
-          placeholder={method === 'BTTS' ? 'e.g. Bolton' : 'e.g. Charlton'}
+          options={pickOptions}
+          placeholder={isBreak ? 'e.g. NFL' : method === 'BTTS' ? 'e.g. Bolton' : 'e.g. Charlton'}
         />
       </div>
 
@@ -215,7 +247,7 @@ function EnterPickInner() {
         <TeamCombobox
           value={secondTeam}
           onChange={setSecondTeam}
-          options={teamDict ?? []}
+          options={pickOptions}
           disabled={method !== 'BTTS'}
           placeholder={method === 'BTTS' ? 'e.g. Stockport' : 'Only for BTTS picks'}
         />

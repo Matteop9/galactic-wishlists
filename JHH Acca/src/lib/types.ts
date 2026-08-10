@@ -29,6 +29,7 @@ export interface Gameweek {
   status: GwStatus
   is_season_final: boolean
   live_enabled: boolean
+  is_international_break: boolean
 }
 
 export interface Pick {

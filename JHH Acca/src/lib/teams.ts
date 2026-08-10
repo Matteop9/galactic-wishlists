@@ -4,6 +4,8 @@
    (see TeamBadge in components/ui.tsx), so missing entries are cosmetic only.
    Keys must match the canonical names used in picks (see migration 0017). */
 
+import { SDB_BADGES } from './badges'
+
 const CRESTS: Record<string, number> = {
   // Premier League / EFL
   Arsenal: 57,
@@ -137,7 +139,37 @@ const CRESTS: Record<string, number> = {
   Benfica: 1903,
 }
 
+/* International-break weeks: picks are sports, not clubs. Emoji stand in for
+   crests, and the pick combobox suggests these instead of teams. */
+export const SPORT_EMOJI: Record<string, string> = {
+  Football: '⚽',
+  NFL: '🏈',
+  Boxing: '🥊',
+  UFC: '🥋',
+  Cricket: '🏏',
+  Darts: '🎯',
+  F1: '🏎️',
+  Nascar: '🏁',
+  Tennis: '🎾',
+  'Horse Racing': '🐎',
+  'Ice Hockey': '🏒',
+  Lacrosse: '🥍',
+  'League of Legends': '🎮',
+  Volleyball: '🏐',
+  Golf: '⛳',
+  Rugby: '🏉',
+  Snooker: '🎱',
+  Basketball: '🏀',
+  Baseball: '⚾',
+}
+
+export const SPORTS = new Set(Object.keys(SPORT_EMOJI))
+
 export function crestUrl(team: string): string | null {
   const id = CRESTS[team]
-  return id ? `https://crests.football-data.org/${id}.png` : null
+  if (id) return `https://crests.football-data.org/${id}.png`
+  // Lower-league + everything else: TheSportsDB badges resolved by
+  // scripts/fetch-badges.ts; /small = 64px variant, plenty for chip sizes.
+  const badge = SDB_BADGES[team]
+  return badge ? `${badge}/small` : null
 }

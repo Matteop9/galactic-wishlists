@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { fetchGameweeks, fetchSeasons } from '../lib/queries'
 import RequireAuth from '../components/RequireAuth'
-import { GwStatusChip, PageTitle } from '../components/ui'
+import { GwStatusChip, IntlBreakChip, PageTitle } from '../components/ui'
 import { gwDate } from '../lib/format'
 
 function GameweeksInner() {
@@ -29,7 +29,10 @@ function GameweeksInner() {
               <div className="font-mono text-[13px] font-semibold">{gwDate(g.gw_date)}</div>
               <div className="text-[10.5px] text-muted">{seasonName(g.season_id)}</div>
             </div>
-            <GwStatusChip status={g.status} />
+            <span className="flex items-center gap-1.5">
+              {g.is_international_break && <IntlBreakChip />}
+              <GwStatusChip status={g.status} />
+            </span>
           </Link>
         ))}
         {list.length === 0 && <div className="p-5 text-center text-sm text-muted">Nothing here.</div>}

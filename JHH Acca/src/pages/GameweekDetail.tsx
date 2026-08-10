@@ -21,6 +21,7 @@ import {
   DoubleChip,
   GwStatusChip,
   MethodBadge,
+  IntlBreakChip,
   SandboxChip,
   StateIcon,
   TeamBadge,
@@ -246,6 +247,7 @@ function GameweekDetailInner() {
           </Link>
           <span className="display text-xl leading-none">{gw ? gwDate(gw.gw_date) : '…'}</span>
           {isTest && <SandboxChip />}
+          {gw?.is_international_break && <IntlBreakChip />}
         </div>
         {gw && <GwStatusChip status={gw.status} />}
       </div>

@@ -10,7 +10,7 @@ import { useCountdown } from '../hooks/useCountdown'
 import AccaCard from '../components/AccaCard'
 import LiveBanner from '../components/LiveBanner'
 import WhatsNew from '../components/WhatsNew'
-import { GwStatusChip, SandboxChip, teamColor } from '../components/ui'
+import { GwStatusChip, IntlBreakChip, SandboxChip, teamColor } from '../components/ui'
 import { gwDate, ukTime } from '../lib/format'
 import RequireAuth from '../components/RequireAuth'
 
@@ -59,6 +59,7 @@ function ThisWeekInner() {
         {gw && (
           <Link to={`/gameweeks/${gw.id}`} className="flex items-center gap-2">
             <span className="font-mono text-[11px] text-muted">{gwDate(gw.gw_date)}</span>
+            {gw.is_international_break && <IntlBreakChip />}
             <GwStatusChip status={gw.status} />
           </Link>
         )}

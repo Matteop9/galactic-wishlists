@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { initials } from '../lib/format'
-import { crestUrl } from '../lib/teams'
+import { crestUrl, SPORT_EMOJI } from '../lib/teams'
 
 export const teamColor = (team: string) =>
   team === 'VDL' ? 'var(--color-vdl)' : team === 'JHP' ? 'var(--color-jhp)' : 'var(--color-accent)'
@@ -61,6 +61,20 @@ export function TeamChip({ team }: { team: string }) {
   )
 }
 
+export function IntlBreakChip() {
+  return (
+    <span
+      className="rounded-[4px] border px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]"
+      style={{
+        borderColor: 'color-mix(in srgb, var(--color-jhp) 40%, transparent)',
+        color: 'var(--color-jhp)',
+      }}
+    >
+      🌍 Int'l break
+    </span>
+  )
+}
+
 export function SandboxChip() {
   return (
     <span
@@ -99,6 +113,13 @@ export function Avatar({ name, team, size = 30 }: { name: string; team: string; 
     load silently falls back to the chip. */
 export function TeamBadge({ name, size = 18 }: { name: string; size?: number }) {
   const [failed, setFailed] = useState(false)
+  const emoji = SPORT_EMOJI[name]
+  if (emoji)
+    return (
+      <span className="shrink-0 leading-none" style={{ fontSize: size * 0.85 }}>
+        {emoji}
+      </span>
+    )
   const url = crestUrl(name)
   if (!url || failed)
     return (

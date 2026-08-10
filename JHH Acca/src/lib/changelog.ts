@@ -10,6 +10,16 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.4.0',
+    date: '2026-08-10',
+    title: 'Badges for everyone + international breaks',
+    items: [
+      'Club badges for lower-league sides — Stockport, Crewe, Wrexham and co. finally get their crests',
+      'International break weeks: marked with a 🌍 chip, the pick page suggests sports (with emoji) instead of clubs, and live scores stay off',
+      'Past break weeks (Sep/Oct/Nov ’25, Mar ’26) tagged automatically',
+    ],
+  },
+  {
     version: '0.3.0',
     date: '2026-08-10',
     title: 'Phase 2 — polish pass',

@@ -1,5 +1,10 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.4.0 — 2026-08-10
+
+- **Lower-league badges**: `scripts/fetch-badges.ts` resolves every club without a football-data.org crest against TheSportsDB (conservative matching: Soccer-only, exact > alternate > substring, alias table for nicknames like Stockport→Stockport County, Hearts→Heart of Midlothian; rate-limit-aware and resumable) and generates `src/lib/badges.ts`. `crestUrl()` now falls back football-data → TheSportsDB `/small` (64px) → initials chip. Rerun the script when a brand-new club appears.
+- **International breaks** (migration `0018`): `gameweeks.is_international_break` flag; admin toggles it per week (🌍 BREAK button), which also flips `live_enabled` off/on — `live_tick()` already gates on that, so the Saturday poller stays silent. Break weeks show a 🌍 INT'L BREAK chip on This Week / Gameweeks / detail; Enter Pick shows a break banner and suggests **sports** (with emoji badges — ⚽🏈🥊🐎…) instead of clubs, while normal weeks no longer suggest sport categories. The four historical break weeks (2025-09-06, 2025-10-11, 2025-11-15, 2026-03-28) were back-tagged by their sport picks.
+
 ## v0.3.0 — 2026-08-10
 
 Phase 2 polish pass (full request list tracked in `docs/phase-2.md`):

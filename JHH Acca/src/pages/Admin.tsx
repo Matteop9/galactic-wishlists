@@ -17,6 +17,7 @@ import {
   setAppConfig,
   setFeedbackStatus,
   setGameweekStatus,
+  setIntlBreak,
   addAdjustment,
 } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
@@ -96,6 +97,13 @@ function AdminInner() {
     onSuccess: () => inv('gameweeks'),
   })
   const newGw = useMutation({ mutationFn: createGameweek, onSuccess: () => inv('gameweeks') })
+  const intlBreak = useMutation({
+    mutationFn: ({ id, on }: { id: string; on: boolean }) => setIntlBreak(id, on),
+    onSuccess: () => {
+      inv('gameweeks')
+      inv('currentGw')
+    },
+  })
   const resolve = useMutation({
     mutationFn: ({ id, status, note }: { id: string; status: 'upheld' | 'rejected'; note: string }) =>
       resolveDispute(id, status, note),
@@ -278,6 +286,14 @@ function AdminInner() {
             <span className="font-mono text-[12px]">{gwDate(g.gw_date)}</span>
             <div className="flex items-center gap-2">
               <GwStatusChip status={g.status} />
+              <button
+                className="font-mono text-[10px] underline"
+                title="International break: sport picks instead of clubs, live scores off"
+                style={{ color: g.is_international_break ? 'var(--color-jhp)' : 'var(--color-muted)' }}
+                onClick={() => intlBreak.mutate({ id: g.id, on: !g.is_international_break })}
+              >
+                {g.is_international_break ? '🌍 BREAK ON' : 'BREAK'}
+              </button>
               <button
                 className="font-mono text-[10px] text-muted underline"
                 onClick={() => gwStatus.mutate({ id: g.id, status: g.status === 'skipped' ? 'scheduled' : 'skipped' })}
