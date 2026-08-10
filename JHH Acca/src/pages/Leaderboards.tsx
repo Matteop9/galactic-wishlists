@@ -91,6 +91,8 @@ function LeaderboardsInner() {
   const [tabIdx, setTabIdx] = useState(0)
   const [customStart, setCustomStart] = useState('2026-06-01')
   const [customEnd, setCustomEnd] = useState(today)
+  const [excludeBreaks, setExcludeBreaks] = useState(false)
+  const [formN, setFormN] = useState(5)
   const tab = tabs[Math.min(tabIdx, tabs.length - 1)] ?? { kind: 'all' as const }
 
   // provisional live overlay - only meaningful while a live gameweek is closed
@@ -130,13 +132,13 @@ function LeaderboardsInner() {
         : [tab.season.start_date, tab.season.end_date]
 
   const { data: rows } = useQuery({
-    queryKey: ['leaderboard', range[0], range[1]],
-    queryFn: () => fetchLeaderboard(range[0], range[1]),
+    queryKey: ['leaderboard', range[0], range[1], excludeBreaks],
+    queryFn: () => fetchLeaderboard(range[0], range[1], excludeBreaks),
     enabled: tab.kind !== 'test',
   })
   const { data: teamRows } = useQuery({
-    queryKey: ['teamLeaderboard', range[0], range[1]],
-    queryFn: () => fetchTeamLeaderboard(range[0], range[1]),
+    queryKey: ['teamLeaderboard', range[0], range[1], excludeBreaks],
+    queryFn: () => fetchTeamLeaderboard(range[0], range[1], excludeBreaks),
     enabled: tab.kind !== 'test',
   })
   const { data: testRows } = useQuery({
@@ -144,7 +146,10 @@ function LeaderboardsInner() {
     queryFn: () => fetchSeasonLeaderboard((tab as Extract<Tab, { kind: 'test' }>).season.id),
     enabled: tab.kind === 'test',
   })
-  const { data: formCells } = useQuery({ queryKey: ['formGrid'], queryFn: () => fetchFormGrid(5) })
+  const { data: rawFormCells } = useQuery({
+    queryKey: ['formGrid', formN],
+    queryFn: () => fetchFormGrid(formN),
+  })
   const { data: allTws } = useQuery({ queryKey: ['allTeamWeekScores'], queryFn: fetchAllTeamWeekScores })
 
   // column sorting — default ranks All Time by score-per-match, else by score
@@ -168,6 +173,17 @@ function LeaderboardsInner() {
   const vdl = teamRows?.find((t) => t.acca_team === 'VDL')?.score ?? 0
   const jhp = teamRows?.find((t) => t.acca_team === 'JHP')?.score ?? 0
 
+  // Dates of international-break weeks — the standings filter is applied in SQL,
+  // so the chart and form grid below it filter client-side to stay consistent.
+  const breakDates = useMemo(
+    () => new Set((allGws ?? []).filter((g) => g.is_international_break).map((g) => g.gw_date)),
+    [allGws],
+  )
+  const formCells = useMemo(
+    () => (excludeBreaks ? (rawFormCells ?? []).filter((c) => !breakDates.has(c.gw_date)) : rawFormCells),
+    [rawFormCells, excludeBreaks, breakDates],
+  )
+
   // GW history: per-week VDL v JHP margins within the selected range
   const gwHistory = useMemo(() => {
     if (!allTws || !allGws || !seasons) return []
@@ -177,6 +193,7 @@ function LeaderboardsInner() {
         (g) =>
           g.status === 'settled' &&
           !testSeasons.has(g.season_id) &&
+          !(excludeBreaks && g.is_international_break) &&
           g.gw_date >= range[0] &&
           g.gw_date <= range[1],
       )
@@ -189,7 +206,7 @@ function LeaderboardsInner() {
           jhp: Number(week.find((w) => w.team_name === 'JHP')?.week_score ?? 0),
         }
       })
-  }, [allTws, allGws, seasons, range[0], range[1]])
+  }, [allTws, allGws, seasons, excludeBreaks, range[0], range[1]])
 
   const testSorted = [...(testRows ?? [])].sort((a, b) => b.score - a.score)
   const testTeams = new Map<string, number>()
@@ -199,21 +216,28 @@ function LeaderboardsInner() {
     <div className="px-4 pb-6">
       <PageTitle right={tab.kind === 'test' ? <SandboxChip /> : undefined}>STANDINGS</PageTitle>
 
-      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3">
-        {tabs.map((t, i) => (
-          <button
-            key={tabLabel(t)}
-            onClick={() => setTabIdx(i)}
-            className="shrink-0 rounded-full px-3.5 py-1.5 text-[12px] font-semibold"
-            style={
-              i === tabIdx
-                ? { background: 'var(--color-accent)', color: 'var(--color-on-accent)' }
-                : { border: '1px solid var(--color-line-strong)', color: 'var(--color-muted)' }
-            }
-          >
-            {tabLabel(t)}
-          </button>
-        ))}
+      <div className="mb-3 grid grid-cols-2 gap-2 pt-1">
+        <select
+          value={Math.min(tabIdx, tabs.length - 1)}
+          onChange={(e) => setTabIdx(Number(e.target.value))}
+          className="w-full rounded-[10px] border bg-surface-2 px-3 py-2 text-[13px] font-semibold"
+          style={{ borderColor: 'var(--color-line-strong)', colorScheme: 'dark' }}
+        >
+          {tabs.map((t, i) => (
+            <option key={tabLabel(t)} value={i}>
+              {tabLabel(t)}
+            </option>
+          ))}
+        </select>
+        <select
+          value={excludeBreaks ? 'excl' : 'incl'}
+          onChange={(e) => setExcludeBreaks(e.target.value === 'excl')}
+          className="w-full rounded-[10px] border bg-surface-2 px-3 py-2 text-[13px] font-semibold"
+          style={{ borderColor: 'var(--color-line-strong)', colorScheme: 'dark' }}
+        >
+          <option value="incl">🌍 Breaks included</option>
+          <option value="excl">🌍 Breaks excluded</option>
+        </select>
       </div>
 
       {tab.kind === 'custom' && (
@@ -350,11 +374,29 @@ function LeaderboardsInner() {
         </div>
       )}
 
-      {tab.kind !== 'test' && formCells && formCells.length > 0 && (
+      {tab.kind !== 'test' && rawFormCells && rawFormCells.length > 0 && (
         <div className="mt-5">
-          <div className="overline mb-2 px-1">FORM — LAST 5 GAMEWEEKS</div>
+          <div className="mb-2 flex items-center justify-between px-1">
+            <span className="overline">FORM — LAST {formN} GAMEWEEKS</span>
+            <span className="flex gap-1.5">
+              {[5, 10, 20].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setFormN(n)}
+                  className="rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold"
+                  style={
+                    n === formN
+                      ? { background: 'var(--color-accent)', color: 'var(--color-on-accent)' }
+                      : { border: '1px solid var(--color-line-strong)', color: 'var(--color-muted)' }
+                  }
+                >
+                  {n}
+                </button>
+              ))}
+            </span>
+          </div>
           <div className="rounded-[14px] bg-surface p-3.5">
-            <FormGrid cells={formCells} />
+            <FormGrid cells={formCells ?? []} />
           </div>
         </div>
       )}

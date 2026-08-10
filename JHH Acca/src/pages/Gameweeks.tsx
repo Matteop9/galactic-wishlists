@@ -1,14 +1,31 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { fetchGameweeks, fetchSeasons } from '../lib/queries'
+import { fetchAllTeamWeekScores, fetchGameweeks, fetchSeasons } from '../lib/queries'
 import RequireAuth from '../components/RequireAuth'
-import { GwStatusChip, IntlBreakChip, PageTitle } from '../components/ui'
-import { gwDate } from '../lib/format'
+import { GwStatusChip, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
+import { gwDate, score2 } from '../lib/format'
+import type { TeamWeekScore } from '../lib/types'
+
+/** "9/12 · VDL +2.01" — legs landed for the week, then who took it and by how much.
+    Team names come from the data (Test Weekend uses Team 1-6, not VDL/JHP). */
+function weekSummary(rows: TeamWeekScore[]) {
+  if (rows.length === 0) return null
+  const wins = rows.reduce((s, r) => s + r.wins, 0)
+  const legs = rows.reduce((s, r) => s + r.legs, 0)
+  const ranked = [...rows].sort((a, b) => Number(b.week_score) - Number(a.week_score))
+  const margin = Number(ranked[0].week_score) - Number(ranked[ranked.length - 1].week_score)
+  return { wins, legs, leader: ranked[0].team_name, margin, drawn: margin === 0 }
+}
 
 function GameweeksInner() {
   const { data: gws } = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks })
   const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
+  const { data: allTws } = useQuery({
+    queryKey: ['allTeamWeekScores'],
+    queryFn: fetchAllTeamWeekScores,
+  })
   const seasonName = (id: string) => seasons?.find((s) => s.id === id)?.name ?? ''
+  const summaryFor = (gwId: string) => weekSummary((allTws ?? []).filter((w) => w.gameweek_id === gwId))
 
   const today = new Date().toISOString().slice(0, 10)
   const upcoming = (gws ?? []).filter((g) => g.gw_date >= today && g.status !== 'settled')
@@ -18,23 +35,44 @@ function GameweeksInner() {
     <>
       <div className="overline mb-2 mt-4 px-1">{title}</div>
       <div className="rounded-[14px] bg-surface">
-        {list.map((g) => (
-          <Link
-            key={g.id}
-            to={`/gameweeks/${g.id}`}
-            className="flex items-center justify-between border-b px-3.5 py-3"
-            style={{ borderColor: 'var(--color-line)' }}
-          >
-            <div>
-              <div className="font-mono text-[13px] font-semibold">{gwDate(g.gw_date)}</div>
-              <div className="text-[10.5px] text-muted">{seasonName(g.season_id)}</div>
-            </div>
-            <span className="flex items-center gap-1.5">
-              {g.is_international_break && <IntlBreakChip />}
-              <GwStatusChip status={g.status} />
-            </span>
-          </Link>
-        ))}
+        {list.map((g) => {
+          const s = g.status === 'settled' ? summaryFor(g.id) : null
+          return (
+            <Link
+              key={g.id}
+              to={`/gameweeks/${g.id}`}
+              className="flex items-center justify-between border-b px-3.5 py-3"
+              style={{ borderColor: 'var(--color-line)' }}
+            >
+              <div>
+                <div className="font-mono text-[13px] font-semibold">{gwDate(g.gw_date)}</div>
+                <div className="text-[10.5px] text-muted">
+                  {seasonName(g.season_id)}
+                  {s && (
+                    <>
+                      {' · '}
+                      <span className="font-mono">
+                        {s.wins}/{s.legs}
+                      </span>
+                      {' · '}
+                      {s.drawn ? (
+                        <span className="font-mono">level</span>
+                      ) : (
+                        <span className="font-mono font-semibold" style={{ color: teamColor(s.leader) }}>
+                          {s.leader} +{score2(s.margin)}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+              <span className="flex items-center gap-1.5">
+                {g.is_international_break && <IntlBreakChip />}
+                <GwStatusChip status={g.status} />
+              </span>
+            </Link>
+          )
+        })}
         {list.length === 0 && <div className="p-5 text-center text-sm text-muted">Nothing here.</div>}
       </div>
     </>

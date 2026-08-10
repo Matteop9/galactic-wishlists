@@ -1,5 +1,14 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.5.0 — 2026-08-10
+
+Feedback-queue items 1–4 (submitted in-app; the BTTS/scoreline item is deferred).
+
+- **Standings period dropdown**: the horizontally-scrolling pill strip is replaced by a native `<select>`. The `tabs` memo already ordered the current season first, so the default selection is "this season" with no change to the ranking logic. Custom still reveals the two date inputs.
+- **International-break filter** (migration `0019`): `v_pick_scores` gains a trailing `is_international_break` column (appended, so `create or replace` is legal and `v_team_week_scores` is untouched); `leaderboard()` and `team_leaderboard()` are dropped and recreated with a third `p_exclude_breaks boolean default false` parameter filtering both the pick CTE and the adjustments/sweeps CTEs, then re-granted to `authenticated, service_role`. Client-side, the GW-margin chart and the form grid filter on the same break dates so the whole page agrees. **Default is include** — every existing call is unchanged. Verified: all-time total identical at `1255.7651115551115554` with the flag off, `1223.7251115551115554` (−32.04, −48 entries) with it on, and all four `scripts/checks.sql` gates still return zero rows.
+- **Gameweek week summary**: the Gameweeks list shows `9/12 · VDL +2.01` under each settled week — legs landed over legs played, then the winning team and margin. Sourced entirely from the existing `v_team_week_scores` view via the shared `['allTeamWeekScores']` query key (no new SQL, cache-shared with Standings). Leader is derived from the data rather than hardcoded, so Test Weekend's `Team 1`–`Team 6` render correctly; level weeks say "level".
+- **Form look-back window**: 5 / 10 / 20 selector on the Form panel, passed to the existing `form_grid(last_n, as_of)` RPC. `FormGrid` shrinks cells from 26px to 20px past 8 weeks and, beyond that, scrolls *inside its own card* with the name column pinned — the page body never scrolls sideways.
+
 ## v0.4.0 — 2026-08-10
 
 - **Lower-league badges**: `scripts/fetch-badges.ts` resolves every club without a football-data.org crest against TheSportsDB (conservative matching: Soccer-only, exact > alternate > substring, alias table for nicknames like Stockport→Stockport County, Hearts→Heart of Midlothian; rate-limit-aware and resumable) and generates `src/lib/badges.ts`. `crestUrl()` now falls back football-data → TheSportsDB `/small` (64px) → initials chip. Rerun the script when a brand-new club appears.

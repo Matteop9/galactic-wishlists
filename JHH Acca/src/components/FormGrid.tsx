@@ -21,10 +21,22 @@ export default function FormGrid({ cells }: { cells: FormCell[] }) {
   )
   const byKey = new Map(cells.map((c) => [`${c.player_id}|${c.gw_date}`, c]))
 
+  /* Longer look-back windows shrink the cells first, and only scroll once even
+     20px columns won't fit — and then inside this card, never the page. */
+  const cw = dates.length > 8 ? 20 : 26
+  const stick = { position: 'sticky', left: 0, zIndex: 1, background: 'var(--color-surface)' } as const
+
   return (
     <div>
-      <div className="grid gap-y-1" style={{ gridTemplateColumns: `52px repeat(${dates.length}, 26px) 1fr` }}>
-        <div />
+      <div className="no-scrollbar overflow-x-auto">
+      <div
+        className="grid gap-y-1"
+        style={{
+          gridTemplateColumns: `52px repeat(${dates.length}, ${cw}px) 1fr`,
+          minWidth: 52 + dates.length * cw + 40,
+        }}
+      >
+        <div style={stick} />
         {dates.map((d) => (
           <div
             key={d}
@@ -43,7 +55,10 @@ export default function FormGrid({ cells }: { cells: FormCell[] }) {
           }).length
           return (
             <FragmentRow key={p.player_id}>
-              <div className="truncate pr-1 text-[11px] font-semibold leading-6" style={{ color: teamColor(p.acca_team) }}>
+              <div
+                className="truncate pr-1 text-[11px] font-semibold leading-6"
+                style={{ ...stick, color: teamColor(p.acca_team) }}
+              >
                 {p.name}
               </div>
               {dates.map((d) => {
@@ -51,13 +66,17 @@ export default function FormGrid({ cells }: { cells: FormCell[] }) {
                 return c ? (
                   <div
                     key={d}
-                    className="mx-auto flex h-6 w-[26px] items-center justify-center rounded-[5px] font-mono text-[9px] font-semibold"
-                    style={cellStyle(c.form_value)}
+                    className="mx-auto flex h-6 items-center justify-center rounded-[5px] font-mono text-[9px] font-semibold"
+                    style={{ ...cellStyle(c.form_value), width: cw }}
                   >
                     {cellLabel(c.form_value)}
                   </div>
                 ) : (
-                  <div key={d} className="mx-auto h-6 w-[26px] rounded-[5px]" style={{ background: 'var(--color-surface-2)' }} />
+                  <div
+                    key={d}
+                    className="mx-auto h-6 rounded-[5px]"
+                    style={{ width: cw, background: 'var(--color-surface-2)' }}
+                  />
                 )
               })}
               <div
@@ -69,6 +88,7 @@ export default function FormGrid({ cells }: { cells: FormCell[] }) {
             </FragmentRow>
           )
         })}
+      </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">

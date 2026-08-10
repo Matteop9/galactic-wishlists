@@ -59,6 +59,7 @@ export interface PickScore extends Omit<Pick, 'match_confidence'> {
   doubled: boolean
   effective_odds: number
   form_value: number | null
+  is_international_break: boolean
 }
 
 export interface LeaderboardRow {

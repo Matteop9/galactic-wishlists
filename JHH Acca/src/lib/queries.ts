@@ -38,12 +38,23 @@ export const fetchGameweeks = () =>
 export const fetchGameweek = (id: string) =>
   unwrap<Gameweek>(supabase.from('gameweeks').select('*').eq('id', id).single())
 
-export const fetchLeaderboard = (start: string, end: string) =>
-  unwrap<LeaderboardRow[]>(supabase.rpc('leaderboard', { range_start: start, range_end: end }))
+/** `excludeBreaks` drops international-break gameweeks from the range (migration 0019). */
+export const fetchLeaderboard = (start: string, end: string, excludeBreaks = false) =>
+  unwrap<LeaderboardRow[]>(
+    supabase.rpc('leaderboard', {
+      range_start: start,
+      range_end: end,
+      p_exclude_breaks: excludeBreaks,
+    }),
+  )
 
-export const fetchTeamLeaderboard = (start: string, end: string) =>
+export const fetchTeamLeaderboard = (start: string, end: string, excludeBreaks = false) =>
   unwrap<TeamLeaderboardRow[]>(
-    supabase.rpc('team_leaderboard', { range_start: start, range_end: end }),
+    supabase.rpc('team_leaderboard', {
+      range_start: start,
+      range_end: end,
+      p_exclude_breaks: excludeBreaks,
+    }),
   )
 
 export const fetchSeasonLeaderboard = (seasonId: string) =>

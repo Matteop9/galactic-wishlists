@@ -10,6 +10,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.5.0',
+    date: '2026-08-10',
+    title: 'Your feedback, done',
+    items: [
+      'Standings: the sideways-scrolling tabs are gone — pick your season from a dropdown, and it starts on this one',
+      'New dropdown next to it: count the international breaks or leave them out',
+      'Gameweeks list now tells you how each week went at a glance — 9/12 · VDL +2.01',
+      'Form grid goes back 5, 10 or 20 weeks — your call',
+    ],
+  },
+  {
     version: '0.4.0',
     date: '2026-08-10',
     title: 'Badges for everyone + international breaks',
