@@ -1,5 +1,13 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.2.0 — 2026-08-10
+
+Username + password auth (replaces magic links entirely — no email, no Supabase redirect-URL config needed):
+- First-time flow: pick your name from the unclaimed list → choose username + password → enter the shared **group code** (default `ACCA2627`, editable on Admin) → in.
+- Auth users created server-side (`register_player` RPC, bcrypt via pgcrypto, synthetic `@players.jhh-acca.app` emails); registration guards verified (wrong code / taken username / short password / claimed name all rejected). Registrations are audited with IP + user agent like everything else.
+- Admin → Accounts: see usernames, edit the group code, **reset password**, **unlink** (frees the name to re-register) — full recovery without email.
+- End-to-end verified: register → auto sign-in → full data access; sign-out/sign-in round trip.
+
 ## v0.1.0 — 2026-08-10
 
 First full build, live at https://jhh-acca.vercel.app.

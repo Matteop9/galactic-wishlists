@@ -156,6 +156,36 @@ export const createGameweek = (date: string) =>
 export const claimPlayer = (token: string) =>
   unwrap(supabase.rpc('claim_player', { claim_token: token }))
 
+// --- username auth ---
+
+export const usernameToEmail = (username: string) =>
+  `${username.trim().toLowerCase()}@players.jhh-acca.app`
+
+export const fetchUnclaimedPlayers = () =>
+  unwrap<{ id: string; name: string; acca_team: string }[]>(supabase.rpc('unclaimed_players'))
+
+/** Creates the auth user server-side and returns the email to sign in with. */
+export const registerPlayer = (playerId: string, username: string, password: string, code: string) =>
+  unwrap<string>(
+    supabase.rpc('register_player', {
+      p_player: playerId,
+      p_username: username,
+      p_password: password,
+      p_code: code,
+    }),
+  )
+
+export const adminResetPassword = (playerId: string, password: string) =>
+  unwrap(supabase.rpc('admin_reset_password', { p_player: playerId, p_password: password }))
+
+export const adminUnlinkPlayer = (playerId: string) =>
+  unwrap(supabase.rpc('admin_unlink_player', { p_player: playerId }))
+
+export const fetchPlayerAccounts = () =>
+  unwrap<{ player_id: string; username: string; created_at: string }[]>(
+    supabase.rpc('admin_player_accounts'),
+  )
+
 // --- admin ---
 
 export interface ClaimToken {

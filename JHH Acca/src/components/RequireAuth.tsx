@@ -21,8 +21,8 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
       <div className="flex min-h-[70dvh] flex-col items-center justify-center gap-3 px-8 text-center">
         <div className="display text-xl">Account not linked</div>
         <p className="text-sm text-muted">
-          You're signed in, but this login isn't linked to a player yet. Ask Matteo for your claim
-          link, then open it on this device.
+          You're signed in, but this login isn't linked to a player. Ask Matteo to sort your
+          account on the admin page.
         </p>
       </div>
     )

@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  createClaimToken,
+  adminResetPassword,
+  adminUnlinkPlayer,
   createGameweek,
   fetchAppConfig,
   fetchAudit,
-  fetchClaimTokens,
   fetchDisputes,
   fetchGameweeks,
   fetchLlmUsage,
+  fetchPlayerAccounts,
   resolveDispute,
   setAppConfig,
   setGameweekStatus,
@@ -52,7 +53,12 @@ function AdminInner() {
   const [newGwDate, setNewGwDate] = useState('')
   const [adj, setAdj] = useState({ player: '', gw: '', kind: 'Minus' as 'Bonus' | 'Minus', reason: '', score: '' })
 
-  const { data: tokens } = useQuery({ queryKey: ['claimTokens'], queryFn: fetchClaimTokens, enabled: isAdmin })
+  const { data: accounts } = useQuery({ queryKey: ['playerAccounts'], queryFn: fetchPlayerAccounts, enabled: isAdmin })
+  const { data: joinCode } = useQuery({
+    queryKey: ['config', 'join_code'],
+    queryFn: () => fetchAppConfig('join_code'),
+    enabled: isAdmin,
+  })
   const { data: gws } = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks })
   const { data: disputes } = useQuery({ queryKey: ['disputes'], queryFn: fetchDisputes })
   const { data: audit } = useQuery({ queryKey: ['audit'], queryFn: () => fetchAudit(50), enabled: isAdmin && showAudit })
@@ -64,7 +70,20 @@ function AdminInner() {
   })
 
   const inv = (k: string) => qc.invalidateQueries({ queryKey: [k] })
-  const genToken = useMutation({ mutationFn: createClaimToken, onSuccess: () => inv('claimTokens') })
+  const resetPw = useMutation({
+    mutationFn: ({ id, pw }: { id: string; pw: string }) => adminResetPassword(id, pw),
+  })
+  const unlink = useMutation({
+    mutationFn: adminUnlinkPlayer,
+    onSuccess: () => {
+      inv('playerAccounts')
+      inv('players')
+    },
+  })
+  const saveCode = useMutation({
+    mutationFn: (c: string) => setAppConfig('join_code', c),
+    onSuccess: () => inv('config'),
+  })
   const gwStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) => setGameweekStatus(id, status),
     onSuccess: () => inv('gameweeks'),
@@ -113,37 +132,60 @@ function AdminInner() {
     <div className="px-4 pb-6">
       <PageTitle>ADMIN</PageTitle>
 
-      <Section title="CLAIM LINKS">
+      <Section title="ACCOUNTS">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="overline shrink-0">GROUP CODE</span>
+          <input
+            defaultValue={(joinCode as string) ?? ''}
+            key={(joinCode as string) ?? ''}
+            onBlur={(e) => e.target.value && e.target.value !== joinCode && saveCode.mutate(e.target.value)}
+            className="w-32 rounded-[8px] border bg-surface-2 px-2 py-1 font-mono text-[12px] font-bold"
+            style={{ borderColor: 'var(--color-line-strong)', color: 'var(--color-accent)' }}
+          />
+          <span className="text-[10px] text-muted">needed to register — share in the chat</span>
+        </div>
         {players.map((p) => {
-          const token = tokens?.find((t) => t.player_id === p.id)
-          const claimed = !!p.auth_user_id
+          const account = accounts?.find((a) => a.player_id === p.id)
           return (
             <div key={p.id} className="flex items-center justify-between border-b py-2 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
               <span className="text-[13px] font-semibold">
                 {p.name}
                 {p.is_admin && <span className="ml-1.5 font-mono text-[9px] text-muted">ADMIN</span>}
+                {account && <span className="ml-1.5 font-mono text-[10px] text-muted">@{account.username}</span>}
               </span>
-              {claimed ? (
-                <span className="font-mono text-[10px]" style={{ color: 'var(--color-win)' }}>CLAIMED</span>
-              ) : token ? (
-                <button
-                  className="font-mono text-[10px] underline"
-                  style={{ color: 'var(--color-accent)' }}
-                  onClick={() => navigator.clipboard.writeText(`${window.location.origin}/claim/${token.token}`)}
-                >
-                  COPY LINK
-                </button>
+              {account ? (
+                <span className="flex gap-2.5">
+                  <button
+                    className="font-mono text-[10px] text-muted underline"
+                    onClick={() => {
+                      const pw = prompt(`New password for ${p.name} (min 8 chars):`)
+                      if (pw) resetPw.mutate({ id: p.id, pw })
+                    }}
+                  >
+                    RESET PW
+                  </button>
+                  <button
+                    className="font-mono text-[10px] underline"
+                    style={{ color: 'var(--color-loss)' }}
+                    onClick={() => {
+                      if (confirm(`Remove ${p.name}'s account so they can re-register?`)) unlink.mutate(p.id)
+                    }}
+                  >
+                    UNLINK
+                  </button>
+                </span>
               ) : (
-                <button
-                  className="font-mono text-[10px] text-muted underline"
-                  onClick={() => genToken.mutate(p.id)}
-                >
-                  GENERATE
-                </button>
+                <span className="font-mono text-[10px] text-muted">NOT REGISTERED</span>
               )}
             </div>
           )
         })}
+        {(resetPw.isError || unlink.isError) && (
+          <p className="mt-1 text-[11px]" style={{ color: 'var(--color-loss)' }}>
+            {((resetPw.error ?? unlink.error) as Error).message}
+          </p>
+        )}
+        {resetPw.isSuccess && <p className="mt-1 text-[11px]" style={{ color: 'var(--color-win)' }}>Password reset ✓</p>}
       </Section>
 
       <Section title="DISPUTES">
