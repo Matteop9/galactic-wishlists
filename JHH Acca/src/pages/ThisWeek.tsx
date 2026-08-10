@@ -9,6 +9,7 @@ import {
 import { useCountdown } from '../hooks/useCountdown'
 import AccaCard from '../components/AccaCard'
 import LiveBanner from '../components/LiveBanner'
+import WhatsNew from '../components/WhatsNew'
 import { GwStatusChip, SandboxChip, teamColor } from '../components/ui'
 import { gwDate, ukTime } from '../lib/format'
 import RequireAuth from '../components/RequireAuth'
@@ -109,6 +110,7 @@ function ThisWeekInner() {
             No gameweek scheduled.
           </div>
         )}
+        <WhatsNew />
       </div>
     </div>
   )

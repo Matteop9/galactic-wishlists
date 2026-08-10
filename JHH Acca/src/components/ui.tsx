@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { initials } from '../lib/format'
+import { crestUrl } from '../lib/teams'
 
 export const teamColor = (team: string) =>
   team === 'VDL' ? 'var(--color-vdl)' : team === 'JHP' ? 'var(--color-jhp)' : 'var(--color-accent)'
@@ -90,6 +91,42 @@ export function Avatar({ name, team, size = 30 }: { name: string; team: string; 
     >
       {initials(name)}
     </div>
+  )
+}
+
+/** Club crest where we have one, otherwise a two-letter initials chip.
+    Crests come from crests.football-data.org (see lib/teams.ts); a failed
+    load silently falls back to the chip. */
+export function TeamBadge({ name, size = 18 }: { name: string; size?: number }) {
+  const [failed, setFailed] = useState(false)
+  const url = crestUrl(name)
+  if (!url || failed)
+    return (
+      <span
+        className="flex shrink-0 items-center justify-center rounded-[5px] font-mono font-semibold uppercase"
+        style={{
+          width: size,
+          height: size,
+          fontSize: Math.max(7, size * 0.4),
+          background: 'var(--color-surface-2)',
+          border: '1px solid var(--color-line-strong)',
+          color: 'var(--color-muted)',
+        }}
+      >
+        {initials(name)}
+      </span>
+    )
+  return (
+    <img
+      src={url}
+      width={size}
+      height={size}
+      loading="lazy"
+      alt=""
+      onError={() => setFailed(true)}
+      className="shrink-0 object-contain"
+      style={{ width: size, height: size }}
+    />
   )
 }
 

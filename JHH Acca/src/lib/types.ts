@@ -182,6 +182,25 @@ export interface SeasonTeamMember {
   player_id: string
 }
 
+export interface Feedback {
+  id: string
+  player_id: string
+  message: string
+  status: 'new' | 'planned' | 'done' | 'dismissed'
+  created_at: string
+}
+
+export interface Adjustment {
+  id: string
+  gameweek_id: string | null
+  player_id: string | null
+  acca_team: string | null
+  kind: 'Bonus' | 'Minus'
+  reason: string
+  score: number
+  created_at: string
+}
+
 export interface AuditRow {
   id: number
   at: string

@@ -4,21 +4,26 @@ import {
   adminResetPassword,
   adminUnlinkPlayer,
   createGameweek,
+  deleteAdjustment,
+  fetchAdjustments,
   fetchAppConfig,
   fetchAudit,
   fetchDisputes,
+  fetchFeedback,
   fetchGameweeks,
   fetchLlmUsage,
   fetchPlayerAccounts,
   resolveDispute,
   setAppConfig,
+  setFeedbackStatus,
   setGameweekStatus,
   addAdjustment,
 } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
-import { GwStatusChip, PageTitle } from '../components/ui'
+import { GwStatusChip, PageTitle, teamColor } from '../components/ui'
 import { gwDate, longDate } from '../lib/format'
+import type { Feedback } from '../lib/types'
 
 /* Admin: claim links, gameweek management, dispute queue, adjustments,
    the audit trail (who/what/when/IP/device) and LLM usage tracking. */
@@ -63,6 +68,8 @@ function AdminInner() {
   const { data: disputes } = useQuery({ queryKey: ['disputes'], queryFn: fetchDisputes })
   const { data: audit } = useQuery({ queryKey: ['audit'], queryFn: () => fetchAudit(50), enabled: isAdmin && showAudit })
   const { data: llm } = useQuery({ queryKey: ['llmUsage'], queryFn: fetchLlmUsage, enabled: isAdmin })
+  const { data: feedback } = useQuery({ queryKey: ['feedback'], queryFn: fetchFeedback, enabled: isAdmin })
+  const { data: adjustments } = useQuery({ queryKey: ['adjustments'], queryFn: fetchAdjustments, enabled: isAdmin })
   const { data: checklist } = useQuery({
     queryKey: ['config', 'test_checklist'],
     queryFn: () => fetchAppConfig('test_checklist'),
@@ -98,6 +105,17 @@ function AdminInner() {
     mutationFn: (ticked: number[]) => setAppConfig('test_checklist', ticked),
     onSuccess: () => inv('config'),
   })
+  const feedbackStatus = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: Feedback['status'] }) => setFeedbackStatus(id, status),
+    onSuccess: () => inv('feedback'),
+  })
+  const removeAdj = useMutation({
+    mutationFn: deleteAdjustment,
+    onSuccess: () => {
+      inv('adjustments')
+      inv('leaderboard')
+    },
+  })
   const addAdj = useMutation({
     mutationFn: () =>
       addAdjustment({
@@ -108,7 +126,11 @@ function AdminInner() {
         reason: adj.reason,
         score: (adj.kind === 'Minus' ? -1 : 1) * Math.abs(parseFloat(adj.score)),
       }),
-    onSuccess: () => setAdj({ player: '', gw: '', kind: 'Minus', reason: '', score: '' }),
+    onSuccess: () => {
+      setAdj({ player: '', gw: '', kind: 'Minus', reason: '', score: '' })
+      inv('adjustments')
+      inv('leaderboard')
+    },
   })
 
   if (!isAdmin)
@@ -148,7 +170,7 @@ function AdminInner() {
           const account = accounts?.find((a) => a.player_id === p.id)
           return (
             <div key={p.id} className="flex items-center justify-between border-b py-2 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
-              <span className="text-[13px] font-semibold">
+              <span className="text-[13px] font-semibold" style={{ color: teamColor(p.acca_team) }}>
                 {p.name}
                 {p.is_admin && <span className="ml-1.5 font-mono text-[9px] text-muted">ADMIN</span>}
                 {account && <span className="ml-1.5 font-mono text-[10px] text-muted">@{account.username}</span>}
@@ -219,6 +241,37 @@ function AdminInner() {
         {openDisputes.length === 0 && <p className="text-[12px] text-muted">No open disputes.</p>}
       </Section>
 
+      <Section title="FEEDBACK QUEUE">
+        {(feedback ?? []).map((f) => (
+          <div key={f.id} className="border-b py-2 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
+            <div className="flex items-center justify-between">
+              <span className="text-[12px] font-semibold" style={{ color: teamColor(players.find((p) => p.id === f.player_id)?.acca_team ?? '') }}>
+                {playerName(f.player_id)}
+              </span>
+              <span className="font-mono text-[9px] text-muted">{longDate(f.created_at.slice(0, 10))}</span>
+            </div>
+            <p className="my-1 text-[11.5px] text-muted">{f.message}</p>
+            <div className="flex gap-1.5">
+              {(['new', 'planned', 'done', 'dismissed'] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => feedbackStatus.mutate({ id: f.id, status: s })}
+                  className="rounded-[6px] border px-2 py-0.5 font-mono text-[9px] font-bold uppercase"
+                  style={
+                    f.status === s
+                      ? { background: 'var(--color-accent)', borderColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }
+                      : { borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }
+                  }
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+        {(feedback ?? []).length === 0 && <p className="text-[12px] text-muted">No feedback yet.</p>}
+      </Section>
+
       <Section title="GAMEWEEKS">
         {nearGws.map((g) => (
           <div key={g.id} className="flex items-center justify-between border-b py-2 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
@@ -283,6 +336,35 @@ function AdminInner() {
             {addAdj.isSuccess ? 'Added ✓' : 'Apply adjustment'}
           </button>
         </div>
+        {(adjustments ?? []).length > 0 && (
+          <div className="mt-3 border-t pt-1" style={{ borderColor: 'var(--color-line)' }}>
+            {(adjustments ?? []).map((a) => {
+              const g = (gws ?? []).find((x) => x.id === a.gameweek_id)
+              return (
+                <div key={a.id} className="flex items-center gap-2 border-b py-2 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
+                  <span className="w-[52px] shrink-0 font-mono text-[10px] text-muted">{g ? g.gw_date.slice(5) : '—'}</span>
+                  <span className="min-w-0 flex-1 truncate text-[11.5px]">
+                    <span className="font-semibold">{a.player_id ? playerName(a.player_id) : a.acca_team}</span>
+                    <span className="text-muted"> · {a.reason}</span>
+                  </span>
+                  <span className="font-mono text-[12px] font-bold" style={{ color: Number(a.score) >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}>
+                    {Number(a.score) >= 0 ? '+' : ''}
+                    {Number(a.score).toFixed(2)}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (confirm('Remove this adjustment?')) removeAdj.mutate(a.id)
+                    }}
+                    className="font-mono text-[10px] underline"
+                    style={{ color: 'var(--color-loss)' }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </Section>
 
       <Section title="LLM USAGE (OPENROUTER — LIMITED KEY)">

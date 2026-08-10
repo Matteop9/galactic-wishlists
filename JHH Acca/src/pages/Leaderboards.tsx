@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import {
   ALL_TIME,
+  fetchAllTeamWeekScores,
   fetchCurrentGameweek,
   fetchFormGrid,
   fetchGameweeks,
@@ -16,10 +17,39 @@ import {
 import { usePlayer } from '../hooks/usePlayer'
 import { odds2, score2 } from '../lib/format'
 import FormGrid from '../components/FormGrid'
+import GwHistoryChart from '../components/GwHistoryChart'
 import TugBar from '../components/TugBar'
 import RequireAuth from '../components/RequireAuth'
-import { PageTitle, SandboxChip } from '../components/ui'
-import type { Season } from '../lib/types'
+import { PageTitle, SandboxChip, teamColor } from '../components/ui'
+import type { LeaderboardRow, Season } from '../lib/types'
+
+type SortKey = 'entries' | 'wins' | 'score' | 'spm'
+
+function SortHeader({
+  label,
+  col,
+  sort,
+  onSort,
+  className = 'text-right',
+}: {
+  label: string
+  col: SortKey
+  sort: { key: SortKey | null; asc: boolean }
+  onSort: (k: SortKey) => void
+  className?: string
+}) {
+  const active = sort.key === col
+  return (
+    <button
+      onClick={() => onSort(col)}
+      className={`${className} font-mono text-[8.5px] uppercase tracking-[0.12em]`}
+      style={{ color: active ? 'var(--color-accent)' : 'var(--color-muted)' }}
+    >
+      {label}
+      {active ? (sort.asc ? ' ▲' : ' ▼') : ''}
+    </button>
+  )
+}
 
 type Tab =
   | { kind: 'all' }
@@ -64,7 +94,7 @@ function LeaderboardsInner() {
   const tab = tabs[Math.min(tabIdx, tabs.length - 1)] ?? { kind: 'all' as const }
 
   // provisional live overlay - only meaningful while a live gameweek is closed
-  const { me } = usePlayer()
+  const { me, players } = usePlayer()
   const [liveOn, setLiveOn] = useState<boolean | null>(null)
   const { data: currentGw } = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
   const liveGw = currentGw?.status === 'closed' && currentGw.live_enabled ? currentGw : null
@@ -115,15 +145,51 @@ function LeaderboardsInner() {
     enabled: tab.kind === 'test',
   })
   const { data: formCells } = useQuery({ queryKey: ['formGrid'], queryFn: () => fetchFormGrid(5) })
+  const { data: allTws } = useQuery({ queryKey: ['allTeamWeekScores'], queryFn: fetchAllTeamWeekScores })
 
+  // column sorting — default ranks All Time by score-per-match, else by score
+  const [sort, setSort] = useState<{ key: SortKey | null; asc: boolean }>({ key: null, asc: false })
+  const onSort = (k: SortKey) =>
+    setSort((s) =>
+      s.key !== k ? { key: k, asc: false } : s.asc ? { key: null, asc: false } : { key: k, asc: true },
+    )
   const rankByScorePerMatch = tab.kind === 'all'
-  const sorted = [...(rows ?? [])].sort((a, b) =>
-    rankByScorePerMatch
+  const colValue = (r: LeaderboardRow, k: SortKey) =>
+    k === 'entries' ? r.entries : k === 'wins' ? r.wins : k === 'score' ? Number(r.score) : Number(r.score_per_match ?? -1)
+  const sorted = [...(rows ?? [])].sort((a, b) => {
+    if (sort.key) {
+      const d = colValue(b, sort.key) - colValue(a, sort.key)
+      return sort.asc ? -d : d
+    }
+    return rankByScorePerMatch
       ? (b.score_per_match ?? 0) - (a.score_per_match ?? 0)
-      : b.score - a.score,
-  )
+      : b.score - a.score
+  })
   const vdl = teamRows?.find((t) => t.acca_team === 'VDL')?.score ?? 0
   const jhp = teamRows?.find((t) => t.acca_team === 'JHP')?.score ?? 0
+
+  // GW history: per-week VDL v JHP margins within the selected range
+  const gwHistory = useMemo(() => {
+    if (!allTws || !allGws || !seasons) return []
+    const testSeasons = new Set(seasons.filter((s) => s.kind === 'test').map((s) => s.id))
+    return (allGws ?? [])
+      .filter(
+        (g) =>
+          g.status === 'settled' &&
+          !testSeasons.has(g.season_id) &&
+          g.gw_date >= range[0] &&
+          g.gw_date <= range[1],
+      )
+      .map((g) => {
+        const week = allTws.filter((w) => w.gameweek_id === g.id)
+        return {
+          gameweek_id: g.id,
+          gw_date: g.gw_date,
+          vdl: Number(week.find((w) => w.team_name === 'VDL')?.week_score ?? 0),
+          jhp: Number(week.find((w) => w.team_name === 'JHP')?.week_score ?? 0),
+        }
+      })
+  }, [allTws, allGws, seasons, range[0], range[1]])
 
   const testSorted = [...(testRows ?? [])].sort((a, b) => b.score - a.score)
   const testTeams = new Map<string, number>()
@@ -131,7 +197,7 @@ function LeaderboardsInner() {
 
   return (
     <div className="px-4 pb-6">
-      <PageTitle right={tab.kind === 'test' ? <SandboxChip /> : undefined}>LEADERBOARDS</PageTitle>
+      <PageTitle right={tab.kind === 'test' ? <SandboxChip /> : undefined}>STANDINGS</PageTitle>
 
       <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-3">
         {tabs.map((t, i) => (
@@ -200,7 +266,9 @@ function LeaderboardsInner() {
             <div key={r.player_id} className="grid grid-cols-[24px_1fr_44px_56px_48px] items-center gap-2 border-b px-3.5 py-2.5" style={{ borderColor: 'var(--color-line)' }}>
               <span className="font-mono text-[11px] text-muted">{i + 1}</span>
               <span className="flex items-center gap-1.5 text-[12.5px] font-semibold">
-                {r.name}
+                <span style={{ color: teamColor(players.find((p) => p.id === r.player_id)?.acca_team ?? '') }}>
+                  {r.name}
+                </span>
                 <span className="text-[10px] text-muted">{r.team_name}</span>
               </span>
               <span className="text-right font-mono text-[12px]">{r.wins}</span>
@@ -215,7 +283,11 @@ function LeaderboardsInner() {
       ) : (
         <div className="rounded-[14px] bg-surface">
           <div className="grid grid-cols-[24px_1fr_30px_44px_56px_48px] gap-2 border-b px-3.5 py-2 font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted" style={{ borderColor: 'var(--color-line)' }}>
-            <span>#</span><span>Player</span><span className="text-right">P</span><span className="text-right">W</span><span className="text-right">Score</span><span className="text-right">S/M</span>
+            <span>#</span><span>Player</span>
+            <SortHeader label="P" col="entries" sort={sort} onSort={onSort} />
+            <SortHeader label="W" col="wins" sort={sort} onSort={onSort} />
+            <SortHeader label="Score" col="score" sort={sort} onSort={onSort} />
+            <SortHeader label="S/M" col="spm" sort={sort} onSort={onSort} />
           </div>
           {sorted.map((r, i) => {
             const leader = i === 0
@@ -232,11 +304,10 @@ function LeaderboardsInner() {
                 <span className="font-mono text-[11px]" style={{ color: leader ? 'var(--color-accent)' : 'var(--color-muted)' }}>
                   {i + 1}
                 </span>
-                <span className="flex items-center gap-1.5 truncate text-[12.5px] font-semibold">
-                  <span
-                    className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ background: r.acca_team === 'VDL' ? 'var(--color-vdl)' : 'var(--color-jhp)' }}
-                  />
+                <span
+                  className="truncate text-[12.5px] font-semibold"
+                  style={{ color: teamColor(r.acca_team) }}
+                >
                   {r.name}
                 </span>
                 <span className="text-right font-mono text-[11px] text-muted">{r.entries}</span>
@@ -267,6 +338,15 @@ function LeaderboardsInner() {
               doubles are never shown provisionally.
             </div>
           )}
+        </div>
+      )}
+
+      {tab.kind !== 'test' && (
+        <div className="mt-5">
+          <div className="overline mb-2 px-1">GW HISTORY — WEEKLY MARGIN</div>
+          <div className="rounded-[14px] bg-surface p-3.5">
+            <GwHistoryChart rows={gwHistory} />
+          </div>
         </div>
       )}
 

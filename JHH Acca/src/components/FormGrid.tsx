@@ -1,5 +1,6 @@
 import type { FormCell } from '../lib/types'
 import { dayMonth } from '../lib/format'
+import { teamColor } from './ui'
 
 /* Design guide §3 form grid: 26x24px cells, solid fills, mono values,
    gold column header on sweep weeks, four-swatch legend always shown. */
@@ -42,7 +43,9 @@ export default function FormGrid({ cells }: { cells: FormCell[] }) {
           }).length
           return (
             <FragmentRow key={p.player_id}>
-              <div className="truncate pr-1 text-[11px] font-semibold leading-6">{p.name}</div>
+              <div className="truncate pr-1 text-[11px] font-semibold leading-6" style={{ color: teamColor(p.acca_team) }}>
+                {p.name}
+              </div>
               {dates.map((d) => {
                 const c = byKey.get(`${p.player_id}|${d}`)
                 return c ? (

@@ -1,5 +1,21 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.3.0 — 2026-08-10
+
+Phase 2 polish pass (full request list tracked in `docs/phase-2.md`):
+
+- **Standings** (renamed from Table/Leaderboards): sortable columns (P/W/Score/S/M, toggle asc/desc), plus a **GW history diverging bar chart** — one row per settled gameweek, bar pulls left (VDL) or right (JHP) by that week's margin, scaled to the range, linked through to the gameweek, load-more paged.
+- **Team picker**: Enter Pick inputs are now search comboboxes over every team ever picked (usage counts, club badges), free text still allowed for new teams. Badges (`crests.football-data.org`, ~110 clubs mapped in `src/lib/teams.ts`) also show on acca cards, gameweek detail and pick history; unmapped clubs fall back to initials chips.
+- **Team-name canonicalisation** (migration `0017`): 29 variants fixed in `picks` (e.g. Athletico→Atletico Madrid, Middlesborough→Middlesbrough, Villareal→Villarreal, Palmero→Palermo, Spurs→Tottenham, Leipzig→RB Leipzig, Hull City→Hull, Notts Forest→Nottingham Forest) + whitespace trim. Text-only — odds/results untouched; all-time totals still reconcile (VDL 656.4740 / JHP 599.2911). `picks_stamp` trigger disabled during the update so historical `submitted_at/by` survive. Seed CSV intentionally keeps original spellings.
+- **Feedback table** (`feedback`, RLS: own insert, all read, admin status updates, audited): submit from You → Settings, review with new/planned/done/dismissed statuses in Admin → Feedback Queue.
+- **Changelog on the front page**: What's New panel on This Week, driven by `src/lib/changelog.ts`.
+- **Adjustments made visible**: listed on the gameweek page and in Admin (with remove). Heads-up: adjustments on test-season gameweeks only ever appear in the sandbox tab, never in real standings — by design.
+- **Names wear team colours** everywhere (standings, cards, form grid, admin, pick entry, profiles); `--color-vdl` shifted from amber to a clear yellow (#f6c437) per "blue and yellow".
+- **Picks page**: prominent "group chat first" notice.
+- **JHP Test Weekend pairs** (Team 4: Dom+George, 5: Harry+Matt, 6: Sandy+Will) added to the same 15 Aug sandbox gameweek — 2/2 pair sweeps double for them too.
+- **Load more**: profile pick history no longer stops at 15.
+- Routes: `/standings` is canonical; `/table` kept for old bookmarks.
+
 ## v0.2.0 — 2026-08-10
 
 Username + password auth (replaces magic links entirely — no email, no Supabase redirect-URL config needed):

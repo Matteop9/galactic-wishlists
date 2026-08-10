@@ -1,7 +1,9 @@
 import { supabase } from './supabase'
 import type {
+  Adjustment,
   AuditRow,
   Dispute,
+  Feedback,
   FormCell,
   Gameweek,
   LeaderboardRow,
@@ -68,6 +70,35 @@ export const fetchTeamWeekScores = (gameweekId: string) =>
   unwrap<TeamWeekScore[]>(
     supabase.from('v_team_week_scores').select('*').eq('gameweek_id', gameweekId),
   )
+
+export const fetchAllTeamWeekScores = () =>
+  unwrap<TeamWeekScore[]>(supabase.from('v_team_week_scores').select('*'))
+
+/** Every team name ever picked, with usage counts — feeds the pick combobox.
+    Paged reads because PostgREST caps a single response at 1,000 rows. */
+export interface TeamUsage {
+  name: string
+  uses: number
+}
+
+export async function fetchTeamDictionary(): Promise<TeamUsage[]> {
+  const counts = new Map<string, number>()
+  const page = 1000
+  for (let from = 0; ; from += page) {
+    const rows = await unwrap<{ team: string; second_team: string | null; method: string }[]>(
+      supabase.from('picks').select('team,second_team,method').range(from, from + page - 1),
+    )
+    for (const r of rows) {
+      if (r.method !== 'N/A' && r.team && r.team !== 'N/A')
+        counts.set(r.team, (counts.get(r.team) ?? 0) + 1)
+      if (r.second_team) counts.set(r.second_team, (counts.get(r.second_team) ?? 0) + 1)
+    }
+    if (rows.length < page) break
+  }
+  return [...counts.entries()]
+    .map(([name, uses]) => ({ name, uses }))
+    .sort((a, b) => b.uses - a.uses || a.name.localeCompare(b.name))
+}
 
 export const fetchLiveStatuses = (gameweekId: string) =>
   unwrap<LivePickStatus[]>(
@@ -205,6 +236,25 @@ export const createClaimToken = (playerId: string) =>
 
 export const deleteClaimToken = (playerId: string) =>
   unwrap(supabase.from('claim_tokens').delete().eq('player_id', playerId))
+
+export const fetchAdjustments = () =>
+  unwrap<Adjustment[]>(
+    supabase.from('adjustments').select('*').order('created_at', { ascending: false }),
+  )
+
+export const deleteAdjustment = (id: string) =>
+  unwrap(supabase.from('adjustments').delete().eq('id', id))
+
+// --- feedback ---
+
+export const fetchFeedback = () =>
+  unwrap<Feedback[]>(supabase.from('feedback').select('*').order('created_at', { ascending: false }))
+
+export const submitFeedback = (playerId: string, message: string) =>
+  unwrap(supabase.from('feedback').insert({ player_id: playerId, message }).select().single())
+
+export const setFeedbackStatus = (id: string, status: Feedback['status']) =>
+  unwrap(supabase.from('feedback').update({ status }).eq('id', id).select().single())
 
 export const addAdjustment = (a: {
   gameweek_id: string

@@ -27,6 +27,8 @@ export default function App() {
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route element={<Shell />}>
             <Route path="/" element={<ThisWeek />} />
+            <Route path="/standings" element={<Leaderboards />} />
+            {/* old bookmarks */}
             <Route path="/table" element={<Leaderboards />} />
             <Route path="/pick" element={<EnterPick />} />
             <Route path="/gameweeks" element={<Gameweeks />} />

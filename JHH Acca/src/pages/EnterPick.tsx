@@ -5,13 +5,15 @@ import {
   fetchPickScores,
   fetchSeasonTeamMembers,
   fetchSeasons,
+  fetchTeamDictionary,
   upsertPick,
 } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
 import { useCountdown } from '../hooks/useCountdown'
 import RequireAuth from '../components/RequireAuth'
 import LiveBanner from '../components/LiveBanner'
-import { Avatar, PageTitle } from '../components/ui'
+import TeamCombobox from '../components/TeamCombobox'
+import { Avatar, PageTitle, teamColor } from '../components/ui'
 import { gwDate, odds2, ukTime } from '../lib/format'
 
 /* Enter Pick: any teammate can enter for their team (pair-scoped on the Test
@@ -33,6 +35,11 @@ function EnterPickInner() {
     queryKey: ['pickScores', gw?.id],
     queryFn: () => fetchPickScores(gw!.id),
     enabled: !!gw,
+  })
+  const { data: teamDict } = useQuery({
+    queryKey: ['teamDictionary'],
+    queryFn: fetchTeamDictionary,
+    staleTime: 10 * 60_000,
   })
 
   // Who can I pick for? season_team_members mapping if it exists, else my acca team.
@@ -107,7 +114,7 @@ function EnterPickInner() {
         <PageTitle>ENTER PICK</PageTitle>
         <div className="rounded-[14px] bg-surface p-6 text-center text-sm text-muted">
           You're not taking part in this gameweek — {gwDate(gw.gw_date)} is
-          {season?.kind === 'test' ? ' a VDL-only test weekend. You can still watch everything.' : ' restricted.'}
+          {season?.kind === 'test' ? ' a Test Weekend for drawn pairs and you\'re not in one. You can still watch everything.' : ' restricted.'}
         </div>
       </div>
     )
@@ -123,6 +130,18 @@ function EnterPickInner() {
       >
         ENTER PICK
       </PageTitle>
+
+      <div
+        className="mb-3 rounded-[12px] border px-3.5 py-2.5 text-[11.5px]"
+        style={{
+          borderColor: 'color-mix(in srgb, var(--color-gold) 45%, transparent)',
+          background: 'rgba(242,201,76,0.07)',
+          color: 'var(--color-gold)',
+        }}
+      >
+        <span className="font-bold">Group chat first.</span> This page only records your pick — it
+        doesn't count unless it's been posted in the group chat.
+      </div>
 
       {!windowOpen && (
         <LiveBanner pulse={false}>
@@ -149,7 +168,7 @@ function EnterPickInner() {
                 }
               >
                 <Avatar name={p.name} team={p.acca_team} size={22} />
-                <span className="text-[12px] font-semibold" style={{ color: active ? 'var(--color-accent-bright)' : has ? 'var(--color-text)' : 'var(--color-muted)' }}>
+                <span className="text-[12px] font-semibold" style={{ color: active ? 'var(--color-accent-bright)' : teamColor(p.acca_team) }}>
                   {p.name}
                   {p.id === me?.id ? ' (you)' : ''}
                 </span>
@@ -183,24 +202,22 @@ function EnterPickInner() {
 
       <div className="mb-4">
         <div className="overline mb-1.5">{method === 'BTTS' ? 'FIRST TEAM' : 'SELECTION'}</div>
-        <input
+        <TeamCombobox
           value={team}
-          onChange={(e) => setTeam(e.target.value)}
+          onChange={setTeam}
+          options={teamDict ?? []}
           placeholder={method === 'BTTS' ? 'e.g. Bolton' : 'e.g. Charlton'}
-          className="w-full rounded-[10px] border bg-surface-2 px-3.5 py-3 text-[15px]"
-          style={{ borderColor: 'var(--color-line-strong)' }}
         />
       </div>
 
       <div className="mb-4" style={{ opacity: method === 'BTTS' ? 1 : 0.4 }}>
         <div className="overline mb-1.5">SECOND TEAM</div>
-        <input
+        <TeamCombobox
           value={secondTeam}
-          onChange={(e) => setSecondTeam(e.target.value)}
+          onChange={setSecondTeam}
+          options={teamDict ?? []}
           disabled={method !== 'BTTS'}
           placeholder={method === 'BTTS' ? 'e.g. Stockport' : 'Only for BTTS picks'}
-          className="w-full rounded-[10px] border bg-surface-2 px-3.5 py-3 text-[15px] disabled:border-dashed"
-          style={{ borderColor: 'var(--color-line-strong)' }}
         />
       </div>
 

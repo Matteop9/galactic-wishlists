@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { LivePickStatus, PickScore } from '../lib/types'
 import { odds2, score2 } from '../lib/format'
-import { Avatar, DoubleChip, MethodBadge, StateIcon, teamColor } from './ui'
+import { Avatar, DoubleChip, MethodBadge, StateIcon, TeamBadge, teamColor } from './ui'
 import LivePickChip from './LivePickChip'
 
 /* Flagship component - design guide §3. 3px team gradient bar, header with
@@ -81,16 +81,22 @@ export default function AccaCard({ teamName, displayColor, picks, live }: Props)
               <Avatar name={p.name} team={p.acca_team} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="truncate text-[13px] font-bold">{p.name}</span>
+                  <span className="truncate text-[13px] font-bold" style={{ color: teamColor(p.acca_team) }}>
+                    {p.name}
+                  </span>
                   <MethodBadge method={p.method} />
                   {p.doubled && p.result === 1 && <DoubleChip />}
                 </div>
-                <div className="truncate text-[11.5px] text-muted">
-                  {p.method === 'N/A'
-                    ? 'No pick submitted'
-                    : p.method === 'BTTS' && p.second_team
-                      ? `${p.team} v ${p.second_team}`
-                      : p.team}
+                <div className="flex items-center gap-1.5 text-[11.5px] text-muted">
+                  {p.method !== 'N/A' && <TeamBadge name={p.team} size={14} />}
+                  <span className="truncate">
+                    {p.method === 'N/A'
+                      ? 'No pick submitted'
+                      : p.method === 'BTTS' && p.second_team
+                        ? `${p.team} v ${p.second_team}`
+                        : p.team}
+                  </span>
+                  {p.method === 'BTTS' && p.second_team && <TeamBadge name={p.second_team} size={14} />}
                 </div>
                 {l && l.live_state !== 'NOT_STARTED' && (
                   <div className="mt-0.5">

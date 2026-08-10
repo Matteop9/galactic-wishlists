@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import {
+  deleteAdjustment,
+  fetchAdjustments,
   fetchDisputes,
   fetchGameweek,
   fetchLiveStatuses,
@@ -21,6 +23,7 @@ import {
   MethodBadge,
   SandboxChip,
   StateIcon,
+  TeamBadge,
   teamColor,
 } from '../components/ui'
 import LivePickChip from '../components/LivePickChip'
@@ -173,7 +176,7 @@ function DisputeSheet({
 function GameweekDetailInner() {
   const { id } = useParams<{ id: string }>()
   const qc = useQueryClient()
-  const { me, isAdmin } = usePlayer()
+  const { me, isAdmin, players } = usePlayer()
   const [disputing, setDisputing] = useState<PickScore | null>(null)
 
   const { data: gw } = useQuery({ queryKey: ['gw', id], queryFn: () => fetchGameweek(id!), enabled: !!id })
@@ -195,6 +198,7 @@ function GameweekDetailInner() {
     refetchInterval: 60_000,
   })
   const { data: disputes } = useQuery({ queryKey: ['disputes'], queryFn: fetchDisputes })
+  const { data: adjustments } = useQuery({ queryKey: ['adjustments'], queryFn: fetchAdjustments })
 
   const settle = useMutation({
     mutationFn: ({ pickId, result }: { pickId: string; result: 0 | 1 | null }) =>
@@ -210,6 +214,13 @@ function GameweekDetailInner() {
     mutationFn: ({ did, status, note }: { did: string; status: 'upheld' | 'rejected'; note: string }) =>
       resolveDispute(did, status, note),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['disputes'] }),
+  })
+  const removeAdj = useMutation({
+    mutationFn: deleteAdjustment,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['adjustments'] })
+      qc.invalidateQueries({ queryKey: ['leaderboard'] })
+    },
   })
 
   const season = seasons?.find((s) => s.id === gw?.season_id)
@@ -270,7 +281,9 @@ function GameweekDetailInner() {
                       <Avatar name={p.name} team={p.acca_team} size={26} />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
-                          <span className="truncate text-[13px] font-bold">{p.name}</span>
+                          <span className="truncate text-[13px] font-bold" style={{ color: teamColor(p.acca_team) }}>
+                            {p.name}
+                          </span>
                           <MethodBadge method={p.method} />
                           {p.doubled && p.result === 1 && <DoubleChip />}
                           {dispute && (
@@ -280,8 +293,12 @@ function GameweekDetailInner() {
                             </span>
                           )}
                         </div>
-                        <div className="truncate text-[11.5px] text-muted">
-                          {p.method === 'N/A' ? 'No pick submitted' : p.method === 'BTTS' && p.second_team ? `${p.team} v ${p.second_team}` : p.team}
+                        <div className="flex items-center gap-1.5 text-[11.5px] text-muted">
+                          {p.method !== 'N/A' && <TeamBadge name={p.team} size={14} />}
+                          <span className="truncate">
+                            {p.method === 'N/A' ? 'No pick submitted' : p.method === 'BTTS' && p.second_team ? `${p.team} v ${p.second_team}` : p.team}
+                          </span>
+                          {p.method === 'BTTS' && p.second_team && <TeamBadge name={p.second_team} size={14} />}
                         </div>
                         {l && gw?.status === 'closed' && <div className="mt-0.5"><LivePickChip status={l} /></div>}
                       </div>
@@ -319,6 +336,51 @@ function GameweekDetailInner() {
       {picks?.length === 0 && (
         <div className="rounded-[14px] bg-surface p-6 text-center text-sm text-muted">No picks recorded for this gameweek.</div>
       )}
+
+      {(() => {
+        const gwAdjs = (adjustments ?? []).filter((a) => a.gameweek_id === id)
+        if (gwAdjs.length === 0) return null
+        return (
+          <div className="mb-5">
+            <div className="overline mb-1.5 px-1">ADJUSTMENTS</div>
+            <div className="rounded-[14px] bg-surface">
+              {gwAdjs.map((a) => {
+                const who = a.player_id
+                  ? players.find((p) => p.id === a.player_id)
+                  : null
+                return (
+                  <div key={a.id} className="flex items-center gap-2.5 border-b px-3.5 py-2.5 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[12.5px] font-semibold" style={{ color: who ? teamColor(who.acca_team) : teamColor(a.acca_team ?? '') }}>
+                        {who?.name ?? a.acca_team ?? '—'}
+                      </span>
+                      <span className="ml-1.5 text-[11px] text-muted">{a.reason}</span>
+                    </div>
+                    <span
+                      className="font-mono text-[13px] font-bold"
+                      style={{ color: Number(a.score) >= 0 ? 'var(--color-win)' : 'var(--color-loss)' }}
+                    >
+                      {Number(a.score) >= 0 ? '+' : ''}
+                      {Number(a.score).toFixed(2)}
+                    </span>
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          if (confirm('Remove this adjustment?')) removeAdj.mutate(a.id)
+                        }}
+                        className="font-mono text-[10px] underline"
+                        style={{ color: 'var(--color-loss)' }}
+                      >
+                        REMOVE
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })()}
 
       {settle.isError && (
         <p className="mt-2 text-center text-[11.5px]" style={{ color: 'var(--color-loss)' }}>
