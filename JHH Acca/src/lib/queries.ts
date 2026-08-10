@@ -1,0 +1,231 @@
+import { supabase } from './supabase'
+import type {
+  AuditRow,
+  Dispute,
+  FormCell,
+  Gameweek,
+  LeaderboardRow,
+  LivePickStatus,
+  LlmUsageRow,
+  PickScore,
+  Player,
+  Season,
+  SeasonLeaderboardRow,
+  SeasonTeamMember,
+  TeamLeaderboardRow,
+  TeamWeekScore,
+} from './types'
+
+async function unwrap<T>(q: PromiseLike<{ data: T | null; error: { message: string } | null }>): Promise<T> {
+  const { data, error } = await q
+  if (error) throw new Error(error.message)
+  return data as T
+}
+
+export const ALL_TIME: [string, string] = ['2023-01-01', '2100-01-01']
+
+export const fetchPlayers = () =>
+  unwrap<Player[]>(supabase.from('players').select('*').order('name'))
+
+export const fetchSeasons = () =>
+  unwrap<Season[]>(supabase.from('seasons').select('*').order('start_date'))
+
+export const fetchGameweeks = () =>
+  unwrap<Gameweek[]>(supabase.from('gameweeks').select('*').order('gw_date'))
+
+export const fetchGameweek = (id: string) =>
+  unwrap<Gameweek>(supabase.from('gameweeks').select('*').eq('id', id).single())
+
+export const fetchLeaderboard = (start: string, end: string) =>
+  unwrap<LeaderboardRow[]>(supabase.rpc('leaderboard', { range_start: start, range_end: end }))
+
+export const fetchTeamLeaderboard = (start: string, end: string) =>
+  unwrap<TeamLeaderboardRow[]>(
+    supabase.rpc('team_leaderboard', { range_start: start, range_end: end }),
+  )
+
+export const fetchSeasonLeaderboard = (seasonId: string) =>
+  unwrap<SeasonLeaderboardRow[]>(supabase.rpc('season_leaderboard', { p_season: seasonId }))
+
+export const fetchFormGrid = (lastN = 5) =>
+  unwrap<FormCell[]>(supabase.rpc('form_grid', { last_n: lastN }))
+
+export const fetchPickScores = (gameweekId: string) =>
+  unwrap<PickScore[]>(
+    supabase.from('v_pick_scores').select('*').eq('gameweek_id', gameweekId).order('name'),
+  )
+
+export const fetchPlayerPickScores = (playerId: string) =>
+  unwrap<PickScore[]>(
+    supabase
+      .from('v_pick_scores')
+      .select('*')
+      .eq('player_id', playerId)
+      .order('gw_date', { ascending: false }),
+  )
+
+export const fetchTeamWeekScores = (gameweekId: string) =>
+  unwrap<TeamWeekScore[]>(
+    supabase.from('v_team_week_scores').select('*').eq('gameweek_id', gameweekId),
+  )
+
+export const fetchLiveStatuses = (gameweekId: string) =>
+  unwrap<LivePickStatus[]>(
+    supabase.from('v_live_pick_status').select('*').eq('gameweek_id', gameweekId),
+  )
+
+export const fetchSeasonTeamMembers = (seasonId: string) =>
+  unwrap<SeasonTeamMember[]>(
+    supabase.from('season_team_members').select('*').eq('season_id', seasonId),
+  )
+
+export const fetchDisputes = () =>
+  unwrap<Dispute[]>(supabase.from('disputes').select('*').order('created_at', { ascending: false }))
+
+export const fetchAudit = (limit = 100) =>
+  unwrap<AuditRow[]>(
+    supabase.from('audit_log').select('*').order('at', { ascending: false }).limit(limit),
+  )
+
+export const fetchLlmUsage = () =>
+  unwrap<LlmUsageRow[]>(
+    supabase.from('llm_usage').select('*').order('at', { ascending: false }).limit(200),
+  )
+
+/** The gameweek the app should focus on: earliest not settled/skipped, else latest settled. */
+export async function fetchCurrentGameweek(): Promise<Gameweek | null> {
+  const gws = await fetchGameweeks()
+  const today = new Date().toISOString().slice(0, 10)
+  const active = gws.find(
+    (g) => ['open', 'closed'].includes(g.status) && g.gw_date >= today,
+  )
+  if (active) return active
+  const upcoming = gws.find((g) => g.status === 'scheduled' && g.gw_date >= today)
+  const settled = [...gws].reverse().find((g) => g.status === 'settled')
+  return upcoming ?? settled ?? null
+}
+
+// --- mutations ---
+
+export const upsertPick = (pick: {
+  gameweek_id: string
+  player_id: string
+  method: string
+  team: string
+  second_team: string | null
+  odds: number
+}) =>
+  unwrap(
+    supabase
+      .from('picks')
+      .upsert(pick, { onConflict: 'gameweek_id,player_id' })
+      .select()
+      .single(),
+  )
+
+export const settlePick = (pickId: string, result: 0 | 1 | null) =>
+  unwrap(supabase.rpc('settle_pick', { p_pick: pickId, p_result: result }))
+
+export const matchPick = (
+  pickId: string,
+  fixtureId: number | null,
+  side: 'HOME' | 'AWAY' | null,
+  confidence = 1.0,
+) =>
+  unwrap(
+    supabase.rpc('match_pick', {
+      p_pick: pickId,
+      p_fixture: fixtureId,
+      p_side: side,
+      p_confidence: confidence,
+    }),
+  )
+
+export const raiseDispute = (d: { pick_id: string; raised_by: string; kind: string; reason: string }) =>
+  unwrap(supabase.from('disputes').insert(d).select().single())
+
+export const resolveDispute = (id: string, status: 'upheld' | 'rejected', note: string) =>
+  unwrap(supabase.rpc('resolve_dispute', { p_dispute: id, p_status: status, p_note: note }))
+
+export const setGameweekStatus = (id: string, status: string) =>
+  unwrap(supabase.rpc('set_gameweek_status', { p_gw: id, p_status: status }))
+
+export const createGameweek = (date: string) =>
+  unwrap(supabase.rpc('create_gameweek', { p_date: date }))
+
+export const claimPlayer = (token: string) =>
+  unwrap(supabase.rpc('claim_player', { claim_token: token }))
+
+// --- admin ---
+
+export interface ClaimToken {
+  token: string
+  player_id: string
+  created_at: string
+  claimed_at: string | null
+}
+
+export const fetchClaimTokens = () =>
+  unwrap<ClaimToken[]>(supabase.from('claim_tokens').select('*'))
+
+export const createClaimToken = (playerId: string) =>
+  unwrap<ClaimToken>(
+    supabase.from('claim_tokens').insert({ player_id: playerId }).select().single(),
+  )
+
+export const deleteClaimToken = (playerId: string) =>
+  unwrap(supabase.from('claim_tokens').delete().eq('player_id', playerId))
+
+export const addAdjustment = (a: {
+  gameweek_id: string
+  player_id: string | null
+  acca_team: string | null
+  kind: 'Bonus' | 'Minus'
+  reason: string
+  score: number
+}) => unwrap(supabase.from('adjustments').insert(a).select().single())
+
+export const fetchAppConfig = async (key: string) => {
+  const { data, error } = await supabase.from('app_config').select('value').eq('key', key).maybeSingle()
+  if (error) throw new Error(error.message)
+  return (data?.value ?? null) as unknown
+}
+
+export const setAppConfig = (key: string, value: unknown) =>
+  unwrap(supabase.from('app_config').upsert({ key, value }).select().single())
+
+export const fetchFixtures = (gameweekId: string) =>
+  unwrap<import('./types').Fixture[]>(
+    supabase.from('fixtures').select('*').eq('gameweek_id', gameweekId).order('kickoff'),
+  )
+
+export interface MatchSuggestion {
+  pick_id: string
+  fixture_id: number | null
+  fixture_side: 'HOME' | 'AWAY' | null
+  confidence: number | null
+}
+
+export const fetchMatchSuggestions = () =>
+  unwrap<MatchSuggestion[]>(supabase.from('match_suggestions').select('*'))
+
+export const deleteMatchSuggestion = (pickId: string) =>
+  unwrap(supabase.from('match_suggestions').delete().eq('pick_id', pickId))
+
+export const fetchWeekendFixtures = (gw: string) =>
+  unwrap(supabase.rpc('fetch_weekend_fixtures', { p_gw: gw }))
+
+export const requestPickMatching = (gw: string) =>
+  unwrap(supabase.rpc('request_pick_matching', { p_gw: gw }))
+
+export const ingestResponses = () => unwrap(supabase.rpc('ingest_responses'))
+
+export const renameSeasonTeam = (seasonId: string, oldName: string, newName: string) =>
+  unwrap(
+    supabase
+      .from('season_team_members')
+      .update({ team_name: newName })
+      .eq('season_id', seasonId)
+      .eq('team_name', oldName)
+      .select(),
+  )

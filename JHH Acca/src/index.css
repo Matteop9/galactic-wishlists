@@ -1,0 +1,71 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Friday Night Slip — design guide §2 */
+  --color-bg: #0a0d0b;
+  --color-surface: #121712;
+  --color-surface-2: #0e120f;
+  --color-line: rgba(255, 255, 255, 0.07);
+  --color-line-strong: rgba(255, 255, 255, 0.13);
+  --color-text: #eaf0e6;
+  --color-muted: #93a08f;
+  --color-accent: #b4e33d;
+  --color-accent-bright: #d8f58c;
+  --color-on-accent: #0a0d0b;
+  --color-vdl: #f5a83b;
+  --color-jhp: #57b8f0;
+  --color-win: #55d97c;
+  --color-win-solid: #2f9e5d;
+  --color-loss: #f0655f;
+  --color-loss-solid: #b54742;
+  --color-gold: #f2c94c;
+  --color-on-gold: #3a2a08;
+  --color-nopick: #6e1f1f;
+  --color-nopick-text: #f5c9c9;
+
+  --font-display: 'Saira Condensed', sans-serif;
+  --font-sans: 'Archivo', sans-serif;
+  --font-mono: 'Spline Sans Mono', monospace;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Overline micro-label — design guide §2 type scale */
+.overline {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
