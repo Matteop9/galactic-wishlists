@@ -12,6 +12,18 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.15",
+    date: "2026-08-11",
+    changes: [
+      "Overhead catches now verify properly: pointing is judged by true angular separation instead of separate compass/tilt checks, so a plane straight above you no longer fails a direction test that means nothing at the zenith — while catches near the horizon stay just as strict.",
+      "The camera now shows where the app calculates your target to be: a solid plane marker (with a ghost at its last radar fix, so you can see if the calc runs ahead or behind), plus an edge arrow when it's outside your frame.",
+      "Tracking is much snappier: every plane's position is projected forward between updates, and the one you're tracking is re-polled every 2 seconds instead of 6.",
+      "Pinch to zoom on the camera — the slider is gone. Double-tap resets, and −/+ buttons remain for accessibility.",
+      "The feed catches you up like stories: a banner counts what landed since your last visit — tap it to swipe through the new catches full-screen.",
+      "Feed cards are photo-first: bigger picture, one-line summary. Tap any photo for the full spec card, same as always.",
+    ],
+  },
+  {
     version: "0.3.14",
     date: "2026-07-24",
     changes: [

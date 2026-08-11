@@ -44,6 +44,7 @@ export type Aircraft = {
   typeDesc: string | null; // e.g. BOEING 737-800
   track: number | null;
   velocityMs: number | null;
+  seenPosS: number | null; // seconds since the position fix (readsb seen_pos)
   adsbCategory: string | null; // ADS-B emitter category (A1 light … A5 heavy, A7 rotorcraft)
   military: boolean; // readsb dbFlags bit 0
 };
@@ -63,6 +64,7 @@ type AcRecord = {
   alt_geom?: number;
   gs?: number;
   track?: number;
+  seen_pos?: number; // seconds since the position was last updated
   category?: string; // ADS-B emitter category, e.g. "A3"
   dbFlags?: number; // bit 0 = military, per readsb's aircraft DB
 };
@@ -93,6 +95,7 @@ function mapReadsb(json: { ac?: AcRecord[] }): Aircraft[] {
         typeDesc: a.desc ?? null,
         track: a.track ?? null,
         velocityMs: typeof a.gs === "number" ? a.gs * KT_TO_MS : null,
+        seenPosS: typeof a.seen_pos === "number" ? a.seen_pos : null,
         adsbCategory: a.category ?? null,
         military: ((a.dbFlags ?? 0) & 1) === 1,
       };
@@ -124,10 +127,13 @@ export type HexLookup = {
   aircraftType: string | null;
   typeDesc: string | null;
   registration: string | null;
+  callsign: string | null;
   lat: number | null;
   lon: number | null;
   altM: number | null;
   track: number | null;
+  velocityMs: number | null;
+  seenPosS: number | null; // seconds since the position fix
   adsbCategory: string | null;
   military: boolean;
 };
@@ -138,10 +144,13 @@ const HEX_EMPTY: HexLookup = {
   aircraftType: null,
   typeDesc: null,
   registration: null,
+  callsign: null,
   lat: null,
   lon: null,
   altM: null,
   track: null,
+  velocityMs: null,
+  seenPosS: null,
   adsbCategory: null,
   military: false,
 };
@@ -180,10 +189,13 @@ export async function lookupLiveByHex(hex: string | null): Promise<HexLookup> {
         aircraftType: rec.t ?? null,
         typeDesc: rec.desc ?? null,
         registration: rec.r ?? null,
+        callsign: String(rec.flight ?? "").trim() || null,
         lat: typeof rec.lat === "number" ? rec.lat : null,
         lon: typeof rec.lon === "number" ? rec.lon : null,
         altM: altFt != null ? altFt * FT_TO_M : null,
         track: typeof rec.track === "number" ? rec.track : null,
+        velocityMs: typeof rec.gs === "number" ? rec.gs * KT_TO_MS : null,
+        seenPosS: typeof rec.seen_pos === "number" ? rec.seen_pos : null,
         adsbCategory: rec.category ?? null,
         military: ((rec.dbFlags ?? 0) & 1) === 1,
       };

@@ -10,7 +10,14 @@ import {
 import { normalizeBrand, airlineFromCallsign } from "@/lib/airlines";
 import { specialLivery } from "@/lib/specialLiveries";
 import { aircraftTypeName, aircraftTypeDisplay, aircraftCategory } from "@/lib/aircraftTypes";
-import { haversineMeters, bearingDeg, elevationDeg, angularDiff } from "@/lib/geo";
+import {
+  haversineMeters,
+  bearingDeg,
+  elevationDeg,
+  angularDiff,
+  angularSeparation,
+  projectForward,
+} from "@/lib/geo";
 
 // ---- Abuse / verification tuning ----
 const RATE_LIMIT_PER_MINUTE = 5;
@@ -19,14 +26,20 @@ const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const MAX_CAPTURE_AGE_MS = 10 * 60 * 1000; // how far back capturedAt may claim
 const MAX_CLOCK_SKEW_MS = 2 * 60 * 1000; // how far ahead (client clock drift)
 const VERIFY_MAX_DISTANCE_KM = 80; // plane must be plausibly visible
-// Generous cones: the plane moves between capture and our re-query, and phone
-// compasses drift. These block fabrication, not honest users.
-const VERIFY_HEADING_TOL = 60;
-const VERIFY_PITCH_TOL = 45;
+// Generous pointing cone (true angular separation, not per-axis): the plane
+// moves between capture and our re-query, and phone compasses drift. This
+// blocks fabrication, not honest users — and unlike the old separate
+// heading/pitch tolerances it stays meaningful near the zenith, where azimuth
+// is degenerate.
+const VERIFY_CONE_TOL = 70;
 // Inside this range the pointing checks are skipped: a nearly-overhead aircraft
 // (low helicopters especially) swings its bearing/elevation faster than the
 // feed updates, and fraud is moot when the plane demonstrably is right there.
 const VERIFY_CLOSE_RANGE_M = 2000;
+// Back-projecting the live sample to the shutter instant is only trusted over
+// short horizons — beyond this the flat-earth dead reckoning (and an unchanged
+// track assumption) stops being credible.
+const VERIFY_MAX_PROJECT_S = 120;
 
 // ---- Input validation helpers (meta is untrusted client JSON) ----
 function num(v: unknown, min: number, max: number): number | null {
@@ -173,25 +186,47 @@ export async function POST(request: Request) {
   let verifyFailReason: string | null = null;
   if (hasPhoto && icao24 && lat != null && lon != null && live) {
     if (live.found && live.lat != null && live.lon != null) {
-      const groundM = haversineMeters(lat, lon, live.lat, live.lon);
-      const liveBearing = bearingDeg(lat, lon, live.lat, live.lon);
+      // The live sample describes where the plane was ~seenPosS ago, but the
+      // photo was taken at capturedAt — back-project the plane along its track
+      // to the shutter instant so the geometry compares like with like. This
+      // removes the last systematic false-negative: at close range the plane
+      // moves tens of degrees of bearing between shutter and re-query.
+      let planeLat = live.lat;
+      let planeLon = live.lon;
+      const posEpochMs = now - (live.seenPosS ?? 0) * 1000;
+      const dtSec = (capturedAtMs - posEpochMs) / 1000;
+      if (
+        live.track != null &&
+        live.velocityMs != null &&
+        Math.abs(dtSec) <= VERIFY_MAX_PROJECT_S
+      ) {
+        const p = projectForward(live.lat, live.lon, live.track, live.velocityMs, dtSec);
+        planeLat = p.lat;
+        planeLon = p.lon;
+      }
+      const groundM = haversineMeters(lat, lon, planeLat, planeLon);
+      const liveBearing = bearingDeg(lat, lon, planeLat, planeLon);
       const liveElevation =
         live.altM != null ? elevationDeg(groundM, live.altM - obsAltM) : null;
       const nearEnough = groundM / 1000 <= VERIFY_MAX_DISTANCE_KM;
       const close = groundM <= VERIFY_CLOSE_RANGE_M;
-      const headingOk =
-        heading != null && angularDiff(heading, liveBearing) <= VERIFY_HEADING_TOL;
-      const pitchOk =
-        pitch == null ||
-        liveElevation == null ||
-        Math.abs(pitch - liveElevation) <= VERIFY_PITCH_TOL;
-      verified = nearEnough && (close || (headingOk && pitchOk));
+      // Pointing check as ONE true angular separation. Missing heading fails
+      // closed (as before); missing pitch or elevation falls back to an
+      // azimuth-only comparison (preserving the old pitch pass-open policy).
+      const coneSep =
+        heading == null
+          ? null
+          : pitch == null || liveElevation == null
+            ? angularDiff(heading, liveBearing)
+            : angularSeparation(heading, pitch, liveBearing, liveElevation);
+      const pointingOk = coneSep != null && coneSep <= VERIFY_CONE_TOL;
+      verified = nearEnough && (close || pointingOk);
       if (!verified) {
         verifyFailReason = !nearEnough
           ? `distance ${Math.round(groundM / 1000)}km`
-          : !headingOk
-            ? `heading ${heading ?? "none"} vs ${Math.round(liveBearing)}`
-            : `pitch ${pitch} vs ${liveElevation == null ? "none" : Math.round(liveElevation)}`;
+          : coneSep == null
+            ? "cone none (no heading)"
+            : `cone ${Math.round(coneSep)} vs ${VERIFY_CONE_TOL}`;
       }
     } else if (live.unavailable) {
       // Upstream outage — no verdict either way. Don't punish an honest capture;

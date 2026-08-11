@@ -9,6 +9,8 @@ export type Sighting = {
   id: string;
   photo_url: string | null;
   captured_at: string;
+  created_at?: string | null; // insert time — powers the feed's catch-up watermark
+
   callsign: string | null;
   registration: string | null;
   aircraft_type: string | null;
@@ -142,7 +144,17 @@ export function SightingSpecs({ s, dark = false }: { s: Sighting; dark?: boolean
   );
 }
 
-export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () => void }) {
+export default function SightingCard({
+  s,
+  onOpen,
+  compact = false,
+}: {
+  s: Sighting;
+  onOpen?: () => void;
+  /** Photo-first feed variant: taller photo, spec grid collapsed to one line.
+      Full detail stays one tap away in the shared Lightbox (via onOpen). */
+  compact?: boolean;
+}) {
   const livery = specialLivery(s.registration);
   const wetLease = Boolean(
     s.painted_as && s.operating_as && s.painted_as !== s.operating_as,
@@ -166,7 +178,7 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
         />
       )}
       <div
-        className={`relative h-40 bg-gradient-to-b from-[#9FC0D4] via-[#C4D6DF] to-[#DFE6E0] ${
+        className={`relative ${compact ? "aspect-[4/3]" : "h-40"} bg-gradient-to-b from-[#9FC0D4] via-[#C4D6DF] to-[#DFE6E0] ${
           onOpen && s.photo_url ? "cursor-zoom-in" : ""
         }`}
         onClick={onOpen && s.photo_url ? onOpen : undefined}
@@ -219,9 +231,49 @@ export default function SightingCard({ s, onOpen }: { s: Sighting; onOpen?: () =
         )}
       </div>
 
-      <div className="px-4 pb-4 pt-3">
-        <SightingSpecs s={s} />
-      </div>
+      {compact ? (
+        // Photo-first summary — headline, spotter, one mono line. The full
+        // spec grid is NOT duplicated here: tapping the photo opens the shared
+        // Lightbox, which renders the canonical SightingSpecs block.
+        <div className="px-4 pb-3.5 pt-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+            <span className="font-display text-xl font-bold tracking-wide text-ink">
+              {s.registration || s.callsign || "Unknown"}
+            </span>
+            <span className="truncate font-serif text-sm text-ink-soft">
+              {[s.aircraft_type, s.airline ?? airlineFromCallsign(s.callsign)]
+                .filter(Boolean)
+                .join(" · ") || "—"}
+            </span>
+          </div>
+          {s.handle && (
+            <Link
+              href={`/u/${s.handle}`}
+              className="mt-1 flex items-center gap-1.5 hover:underline"
+            >
+              <Avatar seed={s.avatar_seed ?? s.handle} admin={Boolean(s.is_admin)} size={16} />
+              <span className="font-mono text-xs text-sky">@{s.handle}</span>
+            </Link>
+          )}
+          <div className="mt-1.5 font-mono text-[11px] text-ink-soft">
+            <b className="font-semibold uppercase text-ink">{s.rarity}</b>
+            {(s.origin || s.destination) && (
+              <>
+                {" · "}
+                {s.origin ? <AirportCode code={s.origin} /> : "—"}
+                {" → "}
+                {s.destination ? <AirportCode code={s.destination} /> : "—"}
+              </>
+            )}
+            {" · "}
+            {zuluDateTime(s.captured_at) ?? s.captured_at}
+          </div>
+        </div>
+      ) : (
+        <div className="px-4 pb-4 pt-3">
+          <SightingSpecs s={s} />
+        </div>
+      )}
     </div>
   );
 }

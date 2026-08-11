@@ -1,13 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { angularDiff } from "@/lib/geo";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  angularSeparation,
+  bearingDeg,
+  elevationDeg,
+  haversineMeters,
+  projectForward,
+} from "@/lib/geo";
 import { aircraftCategory, mapKind } from "@/lib/aircraftTypes";
 import { airlineFromCallsign } from "@/lib/airlines";
 import { RARITY_RANK, type Rarity } from "@/lib/rarity";
 import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
+import TargetOverlay from "@/components/TargetOverlay";
 import { deleteSighting } from "@/app/actions/admin";
 import SpotMap from "@/components/SpotMap";
 
@@ -25,13 +32,31 @@ type Candidate = {
   elevation: number | null;
   track: number | null;
   velocityMs: number | null;
+  seenPosS: number | null;
   adsbCategory: string | null;
   military: boolean;
 };
 
-// Phone compasses drift; keep the cone wide (the proposal notes 10–20°).
-const HEADING_TOL = 22;
-const PITCH_TOL = 22;
+// A candidate stamped with when its position fix is actually FROM (client
+// receive time minus the feed's own seen_pos age) — the anchor dead reckoning
+// extrapolates from between polls.
+type TimedCandidate = Candidate & { sampleAt: number };
+
+// A candidate with its geometry dead-reckoned to "now"; the raw last-fix
+// bearing/elevation ride along so the overlay can ghost them.
+type LiveCandidate = TimedCandidate & {
+  rawBearing: number;
+  rawElevation: number | null;
+};
+
+// Pointing gate: ONE true angular separation between where the camera points
+// and where the plane is (see lib/geo angularSeparation). Unlike the old
+// separate heading/pitch boxes this stays meaningful overhead, where azimuth
+// is degenerate — a plane at 85° elevation can swing 90° of bearing while
+// moving ~5° across the sky. Phone compasses drift; keep it generous.
+const CONE_TOL = 25;
+// How often the tracked (locked) plane is re-polled, vs 6 s for the area sweep.
+const TRACKED_POLL_MS = 2000;
 
 export default function SpotPage() {
   const [phase, setPhase] = useState<"idle" | "active">("idle");
@@ -39,7 +64,10 @@ export default function SpotPage() {
   const [coords, setCoords] = useState<{ lat: number; lon: number; alt: number | null } | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const [pitch, setPitch] = useState<number | null>(null);
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [candidates, setCandidates] = useState<TimedCandidate[]>([]);
+  // Wall-clock driving dead reckoning, bumped by a 500 ms ticker effect (kept
+  // in state so render stays pure — no Date.now() during render).
+  const [nowMs, setNowMs] = useState<number | null>(null);
   const [mapAircraft, setMapAircraft] = useState<Candidate[]>([]);
   const [view, setView] = useState<"camera" | "map">("camera");
   const [lockedId, setLockedId] = useState<string | null>(null);
@@ -71,6 +99,9 @@ export default function SpotPage() {
   const [zoom, setZoom] = useState(1);
   // Non-null = device supports native (optical) zoom; null = digital-crop fallback.
   const [zoomCaps, setZoomCaps] = useState<{ min: number; max: number; step: number } | null>(null);
+  // Two-finger pinch state: finger distance + zoom level at gesture start.
+  const pinchRef = useRef<{ dist: number; zoom: number } | null>(null);
+  const lastTapRef = useRef(0);
 
   const onOrient = useCallback((e: DeviceOrientationEvent) => {
     const anyE = e as DeviceOrientationEvent & { webkitCompassHeading?: number };
@@ -161,7 +192,14 @@ export default function SpotPage() {
         );
         const json = await res.json();
         if (!cancelled && Array.isArray(json.candidates)) {
-          const list = json.candidates as Candidate[];
+          // Anchor each fix at CLIENT receive time minus the feed's own
+          // position age — server timestamps would leak clock skew into the
+          // dead reckoning, and network latency (~100 ms) is far smaller.
+          const receivedAt = Date.now();
+          const list = (json.candidates as Candidate[]).map((c) => ({
+            ...c,
+            sampleAt: receivedAt - (c.seenPosS ?? 0) * 1000,
+          }));
           setCandidates(list);
           // Drop the lock when the tracked plane leaves range.
           setLockedId((id) =>
@@ -179,6 +217,48 @@ export default function SpotPage() {
       clearInterval(id);
     };
   }, [coords]);
+
+  // Fast-poll the tracked plane between sweeps: a single-hex lookup every 2 s,
+  // merged over its sweep entry, so the plane you're actually trying to catch
+  // gets near-live geometry while the 40 km sweep stays at 6 s.
+  useEffect(() => {
+    if (!coords || !lockedId) return;
+    let cancelled = false;
+    async function pollHex() {
+      try {
+        const res = await fetch(
+          `/api/flights?hex=${lockedId}&lat=${coords!.lat}&lon=${coords!.lon}${
+            coords!.alt != null ? `&alt=${Math.round(coords!.alt)}` : ""
+          }`,
+        );
+        const json = await res.json();
+        const fresh = Array.isArray(json.candidates)
+          ? (json.candidates[0] as Candidate | undefined)
+          : undefined;
+        if (cancelled || !fresh) return; // missing → the sweep decides the lock's fate
+        const sampleAt = Date.now() - (fresh.seenPosS ?? 0) * 1000;
+        setCandidates((prev) =>
+          prev.map((c) => (c.icao24 === fresh.icao24 ? { ...fresh, sampleAt } : c)),
+        );
+      } catch {
+        /* transient */
+      }
+    }
+    const id = setInterval(pollHex, TRACKED_POLL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [coords, lockedId]);
+
+  // 500 ms dead-reckoning ticker — drives the extrapolation memo below.
+  // (No synchronous first set: until the first tick, nowMs is null and the
+  // memo passes raw fixes through — a half-second of the old behaviour.)
+  useEffect(() => {
+    if (phase !== "active") return;
+    const id = setInterval(() => setNowMs(Date.now()), 500);
+    return () => clearInterval(id);
+  }, [phase]);
 
   // Own collection for the map's new-catch colouring.
   // Progressive enhancement: if this fails, markers just stay ink.
@@ -367,6 +447,10 @@ export default function SpotPage() {
     [onOrient],
   );
 
+  const minZoom = zoomCaps?.min ?? 1;
+  const maxZoom = zoomCaps?.max ?? 4;
+  const clampZoom = (v: number) => Math.min(maxZoom, Math.max(minZoom, v));
+
   function applyZoom(v: number) {
     setZoom(v);
     const track = trackRef.current as
@@ -377,30 +461,89 @@ export default function SpotPage() {
     }
   }
 
-  // Is the camera pointing at this aircraft (within the tolerance cone)?
-  function inCone(c: Candidate) {
+  // Pinch to zoom (the explicit ask) — two-finger distance ratio against the
+  // gesture-start zoom, through the same applyZoom as the buttons. Double-tap
+  // resets; a wheel handler makes it testable on desktop.
+  const touchDist = (e: React.TouchEvent) =>
+    Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY,
+    );
+  function onPinchStart(e: React.TouchEvent) {
+    if (e.touches.length === 2) {
+      pinchRef.current = { dist: touchDist(e), zoom };
+    } else if (e.touches.length === 1) {
+      const t = e.timeStamp;
+      if (t - lastTapRef.current < 300) applyZoom(minZoom);
+      lastTapRef.current = t;
+    }
+  }
+  function onPinchMove(e: React.TouchEvent) {
+    if (e.touches.length === 2 && pinchRef.current && pinchRef.current.dist > 0) {
+      applyZoom(clampZoom(pinchRef.current.zoom * (touchDist(e) / pinchRef.current.dist)));
+    }
+  }
+  function onPinchEnd(e: React.TouchEvent) {
+    if (e.touches.length < 2) pinchRef.current = null;
+  }
+  function onZoomWheel(e: React.WheelEvent) {
+    applyZoom(clampZoom(zoom * Math.exp(-e.deltaY / 500)));
+  }
+
+  // Dead-reckon every candidate to "now": the sweep is 6 s apart and a 100 m/s
+  // aircraft moves 600 m between polls — tens of degrees of bearing at close
+  // range. Geometry is re-derived from the projected lat/lon at full precision;
+  // the raw last-fix bearing/elevation ride along for the overlay's ghost.
+  const liveCandidates = useMemo<LiveCandidate[]>(() => {
+    return candidates.map((c) => {
+      const base: LiveCandidate = {
+        ...c,
+        rawBearing: c.bearing,
+        rawElevation: c.elevation,
+      };
+      if (nowMs == null || !coords || c.track == null || c.velocityMs == null) {
+        return base;
+      }
+      const dtSec = (nowMs - c.sampleAt) / 1000;
+      if (dtSec <= 0 || dtSec > 60) return base; // stale beyond trust, or clock oddity
+      const p = projectForward(c.lat, c.lon, c.track, c.velocityMs, dtSec);
+      const ground = haversineMeters(coords.lat, coords.lon, p.lat, p.lon);
+      return {
+        ...base,
+        lat: p.lat,
+        lon: p.lon,
+        distanceKm: Number((ground / 1000).toFixed(1)),
+        bearing: bearingDeg(coords.lat, coords.lon, p.lat, p.lon),
+        elevation:
+          c.altM != null ? elevationDeg(ground, c.altM - (coords.alt ?? 0)) : null,
+      };
+    });
+  }, [candidates, coords, nowMs]);
+
+  // Is the camera pointing at this aircraft? ONE true angular-separation cone —
+  // self-relaxing near the zenith where azimuth degenerates (the "directly
+  // overhead" feedback), unchanged at the horizon.
+  function inCone(c: LiveCandidate) {
     return (
       heading != null &&
       pitch != null &&
       c.elevation != null &&
-      angularDiff(heading, c.bearing) <= HEADING_TOL &&
-      Math.abs(pitch - c.elevation) <= PITCH_TOL
+      angularSeparation(heading, pitch, c.bearing, c.elevation) <= CONE_TOL
     );
   }
 
   // Locked plane (if tracking one), else the best auto-match in the cone.
   const lockedCandidate = lockedId
-    ? candidates.find((c) => c.icao24 === lockedId) ?? null
+    ? liveCandidates.find((c) => c.icao24 === lockedId) ?? null
     : null;
   const autoMatch =
     heading != null && pitch != null
-      ? candidates
+      ? liveCandidates
           .filter(inCone)
           .sort(
             (a, b) =>
-              angularDiff(heading, a.bearing) +
-              Math.abs(pitch - (a.elevation ?? 0)) -
-              (angularDiff(heading, b.bearing) + Math.abs(pitch - (b.elevation ?? 0))),
+              angularSeparation(heading, pitch, a.bearing, a.elevation ?? 0) -
+              angularSeparation(heading, pitch, b.bearing, b.elevation ?? 0),
           )[0] ?? null
       : null;
   const target = lockedCandidate ?? autoMatch;
@@ -459,8 +602,9 @@ export default function SpotPage() {
           obsAltM: coords?.alt,
           bearing: target.bearing,
           elevation: target.elevation,
-          // Plane position + ground track at capture time (context for the
-          // server's own live-feed verification).
+          // Dead-reckoned plane position + ground track at capture time.
+          // Diagnostic context only — the server re-queries the live feed and
+          // does its own back-projection; it never reads these.
           planeLat: target.lat,
           planeLon: target.lon,
           track: target.track,
@@ -532,7 +676,19 @@ export default function SpotPage() {
         ))}
       </div>
 
-      <div className="relative overflow-hidden rounded-lg border border-paper-edge bg-ink">
+      <div
+        className={`relative overflow-hidden rounded-lg border border-paper-edge bg-ink ${
+          view === "camera" ? "touch-none" : ""
+        }`}
+        {...(view === "camera"
+          ? {
+              onTouchStart: onPinchStart,
+              onTouchMove: onPinchMove,
+              onTouchEnd: onPinchEnd,
+              onWheel: onZoomWheel,
+            }
+          : {})}
+      >
         <video
           ref={videoRef}
           autoPlay
@@ -553,6 +709,28 @@ export default function SpotPage() {
                 }`}
               />
             </div>
+
+            {/* where we CALCULATE the target to be (solid) vs its raw last
+                fix (ghost) — shows whether the calc runs ahead of or behind
+                the real plane */}
+            {target && heading != null && pitch != null && target.elevation != null && (
+              <TargetOverlay
+                heading={heading}
+                pitch={pitch}
+                zoom={zoom}
+                label={targetLabel(target)}
+                distanceKm={target.distanceKm}
+                track={target.track}
+                target={{ bearing: target.bearing, elevation: target.elevation }}
+                ghost={
+                  target.rawElevation != null &&
+                  (target.rawBearing !== target.bearing ||
+                    target.rawElevation !== target.elevation)
+                    ? { bearing: target.rawBearing, elevation: target.rawElevation }
+                    : null
+                }
+              />
+            )}
 
             {/* sensor readout */}
             <div className="absolute left-3 top-3 rounded bg-ink/70 px-2 py-1 font-mono text-[11px] text-paper">
@@ -588,19 +766,26 @@ export default function SpotPage() {
               </div>
             )}
 
-            {/* zoom */}
-            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded bg-ink/70 px-3 py-1.5">
-              <span className="font-mono text-[11px] text-paper">{zoom.toFixed(1)}×</span>
-              <input
-                type="range"
-                min={zoomCaps?.min ?? 1}
-                max={zoomCaps?.max ?? 4}
-                step={zoomCaps?.step ?? 0.1}
-                value={zoom}
-                onChange={(e) => applyZoom(parseFloat(e.target.value))}
-                className="w-36 accent-sky"
-                aria-label="Zoom"
-              />
+            {/* zoom — pinch anywhere on the preview; buttons for keyboard/desktop;
+                double-tap resets */}
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-ink/70 px-1.5 py-1">
+              <button
+                onClick={() => applyZoom(clampZoom(zoom - 0.5))}
+                aria-label="Zoom out"
+                className="flex h-7 w-7 items-center justify-center rounded-full font-display text-base font-bold text-paper active:bg-paper/20"
+              >
+                −
+              </button>
+              <span className="w-11 text-center font-mono text-[11px] text-paper">
+                {zoom.toFixed(1)}×
+              </span>
+              <button
+                onClick={() => applyZoom(clampZoom(zoom + 0.5))}
+                aria-label="Zoom in"
+                className="flex h-7 w-7 items-center justify-center rounded-full font-display text-base font-bold text-paper active:bg-paper/20"
+              >
+                +
+              </button>
             </div>
           </>
         )}
@@ -682,7 +867,7 @@ export default function SpotPage() {
       </h2>
       <p className="mt-1 text-sm text-ink-soft">Tap a plane to track only that one.</p>
       <ul className="mt-3 divide-y divide-paper-edge rounded-lg border border-paper-edge">
-        {candidates.slice(0, 12).map((c) => {
+        {liveCandidates.slice(0, 12).map((c) => {
           const isLocked = lockedId === c.icao24;
           const isTarget = target?.icao24 === c.icao24 && targetInSights;
           const altFt =
@@ -709,7 +894,10 @@ export default function SpotPage() {
                 </span>
                 <span className="flex flex-col text-right text-ink-soft">
                   <span>{c.distanceKm} km · {altFt}</span>
-                  <span className="text-xs">BRG {c.bearing}° · ELV {c.elevation}°</span>
+                  <span className="text-xs">
+                    BRG {Math.round(c.bearing)}° · ELV{" "}
+                    {c.elevation == null ? "—" : Math.round(c.elevation)}°
+                  </span>
                 </span>
               </button>
             </li>

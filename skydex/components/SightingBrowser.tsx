@@ -1,15 +1,31 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SightingCard, { type Sighting } from "@/components/SightingCard";
 import Comments from "@/components/Comments";
 import Reactions from "@/components/Reactions";
 import ReportButton from "@/components/ReportButton";
 import ShareButton from "@/components/ShareButton";
 import Lightbox from "@/components/Lightbox";
+import FeedStories from "@/components/FeedStories";
 import { airlineFromCallsign } from "@/lib/airlines";
 import { type ReactionState } from "@/lib/reactions";
 import { deleteSighting } from "@/app/actions/admin";
+
+// Catch-up high-water mark: the ISO created_at of the newest sighting already
+// seen. NOT the WeeklyReview date-stamp pattern — this compares `>` against a
+// timestamp so any newer insert counts as unseen.
+const SEEN_KEY = "skydex_feed_seen_at";
+
+// "since Tuesday" / "since 3 Aug" — computed in an effect (not render: clock reads).
+function sinceLabel(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "your last visit";
+  const days = (Date.now() - d.getTime()) / 86_400_000;
+  if (days < 1) return "earlier today";
+  if (days < 7) return d.toLocaleDateString("en-GB", { weekday: "long" });
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
 
 export default function SightingBrowser({
   sightings,
@@ -20,6 +36,8 @@ export default function SightingBrowser({
   canDelete = false,
   commentCounts = {},
   reactions,
+  compact = false,
+  catchUp = false,
 }: {
   sightings: Sighting[];
   showComments?: boolean;
@@ -29,12 +47,66 @@ export default function SightingBrowser({
   canDelete?: boolean;
   commentCounts?: Record<string, number>;
   reactions?: Record<string, ReactionState>;
+  /** Photo-first cards (feed). Other consumers keep the full spec card. */
+  compact?: boolean;
+  /** Enable the "N new since…" banner + tap-through stories (feed only —
+      rows must carry created_at). */
+  catchUp?: boolean;
 }) {
   const [items, setItems] = useState(sightings);
   const [lightbox, setLightbox] = useState<Sighting | null>(null);
   const [query, setQuery] = useState("");
   const [type, setType] = useState<string | null>(null);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  // Catch-up state — `seen` is read/seeded from localStorage in an effect (SSR-safe).
+  const [seen, setSeen] = useState<{ mark: string; label: string } | null>(null);
+  const [storiesOpen, setStoriesOpen] = useState(false);
+
+  const newestIso = useMemo(() => {
+    let max: string | null = null;
+    for (const s of items) {
+      if (s.created_at && (!max || Date.parse(s.created_at) > Date.parse(max))) {
+        max = s.created_at;
+      }
+    }
+    return max;
+  }, [items]);
+
+  useEffect(() => {
+    if (!catchUp || !newestIso) return;
+    // Deferred a tick: localStorage is client-only, so the banner necessarily
+    // appears after hydration — and the setState must not run synchronously in
+    // the effect body (react-hooks/set-state-in-effect).
+    const t = setTimeout(() => {
+      const mark = localStorage.getItem(SEEN_KEY);
+      if (!mark) {
+        // First-ever visit: seed to the newest row, no banner — nobody gets a
+        // 50-card story on day one.
+        localStorage.setItem(SEEN_KEY, newestIso);
+        return;
+      }
+      setSeen({ mark, label: sinceLabel(mark) });
+    }, 0);
+    return () => clearTimeout(t);
+  }, [catchUp, newestIso]);
+
+  // Unseen rows, oldest first, so tapping through reads chronologically.
+  const unseen = useMemo(() => {
+    if (!catchUp || !seen) return [];
+    const cutoff = Date.parse(seen.mark);
+    if (Number.isNaN(cutoff)) return [];
+    return items
+      .filter((s) => s.created_at && Date.parse(s.created_at) > cutoff)
+      .sort((a, b) => Date.parse(a.created_at!) - Date.parse(b.created_at!));
+  }, [catchUp, seen, items]);
+
+  function closeStories() {
+    setStoriesOpen(false);
+    if (newestIso) {
+      localStorage.setItem(SEEN_KEY, newestIso);
+      setSeen({ mark: newestIso, label: "" }); // unseen collapses to [] → banner clears
+    }
+  }
 
   // Distinct types with per-type counts — powers the filter dropdown.
   const typeCounts = useMemo(() => {
@@ -83,6 +155,23 @@ export default function SightingBrowser({
 
   return (
     <div>
+      {/* catch-up banner — tap through everything that landed since last visit */}
+      {unseen.length > 0 && (
+        <button
+          onClick={() => setStoriesOpen(true)}
+          className="mb-4 flex w-full items-center justify-between gap-3 rounded-lg border border-sky bg-sky/10 px-4 py-3 text-left hover:bg-sky/15"
+        >
+          <span className="font-display text-sm font-semibold uppercase tracking-wide text-ink">
+            {unseen.length === items.length && items.length >= 50
+              ? `${items.length}+`
+              : unseen.length}{" "}
+            new {unseen.length === 1 ? "catch" : "catches"}
+            {seen?.label ? ` since ${seen.label}` : ""}
+          </span>
+          <span className="shrink-0 font-mono text-xs text-sky">tap through →</span>
+        </button>
+      )}
+
       {/* toolbar — search, type dropdown, verified toggle on one compact row */}
       <div className="flex flex-wrap items-center gap-2">
         <input
@@ -140,7 +229,7 @@ export default function SightingBrowser({
                   Delete
                 </button>
               )}
-              <SightingCard s={s} onOpen={() => setLightbox(s)} />
+              <SightingCard s={s} onOpen={() => setLightbox(s)} compact={compact} />
               {reactions && (
                 <Reactions
                   sightingId={s.id}
@@ -180,6 +269,15 @@ export default function SightingBrowser({
       )}
 
       {lightbox && <Lightbox sighting={lightbox} onClose={() => setLightbox(null)} />}
+
+      {storiesOpen && unseen.length > 0 && (
+        <FeedStories
+          sightings={unseen}
+          currentUserId={currentUserId}
+          reactions={reactions}
+          onClose={closeStories}
+        />
+      )}
     </div>
   );
 }

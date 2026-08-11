@@ -2,6 +2,32 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.15 — 2026-08-11
+
+Two feedback rows (in-app `feedback` table): @matteop9 2026-08-11 (overhead direction check "a lot a lot more relaxed" / faster polling for the tracked plane / pinch-to-zoom / superimposed calculated-position marker) and @matteop9 2026-07-29 (feed "difficult to digest", wants Instagram-style tap-through of what you've missed). Root causes: capture gating used two independent axis tolerances (azimuth degenerates near the zenith, so honest overhead captures failed a meaningless check), and candidates were polled every 6 s then treated as static while airplanes.live `seen_pos` is ~0.04–0.2 s — all staleness was our own poll gap.
+
+### Changed — pointing checks become one true angular-separation cone
+- **`lib/geo.ts`**: new `angularSeparation(az1, el1, az2, el2)` (spherical law of cosines — collapses to azimuth diff at the horizon, self-relaxes near the zenith), `signedAzimuthDelta` (−180…180), and `projectForward(lat, lon, track, speedMs, dtSec)` (flat-earth dead reckoning; negative dt back-projects).
+- **`app/spot/page.tsx`**: `HEADING_TOL`/`PITCH_TOL` (22/22) → single `CONE_TOL = 25` on true separation; auto-match sorts by separation. Verified deterministically: 85° elevation with 90° of azimuth error = 7.1° separation (passes), horizon 30° azimuth error stays 30° (fails, as before).
+- **`app/api/sightings/route.ts`**: `VERIFY_HEADING_TOL`/`VERIFY_PITCH_TOL` (60/45) → `VERIFY_CONE_TOL = 70`; missing heading still fails closed, missing pitch/elevation falls back to azimuth-only (preserves the old pass-open policy). The live sample is **back-projected to the shutter instant** (`projectForward` over `capturedAt − (now − seen_pos)`, guarded to ±120 s and track+velocity present) before computing geometry. `verify_fail_reason` shape: `cone 84 vs 70` replaces `heading …`/`pitch …` (nullable diagnostic; no migration).
+- **`components/SpotMap.tsx`**: `FOV_HALF_ANGLE` 22 → 25 to keep mirroring the capture tolerance.
+
+### Added — dead reckoning + tracked-plane fast poll
+- **`lib/aircraft.ts`**: `seen_pos` plumbed end-to-end (`AcRecord` → `Aircraft.seenPosS` → `Candidate.seenPosS` → `HexLookup.seenPosS`); `HexLookup` also gains `callsign` and `velocityMs` (needed for server back-projection).
+- **`app/api/flights/route.ts`**: new `hex=<icao24>` mode — resolves one aircraft via `lookupLiveByHex`, annotates with the same geometry, skips the cone filter, returns a one-item `candidates` array; `fetchedAt` added to responses.
+- **`app/spot/page.tsx`**: candidates stored with per-candidate `sampleAt` (client receive time − `seenPosS`, avoiding server-clock skew); a 500 ms ticker + memo dead-reckons every candidate's lat/lon → bearing/elevation/distance between polls (raw fix kept for the overlay ghost). While a plane is locked, it's fast-polled via `hex=` every 2 s and merged over its sweep entry; the 40 km sweep stays at 6 s.
+
+### Added — camera pinch-to-zoom + calculated-position overlay
+- **`app/spot/page.tsx`**: two-finger pinch (ratio × gesture-start zoom, clamped to native caps or 1–4× digital, through the existing `applyZoom`), `touch-none` wrapper, wheel zoom for desktop, double-tap resets. The slider is retired for a `−  1.0×  +` chip (keyboard-accessible).
+- **`components/TargetOverlay.tsx`** (new, presentational): projects the current target into screen space (`signedAzimuthDelta`/elevation offsets over `CAMERA_HFOV_DEG = 65` ÷ zoom — a deliberate tunable, no browser API exposes lens FOV); solid plane glyph at the dead-reckoned position rotated by track − heading, labelled `reg · km · °off`; faint ghost at the raw last fix (ahead/behind legible at a glance); off-screen targets clamp to the edge with a rotated chevron.
+
+### Added — feed catch-up stories + compact cards
+- **`app/feed/page.tsx`**: `created_at` added to `COLS`/`FeedRow`; browser gets `compact` + `catchUp` (catch-up only on Latest — Popular reshuffles old rows).
+- **`components/FeedStories.tsx`** (new): full-screen ink viewer — progress pips, tap zones (left third back / right two-thirds forward), >40 px swipe, arrow keys, Esc via `useDialog`; slides reuse `SightingSpecs dark` + `Reactions` (new `dark` prop, keyed per slide) + `ShareButton`.
+- **`components/SightingBrowser.tsx`**: `localStorage["skydex_feed_seen_at"]` high-water mark (ISO timestamp compared `>` — deliberately NOT the WeeklyReview date-stamp pattern); banner "N new catches since —— tap through →" ("50+" when every loaded row is unseen); first-ever visit seeds silently; closing the viewer advances the mark. New `compact`/`catchUp` props default off, so scrapbook is unchanged.
+- **`components/SightingCard.tsx`**: `Sighting.created_at?` + `compact` prop — photo `h-40` → `aspect-[4/3]`, spec grid collapses to headline / type · airline / linked `@handle` / one mono line (rarity · route · time); rarity rail, stamps and badges stay. Full spec block stays one tap away in the shared Lightbox (AGENTS.md conventions 1+2 hold).
+- **`components/Reactions.tsx`**: `dark` variant (border/text swaps + dark selected states), mirroring the `SightingSpecs` convention.
+
 ## v0.3.14 follow-up — 2026-08-03 (silent, no version bump)
 
 Email sign-up restored by request — deliberately quiet: no `lib/releases.ts` entry, home screen stays on v0.3.14.

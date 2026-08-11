@@ -46,3 +46,53 @@ export function angularDiff(a: number, b: number): number {
   const d = Math.abs(((a - b + 540) % 360) - 180);
   return d;
 }
+
+/** Signed compass delta from `from` to `to`, −180…180 degrees (positive = clockwise/right). */
+export function signedAzimuthDelta(from: number, to: number): number {
+  return ((to - from + 540) % 360) - 180;
+}
+
+/**
+ * True angular separation between two pointing directions given as
+ * (azimuth, elevation) pairs, in degrees — spherical law of cosines.
+ * This is the one number that should gate "am I pointing at it": it collapses
+ * to the azimuth difference at the horizon and self-relaxes near the zenith,
+ * where a plane can swing 90° of bearing while barely moving across the sky.
+ */
+export function angularSeparation(
+  az1: number,
+  el1: number,
+  az2: number,
+  el2: number,
+): number {
+  const e1 = toRad(el1);
+  const e2 = toRad(el2);
+  const dAz = toRad(az2 - az1);
+  const cosSep =
+    Math.sin(e1) * Math.sin(e2) + Math.cos(e1) * Math.cos(e2) * Math.cos(dAz);
+  // Clamp for float noise before acos.
+  return toDeg(Math.acos(Math.min(1, Math.max(-1, cosSep))));
+}
+
+/**
+ * Project a moving aircraft along its ground track. Flat-earth offset — plenty
+ * accurate over the ≤2 min horizons we use it for (dead-reckoning between
+ * polls, back-projecting a live sample to the shutter instant). Negative
+ * `dtSec` projects backwards.
+ */
+export function projectForward(
+  lat: number,
+  lon: number,
+  trackDeg: number,
+  speedMs: number,
+  dtSec: number,
+): { lat: number; lon: number } {
+  const dist = speedMs * dtSec; // metres along track
+  const t = toRad(trackDeg);
+  const dNorth = dist * Math.cos(t);
+  const dEast = dist * Math.sin(t);
+  return {
+    lat: lat + dNorth / 111_320,
+    lon: lon + dEast / (111_320 * Math.cos(toRad(lat))),
+  };
+}

@@ -57,9 +57,11 @@ const RARITY_HEX: Record<string, string> = {
 };
 const GLOW_TIERS = new Set(["rare", "epic", "legendary"]);
 
-// Mirror the capture logic's HEADING_TOL (spot page) — the cone IS the window
-// the camera would accept a target in, so what you see is what you can catch.
-const FOV_HALF_ANGLE = 22;
+// Mirror the capture logic's CONE_TOL (spot page) — the wedge IS roughly the
+// window the camera would accept a target in, so what you see is what you can
+// catch. (The capture check is now a true angular-separation cone; this stays
+// an azimuth wedge, which matches it at the horizon where the map view lives.)
+const FOV_HALF_ANGLE = 25;
 // CARTO Positron — light vector basemap, free with attribution (already credited on /attributions).
 const STYLE_URL = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 

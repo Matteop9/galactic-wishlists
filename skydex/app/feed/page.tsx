@@ -10,7 +10,7 @@ import { type ReactionState } from "@/lib/reactions";
 export const dynamic = "force-dynamic";
 
 const COLS =
-  "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm";
+  "id, created_at, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm";
 
 // Popular window: sightings from the last 30 days, so old winners age out.
 // (Module-level helper — the page is force-dynamic, so this runs per request.)
@@ -20,6 +20,7 @@ function popularCutoff(): string {
 
 type FeedRow = {
   id: string;
+  created_at: string; // insert time — the feed's ordering + catch-up watermark
   captured_at: string;
   callsign: string | null;
   registration: string | null;
@@ -169,6 +170,8 @@ export default async function FeedPage({
           showVerifiedToggle={devMode}
           commentCounts={commentCounts}
           reactions={reactions}
+          compact
+          catchUp={sort === "recent"} // Popular reshuffles old rows — catch-up only makes sense on Latest
         />
       )}
     </SectionShell>

@@ -11,15 +11,23 @@ const SELECTED: Record<string, string> = {
   down: "border-stamp bg-stamp/10 text-ink",
   unsure: "border-brass bg-brass/10 text-ink",
 };
+const SELECTED_DARK: Record<string, string> = {
+  up: "border-rarity-uncommon bg-rarity-uncommon/20 text-paper",
+  down: "border-stamp bg-stamp/20 text-paper",
+  unsure: "border-brass bg-brass/20 text-paper",
+};
 
 export default function Reactions({
   sightingId,
   currentUserId,
   state,
+  dark = false,
 }: {
   sightingId: string;
   currentUserId: string | null;
   state?: ReactionState;
+  /** Restyle for an ink backdrop (story viewer) — same convention as SightingSpecs. */
+  dark?: boolean;
 }) {
   const supabase = useRef(createClient()).current;
   const [counts, setCounts] = useState<Record<string, number>>(state?.counts ?? {});
@@ -80,7 +88,9 @@ export default function Reactions({
   }
 
   return (
-    <div className="flex flex-wrap gap-1.5 bg-paper-deep px-3 pb-2 pt-1">
+    <div
+      className={`flex flex-wrap gap-1.5 px-3 pb-2 pt-1 ${dark ? "" : "bg-paper-deep"}`}
+    >
       {VOTES.map(({ emoji, label, tone }) => {
         const n = counts[emoji] ?? 0;
         const selected = myVote === emoji;
@@ -93,8 +103,10 @@ export default function Reactions({
             aria-pressed={selected}
             className={`flex items-center gap-1 rounded-full border px-2 py-0.5 font-mono text-xs transition-colors disabled:cursor-default ${
               selected
-                ? SELECTED[tone]
-                : "border-paper-edge text-ink-soft hover:border-ink enabled:hover:text-ink"
+                ? (dark ? SELECTED_DARK : SELECTED)[tone]
+                : dark
+                  ? "border-paper/30 text-paper/70 hover:border-paper enabled:hover:text-paper"
+                  : "border-paper-edge text-ink-soft hover:border-ink enabled:hover:text-ink"
             }`}
           >
             <span className="text-sm leading-none">{emoji}</span>
