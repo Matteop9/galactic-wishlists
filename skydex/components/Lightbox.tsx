@@ -47,6 +47,16 @@ export default function Lightbox({
       className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-y-auto bg-ink/90 p-4 outline-none"
       onClick={onClose}
     >
+      {/* always-visible close — fixed (not absolute) so it doesn't scroll away
+          with tall photo + specs content (feedback 2026-08-11) */}
+      <button
+        onClick={onClose}
+        aria-label="Close"
+        className="fixed right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-ink/70 font-mono text-lg leading-none text-paper hover:bg-ink"
+      >
+        ✕
+      </button>
+
       {hasRef ? (
         <div className="relative" onClick={(e) => e.stopPropagation()}>
           {big && (
@@ -78,6 +88,18 @@ export default function Lightbox({
         )
       )}
 
+      {/* clearly identifiable close right below the picture (the explicit ask —
+          the old bottom text hint made people scroll past the attribution link) */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
+        className="sd-btn sd-btn--log mt-4 !px-6 !py-2 !text-sm"
+      >
+        Close
+      </button>
+
       {/* the same card info as everywhere else — shared spec block, dark variant */}
       <div
         className="mt-4 w-full max-w-sm text-left"
@@ -97,10 +119,6 @@ export default function Lightbox({
           Reference photo: {ref?.photographer ?? "unknown"} · Planespotters
         </a>
       )}
-
-      <p className="mt-4 font-mono text-xs uppercase tracking-widest text-paper/50">
-        Tap background or press Esc to close
-      </p>
     </div>
   );
 }

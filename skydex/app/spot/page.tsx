@@ -766,26 +766,24 @@ export default function SpotPage() {
               </div>
             )}
 
-            {/* zoom — pinch anywhere on the preview; buttons for keyboard/desktop;
-                double-tap resets */}
-            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-ink/70 px-1.5 py-1">
-              <button
-                onClick={() => applyZoom(clampZoom(zoom - 0.5))}
-                aria-label="Zoom out"
-                className="flex h-7 w-7 items-center justify-center rounded-full font-display text-base font-bold text-paper active:bg-paper/20"
-              >
-                −
-              </button>
-              <span className="w-11 text-center font-mono text-[11px] text-paper">
-                {zoom.toFixed(1)}×
-              </span>
-              <button
-                onClick={() => applyZoom(clampZoom(zoom + 0.5))}
-                aria-label="Zoom in"
-                className="flex h-7 w-7 items-center justify-center rounded-full font-display text-base font-bold text-paper active:bg-paper/20"
-              >
-                +
-              </button>
+            {/* zoom — pinch anywhere on the preview OR the legacy slider;
+                double-tap resets, wheel works on desktop. touch-auto +
+                stopPropagation keep slider drags out of the pinch handlers. */}
+            <div
+              className="absolute bottom-3 left-1/2 flex -translate-x-1/2 touch-auto items-center gap-2 rounded bg-ink/70 px-3 py-1.5"
+              onTouchStart={(e) => e.stopPropagation()}
+            >
+              <span className="font-mono text-[11px] text-paper">{zoom.toFixed(1)}×</span>
+              <input
+                type="range"
+                min={zoomCaps?.min ?? 1}
+                max={zoomCaps?.max ?? 4}
+                step={zoomCaps?.step ?? 0.1}
+                value={zoom}
+                onChange={(e) => applyZoom(parseFloat(e.target.value))}
+                className="w-36 accent-sky"
+                aria-label="Zoom"
+              />
             </div>
           </>
         )}

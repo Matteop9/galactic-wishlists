@@ -2,6 +2,16 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.16 — 2026-08-12
+
+Feedback row @lgspotzplanez 2026-08-11 ("Escape button… put it below the picture and clearly identifiable button, not just text") + same-day user request to bring the zoom slider back alongside pinch.
+
+### Changed — Lightbox close controls
+- **`components/Lightbox.tsx`**: always-visible ✕ pinned top-right (`fixed`, not `absolute` — the container scrolls) + a labelled `Close` button (`sd-btn sd-btn--log`) directly below the picture; the "Tap background or press Esc to close" text hint removed. Background tap + Esc (`useDialog`) unchanged; the Planespotters attribution link stays (licensing) but is no longer the nearest tappable thing to the close affordance.
+
+### Changed — zoom slider restored alongside pinch
+- **`app/spot/page.tsx`**: the v0.3.15 `−/1.0×/+` chip replaced by the legacy `{zoom}× + <input type="range">` slider row (same markup as pre-0.3.15); pinch, double-tap reset and wheel zoom all stay. The slider container gets `touch-auto` (overrides the wrapper's `touch-none` so native drags work) and `onTouchStart` stopPropagation (slider taps must not feed the wrapper's pinch/double-tap handlers).
+
 ## v0.3.15 — 2026-08-11
 
 Two feedback rows (in-app `feedback` table): @matteop9 2026-08-11 (overhead direction check "a lot a lot more relaxed" / faster polling for the tracked plane / pinch-to-zoom / superimposed calculated-position marker) and @matteop9 2026-07-29 (feed "difficult to digest", wants Instagram-style tap-through of what you've missed). Root causes: capture gating used two independent axis tolerances (azimuth degenerates near the zenith, so honest overhead captures failed a meaningless check), and candidates were polled every 6 s then treated as static while airplanes.live `seen_pos` is ~0.04–0.2 s — all staleness was our own poll gap.

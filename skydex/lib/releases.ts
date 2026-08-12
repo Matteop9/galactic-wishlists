@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.16",
+    date: "2026-08-12",
+    changes: [
+      "The photo card is much easier to close: a ✕ pinned top-right plus a proper Close button right under the picture — no more scrolling past the credits link hunting for the small print.",
+      "The camera zoom slider is back, alongside pinch — use whichever you prefer. Double-tap still resets.",
+    ],
+  },
+  {
     version: "0.3.15",
     date: "2026-08-11",
     changes: [
