@@ -98,6 +98,12 @@ export async function joinLeague(leagueId: string, userId: string): Promise<Leag
   return updated;
 }
 
+export async function updateLockAt(leagueId: string, lockAt: string): Promise<League | null> {
+  const league = await getLeague(leagueId);
+  if (!league) return null;
+  return updateDoc<League>(paths.leagueMeta(leagueId), (cur) => ({ ...(cur ?? league), lockAt }));
+}
+
 export async function getMyLeagueIds(userId: string): Promise<{ id: string; name: string; season: string }[]> {
   const index = await readDoc<LeaguesIndexDoc>(paths.leaguesIndex);
   if (!index) return [];

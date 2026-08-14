@@ -1,5 +1,17 @@
 # Changelog — Spot On
 
+## v0.2.1 — 2026-08-14
+
+- **Editable deadline**: league creators can now move the prediction deadline from the
+  league page (pre-lock only). New `updateDeadlineAction` server action guards
+  creator-only + not-yet-locked, then updates `lockAt` via `updateDoc` on the league
+  meta doc. The form resolves the `datetime-local` value to an instant in the
+  browser's timezone client-side (the create-league form parses it in server TZ =
+  UTC), and shows the current deadline in UK time
+- One-off `scripts/set-deadline-1830.mjs`: sets a league's `lockAt` to 18:30
+  Europe/London on its current deadline date, straight against the Blob store
+  (needs `BLOB_READ_WRITE_TOKEN` from `vercel env pull`)
+
 ## v0.2.0 — 2026-08-07
 
 Design system v2 integrated (ClaudeDesign/ — brand kit, share cards, and 5 new assets):

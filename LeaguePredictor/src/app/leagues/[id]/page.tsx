@@ -6,6 +6,7 @@ import { getScorers, getStandings } from '@/lib/football';
 import { scoreLeague, withRanks, type MemberPredictionInput } from '@/lib/scoring';
 import { competitionById } from '@/lib/competitions';
 import CopyInviteLink from '@/components/CopyInviteLink';
+import EditDeadlineForm from './EditDeadlineForm';
 import type { ApiScorer, ApiTableRow } from '@/lib/types';
 
 export default async function LeaguePage({ params }: { params: Promise<{ id: string }> }) {
@@ -98,6 +99,7 @@ function PreLock({
           <h3 className="mb-2 text-sm font-semibold text-muted">Invite your mates</h3>
           <CopyInviteLink code={league.inviteCode} />
         </div>
+        {league.createdBy === myUserId && <EditDeadlineForm leagueId={league.id} lockAt={league.lockAt} />}
       </div>
 
       <div className="rounded-xl border border-border bg-surface p-5">
