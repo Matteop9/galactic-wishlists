@@ -42,12 +42,19 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
             {league.members.length === 1 ? 'player' : 'players'}
           </p>
         </div>
-        {!locked && (
+        {!locked ? (
           <Link
             href={`/leagues/${league.id}/predict`}
             className="rounded-lg bg-primary px-4 py-2 text-sm font-display font-bold text-primary-ink hover:brightness-110 transition"
           >
             My predictions
+          </Link>
+        ) : (
+          <Link
+            href={`/leagues/${league.id}/table`}
+            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-display font-bold hover:border-muted transition-colors"
+          >
+            The grid — everyone’s picks
           </Link>
         )}
       </div>

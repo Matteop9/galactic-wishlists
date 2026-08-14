@@ -1,5 +1,14 @@
 # Changelog — Spot On
 
+## v0.2.2 — 2026-08-14
+
+- **The grid** (`/leagues/[id]/table`): post-lock view with the actual league table
+  down the side and one column per player — each cell is where that player predicted
+  the team to finish, coloured by distance (green spot-on, amber 1–4 off, red 5+).
+  Sticky position/team columns, players who haven't submitted are omitted, and the
+  page keeps the pre-lock secrecy rule. Linked from the league page header once
+  predictions lock
+
 ## v0.2.1 — 2026-08-14
 
 - **Editable deadline**: league creators can now move the prediction deadline from the
