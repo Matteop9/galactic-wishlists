@@ -2,6 +2,17 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.17 — 2026-08-14
+
+Outage: airplanes.live began returning **403 to all unregistered API consumers** ("Please contact us at contact@airplanes.live…"), taking down the live map, the nearby feed, capture verification and the tracked-plane fast poll (every `/api/flights` call 502'd). Verified the 403 reproduces from multiple egresses — their policy change, not a Vercel IP block. CARTO basemap and all app code were fine.
+
+### Changed — live feed swapped to adsb.fi
+- **`lib/aircraft.ts`**: `fetchAircraftNear` → `opendata.adsb.fi/api/v2/lat/{lat}/lon/{lon}/dist/{nm}`, `lookupLiveByHex` → `opendata.adsb.fi/api/v2/hex/{hex}`; `source` string now `adsb.fi`. adsb.fi is readsb-shaped like airplanes.live and carries the full `desc` (the reason adsb.lol stayed unusable as primary), plus `ownOp`/`year` (unused for now). Quirk handled in `mapReadsb`: the point endpoint keys the array `aircraft`, the hex endpoint `ac`.
+- **`app/api/flights/route.ts`**: hex-mode `source` string updated.
+- **`scripts/rarity-snapshot.mjs`**: fallback source airplanes.live → adsb.fi (parser accepts both array keys).
+- **Docs/comments**: `README.md`, `lib/fr24.ts`, `app/api/sightings/route.ts` license comment, `research/data-licences.md` §2 rewritten (adsb.fi terms: community open data, non-commercial lean, ≤1 req/s guidance — same acquisition caveat as before; airplanes.live marked removed with the option to email for approved access).
+- **`app/attributions/page.tsx`**: live-data credit airplanes.live → adsb.fi.
+
 ## v0.3.16 — 2026-08-12
 
 Feedback row @lgspotzplanez 2026-08-11 ("Escape button… put it below the picture and clearly identifiable button, not just text") + same-day user request to bring the zoom slider back alongside pinch.

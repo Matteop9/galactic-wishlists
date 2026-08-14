@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.17",
+    date: "2026-08-14",
+    changes: [
+      "The live map is back. Our flight-position provider (airplanes.live) started blocking API access, so no planes were loading anywhere — SkyDex now gets live positions from adsb.fi instead, with the same coverage and the same friendly type names.",
+      "Capture verification and the fast-poll on a tracked plane ride the same feed, so catching works again too.",
+    ],
+  },
+  {
     version: "0.3.16",
     date: "2026-08-12",
     changes: [

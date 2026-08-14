@@ -2,7 +2,7 @@
 // source for a *captured* sighting (the data we persist on the permanent card).
 //
 // HYBRID ARCHITECTURE (see research/data-licences.md + project notes):
-//  - airplanes.live (lib/aircraft.ts) drives the live map / nearby feed — transient,
+//  - adsb.fi (lib/aircraft.ts) drives the live map / nearby feed — transient,
 //    nothing persisted.
 //  - At capture, ONE filtered FR24 `full` lookup (by registration) returns the
 //    authoritative aircraft type, registration, operator, and the *direction-correct*
