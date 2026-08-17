@@ -1,0 +1,92 @@
+{
+  "_comment": "Every tunable number in the tracker. Keys starting with an underscore are comments and are stripped before validation. Change a number, reload the site: history re-grades itself (all analytics run at view time).",
+
+  "valueAdjustments": {
+    "_comment": "Multipliers applied to FantasyCalc values per league before any ranking or lineup maths.",
+    "tePremiumMultiplier": 1.1,
+    "_tePremiumMultiplier": "Applied to TE values in leagues where scoring_settings.bonus_rec_te > 0.",
+    "qbFourPointPassTdMultiplier": 0.92,
+    "_qbFourPointPassTdMultiplier": "Applied to QB values when pass_td = 4 (FantasyCalc's superflex baseline assumes 6pt).",
+    "volumeBonusRbWrMultiplier": 1.03,
+    "_volumeBonusRbWrMultiplier": "Boost for high-volume RB/WR in yardage-bonus leagues (Syndicate). Set to 1.0 to disable.",
+    "volumeBonusMinPositionRank": 24,
+    "_volumeBonusMinPositionRank": "Volume bonus only applies to RB/WR at or better than this position rank (proxy for volume)."
+  },
+
+  "ageBands": {
+    "_comment": "Boundaries for the age-weighted value split. Bands: <= youngMax | youngMax+1..primeMax | >= primeMax+1.",
+    "youngMax": 25,
+    "primeMax": 28,
+    "defaultAge": 26,
+    "_defaultAge": "Used when both the Sleeper dump and FantasyCalc lack an age."
+  },
+
+  "direction": {
+    "_comment": "Cutoffs for Contender / Ascending / Mushy middle / Rebuilding. Ranks are within-league, 1 = best.",
+    "contenderStarterRankMax": 3,
+    "contenderWinNowShareMin": 0.45,
+    "_contenderWinNowShareMin": "Share of roster value held by players older than ageBands.youngMax.",
+    "contenderMinWinPct": 0.5,
+    "_contenderMinWinPct": "Ignored in preseason snapshots (no records exist yet).",
+    "ascendingTotalRankMax": 4,
+    "ascendingYouthShareMin": 0.4,
+    "rebuildingStarterRankMinFromBottom": 4,
+    "_rebuildingStarterRankMinFromBottom": "Starter rank within this many places of last = rebuilding candidate.",
+    "rebuildingYouthShareMin": 0.45,
+    "rebuildingPickCapitalRankMax": 3
+  },
+
+  "archetypes": {
+    "_comment": "Player archetype rules. Declining is checked first and overrides Win-now vet.",
+    "winNowVetMinAge": 27,
+    "youthAssetMaxAge": 24,
+    "primeMinAge": 25,
+    "primeMaxAge": 27,
+    "decliningMinAge": 29,
+    "decliningTrend30Max": 0,
+    "_decliningTrend30Max": "trend30Day must be below this for a 29+ player to count as Declining.",
+    "redraftDominanceRatio": 1.08,
+    "_redraftDominanceRatio": "redraftValue must exceed dynasty value by this ratio (or vice versa) before it counts as a win-now or youth signal."
+  },
+
+  "picks": {
+    "_comment": "Pick capital valuation. Slot numbers are overallRank positions on the FantasyCalc curve for the league's variant.",
+    "firstEarlySlot": 15,
+    "firstMidSlot": 18,
+    "firstLateSlot": 30,
+    "secondSlot": 60,
+    "thirdSlot": 110,
+    "fourthSlot": 160,
+    "_thirdSlot": "The brief only prices 1sts and 2nds; 3rds/4ths get these deep slots so pick capital is not understated. Tune to taste.",
+    "futureSeasonDiscount": 0.15,
+    "_futureSeasonDiscount": "Picks two seasons out discounted by this fraction.",
+    "seasonsAhead": 2,
+    "roundsValued": 4,
+    "earlyStandingsCutoff": 4,
+    "lateStandingsCutoff": 9,
+    "_earlyStandingsCutoff": "Owing team in the TOP earlyStandingsCutoff of the standings (rank 1 = best) owes a LATE 1st; at or below lateStandingsCutoff owes an EARLY 1st; in between = mid. Preseason (no standings): all 1sts = mid."
+  },
+
+  "verdicts": {
+    "_comment": "Verdict and buy-target generation.",
+    "sellDuplicateDepthMinCount": 3,
+    "_sellDuplicateDepthMinCount": "Nth-or-worse player at a position, outside my optimal lineup, gets a sell look as duplicated depth.",
+    "duplicateDepthMinValue": 1000,
+    "_duplicateDepthMinValue": "Duplicated depth below this adjusted value is not worth a trade thread; it stays Hold.",
+    "buyTargetMaxPerLeague": 5,
+    "buyTargetMinAdjValue": 800,
+    "minMarginalStarterValue": 1,
+    "_minMarginalStarterValue": "A buy target must add at least this much to my optimal lineup, else it is bench depth."
+  },
+
+  "refresh": {
+    "_comment": "Fetch behaviour for scripts/refresh.ts and the live-fetch button.",
+    "playersDumpMaxAgeDays": 6,
+    "requestDelayMs": 200,
+    "retries": 3,
+    "retryBackoffMs": 500,
+    "timeoutMs": 15000,
+    "fcJoinRateWarnBelow": 0.85,
+    "_fcJoinRateWarnBelow": "Warn if fewer than this fraction of rostered QB/RB/WR/TE match a FantasyCalc entry."
+  }
+}

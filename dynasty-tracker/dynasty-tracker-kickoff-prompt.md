@@ -1,0 +1,162 @@
+# Kick-off prompt: Dynasty Tracker
+
+Paste everything below this line into Claude Code in your empty project.
+
+---
+
+Build me a dynasty fantasy football tracker as a static web app. I manage five Sleeper dynasty leagues and want a site I can deploy (GitHub Pages or Cloudflare Pages) and manually refresh each week with one command. Read this whole brief before writing code, then start with Phase 1.
+
+## Who I am
+
+- Sleeper username `Matteop9`, user_id `1288931369333829632`
+- All five leagues are superflex (SUPER_FLEX slot), PPR, dynasty (settings.type=2), pick trading enabled
+- Playoffs start week 15, 6 teams qualify
+
+## Leagues (2026 season)
+
+| League | league_id | Teams | Scoring notes |
+|---|---|---|---|
+| Olympian League | 1362890836475404288 | 12 | TE prem +0.5, 6pt pass TD, taxi 5, FAAB 100 |
+| The Syndicate | 1332929440778297344 | 12 | Yardage bonuses (100/200 rush+rec, 300/400 pass), TE prem, 6pt pass TD |
+| Stars & Crown | 1313029614053892096 | 10 | 6pt pass TD, taxi 5 |
+| The Kingsmen | 1312484177249079296 | 12 | 4pt pass TD, TE prem, taxi 4 |
+| Raiders Still suck | 1307349910315618304 | 12 | 4pt pass TD, TE prem, FAAB 200, taxi 5 |
+
+League IDs roll over each season (auto_continue on). At the start of a new season, re-resolve via `GET https://api.sleeper.app/v1/user/1288931369333829632/leagues/nfl/{season}` and update config.
+
+## Data sources (all free, no auth, CORS-open)
+
+**Sleeper API** (`https://api.sleeper.app/v1/...`):
+- `/state/nfl` — current week/season. If `season_type` is `pre` or week 0, produce a preseason baseline instead of a gameweek review.
+- `/league/{id}/rosters` — rosters; match me via `owner_id`. Includes wins/losses/fpts in `settings`. `taxi` and `reserve` arrays list taxi-squad and IR player_ids.
+- `/league/{id}/users` — display names for owner_ids.
+- `/league/{id}/matchups/{week}` — per-team and per-player points; `matchup_id` pairs opponents.
+- `/league/{id}/transactions/{week}` — trades, waivers, FAAB spent.
+- `/league/{id}/traded_picks` — pick capital.
+- `/players/nfl` — ~5MB master dump (player_id → name, position, team, age, years_exp, injury_status). Cache to `data/{season}/players.json`; refresh at most weekly, never per page load.
+- `/players/nfl/trending/add` and `/trending/drop` — market momentum.
+
+**FantasyCalc API** (dynasty market values):
+- `GET https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1` (and `numTeams=10` for Stars & Crown)
+- Each entry: `player.sleeperId` (join key), `value`, `overallRank`, `positionRank`, `trend30Day`, `maybeTier`, `player.maybeAge`, `redraftValue`, `redraftDynastyValueDifference`
+- `redraftValue >> value` = win-now asset. `value >> redraftValue` = future/youth asset.
+
+## Architecture
+
+Snapshot-based static site:
+
+```
+dynasty-tracker/
+  CLAUDE.md                    # this brief, maintained as the project bible
+  config/
+    leagues.json               # league table above + per-league scoring adjustments
+    thresholds.json            # all tunable numbers (see Methodology) — nothing hardcoded
+  scripts/
+    refresh.ts                 # pulls all Sleeper + FantasyCalc data, writes dated snapshot
+    insights.ts                # Phase 4: YouTube transcript ingestion
+  data/
+    2026/
+      players.json             # cached Sleeper player dump
+      preseason.json
+      week-01.json ...         # one snapshot per refresh
+      insights/                # Phase 4 output
+  src/                         # Vite + React app, reads snapshots from data/
+  .github/workflows/
+    refresh.yml                # workflow_dispatch manual trigger; runs refresh, commits snapshot, redeploys
+```
+
+- `npm run refresh` = full weekly update. Also wire it into a GitHub Action with `workflow_dispatch` so I can refresh from my phone.
+- The site reads the latest snapshot by default and diffs against the previous one for all delta displays. A snapshot picker lets me view any past week.
+- Keep a "live fetch" fallback button in the UI that pulls current data client-side (both APIs are CORS-open) without writing a snapshot, for mid-week curiosity.
+- Static hosting, no server, no API keys, no database. TypeScript throughout. Shared computation logic must live in one module used by both `scripts/refresh.ts` and `src/` — never duplicate the maths.
+
+## Methodology (the analytical core)
+
+### League-adjusted values
+FantasyCalc values are league-agnostic. Before any ranking or lineup maths, adjust per league (multipliers in `config/thresholds.json`, sensible defaults, easily tuned):
+- TE premium leagues: multiply TE values by ~1.1
+- 4pt pass TD leagues: multiply QB values by ~0.92 relative to the 6pt baseline
+- Yardage-bonus league (Syndicate): small boost to high-volume RB/WR (optional, low priority)
+
+### Team profile (per team, per league)
+1. Join roster player_ids to FantasyCalc (via sleeperId) and the player dump (age, injury).
+2. Compute: total roster value; starter value (best legal lineup by adjusted value, using the league's actual `roster_positions`); depth value (rest); age-weighted split (share of value in ≤25 / 26–28 / 29+); pick capital.
+3. Taxi and IR handling: taxi players are excluded from starter-value calculation but included in total value and youth share. IR players excluded from starter value.
+4. Pick capital: value traded + native picks for the next two drafts. 1sts slotted early/mid/late using the current standings of the team that owes the pick (early ≈ top-15 player value, mid ≈ rank-18, late ≈ rank-30); 2nds ≈ rank-60 value; picks two seasons out discounted 15%.
+
+### Direction classification
+- **Contender**: top-3 starter value, high win-now share, competitive record
+- **Ascending**: high total value, high ≤25 share, thin starters — 1 to 2 moves from contending
+- **Mushy middle**: mid-table on both — flag as the danger zone, recommend picking a lane
+- **Rebuilding**: low starter value, high pick capital or youth share
+
+My team gets a full profile; opponents get one-line classifications (they are the trade market).
+
+### Player archetypes
+- **Win-now vet**: age 27+, redraftValue > value
+- **Youth asset**: age ≤24, value > redraftValue
+- **Prime**: 25–27, balanced
+- **Declining**: 29+, negative trend30Day
+
+### Verdicts (my roster, per league)
+- **Sell**: win-now vets on a rebuilding roster; young stashes/picks on a contender needing starters; declining players; duplicated depth behind locked starters. Name the specific counterparty roster and why they'd buy.
+- **Hold**: fits the direction.
+- **Buy targets**: sourced from opposite-phase rosters (vets from rebuilders, youth/picks from contenders); trending adds still cheap; injury-dip players whose profile fits my timeline.
+
+## Features by phase
+
+### Phase 1 — Foundation
+- `refresh.ts`, snapshot format, config files
+- Preseason baseline view: cross-league summary (direction, starter rank, youth share, pick capital per league), then per-league sections with my full profile, verdict table (Player | Pos | Age | Adj value | 30d | Verdict | Counterparty), buy targets, opponent one-liners
+- League-adjusted values applied everywhere
+- Markdown export of the full report (copy button)
+
+### Phase 2 — Deltas and history
+- Week-over-week diffs: player value change, team rank movement, direction changes prominently flagged
+- Snapshot picker
+- Auto-generated "what changed this week" markdown section
+
+### Phase 3 — Player Fit Finder (a headline feature)
+Search any player (index built from the snapshot, instant picker). Selecting one shows a card with one row per league:
+
+| Column | Content |
+|---|---|
+| Status | Owned by me / owned by {owner} ({direction}) / free agent |
+| Fit | Archetype × my direction in that league: Strong buy fit / Fits / Wrong fit — sell / No fit |
+| Lineup impact | Run the lineup optimiser with and without the player using league-adjusted values; report marginal starter value added (zero = bench depth, say so bluntly) |
+| Tradeability | Easy / Moderate / Hard with stated reasons |
+| Route | If not owned: opening offer anchored in pick equivalents ("≈ mid 1st + early 2nd here") and why the holder sells. If owned and wrong fit: the natural buyers (opposite phase + he'd crack their optimal lineup) and which of my leagues offers the best sale price given scoring context |
+
+Tradeability score from four weighted signals on the holder's side (weights in config):
+1. Phase mismatch (rebuilder holding a win-now vet = motivated seller) — heaviest weight
+2. Positional surplus (player not in the holder's optimal lineup = much easier)
+3. Trend (falling value = willing seller; a rising youth asset on a rebuilder = Hard regardless of everything else)
+4. Roster pressure (holder at roster/taxi limits with rookie picks incoming)
+
+Cross-league arbitrage must be visible: if I hold the same player in multiple leagues, the card should make clear where to sell and where to keep (e.g. sell the TE in the TE-prem league).
+
+### Phase 4 — In-season weekly review
+- Per league: result and score vs opponent, updated record and standings, playoff picture (simple Monte Carlo over remaining schedule using points-for distributions)
+- Top scorer, biggest bust vs positional expectation, bench points left on bench
+- Transaction ledger since last snapshot; one-line grades on any trades
+- FAAB dashboard: budget remaining vs league median, trending adds crossed with my roster gaps, suggested bids
+- Injury flags from the player dump
+
+### Phase 5 — Extras (in rough priority order)
+- Content insights: `scripts/insights.ts` pulls recent video transcripts from the Dynasty Domain YouTube channel (channel_id `UCy6AzBHW2_w3lyA_AqUTTmg`, RSS feed `https://www.youtube.com/feeds/videos.xml?channel_id=UCy6AzBHW2_w3lyA_AqUTTmg`) using `youtube-transcript-api` or `yt-dlp --write-auto-sub`, extracts per-player buy/sell/hold sentiment, stores tags in the snapshot; UI shows "DD: buy" beside my verdicts. Design it so more channels can be added in config.
+- Cross-league exposure view: players held in 2+ of my leagues (correlated injury risk)
+- Watchlist with flags: value crossed a threshold, appeared in trending adds since last snapshot
+- Contention window chart: youth share vs starter rank scatter per league over time
+
+## Conventions
+- UK spelling in all UI copy and reports. No emojis anywhere.
+- Verdicts are opinionated: lead with the recommendation, never a neutral menu.
+- Every tunable number (age bands, value floors, direction cutoffs, tradeability weights, scoring multipliers, pick valuations) lives in `config/thresholds.json` with a comment on what it does.
+- Dark, football-adjacent aesthetic (the previous artifact used a field-green/chalk/amber palette with Barlow Condensed headers — keep that spirit, but you have licence to improve it).
+- Mobile-friendly: I will check this on my phone.
+
+## First actions
+1. Save this brief as `CLAUDE.md`.
+2. Scaffold the repo (Vite + React + TypeScript), config files, and `refresh.ts`.
+3. Run a real refresh against the live APIs and commit the first snapshot so we're building against real data.
+4. Build Phase 1, show me, then we iterate phase by phase. Do not build ahead of the current phase without asking.

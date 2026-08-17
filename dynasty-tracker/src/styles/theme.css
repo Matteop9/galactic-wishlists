@@ -1,0 +1,70 @@
+:root {
+  --field-950: #071409;
+  --field-900: #0a1f12;
+  --field-800: #0f2a19;
+  --field-700: #14301e;
+  --line: #24422f;
+  --chalk: #ece9dd;
+  --chalk-dim: #a8b3a6;
+  --amber: #e0a63f;
+  --amber-dim: #9c7426;
+  --sell: #d96b4f;
+  --buy: #7fb069;
+  --hold: #a8b3a6;
+  --warn: #e0a63f;
+  --font-head: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--field-950);
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, var(--field-900) 0%, var(--field-950) 100%);
+  background-attachment: fixed;
+  color: var(--chalk);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--chalk);
+  background: var(--field-700);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--amber-dim);
+  color: var(--amber);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}

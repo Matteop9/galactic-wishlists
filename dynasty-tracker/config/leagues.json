@@ -1,0 +1,39 @@
+{
+  "_comment": "League identity for the current season. League IDs roll over each season: re-resolve via GET https://api.sleeper.app/v1/user/{userId}/leagues/nfl/{season} and update this file. Scoring adjustment flags (TE premium, 4pt pass TD) are derived live from each league's scoring_settings at refresh time; set an override here only to force a flag on or off.",
+  "season": "2026",
+  "userId": "1288931369333829632",
+  "username": "Matteop9",
+  "leagues": [
+    {
+      "id": "1362890836475404288",
+      "label": "Olympian League",
+      "fantasyCalcVariant": "12team",
+      "overrides": {}
+    },
+    {
+      "id": "1332929440778297344",
+      "label": "The Syndicate",
+      "fantasyCalcVariant": "12team",
+      "_comment": "Yardage-bonus league: volumeBonus cannot be derived from scoring_settings flags alone, so it is forced on here.",
+      "overrides": { "volumeBonus": true }
+    },
+    {
+      "id": "1313029614053892096",
+      "label": "Stars & Crown",
+      "fantasyCalcVariant": "10team",
+      "overrides": {}
+    },
+    {
+      "id": "1312484177249079296",
+      "label": "The Kingsmen",
+      "fantasyCalcVariant": "12team",
+      "overrides": {}
+    },
+    {
+      "id": "1307349910315618304",
+      "label": "Raiders Still suck",
+      "fantasyCalcVariant": "12team",
+      "overrides": {}
+    }
+  ]
+}
