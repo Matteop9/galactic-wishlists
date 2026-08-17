@@ -71,8 +71,8 @@
 
   "verdicts": {
     "_comment": "Verdict and buy-target generation.",
-    "sellDuplicateDepthMinCount": 3,
-    "_sellDuplicateDepthMinCount": "Nth-or-worse player at a position, outside my optimal lineup, gets a sell look as duplicated depth. Never applies to youth assets (bench time is irrelevant to a young asset's value) or to excluded positions.",
+    "depthSellSpareSlots": 1,
+    "_depthSellSpareSlots": "Duplicate-depth sells are league-structure-relative: a player must sit more than (startable slots at his position + this many spares) deep in my position group before he counts as duplicated depth. Startable slots = dedicated slots + every flex slot his position can fill (2RB + 3FLEX means the 5th RB is starting depth, not trade bait). Never applies to youth assets or excluded positions.",
     "duplicateDepthMinValue": 1000,
     "_duplicateDepthMinValue": "Duplicated depth below this adjusted value is not worth a trade thread; it stays Hold.",
     "depthSellExcludePositions": ["QB"],

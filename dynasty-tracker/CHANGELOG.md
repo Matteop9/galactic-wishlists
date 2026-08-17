@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 — 2026-08-17
+
+- Depth is now league-structure-relative (user training feedback): a player only counts as
+  duplicate depth beyond his position's startable slots (dedicated + every eligible flex slot;
+  SUPER_FLEX counts as a QB slot) plus `depthSellSpareSlots`. In the 2RB + 3FLEX leagues the
+  4th–5th RB/WR are treated as starting depth, not trade bait — `sellDuplicateDepthMinCount`
+  replaced by `depthSellSpareSlots`. Depth-sell reasons now cite the league's startable count.
+  Logged in STRATEGY.md's Training log; regression suite added.
+
 ## 0.4.0 — 2026-08-17
 
 Training loop:

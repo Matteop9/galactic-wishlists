@@ -187,7 +187,15 @@ export function buildReport(
         ]),
       ),
       directionStatement: directionStatement(mine.direction, myRanks.starter, league.settings.numTeams),
-      verdicts: generateVerdicts(mine, others, t, playerName, league.leagueId, disputes),
+      verdicts: generateVerdicts(
+        mine,
+        others,
+        league.settings.rosterPositions,
+        t,
+        playerName,
+        league.leagueId,
+        disputes,
+      ),
       buyTargets: generateBuyTargets(mine, myRanks.starter, others, league, t),
       opponents: withDirections
         .map((p, i) => ({ p, i }))

@@ -78,6 +78,11 @@ only — the rules are what matter. Engine keys referenced where a rule is imple
 
 ## Depth rules
 
+- **Depth is league-structure-relative.** A position's startable count = dedicated slots + every
+  flex slot the position can fill (SUPER_FLEX counts as a QB slot in superflex). In a 2RB + 3FLEX
+  lineup, five RBs can start at once — the 4th and 5th RB are starting depth (byes, injuries,
+  matchups), not trade bait. Duplicate-depth sells only apply beyond startable + `depthSellSpareSlots`
+  (`startableCount` in lineup.ts).
 - Only ~15 roster spots matter (starters + 3–4). Consolidate bench value up-tier; don't down-tier
   stars for depth.
 - Depth worth keeping: **backup QBs** (value pops the moment they start — never depth-sold,
@@ -129,4 +134,8 @@ regress the hard rules above.
 Format:
 `- YYYY-MM-DD — {player} ({league}) — disputed {engine verdict} → {user verdict} — change: {thresholds key or ladder rule, or "rejected: why"} — test: {test name}`
 
-(no entries yet)
+- 2026-08-17 — depth threshold (session feedback, all leagues) — disputed the fixed "3rd at position
+  = depth" rule: in 2RB + 3FLEX lineups the 4th–5th RB often starts — change: depth-sell threshold
+  now derived from league structure (`startableCount` in lineup.ts: dedicated + eligible flex
+  slots; `depthSellSpareSlots` replaces `sellDuplicateDepthMinCount`) — test: "depth is
+  league-structure-relative" suite in tests/verdicts.test.ts.

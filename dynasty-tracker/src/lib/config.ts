@@ -88,7 +88,7 @@ const thresholdsSchema = z.object({
     lateStandingsCutoff: z.number(),
   }),
   verdicts: z.object({
-    sellDuplicateDepthMinCount: z.number(),
+    depthSellSpareSlots: z.number(),
     duplicateDepthMinValue: z.number(),
     depthSellExcludePositions: z.array(z.string()),
     contenderYouthConsolidateMinValue: z.number(),

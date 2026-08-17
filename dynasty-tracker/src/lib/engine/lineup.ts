@@ -36,6 +36,21 @@ export function eligibleSlotsFor(position: string): string[] {
   return Object.keys(SLOT_ELIGIBILITY).filter((slot) => SLOT_ELIGIBILITY[slot].includes(position))
 }
 
+// Maximum number of players at a position that could start simultaneously in
+// this league: dedicated slots plus every flex slot the position can fill.
+// In a 2RB + 3FLEX lineup the 5th RB is startable depth, not trade bait.
+// SUPER_FLEX is attributed to QB only — in superflex it is a de facto QB slot.
+export function startableCount(position: string, rosterPositions: string[]): number {
+  let count = 0
+  for (const slot of lineupSlots(rosterPositions)) {
+    if (slot === position) count++
+    else if (slot === 'SUPER_FLEX') {
+      if (position === 'QB') count++
+    } else if (SLOT_ELIGIBILITY[slot].includes(position)) count++
+  }
+  return count
+}
+
 // Best legal lineup by value. Dedicated slots are filled before flex slots
 // (ascending eligibility-set size), each taking the best remaining eligible
 // player — optimal for Sleeper's nested slot families.

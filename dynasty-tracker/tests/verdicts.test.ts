@@ -70,8 +70,18 @@ function profile(direction: Direction, players: RosterPlayerRow[]): ProfileWithD
   }
 }
 
-function verdictOf(direction: Direction, target: RosterPlayerRow, rest: RosterPlayerRow[] = []) {
-  const rows = generateVerdicts(profile(direction, [target, ...rest]), [], thresholds, (id) => id)
+// No flex: WR/RB can start 2 apiece, so the 4th at a position is true depth.
+const SHALLOW_POSITIONS = ['QB', 'RB', 'RB', 'WR', 'WR', 'TE']
+// The user's deep-flex case: 2 RB + 3 FLEX means five RBs can start at once.
+const DEEP_FLEX_POSITIONS = ['QB', 'RB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'FLEX', 'FLEX', 'SUPER_FLEX']
+
+function verdictOf(
+  direction: Direction,
+  target: RosterPlayerRow,
+  rest: RosterPlayerRow[] = [],
+  rosterPositions: string[] = SHALLOW_POSITIONS,
+) {
+  const rows = generateVerdicts(profile(direction, [target, ...rest]), [], rosterPositions, thresholds, (id) => id)
   const row = rows.find((r) => r.playerId === target.id)
   if (!row) throw new Error('target row missing')
   return row
@@ -223,6 +233,58 @@ describe('generateVerdicts — regression cases from STRATEGY.md', () => {
   })
 })
 
+function rbStarters(n: number): RosterPlayerRow[] {
+  return Array.from({ length: n }, (_, i) =>
+    player({
+      id: `rb${i + 1}`,
+      position: 'RB',
+      age: 26,
+      inOptimalLineup: i < 5,
+      fcOver: { value: 6000 - i * 200, position: 'RB' },
+    }),
+  )
+}
+
+describe('generateVerdicts — depth is league-structure-relative (Matteo, 2026-08-17)', () => {
+  it('deep-flex league (2 RB + 3 FLEX): the 5th RB is startable depth, never a duplicate-depth sell', () => {
+    const rb5 = player({
+      id: 'rb5',
+      position: 'RB',
+      age: 26,
+      inOptimalLineup: false,
+      fcOver: { value: 1500, redraftValue: 1500, position: 'RB' },
+    })
+    const row = verdictOf('Contender', rb5, rbStarters(4), DEEP_FLEX_POSITIONS)
+    expect(row.verdict).toBe('Hold')
+  })
+
+  it('deep-flex league: the 7th RB of real value is still a depth sell', () => {
+    const rb7 = player({
+      id: 'rb7',
+      position: 'RB',
+      age: 26,
+      inOptimalLineup: false,
+      fcOver: { value: 1500, redraftValue: 1500, position: 'RB' },
+    })
+    const row = verdictOf('Contender', rb7, rbStarters(6), DEEP_FLEX_POSITIONS)
+    expect(row.verdict).toBe('Sell')
+    expect(row.reason).toContain('7th RB')
+  })
+
+  it('the same 4th WR is depth in a no-flex league but a hold in a deep-flex league', () => {
+    const mk = () =>
+      player({
+        id: 'wr4',
+        position: 'WR',
+        age: 26,
+        inOptimalLineup: false,
+        fcOver: { value: 1500, redraftValue: 1500 },
+      })
+    expect(verdictOf('Contender', mk(), threeStarterWrs(), SHALLOW_POSITIONS).verdict).toBe('Sell')
+    expect(verdictOf('Contender', mk(), threeStarterWrs(), DEEP_FLEX_POSITIONS).verdict).toBe('Hold')
+  })
+})
+
 function mkDispute(leagueId: string, playerId: string, desiredVerdict: VerdictKind, note = ''): Dispute {
   return {
     leagueId,
@@ -257,7 +319,7 @@ describe('generateVerdicts — disputes (training loop)', () => {
       fcOver: { value: 1500, redraftValue: 2600, trend30Day: -100, position: 'RB' },
     })
     const disputes = { [disputeKey('L1', 'vet')]: mkDispute('L1', 'vet', 'Hold', 'handcuff I trust') }
-    const rows = generateVerdicts(profile('Contender', [vet]), [], thresholds, (id) => id, 'L1', disputes)
+    const rows = generateVerdicts(profile('Contender', [vet]), [], SHALLOW_POSITIONS, thresholds, (id) => id, 'L1', disputes)
     const row = rows.find((r) => r.playerId === 'vet')!
     expect(row.verdict).toBe('Sell') // engine's own view unchanged
     expect(row.dispute?.desiredVerdict).toBe('Hold')
@@ -274,7 +336,7 @@ describe('generateVerdicts — disputes (training loop)', () => {
       fcOver: { value: 5000, redraftValue: 5000 },
     })
     const disputes = { [disputeKey('L1', 'starter')]: mkDispute('L1', 'starter', 'Hold') }
-    const rows = generateVerdicts(profile('Contender', [starter]), [], thresholds, (id) => id, 'L1', disputes)
+    const rows = generateVerdicts(profile('Contender', [starter]), [], SHALLOW_POSITIONS, thresholds, (id) => id, 'L1', disputes)
     const row = rows.find((r) => r.playerId === 'starter')!
     expect(row.verdict).toBe('Hold')
     expect(row.dispute?.engineAgrees).toBe(true)
@@ -300,7 +362,7 @@ describe('generateVerdicts — disputes (training loop)', () => {
       },
     }
     const disputes = { [disputeKey('L1', 'mine')]: mkDispute('L1', 'mine', 'Sell', 'want to cash out') }
-    const rows = generateVerdicts(profile('Contender', [starter]), [buyer], thresholds, (id) => id, 'L1', disputes)
+    const rows = generateVerdicts(profile('Contender', [starter]), [buyer], SHALLOW_POSITIONS, thresholds, (id) => id, 'L1', disputes)
     const row = rows.find((r) => r.playerId === 'mine')!
     expect(row.verdict).toBe('Hold')
     expect(effectiveVerdict(row)).toBe('Sell')
@@ -309,7 +371,7 @@ describe('generateVerdicts — disputes (training loop)', () => {
 
   it('rows without disputes are untouched', () => {
     const p = player({ id: 'plain', position: 'WR', age: 26, inOptimalLineup: true })
-    const rows = generateVerdicts(profile('Contender', [p]), [], thresholds, (id) => id, 'L1', {})
+    const rows = generateVerdicts(profile('Contender', [p]), [], SHALLOW_POSITIONS, thresholds, (id) => id, 'L1', {})
     expect(rows.find((r) => r.playerId === 'plain')!.dispute).toBeUndefined()
   })
 })

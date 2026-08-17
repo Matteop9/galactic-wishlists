@@ -2,7 +2,7 @@ import type { Thresholds } from '../config'
 import type { LeagueSnapshot } from '../types'
 import { ordinal, fmtValue } from '../format'
 import { classifyArchetype, decliningAgeFor, isRedraftDominant, type Archetype } from './archetype'
-import { eligibleSlotsFor, optimalLineup } from './lineup'
+import { eligibleSlotsFor, optimalLineup, startableCount } from './lineup'
 import type { Direction } from './direction'
 import type { RosterPlayerRow, TeamProfile } from './profile'
 
@@ -149,17 +149,21 @@ function verdictFor(
   p: RosterPlayerRow,
   archetype: Archetype,
   depth: number,
+  startable: number,
   direction: Direction,
   t: Thresholds,
 ): Call {
   const v = t.verdicts
   const benchDepth = !p.inOptimalLineup && !p.onTaxi
   const trendingDown = (p.fc?.trend30Day ?? 0) < 0
+  // Depth is league-structure-relative: a position's startable count includes
+  // its share of flex slots, so in a 2RB + 3FLEX lineup the 4th and 5th RBs
+  // are starting depth (byes, injuries, matchups), never duplicate depth.
   const depthSellEligible =
     benchDepth &&
     archetype !== 'Youth asset' &&
     !v.depthSellExcludePositions.includes(p.position) &&
-    depth >= v.sellDuplicateDepthMinCount &&
+    depth > startable + v.depthSellSpareSlots &&
     p.adjValue >= v.duplicateDepthMinValue
 
   if (direction === 'Contender') {
@@ -198,7 +202,7 @@ function verdictFor(
     if (depthSellEligible) {
       return {
         verdict: 'Sell',
-        reason: `${ordinal(depth)} ${p.position} behind locked starters — real value doing nothing on the bench.`,
+        reason: `${ordinal(depth)} ${p.position} in a lineup that can only start ${startable} — real value doing nothing on the bench.`,
       }
     }
     if (p.inOptimalLineup && (archetype === 'Win-now vet' || archetype === 'Prime')) {
@@ -243,7 +247,7 @@ function verdictFor(
     if (depthSellEligible) {
       return {
         verdict: 'Sell',
-        reason: `${ordinal(depth)} ${p.position} of real value, past the youth window and outside the lineup — package him up.`,
+        reason: `${ordinal(depth)} ${p.position} where only ${startable} can start, past the youth window — package him up.`,
       }
     }
   }
@@ -270,7 +274,7 @@ function verdictFor(
     if (depthSellEligible) {
       return {
         verdict: 'Sell',
-        reason: `${ordinal(depth)} ${p.position} outside the lineup — consolidation fuel. Trade quantity for quality.`,
+        reason: `${ordinal(depth)} ${p.position} with only ${startable} startable — consolidation fuel. Trade quantity for quality.`,
       }
     }
   }
@@ -297,7 +301,7 @@ function verdictFor(
     if (depthSellEligible) {
       return {
         verdict: 'Sell',
-        reason: `${ordinal(depth)} ${p.position} behind locked starters — real value doing nothing on the bench.`,
+        reason: `${ordinal(depth)} ${p.position} in a lineup that can only start ${startable} — real value doing nothing on the bench.`,
       }
     }
   }
@@ -314,6 +318,7 @@ function verdictFor(
 export function generateVerdicts(
   mine: ProfileWithDirection,
   others: ProfileWithDirection[],
+  rosterPositions: string[],
   t: Thresholds,
   playerName: (id: string) => string,
   leagueId = '',
@@ -335,10 +340,16 @@ export function generateVerdicts(
     list.forEach((p, i) => depthIndex.set(p.id, i + 1))
   }
 
+  const startableByPos = new Map<string, number>()
+  const startableFor = (position: string) => {
+    if (!startableByPos.has(position)) startableByPos.set(position, startableCount(position, rosterPositions))
+    return startableByPos.get(position)!
+  }
+
   for (const p of valued) {
     const archetype = classifyArchetype(p.age, p.position, p.fc, t)
     const depth = depthIndex.get(p.id) ?? 1
-    const { verdict, reason } = verdictFor(p, archetype, depth, mine.direction, t)
+    const { verdict, reason } = verdictFor(p, archetype, depth, startableFor(p.position), mine.direction, t)
 
     const raw = disputes[disputeKey(leagueId, p.id)]
     const dispute: VerdictDispute | undefined = raw

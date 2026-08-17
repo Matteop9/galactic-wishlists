@@ -120,7 +120,9 @@ primes) into the August window; contenders consolidate valuable bench youth up-t
 falling trend — no selling the bottom); backup QBs are never depth-sold in superflex; ascending
 teams sell vets (Unsure — push-year exception) and buy prime/youth, not ageing producers; buy
 targets for contenders must raise starter value, while youth buys for rebuilds are ranked by asset
-value (a stash doesn't need to start).
+value (a stash doesn't need to start); depth is judged against the league's lineup structure
+(startable slots per position = dedicated + eligible flex, `startableCount`), never a fixed
+positional count — in a 2RB + 3FLEX league the 4th–5th RB is starting depth.
 
 ## Features by phase
 
