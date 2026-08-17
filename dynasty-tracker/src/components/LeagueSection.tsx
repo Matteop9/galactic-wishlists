@@ -1,5 +1,6 @@
 import type { Direction } from '../lib/engine/direction'
 import type { LeagueReport } from '../lib/engine/report'
+import type { VerdictKind, VerdictRow } from '../lib/engine/verdicts'
 import { MyProfileCard } from './MyProfileCard'
 import { VerdictColumns } from './VerdictColumns'
 import { BuyTargets } from './BuyTargets'
@@ -8,9 +9,11 @@ import { OpponentLines } from './OpponentLines'
 interface Props {
   league: LeagueReport
   onOverride: (leagueId: string, rosterId: number, direction: Direction | null) => void
+  onDispute: (row: VerdictRow, desired: VerdictKind, note: string) => void
+  onClearDispute: (playerId: string) => void
 }
 
-export function LeagueSection({ league, onOverride }: Props) {
+export function LeagueSection({ league, onOverride, onDispute, onClearDispute }: Props) {
   const tags = [
     `${league.numTeams} teams`,
     league.derived.tePremium ? 'TE premium' : null,
@@ -26,7 +29,7 @@ export function LeagueSection({ league, onOverride }: Props) {
         onOverride={(direction) => onOverride(league.leagueId, league.myProfile.rosterId, direction)}
       />
       <h3>Verdicts</h3>
-      <VerdictColumns rows={league.verdicts} />
+      <VerdictColumns rows={league.verdicts} onDispute={onDispute} onClearDispute={onClearDispute} />
       <h3>Buy targets</h3>
       <BuyTargets targets={league.buyTargets} />
       <h3>The market</h3>

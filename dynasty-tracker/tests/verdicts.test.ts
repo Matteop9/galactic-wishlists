@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { thresholds } from '../src/lib/config'
 import type { FcValue } from '../src/lib/types'
 import type { RosterPlayerRow } from '../src/lib/engine/profile'
-import { generateVerdicts, type ProfileWithDirection } from '../src/lib/engine/verdicts'
+import {
+  disputeKey,
+  effectiveVerdict,
+  generateVerdicts,
+  type Dispute,
+  type ProfileWithDirection,
+  type VerdictKind,
+} from '../src/lib/engine/verdicts'
 import type { Direction } from '../src/lib/engine/direction'
 
 function fc(over: Partial<FcValue>): FcValue {
@@ -213,5 +220,96 @@ describe('generateVerdicts — regression cases from STRATEGY.md', () => {
     const row = verdictOf('Contender', depth, threeStarterWrs())
     expect(row.verdict).toBe('Sell')
     expect(row.reason).toContain('bench')
+  })
+})
+
+function mkDispute(leagueId: string, playerId: string, desiredVerdict: VerdictKind, note = ''): Dispute {
+  return {
+    leagueId,
+    playerId,
+    desiredVerdict,
+    note,
+    createdAt: '2026-08-17T12:00:00.000Z',
+    context: {
+      playerName: 'Player',
+      position: 'WR',
+      age: 25,
+      adjValue: 2000,
+      trend30Day: 0,
+      archetype: 'Prime',
+      myDirection: 'Contender',
+      engineVerdict: 'Hold',
+      engineReason: 'test',
+      season: '2026',
+      kind: 'preseason',
+      week: 0,
+    },
+  }
+}
+
+describe('generateVerdicts — disputes (training loop)', () => {
+  it('a dispute re-files the row under the desired verdict while preserving the engine view', () => {
+    const vet = player({
+      id: 'vet',
+      position: 'RB',
+      age: 30,
+      inOptimalLineup: false,
+      fcOver: { value: 1500, redraftValue: 2600, trend30Day: -100, position: 'RB' },
+    })
+    const disputes = { [disputeKey('L1', 'vet')]: mkDispute('L1', 'vet', 'Hold', 'handcuff I trust') }
+    const rows = generateVerdicts(profile('Contender', [vet]), [], thresholds, (id) => id, 'L1', disputes)
+    const row = rows.find((r) => r.playerId === 'vet')!
+    expect(row.verdict).toBe('Sell') // engine's own view unchanged
+    expect(row.dispute?.desiredVerdict).toBe('Hold')
+    expect(row.dispute?.engineAgrees).toBe(false)
+    expect(effectiveVerdict(row)).toBe('Hold')
+  })
+
+  it('engineAgrees flips true when the engine matches the disputed verdict', () => {
+    const starter = player({
+      id: 'starter',
+      position: 'WR',
+      age: 26,
+      inOptimalLineup: true,
+      fcOver: { value: 5000, redraftValue: 5000 },
+    })
+    const disputes = { [disputeKey('L1', 'starter')]: mkDispute('L1', 'starter', 'Hold') }
+    const rows = generateVerdicts(profile('Contender', [starter]), [], thresholds, (id) => id, 'L1', disputes)
+    const row = rows.find((r) => r.playerId === 'starter')!
+    expect(row.verdict).toBe('Hold')
+    expect(row.dispute?.engineAgrees).toBe(true)
+  })
+
+  it('a Hold-to-Sell dispute gets a named counterparty', () => {
+    const starter = player({
+      id: 'mine',
+      position: 'WR',
+      age: 26,
+      inOptimalLineup: true,
+      fcOver: { value: 4000, redraftValue: 4000 },
+    })
+    const buyer: ProfileWithDirection = {
+      ...profile('Contender', []),
+      rosterId: 2,
+      ownerId: 'them',
+      ownerName: 'Them',
+      lineup: {
+        slots: [{ slot: 'WR', player: { id: 'weak', position: 'WR', value: 500 } }],
+        starterValue: 500,
+        starterIds: new Set(['weak']),
+      },
+    }
+    const disputes = { [disputeKey('L1', 'mine')]: mkDispute('L1', 'mine', 'Sell', 'want to cash out') }
+    const rows = generateVerdicts(profile('Contender', [starter]), [buyer], thresholds, (id) => id, 'L1', disputes)
+    const row = rows.find((r) => r.playerId === 'mine')!
+    expect(row.verdict).toBe('Hold')
+    expect(effectiveVerdict(row)).toBe('Sell')
+    expect(row.counterparty).toContain('Them')
+  })
+
+  it('rows without disputes are untouched', () => {
+    const p = player({ id: 'plain', position: 'WR', age: 26, inOptimalLineup: true })
+    const rows = generateVerdicts(profile('Contender', [p]), [], thresholds, (id) => id, 'L1', {})
+    expect(rows.find((r) => r.playerId === 'plain')!.dispute).toBeUndefined()
   })
 })

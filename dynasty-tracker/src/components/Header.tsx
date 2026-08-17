@@ -8,9 +8,22 @@ interface Props {
   onLiveFetch: () => void
   onCopyMarkdown: () => void
   copied: boolean
+  trainingCount: number
+  onCopyTraining: () => void
+  trainingCopied: boolean
 }
 
-export function Header({ meta, live, liveLoading, onLiveFetch, onCopyMarkdown, copied }: Props) {
+export function Header({
+  meta,
+  live,
+  liveLoading,
+  onLiveFetch,
+  onCopyMarkdown,
+  copied,
+  trainingCount,
+  onCopyTraining,
+  trainingCopied,
+}: Props) {
   let metaLine = ''
   if (meta) {
     const label = meta.kind === 'preseason' ? `Preseason baseline ${meta.season}` : `Week ${meta.week}, ${meta.season}`
@@ -23,6 +36,11 @@ export function Header({ meta, live, liveLoading, onLiveFetch, onCopyMarkdown, c
       </h1>
       {metaLine && <div className="meta">{metaLine}</div>}
       <div className="actions">
+        {trainingCount > 0 && (
+          <button onClick={onCopyTraining} title="Copy all disputed verdicts as a report to paste into Claude">
+            {trainingCopied ? 'Copied' : `Copy training report (${trainingCount})`}
+          </button>
+        )}
         <button onClick={onCopyMarkdown} disabled={!meta}>
           {copied ? 'Copied' : 'Copy markdown'}
         </button>

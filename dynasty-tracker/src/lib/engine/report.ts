@@ -8,6 +8,7 @@ import {
   generateBuyTargets,
   generateVerdicts,
   type BuyTarget,
+  type DisputeMap,
   type ProfileWithDirection,
   type VerdictRow,
 } from './verdicts'
@@ -111,6 +112,7 @@ export function buildReport(
   cfg: LeaguesConfig,
   t: Thresholds,
   overrides: DirectionOverrides = {},
+  disputes: DisputeMap = {},
 ): ReportModel {
   const summary: SummaryRow[] = []
   const leagues: LeagueReport[] = []
@@ -185,7 +187,7 @@ export function buildReport(
         ]),
       ),
       directionStatement: directionStatement(mine.direction, myRanks.starter, league.settings.numTeams),
-      verdicts: generateVerdicts(mine, others, t, playerName),
+      verdicts: generateVerdicts(mine, others, t, playerName, league.leagueId, disputes),
       buyTargets: generateBuyTargets(mine, myRanks.starter, others, league, t),
       opponents: withDirections
         .map((p, i) => ({ p, i }))

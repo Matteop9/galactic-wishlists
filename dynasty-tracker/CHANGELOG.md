@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0 — 2026-08-17
+
+Training loop:
+
+- Any verdict card can be disputed: pick the verdict you believe (the card re-files under it, with
+  the engine's view and your note kept visible) — persisted locally, and a buyer is named even for
+  a Hold-to-Sell flip.
+- "Copy training report" in the header exports every dispute (with the frozen decision context) as
+  markdown addressed to Claude, whose job is then: fix the threshold or ladder rule (or reject the
+  dispute with reasoning), log the decision in STRATEGY.md's new Training log, and add a
+  regression case to `tests/verdicts.test.ts` — accepted disputes become permanent, tested engine
+  behaviour.
+- Once the engine agrees with a dispute, the card badge flips to "Engine now agrees" for clearing.
+- Disputed verdicts are marked in the main markdown export.
+
 ## 0.3.0 — 2026-08-17
 
 Verdict engine rework, driven by the `transcripts/` research (see `STRATEGY.md`):

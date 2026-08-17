@@ -1,5 +1,6 @@
 import { fmtDate, fmtShare, fmtTrend, fmtValue, ordinal } from '../format'
 import type { ReportModel } from '../engine/report'
+import { effectiveVerdict } from '../engine/verdicts'
 
 // Renders the same ReportModel the UI consumes, so the export can never
 // drift from what is on screen.
@@ -52,8 +53,15 @@ export function buildMarkdown(report: ReportModel): string {
     for (const v of league.verdicts) {
       const age = v.ageEstimated ? `~${v.age}` : String(v.age)
       const counterparty = v.counterparty ?? '—'
+      let verdictCell = `${v.verdict} — ${v.reason}`
+      if (v.dispute) {
+        const note = v.dispute.note ? ` — "${v.dispute.note}"` : ''
+        verdictCell = v.dispute.engineAgrees
+          ? `${effectiveVerdict(v)} — ${v.reason} (disputed; engine now agrees)`
+          : `${effectiveVerdict(v)}${note} (disputed — engine says ${v.verdict}: ${v.reason})`
+      }
       lines.push(
-        `| ${v.name} | ${v.position} | ${age} | ${fmtValue(v.adjValue)} | ${fmtTrend(v.trend30Day)} | ${v.verdict} — ${v.reason} | ${counterparty} |`,
+        `| ${v.name} | ${v.position} | ${age} | ${fmtValue(v.adjValue)} | ${fmtTrend(v.trend30Day)} | ${verdictCell} | ${counterparty} |`,
       )
     }
     lines.push('')

@@ -8,6 +8,44 @@ import type { RosterPlayerRow, TeamProfile } from './profile'
 
 export type VerdictKind = 'Sell' | 'Unsure' | 'Hold'
 
+// A dispute is the training signal: the user disagrees with the engine's
+// verdict. The full engine context is frozen at dispute time so the training
+// report can explain the situation to Claude even after the data moves on.
+export interface DisputeContext {
+  playerName: string
+  position: string
+  age: number
+  adjValue: number
+  trend30Day: number | null
+  archetype: Archetype
+  myDirection: Direction
+  engineVerdict: VerdictKind
+  engineReason: string
+  season: string
+  kind: string
+  week: number
+}
+
+export interface Dispute {
+  leagueId: string
+  playerId: string
+  desiredVerdict: VerdictKind
+  note: string
+  createdAt: string
+  context: DisputeContext
+}
+
+export type DisputeMap = Record<string, Dispute>
+
+export const disputeKey = (leagueId: string, playerId: string) => `${leagueId}:${playerId}`
+
+export interface VerdictDispute {
+  desiredVerdict: VerdictKind
+  note: string
+  createdAt: string
+  engineAgrees: boolean
+}
+
 export interface VerdictRow {
   playerId: string
   name: string
@@ -20,6 +58,13 @@ export interface VerdictRow {
   verdict: VerdictKind
   reason: string
   counterparty: string | null
+  dispute?: VerdictDispute
+}
+
+// The verdict the board files the player under: the user's disputed call wins
+// on their own board; the engine's view stays on the row for context.
+export function effectiveVerdict(row: VerdictRow): VerdictKind {
+  return row.dispute?.desiredVerdict ?? row.verdict
 }
 
 export interface BuyTarget {
@@ -271,6 +316,8 @@ export function generateVerdicts(
   others: ProfileWithDirection[],
   t: Thresholds,
   playerName: (id: string) => string,
+  leagueId = '',
+  disputes: DisputeMap = {},
 ): VerdictRow[] {
   const rows: VerdictRow[] = []
   const valued = mine.players.filter((p) => p.adjValue > 0)
@@ -293,6 +340,28 @@ export function generateVerdicts(
     const depth = depthIndex.get(p.id) ?? 1
     const { verdict, reason } = verdictFor(p, archetype, depth, mine.direction, t)
 
+    const raw = disputes[disputeKey(leagueId, p.id)]
+    const dispute: VerdictDispute | undefined = raw
+      ? {
+          desiredVerdict: raw.desiredVerdict,
+          note: raw.note,
+          createdAt: raw.createdAt,
+          engineAgrees: raw.desiredVerdict === verdict,
+        }
+      : undefined
+    const effective = dispute?.desiredVerdict ?? verdict
+
+    // A named buyer matters whenever either view of the player is a Sell or
+    // Unsure — a disputed Hold-to-Sell flip needs a counterparty too.
+    const wantsBuyer = (k: VerdictKind) => k !== 'Hold'
+    let counterparty: string | null = null
+    if (wantsBuyer(verdict) || wantsBuyer(effective)) {
+      counterparty = findCounterparty(p, archetype, others, playerName)
+      if (counterparty === null && (verdict === 'Sell' || effective === 'Sell')) {
+        counterparty = 'No natural buyer yet — shop it broadly'
+      }
+    }
+
     rows.push({
       playerId: p.id,
       name: p.name,
@@ -304,18 +373,14 @@ export function generateVerdicts(
       archetype,
       verdict,
       reason,
-      counterparty:
-        verdict === 'Sell'
-          ? (findCounterparty(p, archetype, others, playerName) ?? 'No natural buyer yet — shop it broadly')
-          : verdict === 'Unsure'
-            ? findCounterparty(p, archetype, others, playerName)
-            : null,
+      counterparty,
+      dispute,
     })
   }
 
   const kindOrder: Record<VerdictKind, number> = { Sell: 0, Unsure: 1, Hold: 2 }
   return rows.sort(
-    (a, b) => kindOrder[a.verdict] - kindOrder[b.verdict] || b.adjValue - a.adjValue,
+    (a, b) => kindOrder[effectiveVerdict(a)] - kindOrder[effectiveVerdict(b)] || b.adjValue - a.adjValue,
   )
 }
 

@@ -72,6 +72,7 @@ dynasty-tracker/
 - Snapshots are bundled at build time via `import.meta.glob` in `src/lib/snapshots.ts` — deploy after each refresh to publish.
 - Config JSON uses `_`-prefixed comment keys, stripped and zod-validated in `src/lib/config.ts`.
 - UI (per user feedback, v0.2.0): league tabs rather than stacked sections; verdicts as three columns (Sell / Unsure / Hold — `Unsure` is a real engine verdict for borderline calls); any team's direction can be manually overridden via dropdowns (persisted in localStorage under `dynasty_` keys, threaded into `buildReport` so verdicts/counterparties/buy targets follow the override).
+- Training loop (v0.4.0): any verdict card can be disputed in the UI — the card re-files under the user's verdict with a note, the engine's view stays visible, and the dispute (with frozen decision context) persists in localStorage (`dynasty_verdict_disputes`). "Copy training report" in the header exports all disputes as markdown addressed to Claude. **When a training report is pasted into a session, the obligations are:** (1) fix the number in `config/thresholds.json` or the rule in `src/lib/engine/verdicts.ts` (or reject the dispute with reasoning); (2) append the entry to STRATEGY.md's Training log; (3) add a regression case to `tests/verdicts.test.ts` reproducing the dispute; (4) never regress STRATEGY.md's hard rules. Once the engine agrees, the card shows "Engine now agrees" and the user clears it.
 
 ## Methodology (the analytical core)
 

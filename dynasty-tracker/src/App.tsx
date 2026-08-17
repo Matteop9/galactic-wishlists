@@ -2,9 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { buildSnapshot } from './lib/api/buildSnapshot'
 import { leaguesConfig, thresholds } from './lib/config'
 import type { Direction } from './lib/engine/direction'
-import { buildReport, type DirectionOverrides } from './lib/engine/report'
+import { buildReport, type DirectionOverrides, type LeagueReport } from './lib/engine/report'
+import type { Dispute, DisputeMap, VerdictKind, VerdictRow } from './lib/engine/verdicts'
 import { buildMarkdown } from './lib/report/markdown'
+import { buildTrainingReport } from './lib/report/training'
 import { loadActiveLeague, loadOverrides, saveActiveLeague, withOverride } from './lib/overrides'
+import { loadDisputes, withDispute, withoutDispute } from './lib/training'
 import { latestSnapshot, loadPlayers } from './lib/snapshots'
 import type { PlayersFile, Snapshot } from './lib/types'
 import { Header } from './components/Header'
@@ -18,7 +21,9 @@ export default function App() {
   const [liveLoading, setLiveLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [trainingCopied, setTrainingCopied] = useState(false)
   const [overrides, setOverrides] = useState<DirectionOverrides>(() => loadOverrides())
+  const [disputes, setDisputes] = useState<DisputeMap>(() => loadDisputes())
   const [activeLeague, setActiveLeague] = useState<string | null>(() => loadActiveLeague())
 
   useEffect(() => {
@@ -37,8 +42,9 @@ export default function App() {
 
   const active = live ?? baseline
   const report = useMemo(
-    () => (active && players ? buildReport(active, players, leaguesConfig, thresholds, overrides) : null),
-    [active, players, overrides],
+    () =>
+      active && players ? buildReport(active, players, leaguesConfig, thresholds, overrides, disputes) : null,
+    [active, players, overrides, disputes],
   )
 
   const currentLeague = useMemo(() => {
@@ -53,6 +59,36 @@ export default function App() {
 
   function overrideDirection(leagueId: string, rosterId: number, direction: Direction | null) {
     setOverrides(withOverride(overrides, leagueId, rosterId, direction))
+  }
+
+  function disputeVerdict(league: LeagueReport, row: VerdictRow, desired: VerdictKind, note: string) {
+    if (!report) return
+    const dispute: Dispute = {
+      leagueId: league.leagueId,
+      playerId: row.playerId,
+      desiredVerdict: desired,
+      note,
+      createdAt: new Date().toISOString(),
+      context: {
+        playerName: row.name,
+        position: row.position,
+        age: row.age,
+        adjValue: row.adjValue,
+        trend30Day: row.trend30Day,
+        archetype: row.archetype,
+        myDirection: league.myDirection,
+        engineVerdict: row.verdict,
+        engineReason: row.reason,
+        season: report.meta.season,
+        kind: report.meta.kind,
+        week: report.meta.week,
+      },
+    }
+    setDisputes(withDispute(disputes, dispute))
+  }
+
+  function clearDispute(leagueId: string, playerId: string) {
+    setDisputes(withoutDispute(disputes, leagueId, playerId))
   }
 
   async function onLiveFetch() {
@@ -74,6 +110,13 @@ export default function App() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  async function onCopyTraining() {
+    if (!report) return
+    await navigator.clipboard.writeText(buildTrainingReport(report, disputes))
+    setTrainingCopied(true)
+    setTimeout(() => setTrainingCopied(false), 2000)
+  }
+
   return (
     <div className="app">
       <Header
@@ -83,6 +126,9 @@ export default function App() {
         onLiveFetch={onLiveFetch}
         onCopyMarkdown={onCopyMarkdown}
         copied={copied}
+        trainingCount={Object.keys(disputes).length}
+        onCopyTraining={onCopyTraining}
+        trainingCopied={trainingCopied}
       />
       {live !== null && (
         <div className="live-banner">
@@ -106,7 +152,12 @@ export default function App() {
               </button>
             ))}
           </nav>
-          <LeagueSection league={currentLeague} onOverride={overrideDirection} />
+          <LeagueSection
+            league={currentLeague}
+            onOverride={overrideDirection}
+            onDispute={(row, desired, note) => disputeVerdict(currentLeague, row, desired, note)}
+            onClearDispute={(playerId) => clearDispute(currentLeague.leagueId, playerId)}
+          />
         </>
       )}
     </div>

@@ -115,3 +115,18 @@ only — the rules are what matter. Engine keys referenced where a rule is imple
 4. Recommending a contender buy that doesn't raise starter value.
 5. Recommending an ascending/rebuilding team buy ageing vets.
 6. Depth-selling backup QBs in superflex.
+
+## Training log
+
+Verdict disputes from the app (v0.4.0 training feature) land here once processed. When Matteo
+pastes a training report into a session: decide whether a threshold or a ladder rule is wrong,
+apply the correction (`config/thresholds.json` for numbers, `src/lib/engine/verdicts.ts` for
+rules), add a regression case to `tests/verdicts.test.ts` reproducing the disputed situation, and
+record the decision below — one line per dispute, newest first. If the dispute is wrong on the
+strategy merits, record it as `rejected` with the reasoning instead of changing the engine. Never
+regress the hard rules above.
+
+Format:
+`- YYYY-MM-DD — {player} ({league}) — disputed {engine verdict} → {user verdict} — change: {thresholds key or ladder rule, or "rejected: why"} — test: {test name}`
+
+(no entries yet)
