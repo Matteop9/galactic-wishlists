@@ -65,6 +65,12 @@ const thresholdsSchema = z.object({
     primeMinAge: z.number(),
     primeMaxAge: z.number(),
     decliningMinAge: z.number(),
+    decliningMinAgeByPosition: z.object({
+      QB: z.number(),
+      RB: z.number(),
+      WR: z.number(),
+      TE: z.number(),
+    }),
     decliningTrend30Max: z.number(),
     redraftDominanceRatio: z.number(),
   }),
@@ -84,6 +90,8 @@ const thresholdsSchema = z.object({
   verdicts: z.object({
     sellDuplicateDepthMinCount: z.number(),
     duplicateDepthMinValue: z.number(),
+    depthSellExcludePositions: z.array(z.string()),
+    contenderYouthConsolidateMinValue: z.number(),
     buyTargetMaxPerLeague: z.number(),
     buyTargetMinAdjValue: z.number(),
     minMarginalStarterValue: z.number(),

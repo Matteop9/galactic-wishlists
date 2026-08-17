@@ -1,7 +1,7 @@
 import type { Thresholds } from '../config'
 import type { LeagueSnapshot } from '../types'
 import { ordinal, fmtValue } from '../format'
-import { classifyArchetype, type Archetype } from './archetype'
+import { classifyArchetype, decliningAgeFor, isRedraftDominant, type Archetype } from './archetype'
 import { eligibleSlotsFor, optimalLineup } from './lineup'
 import type { Direction } from './direction'
 import type { RosterPlayerRow, TeamProfile } from './profile'
@@ -88,6 +88,184 @@ function findCounterparty(
   return best?.text ?? null
 }
 
+interface Call {
+  verdict: VerdictKind
+  reason: string
+}
+
+// Direction-first verdict ladder. The same player gets a different verdict on
+// different teams — that is the whole point (STRATEGY.md). Two hard rules from
+// the research that must never regress:
+//   1. A young asset on a rebuild is NEVER sold as duplicate depth. Bench time
+//      is irrelevant to a rebuild; value growth is the job.
+//   2. An ageing producer who starts for a contender is a HOLD. Production
+//      outweighs value bleed while you contend (the Henry rule).
+function verdictFor(
+  p: RosterPlayerRow,
+  archetype: Archetype,
+  depth: number,
+  direction: Direction,
+  t: Thresholds,
+): Call {
+  const v = t.verdicts
+  const benchDepth = !p.inOptimalLineup && !p.onTaxi
+  const trendingDown = (p.fc?.trend30Day ?? 0) < 0
+  const depthSellEligible =
+    benchDepth &&
+    archetype !== 'Youth asset' &&
+    !v.depthSellExcludePositions.includes(p.position) &&
+    depth >= v.sellDuplicateDepthMinCount &&
+    p.adjValue >= v.duplicateDepthMinValue
+
+  if (direction === 'Contender') {
+    if ((archetype === 'Win-now vet' || archetype === 'Declining') && p.inOptimalLineup) {
+      return {
+        verdict: 'Hold',
+        reason:
+          'Ageing, but he starts and scores — on a contender the production outweighs the value bleed. Hold and enjoy.',
+      }
+    }
+    if (archetype === 'Declining') {
+      return {
+        verdict: 'Sell',
+        reason: 'Ageing depth that does not start — the one vet a contender should move, while he still fetches something.',
+      }
+    }
+    if (archetype === 'Youth asset' && benchDepth) {
+      if (trendingDown) {
+        return {
+          verdict: 'Hold',
+          reason: 'Young asset in a value dip — never sell the bottom. Revisit when the trend turns.',
+        }
+      }
+      if (p.adjValue >= v.contenderYouthConsolidateMinValue) {
+        return {
+          verdict: 'Sell',
+          reason:
+            'Valuable youth doing nothing for your weekly ceiling — up-tier him into a starter upgrade. Consolidate, never discount.',
+        }
+      }
+      return {
+        verdict: 'Hold',
+        reason: 'Cheap upside stash — costs the lineup nothing. Hold, or use as a trade sweetener.',
+      }
+    }
+    if (depthSellEligible) {
+      return {
+        verdict: 'Sell',
+        reason: `${ordinal(depth)} ${p.position} behind locked starters — real value doing nothing on the bench.`,
+      }
+    }
+    if (p.inOptimalLineup && (archetype === 'Win-now vet' || archetype === 'Prime')) {
+      return { verdict: 'Hold', reason: 'Exactly what a contender starts — hold and enjoy.' }
+    }
+  }
+
+  if (direction === 'Rebuilding') {
+    if (archetype === 'Youth asset') {
+      return {
+        verdict: 'Hold',
+        reason: benchDepth
+          ? 'Core of the rebuild — bench weeks are irrelevant, value growth is the job. Never sell young assets low.'
+          : 'Core of the rebuild — this is what the whole plan is built on.',
+      }
+    }
+    if (archetype === 'Declining') {
+      return {
+        verdict: 'Sell',
+        reason: 'Ageing out on a team going nowhere — sell to a contender while pre-season production panic pays a premium.',
+      }
+    }
+    if (archetype === 'Win-now vet') {
+      return {
+        verdict: 'Sell',
+        reason:
+          'Win-now vet on a rebuild — his window closes before this team opens one. Contenders pay most just before the season.',
+      }
+    }
+    if (archetype === 'Prime') {
+      if (isRedraftDominant(p.fc, t)) {
+        return {
+          verdict: 'Sell',
+          reason: 'Realised-ceiling producer — he peaks before this rebuild does. Cash him in for youth or a first.',
+        }
+      }
+      return {
+        verdict: 'Unsure',
+        reason: 'Peaks before this rebuild does — sell if a contender pays up, hold if the window is close.',
+      }
+    }
+    if (depthSellEligible) {
+      return {
+        verdict: 'Sell',
+        reason: `${ordinal(depth)} ${p.position} of real value, past the youth window and outside the lineup — package him up.`,
+      }
+    }
+  }
+
+  if (direction === 'Ascending') {
+    if (archetype === 'Youth asset') {
+      return {
+        verdict: 'Hold',
+        reason: 'Exactly the timeline — hold through the quiet weeks. Young value is what this team is being built on.',
+      }
+    }
+    if (archetype === 'Declining') {
+      return {
+        verdict: 'Sell',
+        reason: 'He will not be part of the window this team is building towards — sell while he still produces.',
+      }
+    }
+    if (archetype === 'Win-now vet') {
+      return {
+        verdict: 'Unsure',
+        reason: 'Sell into the pre-season window unless this is the push year — vets only bleed value while you wait.',
+      }
+    }
+    if (depthSellEligible) {
+      return {
+        verdict: 'Sell',
+        reason: `${ordinal(depth)} ${p.position} outside the lineup — consolidation fuel. Trade quantity for quality.`,
+      }
+    }
+  }
+
+  if (direction === 'Mushy middle') {
+    if (archetype === 'Youth asset') {
+      return {
+        verdict: 'Hold',
+        reason: 'Whatever lane you pick, he fits it — the middle sells vets, never youth.',
+      }
+    }
+    if (archetype === 'Declining') {
+      return {
+        verdict: 'Sell',
+        reason: 'Ageing while the team drifts — the middle is where his value dies quietly. Move him and pick a lane.',
+      }
+    }
+    if (archetype === 'Win-now vet') {
+      return {
+        verdict: 'Unsure',
+        reason: 'Valuable now, worthless to a rebuild — decide the lane before the market decides for you.',
+      }
+    }
+    if (depthSellEligible) {
+      return {
+        verdict: 'Sell',
+        reason: `${ordinal(depth)} ${p.position} behind locked starters — real value doing nothing on the bench.`,
+      }
+    }
+  }
+
+  // Shared tail: age risk, then default holds.
+  if (p.age >= decliningAgeFor(p.position, t) && direction !== 'Contender') {
+    return { verdict: 'Unsure', reason: 'Age risk without the decline yet — watch the 30-day trend closely.' }
+  }
+  if (p.inOptimalLineup) return { verdict: 'Hold', reason: 'Starts every week — hold.' }
+  if (p.onTaxi) return { verdict: 'Hold', reason: 'Taxi stash — free upside, nothing to do yet.' }
+  return { verdict: 'Hold', reason: 'Fits the timeline — hold.' }
+}
+
 export function generateVerdicts(
   mine: ProfileWithDirection,
   others: ProfileWithDirection[],
@@ -111,52 +289,9 @@ export function generateVerdicts(
   }
 
   for (const p of valued) {
-    const archetype = classifyArchetype(p.age, p.fc, t)
+    const archetype = classifyArchetype(p.age, p.position, p.fc, t)
     const depth = depthIndex.get(p.id) ?? 1
-    let verdict: VerdictKind = 'Hold'
-    let reason = ''
-
-    if (archetype === 'Declining') {
-      verdict = 'Sell'
-      reason = 'Ageing out with a falling market — value only goes one way from here.'
-    } else if (mine.direction === 'Rebuilding' && archetype === 'Win-now vet') {
-      verdict = 'Sell'
-      reason = 'Win-now vet on a rebuild — his window closes before this team opens one.'
-    } else if (mine.direction === 'Contender' && archetype === 'Youth asset' && !p.inOptimalLineup) {
-      verdict = 'Sell'
-      reason = 'Young stash on a win-now roster — convert him into someone who starts.'
-    } else if (
-      !p.inOptimalLineup &&
-      !p.onTaxi &&
-      depth >= t.verdicts.sellDuplicateDepthMinCount &&
-      p.adjValue >= t.verdicts.duplicateDepthMinValue
-    ) {
-      verdict = 'Sell'
-      reason = `${ordinal(depth)} ${p.position} behind locked starters — real value doing nothing on the bench.`
-    } else if (mine.direction === 'Mushy middle' && archetype === 'Win-now vet') {
-      verdict = 'Unsure'
-      reason = 'Valuable now, worthless to a rebuild — decide the lane before the market decides for you.'
-    } else if (mine.direction === 'Rebuilding' && archetype === 'Prime') {
-      verdict = 'Unsure'
-      reason = 'Peaks before this rebuild does — sell if a contender pays up, hold if the window is close.'
-    } else if (p.age >= t.archetypes.decliningMinAge && mine.direction !== 'Contender') {
-      verdict = 'Unsure'
-      reason = 'Age risk without the decline yet — watch the 30-day trend closely.'
-    } else if (mine.direction === 'Rebuilding' && archetype === 'Youth asset') {
-      reason = 'Core of the rebuild — this is what the whole plan is built on.'
-    } else if (
-      mine.direction === 'Contender' &&
-      p.inOptimalLineup &&
-      (archetype === 'Win-now vet' || archetype === 'Prime')
-    ) {
-      reason = 'Exactly what a contender starts — hold and enjoy.'
-    } else if (p.inOptimalLineup) {
-      reason = 'Starts every week — hold.'
-    } else if (p.onTaxi) {
-      reason = 'Taxi stash — free upside, nothing to do yet.'
-    } else {
-      reason = 'Fits the timeline — hold.'
-    }
+    const { verdict, reason } = verdictFor(p, archetype, depth, mine.direction, t)
 
     rows.push({
       playerId: p.id,
@@ -186,14 +321,17 @@ export function generateVerdicts(
 
 function targetArchetypesFor(direction: Direction, starterRank: number, numTeams: number): Archetype[] {
   if (direction === 'Contender') return ['Win-now vet', 'Prime']
-  if (direction === 'Ascending') return ['Prime', 'Win-now vet']
+  // Ascending teams buy players who can still rise: prime pieces entering the
+  // window and youth — not ageing vets who bleed value while the team waits.
+  if (direction === 'Ascending') return ['Prime', 'Youth asset']
   if (direction === 'Rebuilding') return ['Youth asset']
   // Mushy middle: lean by lineup strength — closer to the top, buy to contend.
   return starterRank <= Math.ceil(numTeams / 2) ? ['Win-now vet', 'Prime'] : ['Youth asset']
 }
 
-function sourceDirectionsFor(targets: Archetype[]): Direction[] {
-  return targets.includes('Youth asset') ? ['Contender', 'Mushy middle'] : ['Rebuilding', 'Ascending']
+// Where each kind of asset is naturally for sale.
+function sourceDirectionsFor(archetype: Archetype): Direction[] {
+  return archetype === 'Youth asset' ? ['Contender', 'Mushy middle'] : ['Rebuilding', 'Ascending']
 }
 
 export function generateBuyTargets(
@@ -204,8 +342,11 @@ export function generateBuyTargets(
   t: Thresholds,
 ): BuyTarget[] {
   const targets = targetArchetypesFor(mine.direction, myStarterRank, league.settings.numTeams)
-  const sources = new Set(sourceDirectionsFor(targets))
   const targetSet = new Set(targets)
+  // Win-now buys must raise the starting lineup ("does it raise your weekly
+  // ceiling?"); youth buys for rebuilding/ascending teams are value plays and
+  // are ranked by asset value instead — a stash does not need to start.
+  const requireLineupGain = targetSet.has('Win-now vet')
 
   const myPool = mine.players
     .filter((p) => !p.onTaxi && !p.onIR)
@@ -213,18 +354,18 @@ export function generateBuyTargets(
 
   const candidates: BuyTarget[] = []
   for (const holder of others) {
-    if (!sources.has(holder.direction)) continue
     for (const p of holder.players) {
       if (p.adjValue < t.verdicts.buyTargetMinAdjValue) continue
-      const archetype = classifyArchetype(p.age, p.fc, t)
+      const archetype = classifyArchetype(p.age, p.position, p.fc, t)
       if (!targetSet.has(archetype)) continue
+      if (!sourceDirectionsFor(archetype).includes(holder.direction)) continue
 
       const withPlayer = optimalLineup(
         [...myPool, { id: p.id, position: p.position, value: p.adjValue }],
         league.settings.rosterPositions,
       )
       const marginal = withPlayer.starterValue - mine.starterValue
-      if (marginal < t.verdicts.minMarginalStarterValue) continue
+      if (requireLineupGain && marginal < t.verdicts.minMarginalStarterValue) continue
 
       const surplus = !p.inOptimalLineup
       const phrases = [`wrong-phase asset for a ${holder.direction.toLowerCase()} roster`]
@@ -245,6 +386,10 @@ export function generateBuyTargets(
   }
 
   return candidates
-    .sort((a, b) => b.marginalStarterValue - a.marginalStarterValue || b.adjValue - a.adjValue)
+    .sort((a, b) =>
+      requireLineupGain
+        ? b.marginalStarterValue - a.marginalStarterValue || b.adjValue - a.adjValue
+        : b.adjValue - a.adjValue || b.marginalStarterValue - a.marginalStarterValue,
+    )
     .slice(0, t.verdicts.buyTargetMaxPerLeague)
 }

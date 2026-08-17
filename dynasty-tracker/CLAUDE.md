@@ -97,14 +97,29 @@ My team gets a full profile; opponents get one-line classifications (they are th
 
 ### Player archetypes
 - **Win-now vet**: age 27+, redraftValue > value
-- **Youth asset**: age ≤24, value > redraftValue
+- **Youth asset**: age ≤24 (age alone — a rookie is a youth asset regardless of FantasyCalc's redraft split)
 - **Prime**: 25–27, balanced
-- **Declining**: 29+, negative trend30Day
+- **Declining**: past the position's age cliff (QB 33 / RB 28 / WR 28 / TE 31, `decliningMinAgeByPosition`) with a negative trend30Day
 
 ### Verdicts (my roster, per league)
-- **Sell**: win-now vets on a rebuilding roster; young stashes/picks on a contender needing starters; declining players; duplicated depth behind locked starters. Name the specific counterparty roster and why they'd buy.
-- **Hold**: fits the direction.
-- **Buy targets**: sourced from opposite-phase rosters (vets from rebuilders, youth/picks from contenders); trending adds still cheap; injury-dip players whose profile fits my timeline.
+
+Direction-first — the same player gets a different verdict on different teams. The full rules and
+their sourcing live in `STRATEGY.md` (distilled from the `transcripts/` research, 2026-08-17);
+the two hard rules that must never regress:
+
+1. **A youth asset on a rebuild is never sold as duplicate depth.** Bench time is irrelevant to a
+   rebuild; value growth is the job. (The old engine told a rebuild to sell a 22-year-old rookie
+   WR4 as "real value doing nothing on the bench" — that was the bug.)
+2. **An ageing producer who starts for a contender is a Hold** (the Henry rule: production
+   outweighs value bleed while you contend). Contenders only sell ageing vets who don't crack the
+   lineup.
+
+Other headline rules: rebuilds sell every realised-ceiling asset (vets, declining, redraft-dominant
+primes) into the August window; contenders consolidate valuable bench youth up-tier (never into a
+falling trend — no selling the bottom); backup QBs are never depth-sold in superflex; ascending
+teams sell vets (Unsure — push-year exception) and buy prime/youth, not ageing producers; buy
+targets for contenders must raise starter value, while youth buys for rebuilds are ranked by asset
+value (a stash doesn't need to start).
 
 ## Features by phase
 
