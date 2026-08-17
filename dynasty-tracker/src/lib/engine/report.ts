@@ -12,10 +12,16 @@ import {
   type VerdictRow,
 } from './verdicts'
 
+// Manual direction overrides, keyed by leagueId then rosterId. Overridden
+// directions feed every downstream calculation (verdicts, counterparties,
+// buy targets) exactly as if the classifier had produced them.
+export type DirectionOverrides = Record<string, Record<number, Direction>>
+
 export interface SummaryRow {
   leagueId: string
   label: string
   direction: Direction
+  manual: boolean
   starterRank: number
   totalRank: number
   numTeams: number
@@ -25,8 +31,11 @@ export interface SummaryRow {
 }
 
 export interface OpponentLine {
+  rosterId: number
   ownerName: string
   direction: Direction
+  autoDirection: Direction
+  manual: boolean
   line: string
 }
 
@@ -43,6 +52,8 @@ export interface LeagueReport {
   numTeams: number
   myProfile: TeamProfile
   myDirection: Direction
+  myAutoDirection: Direction
+  myDirectionManual: boolean
   myRanks: TeamRanks
   rosterOwners: Record<number, string>
   directionStatement: string
@@ -99,6 +110,7 @@ export function buildReport(
   players: PlayersFile,
   cfg: LeaguesConfig,
   t: Thresholds,
+  overrides: DirectionOverrides = {},
 ): ReportModel {
   const summary: SummaryRow[] = []
   const leagues: LeagueReport[] = []
@@ -125,9 +137,8 @@ export function buildReport(
       pickCapital: pickRanks[i],
     })
 
-    const withDirections: ProfileWithDirection[] = profiles.map((p, i) => ({
-      ...p,
-      direction: classifyDirection(
+    const withDirections: ProfileWithDirection[] = profiles.map((p, i) => {
+      const autoDirection = classifyDirection(
         {
           starterRank: starterRanks[i],
           totalRank: totalRanks[i],
@@ -139,8 +150,15 @@ export function buildReport(
           numTeams: league.settings.numTeams,
         },
         t,
-      ),
-    }))
+      )
+      const manual = overrides[league.leagueId]?.[p.rosterId]
+      return {
+        ...p,
+        direction: manual ?? autoDirection,
+        autoDirection,
+        manualDirection: manual !== undefined,
+      }
+    })
 
     const myIndex = withDirections.findIndex((p) => p.ownerId === cfg.userId)
     if (myIndex === -1) continue
@@ -157,6 +175,8 @@ export function buildReport(
       numTeams: league.settings.numTeams,
       myProfile: mine,
       myDirection: mine.direction,
+      myAutoDirection: mine.autoDirection,
+      myDirectionManual: mine.manualDirection,
       myRanks,
       rosterOwners: Object.fromEntries(
         league.rosters.map((r) => [
@@ -171,8 +191,11 @@ export function buildReport(
         .map((p, i) => ({ p, i }))
         .filter(({ i }) => i !== myIndex)
         .map(({ p, i }) => ({
+          rosterId: p.rosterId,
           ownerName: p.ownerName,
           direction: p.direction,
+          autoDirection: p.autoDirection,
+          manual: p.manualDirection,
           line: opponentLine(p, ranksAt(i), league.settings.numTeams),
         }))
         .sort((a, b) => a.ownerName.localeCompare(b.ownerName)),
@@ -182,6 +205,7 @@ export function buildReport(
       leagueId: league.leagueId,
       label: league.label,
       direction: mine.direction,
+      manual: mine.manualDirection,
       starterRank: myRanks.starter,
       totalRank: myRanks.total,
       numTeams: league.settings.numTeams,

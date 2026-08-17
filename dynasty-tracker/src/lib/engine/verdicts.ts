@@ -6,6 +6,8 @@ import { eligibleSlotsFor, optimalLineup } from './lineup'
 import type { Direction } from './direction'
 import type { RosterPlayerRow, TeamProfile } from './profile'
 
+export type VerdictKind = 'Sell' | 'Unsure' | 'Hold'
+
 export interface VerdictRow {
   playerId: string
   name: string
@@ -15,7 +17,7 @@ export interface VerdictRow {
   adjValue: number
   trend30Day: number | null
   archetype: Archetype
-  verdict: 'Sell' | 'Hold'
+  verdict: VerdictKind
   reason: string
   counterparty: string | null
 }
@@ -34,6 +36,8 @@ export interface BuyTarget {
 
 export interface ProfileWithDirection extends TeamProfile {
   direction: Direction
+  autoDirection: Direction
+  manualDirection: boolean
 }
 
 // The weakest starter (by adjusted value) on a profile's optimal lineup at a
@@ -109,7 +113,7 @@ export function generateVerdicts(
   for (const p of valued) {
     const archetype = classifyArchetype(p.age, p.fc, t)
     const depth = depthIndex.get(p.id) ?? 1
-    let verdict: 'Sell' | 'Hold' = 'Hold'
+    let verdict: VerdictKind = 'Hold'
     let reason = ''
 
     if (archetype === 'Declining') {
@@ -129,6 +133,15 @@ export function generateVerdicts(
     ) {
       verdict = 'Sell'
       reason = `${ordinal(depth)} ${p.position} behind locked starters — real value doing nothing on the bench.`
+    } else if (mine.direction === 'Mushy middle' && archetype === 'Win-now vet') {
+      verdict = 'Unsure'
+      reason = 'Valuable now, worthless to a rebuild — decide the lane before the market decides for you.'
+    } else if (mine.direction === 'Rebuilding' && archetype === 'Prime') {
+      verdict = 'Unsure'
+      reason = 'Peaks before this rebuild does — sell if a contender pays up, hold if the window is close.'
+    } else if (p.age >= t.archetypes.decliningMinAge && mine.direction !== 'Contender') {
+      verdict = 'Unsure'
+      reason = 'Age risk without the decline yet — watch the 30-day trend closely.'
     } else if (mine.direction === 'Rebuilding' && archetype === 'Youth asset') {
       reason = 'Core of the rebuild — this is what the whole plan is built on.'
     } else if (
@@ -159,12 +172,16 @@ export function generateVerdicts(
       counterparty:
         verdict === 'Sell'
           ? (findCounterparty(p, archetype, others, playerName) ?? 'No natural buyer yet — shop it broadly')
-          : null,
+          : verdict === 'Unsure'
+            ? findCounterparty(p, archetype, others, playerName)
+            : null,
     })
   }
 
-  // Sells first, then by value.
-  return rows.sort((a, b) => (a.verdict === b.verdict ? b.adjValue - a.adjValue : a.verdict === 'Sell' ? -1 : 1))
+  const kindOrder: Record<VerdictKind, number> = { Sell: 0, Unsure: 1, Hold: 2 }
+  return rows.sort(
+    (a, b) => kindOrder[a.verdict] - kindOrder[b.verdict] || b.adjValue - a.adjValue,
+  )
 }
 
 function targetArchetypesFor(direction: Direction, starterRank: number, numTeams: number): Archetype[] {

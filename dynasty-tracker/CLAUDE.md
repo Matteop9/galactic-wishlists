@@ -71,6 +71,7 @@ dynasty-tracker/
 - Fetch clients + snapshot assembly live in `src/lib/api/` (pure `fetch`, works in node via tsx and in the browser for the live-fetch button).
 - Snapshots are bundled at build time via `import.meta.glob` in `src/lib/snapshots.ts` — deploy after each refresh to publish.
 - Config JSON uses `_`-prefixed comment keys, stripped and zod-validated in `src/lib/config.ts`.
+- UI (per user feedback, v0.2.0): league tabs rather than stacked sections; verdicts as three columns (Sell / Unsure / Hold — `Unsure` is a real engine verdict for borderline calls); any team's direction can be manually overridden via dropdowns (persisted in localStorage under `dynasty_` keys, threaded into `buildReport` so verdicts/counterparties/buy targets follow the override).
 
 ## Methodology (the analytical core)
 

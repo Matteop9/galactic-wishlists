@@ -1,17 +1,30 @@
 import { fmtShare, fmtValue, ordinal } from '../lib/format'
+import type { Direction } from '../lib/engine/direction'
 import type { LeagueReport } from '../lib/engine/report'
 import { directionClass } from './direction'
+import { DirectionSelect } from './DirectionSelect'
 
 const ROUND_NAMES = ['', '1st', '2nd', '3rd', '4th', '5th']
 
-export function MyProfileCard({ league }: { league: LeagueReport }) {
+interface Props {
+  league: LeagueReport
+  onOverride: (direction: Direction | null) => void
+}
+
+export function MyProfileCard({ league, onOverride }: Props) {
   const p = league.myProfile
   return (
     <div className="card">
       <div className="profile-stats">
         <div className="stat">
-          <div className="label">Direction</div>
+          <div className="label">Direction{league.myDirectionManual ? ' (manual)' : ''}</div>
           <div className={`value ${directionClass(league.myDirection)}`}>{league.myDirection}</div>
+          <DirectionSelect
+            direction={league.myDirection}
+            autoDirection={league.myAutoDirection}
+            manual={league.myDirectionManual}
+            onChange={onOverride}
+          />
         </div>
         <div className="stat">
           <div className="label">Starter value</div>

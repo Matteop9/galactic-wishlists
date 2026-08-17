@@ -2,7 +2,13 @@ import { fmtShare, fmtValue, ordinal } from '../lib/format'
 import type { SummaryRow } from '../lib/engine/report'
 import { directionClass } from './direction'
 
-export function SummaryTable({ rows }: { rows: SummaryRow[] }) {
+interface Props {
+  rows: SummaryRow[]
+  activeLeagueId: string
+  onSelect: (leagueId: string) => void
+}
+
+export function SummaryTable({ rows, activeLeagueId, onSelect }: Props) {
   return (
     <div className="card summary-table">
       <div className="table-wrap">
@@ -18,11 +24,16 @@ export function SummaryTable({ rows }: { rows: SummaryRow[] }) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.leagueId}>
+              <tr key={row.leagueId} className={row.leagueId === activeLeagueId ? 'active-row' : ''}>
                 <td>
-                  <a href={`#league-${row.leagueId}`}>{row.label}</a>
+                  <button className="link-btn" onClick={() => onSelect(row.leagueId)}>
+                    {row.label}
+                  </button>
                 </td>
-                <td className={directionClass(row.direction)}>{row.direction}</td>
+                <td>
+                  <span className={directionClass(row.direction)}>{row.direction}</span>
+                  {row.manual && <span className="dim small"> (manual)</span>}
+                </td>
                 <td className="num">
                   {ordinal(row.starterRank)} <span className="dim">of {row.numTeams}</span>
                 </td>

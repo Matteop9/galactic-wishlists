@@ -19,8 +19,9 @@ export function buildMarkdown(report: ReportModel): string {
   lines.push('| League | Direction | Starter rank | Youth share | Pick capital |')
   lines.push('|---|---|---|---|---|')
   for (const row of report.summary) {
+    const direction = row.manual ? `${row.direction} (set manually)` : row.direction
     lines.push(
-      `| ${row.label} | ${row.direction} | ${ordinal(row.starterRank)} of ${row.numTeams} | ${fmtShare(row.youthShare)} | ${fmtValue(row.pickCapitalValue)} (${ordinal(row.pickCapitalRank)}) |`,
+      `| ${row.label} | ${direction} | ${ordinal(row.starterRank)} of ${row.numTeams} | ${fmtShare(row.youthShare)} | ${fmtValue(row.pickCapitalValue)} (${ordinal(row.pickCapitalRank)}) |`,
     )
   }
   lines.push('')
@@ -28,7 +29,9 @@ export function buildMarkdown(report: ReportModel): string {
   for (const league of report.leagues) {
     lines.push(`## ${league.label}`)
     lines.push('')
-    lines.push(`**${league.myDirection}.** ${league.directionStatement}`)
+    lines.push(
+      `**${league.myDirection}${league.myDirectionManual ? ' (set manually)' : ''}.** ${league.directionStatement}`,
+    )
     lines.push('')
     const p = league.myProfile
     lines.push(
@@ -71,7 +74,7 @@ export function buildMarkdown(report: ReportModel): string {
     lines.push('### The market')
     lines.push('')
     for (const o of league.opponents) {
-      lines.push(`- **${o.ownerName}** — ${o.line}`)
+      lines.push(`- **${o.ownerName}** — ${o.line}${o.manual ? ' (status set manually)' : ''}`)
     }
     lines.push('')
   }

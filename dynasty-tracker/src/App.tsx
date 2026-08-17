@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { buildSnapshot } from './lib/api/buildSnapshot'
 import { leaguesConfig, thresholds } from './lib/config'
-import { buildReport } from './lib/engine/report'
+import type { Direction } from './lib/engine/direction'
+import { buildReport, type DirectionOverrides } from './lib/engine/report'
 import { buildMarkdown } from './lib/report/markdown'
+import { loadActiveLeague, loadOverrides, saveActiveLeague, withOverride } from './lib/overrides'
 import { latestSnapshot, loadPlayers } from './lib/snapshots'
 import type { PlayersFile, Snapshot } from './lib/types'
 import { Header } from './components/Header'
@@ -16,6 +18,8 @@ export default function App() {
   const [liveLoading, setLiveLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [overrides, setOverrides] = useState<DirectionOverrides>(() => loadOverrides())
+  const [activeLeague, setActiveLeague] = useState<string | null>(() => loadActiveLeague())
 
   useEffect(() => {
     const ref = latestSnapshot()
@@ -33,9 +37,23 @@ export default function App() {
 
   const active = live ?? baseline
   const report = useMemo(
-    () => (active && players ? buildReport(active, players, leaguesConfig, thresholds) : null),
-    [active, players],
+    () => (active && players ? buildReport(active, players, leaguesConfig, thresholds, overrides) : null),
+    [active, players, overrides],
   )
+
+  const currentLeague = useMemo(() => {
+    if (!report || report.leagues.length === 0) return null
+    return report.leagues.find((l) => l.leagueId === activeLeague) ?? report.leagues[0]
+  }, [report, activeLeague])
+
+  function selectLeague(leagueId: string) {
+    setActiveLeague(leagueId)
+    saveActiveLeague(leagueId)
+  }
+
+  function overrideDirection(leagueId: string, rosterId: number, direction: Direction | null) {
+    setOverrides(withOverride(overrides, leagueId, rosterId, direction))
+  }
 
   async function onLiveFetch() {
     setLiveLoading(true)
@@ -74,12 +92,21 @@ export default function App() {
       )}
       {error && <div className="error-banner">{error}</div>}
       {!report && !error && <div className="loading">Loading snapshot…</div>}
-      {report && (
+      {report && currentLeague && (
         <>
-          <SummaryTable rows={report.summary} />
-          {report.leagues.map((league) => (
-            <LeagueSection key={league.leagueId} league={league} />
-          ))}
+          <SummaryTable rows={report.summary} activeLeagueId={currentLeague.leagueId} onSelect={selectLeague} />
+          <nav className="tabs">
+            {report.leagues.map((league) => (
+              <button
+                key={league.leagueId}
+                className={`tab ${league.leagueId === currentLeague.leagueId ? 'active' : ''}`}
+                onClick={() => selectLeague(league.leagueId)}
+              >
+                {league.label}
+              </button>
+            ))}
+          </nav>
+          <LeagueSection league={currentLeague} onOverride={overrideDirection} />
         </>
       )}
     </div>

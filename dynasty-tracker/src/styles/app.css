@@ -57,6 +57,186 @@
   margin-bottom: 1.25rem;
 }
 
+/* League tabs */
+.tabs {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  margin: 1.5rem 0 1rem;
+  padding-bottom: 0;
+  scrollbar-width: thin;
+}
+
+.tab {
+  border: none;
+  background: none;
+  border-radius: 0;
+  border-bottom: 3px solid transparent;
+  padding: 0.5rem 0.8rem;
+  font-size: 1.05rem;
+  color: var(--chalk-dim);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tab:hover {
+  color: var(--chalk);
+  border-bottom-color: var(--line);
+}
+
+.tab.active {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--chalk);
+  border-bottom: 1px dotted var(--chalk-dim);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
+
+.summary-table .active-row td {
+  background: var(--field-700);
+}
+
+/* Direction override select */
+.direction-select {
+  display: block;
+  margin-top: 0.3rem;
+  max-width: 100%;
+  background: var(--field-700);
+  color: var(--chalk);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+}
+
+.direction-select:hover {
+  border-color: var(--amber-dim);
+}
+
+.opponent-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.opponent-row .direction-select {
+  margin-top: 0;
+  margin-left: auto;
+}
+
+/* Verdict columns */
+.verdict-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.verdict-column {
+  background: var(--field-800);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.75rem;
+  border-top: 3px solid var(--line);
+}
+
+.verdict-column.col-sell {
+  border-top-color: var(--sell);
+}
+
+.verdict-column.col-unsure {
+  border-top-color: var(--amber);
+}
+
+.verdict-column.col-hold {
+  border-top-color: var(--buy);
+}
+
+.verdict-column-head {
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.6rem;
+}
+
+.col-sell .verdict-column-head {
+  color: var(--sell);
+}
+
+.col-unsure .verdict-column-head {
+  color: var(--amber);
+}
+
+.col-hold .verdict-column-head {
+  color: var(--buy);
+}
+
+.verdict-card {
+  background: var(--field-700);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.55rem 0.65rem;
+  margin-bottom: 0.55rem;
+}
+
+.verdict-card:last-child {
+  margin-bottom: 0;
+}
+
+.verdict-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.verdict-card-top .name {
+  font-weight: 700;
+}
+
+.verdict-card-meta {
+  font-size: 0.82rem;
+  margin-bottom: 0.25rem;
+}
+
+.verdict-card-reason {
+  font-size: 0.86rem;
+}
+
+.verdict-card-buyer {
+  margin-top: 0.3rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.3rem;
+}
+
+@media (max-width: 900px) {
+  .verdict-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Cards and sections */
 .card {
   background: var(--field-800);
