@@ -4,7 +4,9 @@ import { leaguesConfig, thresholds } from './lib/config'
 import { adjustedValue } from './lib/engine/adjust'
 import type { Direction } from './lib/engine/direction'
 import { buildExposure } from './lib/engine/exposure'
+import { buildRankCurve } from './lib/engine/picks'
 import type { MarketPlayer } from './lib/engine/tradeCheck'
+import { reviewTrades } from './lib/engine/tradeHistory'
 import { buildReport, type DirectionOverrides, type LeagueReport } from './lib/engine/report'
 import type { Dispute, DisputeMap, VerdictKind, VerdictRow } from './lib/engine/verdicts'
 import { buildMarkdown } from './lib/report/markdown'
@@ -92,6 +94,22 @@ export default function App() {
       }
     }
     return out.sort((a, b) => b.adjValue - a.adjValue)
+  }, [active, players, currentLeague])
+
+  const reviewedTrades = useMemo(() => {
+    if (!active || !players || !currentLeague) return null
+    const league = active.leagues.find((l) => l.leagueId === currentLeague.leagueId)
+    if (!league?.trades) return null
+    const fcMap = active.fantasyCalc[league.fantasyCalcVariant]
+    return reviewTrades(
+      league,
+      fcMap,
+      buildRankCurve(fcMap),
+      players,
+      leaguesConfig.userId,
+      Number(active.meta.season),
+      thresholds,
+    )
   }, [active, players, currentLeague])
 
   function selectLeague(leagueId: string) {
@@ -209,6 +227,7 @@ export default function App() {
             <LeagueSection
               league={currentLeague}
               pool={marketPool}
+              trades={reviewedTrades}
               intel={intel}
               onOverride={overrideDirection}
               onDispute={(row, desired, note) => disputeVerdict(currentLeague, row, desired, note)}

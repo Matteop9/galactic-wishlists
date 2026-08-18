@@ -470,6 +470,74 @@
   font-size: 0.88rem;
 }
 
+/* Trade history */
+.trade-row {
+  border-bottom: 1px solid var(--line);
+  padding: 0.6rem 0;
+}
+
+.trade-row:first-child {
+  padding-top: 0;
+}
+
+.trade-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.trade-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.net-badge {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  border-radius: 3px;
+  padding: 0.05rem 0.45rem;
+  color: var(--field-950);
+}
+
+.net-ahead {
+  background: var(--buy);
+}
+
+.net-behind {
+  background: var(--sell);
+}
+
+.net-even {
+  background: var(--chalk-dim);
+}
+
+.trade-assets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.3rem 0;
+}
+
+.trade-assets .pop-label {
+  margin: 0;
+  min-width: 2.6rem;
+}
+
+.asset-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--field-700);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.12rem 0.55rem 0.12rem 0.15rem;
+  font-size: 0.83rem;
+  white-space: nowrap;
+}
+
 .opponent-name .hover-pop textarea {
   width: 100%;
   background: var(--field-900);

@@ -5,12 +5,54 @@ import {
   type PlayersFile,
   type Snapshot,
   type TradedPick,
+  type TradeRecord,
 } from '../types'
 import { fetchFcValues } from './fantasycalc'
 import { sleep, type HttpOptions } from './http'
 import { sleeper, type SleeperLeague, type SleeperRoster } from './sleeper'
 
 export class SeasonMismatchError extends Error {}
+
+export interface BuildSnapshotOptions {
+  // Trade history costs ~20 extra requests per league per season — the weekly
+  // refresh wants it, the browser live-fetch button does not.
+  includeTradeHistory?: boolean
+}
+
+async function fetchSeasonTrades(
+  leagueId: string,
+  season: string,
+  ownerByRosterId: Record<string, string | null>,
+  weeksToScan: number,
+  o: HttpOptions,
+  delay: () => Promise<unknown>,
+): Promise<TradeRecord[]> {
+  const out: TradeRecord[] = []
+  for (let week = 1; week <= weeksToScan; week++) {
+    await delay()
+    const transactions = await sleeper.transactionsTyped(leagueId, week, o)
+    for (const tx of transactions) {
+      if (tx.type !== 'trade' || tx.status !== 'complete') continue
+      out.push({
+        id: tx.transaction_id,
+        season,
+        week: tx.leg,
+        created: tx.created,
+        rosterIds: tx.roster_ids ?? [],
+        adds: tx.adds ?? {},
+        draftPicks: (tx.draft_picks ?? []).map((p) => ({
+          season: p.season,
+          round: p.round,
+          originalRosterId: p.roster_id,
+          toRosterId: p.owner_id,
+          fromRosterId: p.previous_owner_id,
+        })),
+        ownerByRosterId,
+      })
+    }
+  }
+  return out
+}
 
 const FANTASY_POSITIONS = new Set(['QB', 'RB', 'WR', 'TE'])
 
@@ -45,6 +87,7 @@ export async function buildSnapshot(
   cfg: LeaguesConfig,
   t: Thresholds,
   log: (message: string) => void = () => {},
+  options: BuildSnapshotOptions = {},
 ): Promise<Snapshot> {
   const o: HttpOptions = {
     retries: t.refresh.retries,
@@ -117,6 +160,35 @@ export async function buildSnapshot(
       rosters: rosters.map(normaliseRoster),
       users: Object.fromEntries(users.map((u) => [u.user_id, u.display_name])),
       tradedPicks,
+    }
+
+    if (options.includeTradeHistory) {
+      const ownerMap = Object.fromEntries(rosters.map((r) => [String(r.roster_id), r.owner_id]))
+      const trades = await fetchSeasonTrades(
+        entry.id,
+        league.season,
+        ownerMap,
+        t.trades.weeksToScan,
+        o,
+        delay,
+      )
+      // Sleeper reports "no previous league" as null OR the string "0".
+      const hasPrevious = (id: string | null): id is string => !!id && id !== '0'
+      let previousId: string | null = league.previous_league_id
+      for (let back = 0; back < t.trades.seasonsBack && hasPrevious(previousId); back++) {
+        await delay()
+        const prevLeague = await sleeper.league(previousId, o)
+        await delay()
+        const prevRosters = await sleeper.rosters(previousId, o)
+        const prevOwnerMap = Object.fromEntries(prevRosters.map((r) => [String(r.roster_id), r.owner_id]))
+        trades.push(
+          ...(await fetchSeasonTrades(previousId, prevLeague.season, prevOwnerMap, t.trades.weeksToScan, o, delay)),
+        )
+        previousId = prevLeague.previous_league_id
+      }
+      trades.sort((a, b) => b.created - a.created)
+      snapshot.trades = trades
+      log(`${entry.label}: ${trades.length} completed trades across ${t.trades.seasonsBack + 1} season(s)`)
     }
 
     if (kind === 'week') {

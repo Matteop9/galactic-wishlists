@@ -78,6 +78,29 @@ export const matchupRowSchema = z.object({
 })
 export type MatchupRow = z.infer<typeof matchupRowSchema>
 
+// One completed trade, from this or a previous season (league IDs are walked
+// back via previous_league_id at refresh time). ownerByRosterId is captured
+// per trade because roster ids can map to different owners across seasons.
+export const tradeRecordSchema = z.object({
+  id: z.string(),
+  season: z.string(),
+  week: z.number(),
+  created: z.number(),
+  rosterIds: z.array(z.number()),
+  adds: z.record(z.string(), z.number()),
+  draftPicks: z.array(
+    z.object({
+      season: z.string(),
+      round: z.number(),
+      originalRosterId: z.number(),
+      toRosterId: z.number(),
+      fromRosterId: z.number().nullable(),
+    }),
+  ),
+  ownerByRosterId: z.record(z.string(), z.string().nullable()),
+})
+export type TradeRecord = z.infer<typeof tradeRecordSchema>
+
 export const leagueSnapshotSchema = z.object({
   leagueId: z.string(),
   label: z.string(),
@@ -88,6 +111,7 @@ export const leagueSnapshotSchema = z.object({
   tradedPicks: z.array(tradedPickSchema),
   matchups: z.array(matchupRowSchema).optional(),
   transactions: z.array(z.unknown()).optional(),
+  trades: z.array(tradeRecordSchema).optional(),
 })
 export type LeagueSnapshot = z.infer<typeof leagueSnapshotSchema>
 

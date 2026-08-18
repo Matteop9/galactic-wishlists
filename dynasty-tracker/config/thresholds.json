@@ -87,6 +87,16 @@
     "_minMarginalStarterValue": "A buy target must add at least this much to my optimal lineup, else it is bench depth."
   },
 
+  "trades": {
+    "_comment": "Trade history review (hindsight ledger with current values).",
+    "seasonsBack": 1,
+    "_seasonsBack": "How many previous seasons to walk via previous_league_id when fetching trade history at refresh time.",
+    "weeksToScan": 18,
+    "_weeksToScan": "Transaction rounds scanned per season (offseason trades land in early rounds).",
+    "evenBand": 500,
+    "_evenBand": "A trade whose current-value swing is within this band is called even rather than won or lost."
+  },
+
   "overview": {
     "_comment": "The cross-league All leagues view.",
     "topUnownedCount": 24,

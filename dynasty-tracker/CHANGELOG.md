@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.0 — 2026-08-18
+
+- Trade history review: refresh now pulls every completed trade from Sleeper for this season and
+  last (walking `previous_league_id`; tunables in `thresholds.trades`). A "My trade history"
+  section per league shows each of my trades — gave/got as face chips with today's adjusted
+  values, a net badge (ahead / behind / even within `evenBand`), and honest caveats where a piece
+  can no longer be valued (already-drafted picks, players off the market). Hindsight ledger only —
+  the shape of NEW trades is the Trade check's job, and exact pricing stays with calculators.
+- Snapshot schema: optional `trades` per league (raw, all managers — mine are filtered at view
+  time, so future market-activity views need no refetch). Live fetch skips trade history to stay
+  quick.
+
 ## 0.6.0 — 2026-08-18
 
 Visual pass ("too much text") plus three feature requests:

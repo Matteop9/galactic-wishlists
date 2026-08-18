@@ -16,6 +16,28 @@ export interface SleeperLeague {
   roster_positions: string[]
   scoring_settings: Record<string, number>
   settings: Record<string, number | undefined>
+  season: string
+  previous_league_id: string | null
+}
+
+export interface SleeperTransaction {
+  transaction_id: string
+  type: string
+  status: string
+  leg: number
+  created: number
+  roster_ids: number[] | null
+  adds: Record<string, number> | null
+  drops: Record<string, number> | null
+  draft_picks:
+    | {
+        season: string
+        round: number
+        roster_id: number
+        owner_id: number
+        previous_owner_id: number | null
+      }[]
+    | null
 }
 
 export interface SleeperRoster {
@@ -78,5 +100,7 @@ export const sleeper = {
     fetchJson<SleeperMatchup[]>(`${BASE}/league/${id}/matchups/${week}`, o),
   transactions: (id: string, week: number, o: HttpOptions) =>
     fetchJson<unknown[]>(`${BASE}/league/${id}/transactions/${week}`, o),
+  transactionsTyped: (id: string, week: number, o: HttpOptions) =>
+    fetchJson<SleeperTransaction[]>(`${BASE}/league/${id}/transactions/${week}`, o),
   players: (o: HttpOptions) => fetchJson<Record<string, SleeperPlayer>>(`${BASE}/players/nfl`, o),
 }

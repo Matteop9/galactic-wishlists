@@ -97,6 +97,11 @@ const thresholdsSchema = z.object({
     buyTargetMinAdjValue: z.number(),
     minMarginalStarterValue: z.number(),
   }),
+  trades: z.object({
+    seasonsBack: z.number(),
+    weeksToScan: z.number(),
+    evenBand: z.number(),
+  }),
   overview: z.object({
     topUnownedCount: z.number(),
   }),
