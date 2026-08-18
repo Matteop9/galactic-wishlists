@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.6.0 — 2026-08-18
+
+Visual pass ("too much text") plus three feature requests:
+
+- Player faces everywhere, from Sleeper's free CDN (headshots by player id, team logos for
+  defences, initials fallback).
+- Verdicts and buy targets are now compact tiles; all reasoning, counterparties and dispute
+  controls moved into hover popovers (tap on mobile). Opponent detail lines likewise.
+- New "All leagues" tab: cross-league exposure — my players grouped by how many leagues I hold
+  them in, with per-league verdict dots (spot the sell-here/keep-there arbitrage on hover), plus
+  the top players I own nowhere and who holds them.
+- Team intel: paste chat snippets per opponent (what they want, how they rate their team, trades
+  off the menu) — stored locally, amber dot marker, included in the markdown export.
+- Trade check per league: pick who you give and get; the engine grades the shape — selling
+  engine-Sells is right, selling engine-Holds needs winning clearly, incoming assets graded by
+  archetype fit for my direction — plus the starting-lineup delta. Value stays with calculators.
+- Temporary holds: a wrong-phase player worth less than `minSellValue` is no longer a Sell — he'd
+  fetch nothing, so he becomes a free hold with watch-for-a-value-pop copy (training log entry).
+
 ## 0.5.0 — 2026-08-17
 
 - Depth is now league-structure-relative (user training feedback): a player only counts as

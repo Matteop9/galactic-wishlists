@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { fmtTrend, fmtValue } from '../lib/format'
 import { effectiveVerdict, type VerdictKind, type VerdictRow } from '../lib/engine/verdicts'
+import { HoverCard } from './HoverCard'
+import { PlayerFace } from './PlayerFace'
 
 const COLUMNS: { kind: VerdictKind; className: string }[] = [
   { kind: 'Sell', className: 'col-sell' },
@@ -25,37 +27,54 @@ interface Props {
 export function VerdictColumns({ rows, onDispute, onClearDispute }: Props) {
   const [form, setForm] = useState<FormState | null>(null)
 
-  function renderCard(row: VerdictRow) {
-    const trendClass = (row.trend30Day ?? 0) > 0 ? 'trend-up' : (row.trend30Day ?? 0) < 0 ? 'trend-down' : 'dim'
+  function renderTile(row: VerdictRow) {
+    const trend = row.trend30Day ?? 0
+    const trendClass = trend > 0 ? 'trend-up' : trend < 0 ? 'trend-down' : 'dim'
     const formOpen = form?.playerId === row.playerId
     const alternatives = KINDS.filter((k) => k !== effectiveVerdict(row))
 
     return (
-      <div className={`verdict-card ${row.dispute ? 'disputed' : ''}`} key={row.playerId}>
-        <div className="verdict-card-top">
-          <span className="name">{row.name}</span>
-          <span className={trendClass}>{fmtTrend(row.trend30Day)}</span>
+      <HoverCard
+        key={row.playerId}
+        className={`verdict-tile ${row.dispute ? 'disputed' : ''}`}
+        pinned={formOpen}
+        summary={
+          <>
+            <PlayerFace playerId={row.playerId} name={row.name} position={row.position} />
+            <div className="tile-main">
+              <div className="name">{row.name}</div>
+              <div className="tile-meta dim">
+                {row.position} · {row.ageEstimated ? `~${row.age}` : row.age} · {fmtValue(row.adjValue)}
+              </div>
+            </div>
+            <div className="tile-right">
+              <span className={`small ${trendClass}`}>{fmtTrend(row.trend30Day)}</span>
+              {row.dispute && (
+                <span
+                  className={`dot ${row.dispute.engineAgrees ? 'dot-agrees' : 'dot-disputed'}`}
+                  title={row.dispute.engineAgrees ? 'Engine now agrees' : 'Disputed'}
+                />
+              )}
+            </div>
+          </>
+        }
+      >
+        <div className="pop-title">
+          {row.name} <span className="dim">— {row.archetype}</span>
         </div>
-        <div className="verdict-card-meta dim">
-          {row.position} · {row.ageEstimated ? `~${row.age}` : row.age} · {fmtValue(row.adjValue)}
-        </div>
-
         {row.dispute ? (
           <>
             <div className={`dispute-badge ${row.dispute.engineAgrees ? 'agrees' : ''}`}>
               {row.dispute.engineAgrees ? 'Engine now agrees' : `Disputed — engine says ${row.verdict}`}
             </div>
-            {!row.dispute.engineAgrees && (
-              <div className="verdict-card-reason dim">Engine: {row.reason}</div>
-            )}
-            {row.dispute.note && <div className="verdict-card-reason">“{row.dispute.note}”</div>}
+            {!row.dispute.engineAgrees && <div className="pop-line dim">Engine: {row.reason}</div>}
+            {row.dispute.note && <div className="pop-line">“{row.dispute.note}”</div>}
           </>
         ) : (
-          <div className="verdict-card-reason">{row.reason}</div>
+          <div className="pop-line">{row.reason}</div>
         )}
-
         {row.counterparty && effectiveVerdict(row) !== 'Hold' && (
-          <div className="verdict-card-buyer small">
+          <div className="pop-line small">
             <span className="dim">Buyer:</span> {row.counterparty}
           </div>
         )}
@@ -109,7 +128,7 @@ export function VerdictColumns({ rows, onDispute, onClearDispute }: Props) {
             )}
           </div>
         )}
-      </div>
+      </HoverCard>
     )
   }
 
@@ -122,7 +141,7 @@ export function VerdictColumns({ rows, onDispute, onClearDispute }: Props) {
             <div className="verdict-column-head">
               {kind} <span className="dim">({group.length})</span>
             </div>
-            {group.length === 0 ? <div className="dim small">Nothing here.</div> : group.map(renderCard)}
+            {group.length === 0 ? <div className="dim small">Nothing here.</div> : group.map(renderTile)}
           </div>
         )
       })}

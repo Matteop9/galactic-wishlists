@@ -1,19 +1,25 @@
 import type { Direction } from '../lib/engine/direction'
 import type { LeagueReport } from '../lib/engine/report'
+import type { MarketPlayer } from '../lib/engine/tradeCheck'
 import type { VerdictKind, VerdictRow } from '../lib/engine/verdicts'
+import type { IntelMap } from '../lib/intel'
 import { MyProfileCard } from './MyProfileCard'
 import { VerdictColumns } from './VerdictColumns'
 import { BuyTargets } from './BuyTargets'
 import { OpponentLines } from './OpponentLines'
+import { TradeCheck } from './TradeCheck'
 
 interface Props {
   league: LeagueReport
+  pool: MarketPlayer[]
+  intel: IntelMap
   onOverride: (leagueId: string, rosterId: number, direction: Direction | null) => void
   onDispute: (row: VerdictRow, desired: VerdictKind, note: string) => void
   onClearDispute: (playerId: string) => void
+  onIntel: (rosterId: number, text: string) => void
 }
 
-export function LeagueSection({ league, onOverride, onDispute, onClearDispute }: Props) {
+export function LeagueSection({ league, pool, intel, onOverride, onDispute, onClearDispute, onIntel }: Props) {
   const tags = [
     `${league.numTeams} teams`,
     league.derived.tePremium ? 'TE premium' : null,
@@ -32,10 +38,15 @@ export function LeagueSection({ league, onOverride, onDispute, onClearDispute }:
       <VerdictColumns rows={league.verdicts} onDispute={onDispute} onClearDispute={onClearDispute} />
       <h3>Buy targets</h3>
       <BuyTargets targets={league.buyTargets} />
+      <h3>Trade check</h3>
+      <TradeCheck league={league} pool={pool} />
       <h3>The market</h3>
       <OpponentLines
+        leagueId={league.leagueId}
         opponents={league.opponents}
+        intel={intel}
         onOverride={(rosterId, direction) => onOverride(league.leagueId, rosterId, direction)}
+        onIntel={onIntel}
       />
     </section>
   )

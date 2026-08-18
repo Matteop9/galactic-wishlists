@@ -48,6 +48,9 @@ only — the rules are what matter. Engine keys referenced where a rule is imple
   (for future 1sts — the market prices hyped future picks above ageing producers), and prime
   players whose value is production-backed (redraft-dominant). Timing: sell into August/September
   when contenders panic-buy points.
+- **…but only if the market actually pays.** A wrong-phase player below `minSellValue` fetches
+  nothing — selling him is a favour to the buyer. He becomes a free temporary hold: watch for a
+  value pop, cut only when the roster spot is needed (Matteo's middling-TE case, 2026-08-17).
 - **Buy** upside: cheap youth, players with downside already priced in, injury-dip young assets,
   picks from contenders. Filter: "could this player decrease in value? Then no."
 - **Guardrail**: don't hold *only* unproven assets — value ceiling high, value floor zero.
@@ -134,6 +137,10 @@ regress the hard rules above.
 Format:
 `- YYYY-MM-DD — {player} ({league}) — disputed {engine verdict} → {user verdict} — change: {thresholds key or ladder rule, or "rejected: why"} — test: {test name}`
 
+- 2026-08-17 — sell floor (session feedback) — a wrong-phase player worth next to nothing was
+  still flagged Sell (middling TE on a rebuild, "selling for absolutely nothing") — change:
+  `verdicts.minSellValue` (600): any non-depth Sell below it becomes a temporary hold with
+  watch-for-a-pop copy — test: "temporary hold, not a sell for scraps" in tests/verdicts.test.ts.
 - 2026-08-17 — depth threshold (session feedback, all leagues) — disputed the fixed "3rd at position
   = depth" rule: in 2RB + 3FLEX lineups the 4th–5th RB often starts — change: depth-sell threshold
   now derived from league structure (`startableCount` in lineup.ts: dedicated + eligible flex

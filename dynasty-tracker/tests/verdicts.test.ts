@@ -271,6 +271,31 @@ describe('generateVerdicts — depth is league-structure-relative (Matteo, 2026-
     expect(row.reason).toContain('7th RB')
   })
 
+  it('a middling wrong-phase TE on a rebuild is a temporary hold, not a sell for scraps', () => {
+    const te = player({
+      id: 'te',
+      position: 'TE',
+      age: 29,
+      inOptimalLineup: false,
+      fcOver: { value: 400, redraftValue: 520, trend30Day: -20, position: 'TE' },
+    })
+    const row = verdictOf('Rebuilding', te)
+    expect(row.archetype).toBe('Win-now vet')
+    expect(row.verdict).toBe('Hold')
+    expect(row.reason).toContain('temporary hold')
+  })
+
+  it('the same wrong-phase profile with real market value is still a sell', () => {
+    const te = player({
+      id: 'te2',
+      position: 'TE',
+      age: 29,
+      inOptimalLineup: false,
+      fcOver: { value: 2000, redraftValue: 2600, trend30Day: -20, position: 'TE' },
+    })
+    expect(verdictOf('Rebuilding', te).verdict).toBe('Sell')
+  })
+
   it('the same 4th WR is depth in a no-flex league but a hold in a deep-flex league', () => {
     const mk = () =>
       player({

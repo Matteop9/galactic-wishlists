@@ -51,6 +51,7 @@ export interface LeagueReport {
   label: string
   derived: LeagueDerived
   numTeams: number
+  rosterPositions: string[]
   myProfile: TeamProfile
   myDirection: Direction
   myAutoDirection: Direction
@@ -175,6 +176,7 @@ export function buildReport(
       label: league.label,
       derived: league.settings.derived,
       numTeams: league.settings.numTeams,
+      rosterPositions: league.settings.rosterPositions,
       myProfile: mine,
       myDirection: mine.direction,
       myAutoDirection: mine.autoDirection,

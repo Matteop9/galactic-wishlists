@@ -90,11 +90,15 @@ const thresholdsSchema = z.object({
   verdicts: z.object({
     depthSellSpareSlots: z.number(),
     duplicateDepthMinValue: z.number(),
+    minSellValue: z.number(),
     depthSellExcludePositions: z.array(z.string()),
     contenderYouthConsolidateMinValue: z.number(),
     buyTargetMaxPerLeague: z.number(),
     buyTargetMinAdjValue: z.number(),
     minMarginalStarterValue: z.number(),
+  }),
+  overview: z.object({
+    topUnownedCount: z.number(),
   }),
   refresh: z.object({
     playersDumpMaxAgeDays: z.number(),

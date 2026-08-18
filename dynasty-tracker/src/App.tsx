@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { buildSnapshot } from './lib/api/buildSnapshot'
 import { leaguesConfig, thresholds } from './lib/config'
+import { adjustedValue } from './lib/engine/adjust'
 import type { Direction } from './lib/engine/direction'
+import { buildExposure } from './lib/engine/exposure'
+import type { MarketPlayer } from './lib/engine/tradeCheck'
 import { buildReport, type DirectionOverrides, type LeagueReport } from './lib/engine/report'
 import type { Dispute, DisputeMap, VerdictKind, VerdictRow } from './lib/engine/verdicts'
 import { buildMarkdown } from './lib/report/markdown'
 import { buildTrainingReport } from './lib/report/training'
+import { loadIntel, withIntel, type IntelMap } from './lib/intel'
 import { loadActiveLeague, loadOverrides, saveActiveLeague, withOverride } from './lib/overrides'
 import { loadDisputes, withDispute, withoutDispute } from './lib/training'
 import { latestSnapshot, loadPlayers } from './lib/snapshots'
@@ -13,6 +17,9 @@ import type { PlayersFile, Snapshot } from './lib/types'
 import { Header } from './components/Header'
 import { SummaryTable } from './components/SummaryTable'
 import { LeagueSection } from './components/LeagueSection'
+import { CrossLeagueView } from './components/CrossLeagueView'
+
+const ALL_LEAGUES = '__all__'
 
 export default function App() {
   const [baseline, setBaseline] = useState<Snapshot | null>(null)
@@ -24,6 +31,7 @@ export default function App() {
   const [trainingCopied, setTrainingCopied] = useState(false)
   const [overrides, setOverrides] = useState<DirectionOverrides>(() => loadOverrides())
   const [disputes, setDisputes] = useState<DisputeMap>(() => loadDisputes())
+  const [intel, setIntel] = useState<IntelMap>(() => loadIntel())
   const [activeLeague, setActiveLeague] = useState<string | null>(() => loadActiveLeague())
 
   useEffect(() => {
@@ -47,10 +55,44 @@ export default function App() {
     [active, players, overrides, disputes],
   )
 
-  const currentLeague = useMemo(() => {
-    if (!report || report.leagues.length === 0) return null
+  const isAllView = activeLeague === ALL_LEAGUES
+  const exposure = useMemo(
+    () => (isAllView && active && players && report ? buildExposure(active, players, report, thresholds) : null),
+    [isAllView, active, players, report],
+  )
+
+  const currentLeague: LeagueReport | null = useMemo(() => {
+    if (!report || report.leagues.length === 0 || isAllView) return null
     return report.leagues.find((l) => l.leagueId === activeLeague) ?? report.leagues[0]
-  }, [report, activeLeague])
+  }, [report, activeLeague, isAllView])
+
+  // The current league's opposing rosters as a searchable pool for Trade check.
+  const marketPool = useMemo<MarketPlayer[]>(() => {
+    if (!active || !players || !currentLeague) return []
+    const league = active.leagues.find((l) => l.leagueId === currentLeague.leagueId)
+    if (!league) return []
+    const fcMap = active.fantasyCalc[league.fantasyCalcVariant]
+    const out: MarketPlayer[] = []
+    for (const roster of league.rosters) {
+      if (roster.rosterId === currentLeague.myProfile.rosterId) continue
+      const holderName = currentLeague.rosterOwners[roster.rosterId] ?? 'Unclaimed team'
+      for (const id of roster.players) {
+        const fc = fcMap[id]
+        if (!fc) continue
+        const info = players.players[id]
+        out.push({
+          playerId: id,
+          name: info?.name ?? fc.name,
+          position: info?.position ?? fc.position,
+          age: info?.age ?? fc.age ?? thresholds.ageBands.defaultAge,
+          fc,
+          adjValue: adjustedValue(fc, league.settings.derived, thresholds),
+          holderName,
+        })
+      }
+    }
+    return out.sort((a, b) => b.adjValue - a.adjValue)
+  }, [active, players, currentLeague])
 
   function selectLeague(leagueId: string) {
     setActiveLeague(leagueId)
@@ -105,7 +147,7 @@ export default function App() {
 
   async function onCopyMarkdown() {
     if (!report) return
-    await navigator.clipboard.writeText(buildMarkdown(report))
+    await navigator.clipboard.writeText(buildMarkdown(report, intel))
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -138,26 +180,42 @@ export default function App() {
       )}
       {error && <div className="error-banner">{error}</div>}
       {!report && !error && <div className="loading">Loading snapshot…</div>}
-      {report && currentLeague && (
+      {report && (
         <>
-          <SummaryTable rows={report.summary} activeLeagueId={currentLeague.leagueId} onSelect={selectLeague} />
+          <SummaryTable
+            rows={report.summary}
+            activeLeagueId={currentLeague?.leagueId ?? ''}
+            onSelect={selectLeague}
+          />
           <nav className="tabs">
+            <button
+              className={`tab ${isAllView ? 'active' : ''}`}
+              onClick={() => selectLeague(ALL_LEAGUES)}
+            >
+              All leagues
+            </button>
             {report.leagues.map((league) => (
               <button
                 key={league.leagueId}
-                className={`tab ${league.leagueId === currentLeague.leagueId ? 'active' : ''}`}
+                className={`tab ${league.leagueId === currentLeague?.leagueId ? 'active' : ''}`}
                 onClick={() => selectLeague(league.leagueId)}
               >
                 {league.label}
               </button>
             ))}
           </nav>
-          <LeagueSection
-            league={currentLeague}
-            onOverride={overrideDirection}
-            onDispute={(row, desired, note) => disputeVerdict(currentLeague, row, desired, note)}
-            onClearDispute={(playerId) => clearDispute(currentLeague.leagueId, playerId)}
-          />
+          {isAllView && exposure && <CrossLeagueView exposure={exposure} />}
+          {currentLeague && (
+            <LeagueSection
+              league={currentLeague}
+              pool={marketPool}
+              intel={intel}
+              onOverride={overrideDirection}
+              onDispute={(row, desired, note) => disputeVerdict(currentLeague, row, desired, note)}
+              onClearDispute={(playerId) => clearDispute(currentLeague.leagueId, playerId)}
+              onIntel={(rosterId, text) => setIntel(withIntel(intel, currentLeague.leagueId, rosterId, text))}
+            />
+          )}
         </>
       )}
     </div>

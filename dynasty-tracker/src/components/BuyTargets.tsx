@@ -1,5 +1,7 @@
 import { fmtValue } from '../lib/format'
 import type { BuyTarget } from '../lib/engine/verdicts'
+import { HoverCard } from './HoverCard'
+import { PlayerFace } from './PlayerFace'
 
 export function BuyTargets({ targets }: { targets: BuyTarget[] }) {
   if (targets.length === 0) {
@@ -8,16 +10,35 @@ export function BuyTargets({ targets }: { targets: BuyTarget[] }) {
     )
   }
   return (
-    <div className="card">
+    <div className="tile-grid">
       {targets.map((target) => (
-        <div className="buy-target" key={target.playerId}>
-          <span className="who">
-            {target.name} ({target.position}, {target.age}, {fmtValue(target.adjValue)})
-          </span>{' '}
-          — held by {target.holderName} ({target.holderDirection}); adds{' '}
-          <strong>{fmtValue(target.marginalStarterValue)}</strong> to my starting lineup.{' '}
-          <span className="dim">{target.reason}.</span>
-        </div>
+        <HoverCard
+          key={target.playerId}
+          className="buy-tile"
+          summary={
+            <>
+              <PlayerFace playerId={target.playerId} name={target.name} position={target.position} />
+              <div className="tile-main">
+                <div className="name">{target.name}</div>
+                <div className="tile-meta dim">
+                  {target.position} · {target.age} · {fmtValue(target.adjValue)}
+                </div>
+              </div>
+              {target.marginalStarterValue > 0 && (
+                <span className="gain">+{fmtValue(target.marginalStarterValue)}</span>
+              )}
+            </>
+          }
+        >
+          <div className="pop-title">{target.name}</div>
+          <div className="pop-line">
+            Held by {target.holderName} ({target.holderDirection}).
+          </div>
+          {target.marginalStarterValue > 0 && (
+            <div className="pop-line">Adds {fmtValue(target.marginalStarterValue)} to my starting lineup.</div>
+          )}
+          <div className="pop-line dim">{target.reason}.</div>
+        </HoverCard>
       ))}
     </div>
   )

@@ -34,6 +34,8 @@ League IDs roll over each season (auto_continue on). At the start of a new seaso
 - `/players/nfl` — ~5MB master dump (player_id → name, position, team, age, years_exp, injury_status). Cache to `data/{season}/players.json`; refresh at most weekly, never per page load.
 - `/players/nfl/trending/add` and `/trending/drop` — market momentum.
 
+**Sleeper CDN** (images, free, hotlinkable): player headshots `https://sleepercdn.com/content/nfl/players/thumb/{player_id}.jpg`, team logos `https://sleepercdn.com/images/team_logos/nfl/{team_code_lowercase}.png`.
+
 **FantasyCalc API** (dynasty market values):
 - `GET https://api.fantasycalc.com/values/current?isDynasty=true&numQbs=2&numTeams=12&ppr=1` (and `numTeams=10` for Stars & Crown)
 - Each entry: `player.sleeperId` (join key), `value`, `overallRank`, `positionRank`, `trend30Day`, `maybeTier`, `player.maybeAge`, `redraftValue`, `redraftDynastyValueDifference`
@@ -72,6 +74,9 @@ dynasty-tracker/
 - Snapshots are bundled at build time via `import.meta.glob` in `src/lib/snapshots.ts` — deploy after each refresh to publish.
 - Config JSON uses `_`-prefixed comment keys, stripped and zod-validated in `src/lib/config.ts`.
 - UI (per user feedback, v0.2.0): league tabs rather than stacked sections; verdicts as three columns (Sell / Unsure / Hold — `Unsure` is a real engine verdict for borderline calls); any team's direction can be manually overridden via dropdowns (persisted in localStorage under `dynasty_` keys, threaded into `buildReport` so verdicts/counterparties/buy targets follow the override).
+- Visual pass (v0.6.0, per user feedback "too much text"): player faces from Sleeper's CDN (`https://sleepercdn.com/content/nfl/players/thumb/{player_id}.jpg`; team logos `https://sleepercdn.com/images/team_logos/nfl/{code}.png` for DEF; initials fallback via `PlayerFace`); verdicts/buy targets are compact tiles with all reasoning in hover/tap popovers (`HoverCard`); "All leagues" tab = cross-league exposure view (`engine/exposure.ts`: my players grouped by ownership count with per-league verdict dots, plus top `overview.topUnownedCount` players I own nowhere with holders on hover) — Phase 5's exposure view pulled forward at user request.
+- Team intel (v0.6.0): each opponent popover has a free-text intel box (pasted chat: what they want, self-assessment, trades off the menu) — localStorage `dynasty_team_intel`, shown with an amber dot, included in the markdown export as "Intel:" lines.
+- Trade check (v0.6.0): per-league panel grading trade SHAPE, not value ("am I selling the right players for the right things") — gives graded by engine verdict, gets by archetype fit for my direction (`engine/tradeCheck.ts`), plus starting-lineup delta. Value negotiation stays with the user's calculators.
 - Training loop (v0.4.0): any verdict card can be disputed in the UI — the card re-files under the user's verdict with a note, the engine's view stays visible, and the dispute (with frozen decision context) persists in localStorage (`dynasty_verdict_disputes`). "Copy training report" in the header exports all disputes as markdown addressed to Claude. **When a training report is pasted into a session, the obligations are:** (1) fix the number in `config/thresholds.json` or the rule in `src/lib/engine/verdicts.ts` (or reject the dispute with reasoning); (2) append the entry to STRATEGY.md's Training log; (3) add a regression case to `tests/verdicts.test.ts` reproducing the dispute; (4) never regress STRATEGY.md's hard rules. Once the engine agrees, the card shows "Engine now agrees" and the user clears it.
 
 ## Methodology (the analytical core)

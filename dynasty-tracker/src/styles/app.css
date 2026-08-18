@@ -231,6 +231,263 @@
   padding-top: 0.3rem;
 }
 
+/* Faces */
+.face {
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--field-900);
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.face-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--chalk-dim);
+}
+
+/* Hover popovers: text on demand */
+.hover-card {
+  position: relative;
+}
+
+.hover-trigger {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hover-pop {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 40;
+  background: var(--field-700);
+  border: 1px solid var(--amber-dim);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  width: min(340px, 86vw);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  cursor: default;
+}
+
+.hover-card:hover .hover-pop,
+.hover-card.open .hover-pop {
+  display: block;
+}
+
+.verdict-column:last-child .hover-pop,
+.tile-grid .hover-card:nth-child(3n) .hover-pop {
+  left: auto;
+  right: 0;
+}
+
+.pop-title {
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.pop-line {
+  font-size: 0.88rem;
+  margin: 0.2rem 0;
+}
+
+.pop-label {
+  font-family: var(--font-head);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  color: var(--chalk-dim);
+  margin: 0.45rem 0 0.2rem;
+}
+
+/* Compact tiles */
+.verdict-tile {
+  background: var(--field-700);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.4rem 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.verdict-tile.disputed {
+  border-color: var(--amber-dim);
+}
+
+.tile-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.tile-main .name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile-meta {
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.tile-right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.6rem;
+}
+
+.tile-grid.faces {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  margin-bottom: 1rem;
+}
+
+.buy-tile,
+.exposure-tile {
+  background: var(--field-800);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.45rem 0.55rem;
+}
+
+.gain {
+  color: var(--buy);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* Dots: colour-coded state markers */
+.dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-sell {
+  background: var(--sell);
+}
+
+.dot-unsure {
+  background: var(--amber);
+}
+
+.dot-hold,
+.dot-agrees {
+  background: var(--buy);
+}
+
+.dot-disputed {
+  background: var(--amber);
+}
+
+.dot-intel {
+  background: var(--amber);
+  margin-left: 0.35rem;
+}
+
+.dot-row {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.pop-line .dot {
+  margin-right: 0.3rem;
+}
+
+/* Trade check */
+.trade-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.trade-side select,
+.trade-side input {
+  width: 100%;
+  background: var(--field-900);
+  color: var(--chalk);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.chip {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-body);
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.83rem;
+  padding: 0.25rem 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.chip-add {
+  border-style: dashed;
+}
+
+.trade-result {
+  border-top: 1px solid var(--line);
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+}
+
+.trade-summary {
+  margin: 0 0 0.3rem;
+  font-weight: 600;
+}
+
+.trade-note {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.3rem 0;
+  font-size: 0.88rem;
+}
+
+.opponent-name .hover-pop textarea {
+  width: 100%;
+  background: var(--field-900);
+  color: var(--chalk);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.83rem;
+  resize: vertical;
+}
+
+@media (max-width: 640px) {
+  .trade-sides {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Verdict disputes (training) */
 .verdict-card.disputed {
   border-color: var(--amber-dim);

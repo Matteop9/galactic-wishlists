@@ -77,12 +77,20 @@
     "_duplicateDepthMinValue": "Duplicated depth below this adjusted value is not worth a trade thread; it stays Hold.",
     "depthSellExcludePositions": ["QB"],
     "_depthSellExcludePositions": "Positions never sold as duplicate depth. Backup QBs in superflex are lottery tickets that appreciate the moment they get a start.",
+    "minSellValue": 600,
+    "_minSellValue": "A wrong-phase or declining player below this adjusted value would fetch next to nothing — the verdict becomes a temporary hold (watch for a value pop, cut only when the spot is needed) instead of a Sell. Matteo's middling-TE-on-a-rebuild case.",
     "contenderYouthConsolidateMinValue": 2500,
     "_contenderYouthConsolidateMinValue": "On a contender, a non-starting youth asset above this adjusted value is flagged to consolidate (up-tier into a starter). Below it, cheap stashes are held. Never fires while the 30-day trend is negative (no selling the dip).",
     "buyTargetMaxPerLeague": 5,
     "buyTargetMinAdjValue": 800,
     "minMarginalStarterValue": 1,
     "_minMarginalStarterValue": "A buy target must add at least this much to my optimal lineup, else it is bench depth."
+  },
+
+  "overview": {
+    "_comment": "The cross-league All leagues view.",
+    "topUnownedCount": 24,
+    "_topUnownedCount": "How many of the best players I own nowhere to show in the shopping window."
   },
 
   "refresh": {

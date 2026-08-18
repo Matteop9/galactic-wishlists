@@ -153,6 +153,27 @@ function verdictFor(
   direction: Direction,
   t: Thresholds,
 ): Call {
+  const call = verdictLadder(p, archetype, depth, startable, direction, t)
+  // A sell that fetches nothing is worse than a hold: below the sell floor the
+  // player is a free temporary hold — keep him and watch for a value pop.
+  if (call.verdict === 'Sell' && p.adjValue < t.verdicts.minSellValue) {
+    return {
+      verdict: 'Hold',
+      reason:
+        'Would fetch next to nothing right now — a free temporary hold. Watch for a value pop; cut only when the roster spot is needed.',
+    }
+  }
+  return call
+}
+
+function verdictLadder(
+  p: RosterPlayerRow,
+  archetype: Archetype,
+  depth: number,
+  startable: number,
+  direction: Direction,
+  t: Thresholds,
+): Call {
   const v = t.verdicts
   const benchDepth = !p.inOptimalLineup && !p.onTaxi
   const trendingDown = (p.fc?.trend30Day ?? 0) < 0
@@ -395,7 +416,7 @@ export function generateVerdicts(
   )
 }
 
-function targetArchetypesFor(direction: Direction, starterRank: number, numTeams: number): Archetype[] {
+export function targetArchetypesFor(direction: Direction, starterRank: number, numTeams: number): Archetype[] {
   if (direction === 'Contender') return ['Win-now vet', 'Prime']
   // Ascending teams buy players who can still rise: prime pieces entering the
   // window and youth — not ageing vets who bleed value while the team waits.

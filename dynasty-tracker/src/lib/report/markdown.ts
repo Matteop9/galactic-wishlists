@@ -1,10 +1,11 @@
 import { fmtDate, fmtShare, fmtTrend, fmtValue, ordinal } from '../format'
 import type { ReportModel } from '../engine/report'
 import { effectiveVerdict } from '../engine/verdicts'
+import type { IntelMap } from '../intel'
 
 // Renders the same ReportModel the UI consumes, so the export can never
 // drift from what is on screen.
-export function buildMarkdown(report: ReportModel): string {
+export function buildMarkdown(report: ReportModel, intel: IntelMap = {}): string {
   const lines: string[] = []
   const title =
     report.meta.kind === 'preseason'
@@ -83,6 +84,10 @@ export function buildMarkdown(report: ReportModel): string {
     lines.push('')
     for (const o of league.opponents) {
       lines.push(`- **${o.ownerName}** — ${o.line}${o.manual ? ' (status set manually)' : ''}`)
+      const note = intel[`${league.leagueId}:${o.rosterId}`]
+      if (note && note.trim() !== '') {
+        lines.push(`  - Intel: ${note.trim().replace(/\s*\n\s*/g, ' / ')}`)
+      }
     }
     lines.push('')
   }
