@@ -1,0 +1,240 @@
+import { supabase } from './supabase'
+import type {
+  Adjustment,
+  AuditRow,
+  Feedback,
+  Gameweek,
+  Honour,
+  HonoursRow,
+  LeaderboardRow,
+  MiniLeaderboardRow,
+  MiniLeague,
+  PickScore,
+  Player,
+  PlayerWeek,
+  RulesSection,
+  Season,
+  SeasonHistoryRow,
+} from './types'
+
+async function unwrap<T>(q: PromiseLike<{ data: T | null; error: { message: string } | null }>): Promise<T> {
+  const { data, error } = await q
+  if (error) throw new Error(error.message)
+  return data as T
+}
+
+export const ALL_TIME: [string, string] = ['2022-01-01', '2100-01-01']
+
+export const fetchPlayers = () =>
+  unwrap<Player[]>(supabase.from('players').select('*').order('name'))
+
+export const fetchSeasons = () =>
+  unwrap<Season[]>(supabase.from('seasons').select('*').order('start_date'))
+
+export const fetchGameweeks = () =>
+  unwrap<Gameweek[]>(supabase.from('gameweeks').select('*').order('gw_date'))
+
+export const fetchGameweek = (id: string) =>
+  unwrap<Gameweek>(supabase.from('gameweeks').select('*').eq('id', id).single())
+
+export const fetchLeaderboard = (start: string, end: string) =>
+  unwrap<LeaderboardRow[]>(
+    supabase.rpc('leaderboard', { range_start: start, range_end: end }),
+  )
+
+export const fetchPickScores = (gameweekId: string) =>
+  unwrap<PickScore[]>(
+    supabase.from('v_pick_scores').select('*').eq('gameweek_id', gameweekId).order('name'),
+  )
+
+export const fetchPlayerPickScores = (playerId: string) =>
+  unwrap<PickScore[]>(
+    supabase
+      .from('v_pick_scores')
+      .select('*')
+      .eq('player_id', playerId)
+      .order('gw_date', { ascending: false }),
+  )
+
+export const fetchPlayerWeeks = (gameweekId?: string) => {
+  let q = supabase.from('v_player_weeks').select('*')
+  if (gameweekId) q = q.eq('gameweek_id', gameweekId)
+  return unwrap<PlayerWeek[]>(q)
+}
+
+export const fetchHonours = () =>
+  unwrap<HonoursRow[]>(supabase.from('v_honours').select('*'))
+
+export const fetchHonoursList = () =>
+  unwrap<Honour[]>(supabase.from('honours').select('*').order('season_label'))
+
+// --- mini leagues ---
+
+export const fetchMiniLeagues = () =>
+  unwrap<MiniLeague[]>(supabase.from('mini_leagues').select('*').order('created_at'))
+
+export const createMiniLeague = (seasonId: string, name: string) =>
+  unwrap<MiniLeague>(
+    supabase.from('mini_leagues').insert({ season_id: seasonId, name }).select().single(),
+  )
+
+export const deleteMiniLeague = (id: string) =>
+  unwrap(supabase.from('mini_leagues').delete().eq('id', id))
+
+/** Assign (or clear, with null) a gameweek's mini league. */
+export const setGwMiniLeague = (gwId: string, miniLeagueId: string | null) =>
+  unwrap(
+    supabase.from('gameweeks').update({ mini_league_id: miniLeagueId }).eq('id', gwId).select().single(),
+  )
+
+export const fetchMiniLeaderboard = (miniId: string) =>
+  unwrap<MiniLeaderboardRow[]>(supabase.rpc('mini_leaderboard', { p_mini: miniId }))
+
+// --- past seasons & rules ---
+
+export const fetchSeasonHistory = () =>
+  unwrap<SeasonHistoryRow[]>(
+    supabase.from('season_history').select('*').order('season_label', { ascending: false }).order('position'),
+  )
+
+export const fetchRules = () =>
+  unwrap<RulesSection[]>(supabase.from('rules_sections').select('*').order('sort'))
+
+export const saveRulesSection = (s: { id: string; sort: number; title: string; items: string[] }) =>
+  unwrap(
+    supabase.from('rules_sections').update({ sort: s.sort, title: s.title, items: s.items }).eq('id', s.id).select().single(),
+  )
+
+export const addRulesSection = (s: { sort: number; title: string; items: string[] }) =>
+  unwrap<RulesSection>(supabase.from('rules_sections').insert(s).select().single())
+
+export const deleteRulesSection = (id: string) =>
+  unwrap(supabase.from('rules_sections').delete().eq('id', id))
+
+// --- feedback ---
+
+export const fetchFeedback = () =>
+  unwrap<Feedback[]>(supabase.from('feedback').select('*').order('created_at', { ascending: false }))
+
+export const submitFeedback = (playerId: string, message: string) =>
+  unwrap(supabase.from('feedback').insert({ player_id: playerId, message }).select().single())
+
+export const setFeedbackStatus = (id: string, status: Feedback['status']) =>
+  unwrap(supabase.from('feedback').update({ status }).eq('id', id).select().single())
+
+export const fetchAudit = (limit = 100) =>
+  unwrap<AuditRow[]>(
+    supabase.from('audit_log').select('*').order('at', { ascending: false }).limit(limit),
+  )
+
+/** The gameweek the app should focus on: active/upcoming, else latest settled. */
+export async function fetchCurrentGameweek(): Promise<Gameweek | null> {
+  const gws = await fetchGameweeks()
+  const today = new Date().toISOString().slice(0, 10)
+  const active = gws.find(
+    (g) => ['open', 'closed'].includes(g.status) && g.gw_date >= today,
+  )
+  if (active) return active
+  const upcoming = gws.find((g) => g.status === 'scheduled' && g.gw_date >= today)
+  const settled = [...gws].reverse().find((g) => g.status === 'settled')
+  return upcoming ?? settled ?? null
+}
+
+// --- mutations ---
+
+export const upsertPick = (pick: {
+  gameweek_id: string
+  player_id: string
+  acca_kind: 'W' | 'random'
+  game: string | null
+  selection: string
+  odds: number
+  odds_display: string | null
+}) =>
+  unwrap(
+    supabase
+      .from('picks')
+      .upsert(pick, { onConflict: 'gameweek_id,player_id,acca_kind' })
+      .select()
+      .single(),
+  )
+
+export const settlePick = (
+  pickId: string,
+  result: 0 | 1 | null,
+  voidReason: 'invalid' | 'postponed' | null = null,
+) =>
+  unwrap(
+    supabase.rpc('settle_pick', { p_pick: pickId, p_result: result, p_void_reason: voidReason }),
+  )
+
+export const lockPick = (pickId: string, locked: boolean) =>
+  unwrap(supabase.rpc('lock_pick', { p_pick: pickId, p_locked: locked }))
+
+export const setGameweekStatus = (id: string, status: string) =>
+  unwrap(supabase.rpc('set_gameweek_status', { p_gw: id, p_status: status }))
+
+export const createGameweek = (date: string) =>
+  unwrap(supabase.rpc('create_gameweek', { p_date: date }))
+
+// --- username auth (SHARED with The Acca — same domain, same accounts) ---
+
+export const usernameToEmail = (username: string) =>
+  `${username.trim().toLowerCase()}@players.jhh-acca.app`
+
+export const fetchUnclaimedPlayers = () =>
+  unwrap<{ id: string; name: string }[]>(supabase.rpc('unclaimed_players'))
+
+/** Creates the auth user server-side and returns the email to sign in with. */
+export const registerPlayer = (playerId: string, username: string, password: string, code: string) =>
+  unwrap<string>(
+    supabase.rpc('register_player', {
+      p_player: playerId,
+      p_username: username,
+      p_password: password,
+      p_code: code,
+    }),
+  )
+
+/** Links the SIGNED-IN auth user (e.g. an existing Acca account) to a
+    Milky Bay player row. */
+export const linkPlayer = (playerId: string, code: string) =>
+  unwrap<string>(supabase.rpc('link_player', { p_player: playerId, p_code: code }))
+
+export const adminResetPassword = (playerId: string, password: string) =>
+  unwrap(supabase.rpc('admin_reset_password', { p_player: playerId, p_password: password }))
+
+export const adminUnlinkPlayer = (playerId: string) =>
+  unwrap(supabase.rpc('admin_unlink_player', { p_player: playerId }))
+
+export const fetchPlayerAccounts = () =>
+  unwrap<{ player_id: string; username: string; created_at: string }[]>(
+    supabase.rpc('admin_player_accounts'),
+  )
+
+// --- admin ---
+
+export const fetchAdjustments = () =>
+  unwrap<Adjustment[]>(
+    supabase.from('adjustments').select('*').order('created_at', { ascending: false }),
+  )
+
+export const deleteAdjustment = (id: string) =>
+  unwrap(supabase.from('adjustments').delete().eq('id', id))
+
+export const addAdjustment = (a: {
+  gameweek_id: string
+  player_id: string | null
+  kind: 'Bonus' | 'Minus'
+  reason: string
+  score: number
+}) => unwrap(supabase.from('adjustments').insert(a).select().single())
+
+export const fetchAppConfig = async (key: string) => {
+  const { data, error } = await supabase.from('app_config').select('value').eq('key', key).maybeSingle()
+  if (error) throw new Error(error.message)
+  return (data?.value ?? null) as unknown
+}
+
+export const setAppConfig = (key: string, value: unknown) =>
+  unwrap(supabase.from('app_config').upsert({ key, value }).select().single())

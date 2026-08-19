@@ -1,0 +1,57 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Milky Bay — deep bay at night, milk-blue accent */
+  --color-bg: #0a0e14;
+  --color-surface: #121826;
+  --color-surface-2: #0d1320;
+  --color-line: rgba(255, 255, 255, 0.07);
+  --color-line-strong: rgba(255, 255, 255, 0.13);
+  --color-text: #eef1f6;
+  --color-muted: #8f9aac;
+  --color-accent: #74c0e8;
+  --color-accent-bright: #a8dcf7;
+  --color-on-accent: #0a0e14;
+  --color-win: #55d97c;
+  --color-win-solid: #2f9e5d;
+  --color-loss: #f0655f;
+  --color-loss-solid: #b54742;
+  --color-gold: #f2c94c;
+  --color-on-gold: #3a2a08;
+  --color-spoon: #c58a4a;
+  --color-poo: #b1794f;
+  --color-nopick: #6e1f1f;
+  --color-nopick-text: #f5c9c9;
+
+  --font-display: 'Saira Condensed', sans-serif;
+  --font-sans: 'Archivo', sans-serif;
+  --font-mono: 'Spline Sans Mono', monospace;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+.overline {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
