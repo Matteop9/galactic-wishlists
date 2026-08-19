@@ -14,6 +14,7 @@ import RequireAuth from '../components/RequireAuth'
 import LiveBanner from '../components/LiveBanner'
 import TeamCombobox from '../components/TeamCombobox'
 import { Avatar, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
+import { ChampStars } from '../components/ChampStars'
 import { gwDate, odds2, ukTime } from '../lib/format'
 import { SPORTS } from '../lib/teams'
 
@@ -230,6 +231,7 @@ function EnterPickInner() {
                   {p.name}
                   {p.id === me?.id ? ' (you)' : ''}
                 </span>
+                <ChampStars playerId={p.id} size={8} />
                 {has && (
                   <span
                     className="font-mono text-[9px]"

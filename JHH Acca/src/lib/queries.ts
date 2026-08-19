@@ -12,6 +12,7 @@ import type {
   PickScore,
   Player,
   Season,
+  SeasonChampionRow,
   SeasonLeaderboardRow,
   SeasonTeamMember,
   TeamLeaderboardRow,
@@ -59,6 +60,10 @@ export const fetchTeamLeaderboard = (start: string, end: string, excludeBreaks =
 
 export const fetchSeasonLeaderboard = (seasonId: string) =>
   unwrap<SeasonLeaderboardRow[]>(supabase.rpc('season_leaderboard', { p_season: seasonId }))
+
+/** Gold = individual season winner, silver = winning-team member (migration 0021). */
+export const fetchSeasonChampions = () =>
+  unwrap<SeasonChampionRow[]>(supabase.rpc('season_champions'))
 
 export const fetchFormGrid = (lastN = 5) =>
   unwrap<FormCell[]>(supabase.rpc('form_grid', { last_n: lastN }))

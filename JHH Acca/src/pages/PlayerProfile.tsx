@@ -12,6 +12,7 @@ import { supabase } from '../lib/supabase'
 import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
 import { Avatar, DoubleChip, MethodBadge, TeamBadge, TeamChip, teamColor, VoidChip } from '../components/ui'
+import { ChampStars } from '../components/ChampStars'
 import { dayMonth, longDate, odds2, score2 } from '../lib/format'
 
 const FEEDBACK_STATUS_COLOR: Record<string, string> = {
@@ -140,6 +141,7 @@ function PlayerProfileInner() {
           </div>
           <div className="mt-1 flex items-center gap-2">
             <TeamChip team={player.acca_team} />
+            <ChampStars playerId={player.id} size={12} />
             <span className="font-mono text-[10px] text-muted">
               {row?.entries ?? 0} entries · all-time #{rank || '–'}
             </span>

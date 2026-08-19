@@ -44,3 +44,17 @@ where s.kind = 'test'
                         where x.player_id = ps.player_id
                           and x.season_kind <> 'test' and x.result is not null)
   );
+
+-- 5. Champions: gold stars must match the documented season winners
+-- (docs/score-reconciliation.md), exactly one gold per completed league season
+with expected (season, winner) as (
+  values ('Season 1','George'),('Season 2','Dom'),('Season 3','George'),
+         ('Season 4','Henry'),('Season 5','Tom'),('Season 6','Henry')
+)
+select 'CHAMPION MISMATCH' as problem, e.season
+from expected e
+where not exists (select 1 from season_champions() c
+                  where c.season_name = e.season and c.star = 'gold'
+                    and c.player_name = e.winner)
+   or (select count(*) from season_champions() c
+       where c.season_name = e.season and c.star = 'gold') <> 1;

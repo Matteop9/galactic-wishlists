@@ -10,6 +10,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.7.0',
+    date: '2026-08-19',
+    title: 'Champion stars',
+    items: [
+      'Gold emblem next to your name for every season you\'ve won outright — silver for being on the winning team (Season 5 onwards, when VDL v JHP became real)',
+      'The emblem levels up as wins stack: star → wreath → wings',
+      'Hover or long-press it to see exactly which seasons were won',
+      'Future seasons award themselves automatically once the final week settles — ties share the star until a tie-breaker result is recorded',
+    ],
+  },
+  {
     version: '0.6.0',
     date: '2026-08-19',
     title: 'Deadline moved + void picks',

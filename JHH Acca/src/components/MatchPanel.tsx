@@ -10,6 +10,7 @@ import {
   requestPickMatching,
 } from '../lib/queries'
 import type { PickScore } from '../lib/types'
+import { ChampStars } from './ChampStars'
 
 /* Admin match queue: fetch the weekend's fixture list (1 API call), run the
    AI auto-match (OpenRouter, async - ingest applies it), confirm low-
@@ -93,7 +94,8 @@ export default function MatchPanel({ gwId, picks }: { gwId: string; picks: PickS
           <div key={p.id} className="border-t py-2.5" style={{ borderColor: 'var(--color-line)' }}>
             <div className="mb-1.5 flex items-center justify-between">
               <span className="text-[12px] font-bold">
-                {p.name} · <span className="font-normal text-muted">{p.team}{p.second_team ? ` v ${p.second_team}` : ''} ({p.method})</span>
+                {p.name} <ChampStars playerId={p.player_id} size={8} /> ·{' '}
+                <span className="font-normal text-muted">{p.team}{p.second_team ? ` v ${p.second_team}` : ''} ({p.method})</span>
               </span>
             </div>
             {sug && (

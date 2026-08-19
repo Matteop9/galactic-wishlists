@@ -23,6 +23,7 @@ import {
 import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
 import { GwStatusChip, PageTitle, teamColor } from '../components/ui'
+import { ChampStars } from '../components/ChampStars'
 import { gwDate, longDate } from '../lib/format'
 import type { Feedback } from '../lib/types'
 
@@ -180,6 +181,7 @@ function AdminInner() {
             <div key={p.id} className="flex items-center justify-between border-b py-2 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
               <span className="text-[13px] font-semibold" style={{ color: teamColor(p.acca_team) }}>
                 {p.name}
+                <ChampStars playerId={p.id} size={9} />
                 {p.is_admin && <span className="ml-1.5 font-mono text-[9px] text-muted">ADMIN</span>}
                 {account && <span className="ml-1.5 font-mono text-[10px] text-muted">@{account.username}</span>}
               </span>

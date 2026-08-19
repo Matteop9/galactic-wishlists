@@ -48,6 +48,17 @@ Requested in chat after the Test Weekend.
       - **Postponed / Invalid** — admin settle buttons (PP / INV), score 0 per rules §6,
         shown as a chip on every pick render
 
+## Shipped in v0.7.0 (2026-08-19)
+
+- [x] Champion stars next to names — gold per individual season win (all-time),
+      silver per team season win (**Season 5 onwards only**; S1–S4 team labels are
+      retro backfill). Emblem evolves with count (star → wreath → wings → wings+chevron,
+      MW2-rank style) rather than repeating; tooltip lists the seasons. Computed by
+      `season_champions()` (migration `0021`) from the existing scoring functions, so
+      Season 7+ awards itself when the final week settles; ties share the star until a
+      tie-break result is recorded as a Bonus adjustment. checks.sql gained gate 5
+      pinning the six documented gold winners.
+
 ## Backlog / deferred
 
 - [ ] **BTTS both teams + tick/cross showing the actual result** (feedback, deferred from v0.5.0

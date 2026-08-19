@@ -22,6 +22,7 @@ import GwHistoryChart from '../components/GwHistoryChart'
 import TugBar from '../components/TugBar'
 import RequireAuth from '../components/RequireAuth'
 import { PageTitle, SandboxChip, teamColor } from '../components/ui'
+import { ChampStars } from '../components/ChampStars'
 import type { LeaderboardRow, Season } from '../lib/types'
 
 type SortKey = 'entries' | 'wins' | 'score' | 'spm'
@@ -294,6 +295,7 @@ function LeaderboardsInner() {
                 <span style={{ color: teamColor(players.find((p) => p.id === r.player_id)?.acca_team ?? '') }}>
                   {r.name}
                 </span>
+                <ChampStars playerId={r.player_id} />
                 <span className="text-[10px] text-muted">{r.team_name}</span>
               </span>
               <span className="text-right font-mono text-[12px]">{r.wins}</span>
@@ -329,11 +331,14 @@ function LeaderboardsInner() {
                 <span className="font-mono text-[11px]" style={{ color: leader ? 'var(--color-accent)' : 'var(--color-muted)' }}>
                   {i + 1}
                 </span>
-                <span
-                  className="truncate text-[12.5px] font-semibold"
-                  style={{ color: teamColor(r.acca_team) }}
-                >
-                  {r.name}
+                <span className="flex min-w-0 items-center gap-1">
+                  <span
+                    className="truncate text-[12.5px] font-semibold"
+                    style={{ color: teamColor(r.acca_team) }}
+                  >
+                    {r.name}
+                  </span>
+                  <ChampStars playerId={r.player_id} />
                 </span>
                 <span className="text-right font-mono text-[11px] text-muted">{r.entries}</span>
                 <span className="text-right font-mono text-[12px]">{r.wins}</span>

@@ -107,6 +107,15 @@ export interface SeasonLeaderboardRow {
   score_per_match: number | null
 }
 
+export interface SeasonChampionRow {
+  season_id: string
+  season_name: string
+  end_date: string
+  star: 'gold' | 'silver'
+  player_id: string
+  player_name: string
+}
+
 export interface FormCell {
   player_id: string
   name: string

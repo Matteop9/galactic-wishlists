@@ -1,5 +1,14 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.7.0 — 2026-08-19
+
+Champion stars: evolving emblems next to names for past season winners.
+
+- **`season_champions()` RPC** (migration `0021`): computes past winners entirely from the existing scoring functions — gold (individual) via `cross join lateral season_leaderboard(id)`, silver (team) via `team_leaderboard(start_date, end_date)` — so adjustments, sweeps and the sweep double are included for free and future seasons award themselves once the last gameweek settles. A season counts only when `kind = 'league'`, `end_date` has passed, at least one gameweek is settled and none are still scheduled/open/closed. Gold is all-time (S1–S6: George, Dom, George, Henry, Tom, Henry — S5 by Score, the app's canonical metric); **silver is Season 5 onwards only** (`start_date >= 2025-08-16`), since S1–S4 team labels are a retrospective backfill. Ties: all rank-1 rows share the star; recording the real tie-breaker round as a Bonus adjustment breaks the tie in data. Granted to `authenticated, service_role`, revoked from `anon`.
+- **`ChampStars` component** (`src/components/ChampStars.tsx`): one shared `['seasonChampions']` react-query cache (`staleTime: Infinity`); inline SVG emblem that *evolves with win count* instead of repeating glyphs (MW2-rank style) — 1 win = star, 2 = star in wreath, 3 = winged star, 4+ = winged star + chevron. Gold emblem then silver, `title` tooltip lists the seasons. New `--color-silver` token (#c0c8d2).
+- Rendered everywhere names appear: Standings (main + sandbox rows), Player Profile header, This Week acca cards, gameweek detail, form grid, Enter Pick teammate chips, Admin accounts, match panel. Not on Login (pre-auth — `anon` can't call the RPC, by design).
+- **checks.sql gate 5**: gold winners must exactly match the documented list (one per season). All five gates re-run clean (0 rows) after the migration.
+
 ## v0.6.0 — 2026-08-19
 
 Post-Test-Weekend fixes: decimal odds input, Saturday-midnight app deadline, void picks.

@@ -31,6 +31,7 @@ import {
 } from '../components/ui'
 import LivePickChip from '../components/LivePickChip'
 import MatchPanel from '../components/MatchPanel'
+import { ChampStars } from '../components/ChampStars'
 import { gwDate, odds2, score2, ukTime } from '../lib/format'
 import type { Dispute, LiveState, PickScore, VoidReason } from '../lib/types'
 
@@ -314,6 +315,7 @@ function GameweekDetailInner() {
                           <span className="truncate text-[13px] font-bold" style={{ color: teamColor(p.acca_team) }}>
                             {p.name}
                           </span>
+                          <ChampStars playerId={p.player_id} />
                           <MethodBadge method={p.method} />
                           {p.void_reason && <VoidChip reason={p.void_reason} />}
                           {p.doubled && p.result === 1 && <DoubleChip />}
