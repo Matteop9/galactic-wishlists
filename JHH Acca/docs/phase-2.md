@@ -59,6 +59,15 @@ Requested in chat after the Test Weekend.
       tie-break result is recorded as a Bonus adjustment. checks.sql gained gate 5
       pinning the six documented gold winners.
 
+## Shipped in v0.8.0 (2026-08-19)
+
+- [x] Emblem grammar — champion stars extended to tiers 5–8 (double chevron → rays →
+      laurel ring → banner) with an unbounded tier-9+ chevron rule, per the design
+      canvas `docs/Emblem Grammar.dc.html` (brief: `docs/emblem-design-brief.md`).
+      All tiers now render at a uniform height (silhouette carries rank), run gap is
+      0.3 × height. Same grammar shipped to Milky Bay v0.3.0 (evolving crown/spoon +
+      drawn poo). Dev-only gallery at `/emblem-lab.html` (vite dev, not built).
+
 ## Backlog / deferred
 
 - [ ] **BTTS both teams + tick/cross showing the actual result** (feedback, deferred from v0.5.0

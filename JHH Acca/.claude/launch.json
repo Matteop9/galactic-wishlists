@@ -2,9 +2,15 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "acca-dev",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "name": "the-acca",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/vite/bin/vite.js", "--port", "5174"],
+      "port": 5174
+    },
+    {
+      "name": "milky-bay",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["../Milky Bay/node_modules/vite/bin/vite.js", "../Milky Bay"],
       "port": 5173
     }
   ]

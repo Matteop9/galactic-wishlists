@@ -10,6 +10,16 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.8.0',
+    date: '2026-08-19',
+    title: 'Emblems get a career path',
+    items: [
+      'Champion stars now level up through EIGHT designed ranks — chevrons, sun rays, a laurel ring and a banner await the truly decorated (and there\'s a rule for rank nine and beyond, so no ceiling ever again)',
+      'Every rank renders at the same size next to your name — the silhouette carries the rank, not the width',
+      'Same emblem language now lives in Milky Bay too — one grammar across both leagues',
+    ],
+  },
+  {
     version: '0.7.0',
     date: '2026-08-19',
     title: 'Champion stars',
