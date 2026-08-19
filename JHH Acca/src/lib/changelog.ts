@@ -10,6 +10,18 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.6.0',
+    date: '2026-08-19',
+    title: 'Deadline moved + void picks',
+    items: [
+      'Typing decimal odds actually works now — the decimal point no longer vanishes',
+      'You\'ve got until Saturday midnight to get picks into the app. Group chat deadline is still Friday 8 PM — nothing changes there',
+      'New "No pick" option on the pick page for when someone in your team hasn\'t picked',
+      'Postponed and invalid picks get their own marker at settlement — they score 0 per the rules, with a chip explaining why',
+      'Live scores now show on Saturday even while the entry window is still open',
+    ],
+  },
+  {
     version: '0.5.0',
     date: '2026-08-10',
     title: 'Your feedback, done',

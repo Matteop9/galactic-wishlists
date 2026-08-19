@@ -34,6 +34,20 @@ All from the in-app feedback queue.
 - [x] Gameweeks list shows a per-week summary — `9/12 · VDL +2.01` on settled weeks
 - [x] Form grid look-back window — 5 / 10 / 20 gameweeks
 
+## Shipped in v0.6.0 (2026-08-19)
+
+Requested in chat after the Test Weekend.
+
+- [x] Decimal point wouldn't type in the odds field on Enter Pick (controlled number input
+      swallowed `1.` → now text-while-typing, parsed on save)
+- [x] App pick-entry deadline moved to **Saturday midnight UK** — picks are made in the group
+      chat by Friday 8 PM and transcribed later (migration `0020`; live scores, no-pick sweeper
+      and settle toggles all adjusted for the window now spanning match day)
+- [x] Invalid / postponed / did-not-pick can now be recorded:
+      - **No pick** — third option on Enter Pick, finalised to the sheet convention at close
+      - **Postponed / Invalid** — admin settle buttons (PP / INV), score 0 per rules §6,
+        shown as a chip on every pick render
+
 ## Backlog / deferred
 
 - [ ] **BTTS both teams + tick/cross showing the actual result** (feedback, deferred from v0.5.0

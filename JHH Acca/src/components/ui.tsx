@@ -34,6 +34,23 @@ export function MethodBadge({ method }: { method: string }) {
   )
 }
 
+/** Void chip: why a pick scored 0 without being a straight loss (rules §6). */
+export function VoidChip({ reason }: { reason: string }) {
+  return (
+    <span
+      title={
+        reason === 'postponed'
+          ? 'Match postponed/cancelled after the deadline — scores 0 (rules §6)'
+          : 'Invalid pick — scores 0 (rules §6)'
+      }
+      className="rounded-[4px] border px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]"
+      style={{ borderColor: 'rgba(147,160,143,0.4)', color: 'var(--color-muted)' }}
+    >
+      {reason === 'postponed' ? 'Postp' : 'Invalid'}
+    </span>
+  )
+}
+
 /** The x2 gold chip - shown NEXT TO market odds, never mutating them. */
 export function DoubleChip() {
   return (

@@ -5,6 +5,7 @@ import {
   fetchLiveStatuses,
   fetchPickScores,
   fetchSeasons,
+  isMatchday,
 } from '../lib/queries'
 import { useCountdown } from '../hooks/useCountdown'
 import AccaCard from '../components/AccaCard'
@@ -23,12 +24,12 @@ function ThisWeekInner() {
     queryKey: ['pickScores', gw?.id],
     queryFn: () => fetchPickScores(gw!.id),
     enabled: !!gw,
-    refetchInterval: gw?.status === 'closed' ? 60_000 : false,
+    refetchInterval: isMatchday(gw) ? 60_000 : false,
   })
   const { data: live } = useQuery({
     queryKey: ['live', gw?.id],
     queryFn: () => fetchLiveStatuses(gw!.id),
-    enabled: !!gw && gw.status === 'closed' && gw.live_enabled,
+    enabled: isMatchday(gw),
     refetchInterval: 60_000,
   })
   const closesIn = useCountdown(gw?.status === 'open' ? gw.window_closes : null)
@@ -75,11 +76,13 @@ function ThisWeekInner() {
           Window opens {ukTime(gw.window_opens)}
         </LiveBanner>
       )}
-      {gw?.status === 'closed' && (
+      {(gw?.status === 'closed' || (gw && isMatchday(gw))) && (
         <LiveBanner pulse right={`${settledCount} of ${picks?.length ?? 0} settled`}>
           {live?.some((l) => !['NO_LIVE', 'NOT_STARTED'].includes(l.live_state))
             ? 'LIVE — scores updating'
-            : 'Window closed — game on'}
+            : gw.status === 'closed'
+              ? 'Window closed — game on'
+              : 'Matchday — live scores from kick-off'}
         </LiveBanner>
       )}
 

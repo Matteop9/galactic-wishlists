@@ -11,7 +11,7 @@ import {
 import { supabase } from '../lib/supabase'
 import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
-import { Avatar, DoubleChip, MethodBadge, TeamBadge, TeamChip, teamColor } from '../components/ui'
+import { Avatar, DoubleChip, MethodBadge, TeamBadge, TeamChip, teamColor, VoidChip } from '../components/ui'
 import { dayMonth, longDate, odds2, score2 } from '../lib/format'
 
 const FEEDBACK_STATUS_COLOR: Record<string, string> = {
@@ -196,6 +196,7 @@ function PlayerProfileInner() {
                     {h.method === 'N/A' ? 'No pick' : h.method === 'BTTS' && h.second_team ? `${h.team} v ${h.second_team}` : h.team}
                   </span>
                   <MethodBadge method={h.method} />
+                  {h.void_reason && <VoidChip reason={h.void_reason} />}
                   {h.doubled && h.result === 1 && <DoubleChip />}
                 </div>
               </div>

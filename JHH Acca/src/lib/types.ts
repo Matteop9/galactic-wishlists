@@ -1,6 +1,8 @@
 export type AccaTeam = 'VDL' | 'JHP'
 export type Method = 'Win' | 'BTTS' | 'N/A'
 export type GwStatus = 'scheduled' | 'open' | 'closed' | 'settled' | 'skipped'
+/** Why a pick scored 0 without being a straight loss (rules §6). */
+export type VoidReason = 'invalid' | 'postponed'
 
 export interface Player {
   id: string
@@ -41,6 +43,7 @@ export interface Pick {
   second_team: string | null
   odds: number
   result: 0 | 1 | null
+  void_reason: VoidReason | null
   submitted_at: string
   submitted_by: string | null
   locked: boolean

@@ -13,6 +13,7 @@ import {
   fetchSeasonLeaderboard,
   fetchSeasons,
   fetchTeamLeaderboard,
+  isMatchday,
 } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
 import { odds2, score2 } from '../lib/format'
@@ -99,7 +100,7 @@ function LeaderboardsInner() {
   const { me, players } = usePlayer()
   const [liveOn, setLiveOn] = useState<boolean | null>(null)
   const { data: currentGw } = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
-  const liveGw = currentGw?.status === 'closed' && currentGw.live_enabled ? currentGw : null
+  const liveGw = currentGw && isMatchday(currentGw) ? currentGw : null
   const { data: liveStatuses } = useQuery({
     queryKey: ['live', liveGw?.id],
     queryFn: () => fetchLiveStatuses(liveGw!.id),

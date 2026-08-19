@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { LivePickStatus, PickScore } from '../lib/types'
 import { odds2, score2 } from '../lib/format'
-import { Avatar, DoubleChip, MethodBadge, StateIcon, TeamBadge, teamColor } from './ui'
+import { Avatar, DoubleChip, MethodBadge, StateIcon, TeamBadge, teamColor, VoidChip } from './ui'
 import LivePickChip from './LivePickChip'
 
 /* Flagship component - design guide §3. 3px team gradient bar, header with
@@ -85,6 +85,7 @@ export default function AccaCard({ teamName, displayColor, picks, live }: Props)
                     {p.name}
                   </span>
                   <MethodBadge method={p.method} />
+                  {p.void_reason && <VoidChip reason={p.void_reason} />}
                   {p.doubled && p.result === 1 && <DoubleChip />}
                 </div>
                 <div className="flex items-center gap-1.5 text-[11.5px] text-muted">

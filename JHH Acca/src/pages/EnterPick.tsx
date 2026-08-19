@@ -18,8 +18,10 @@ import { gwDate, odds2, ukTime } from '../lib/format'
 import { SPORTS } from '../lib/teams'
 
 /* Enter Pick: any teammate can enter for their team (pair-scoped on the Test
-   Weekend). Method segmented control, selection, second team iff BTTS, odds
-   stepper (min 1.50), lock CTA, team progress row. */
+   Weekend). Method segmented control (Win / BTTS / No pick), selection, second
+   team iff BTTS, odds stepper (min 1.50), lock CTA, team progress row.
+   Odds are kept as TEXT while typing — a controlled number would swallow the
+   decimal point ("1." parses to 1 and re-renders without the dot). */
 
 function EnterPickInner() {
   const qc = useQueryClient()
@@ -69,23 +71,29 @@ function EnterPickInner() {
 
   const [forPlayer, setForPlayer] = useState<string | null>(null)
   const target = forPlayer ?? me?.id ?? null
-  const existing = picks?.find((p) => p.player_id === target && p.method !== 'N/A')
+  const existing = picks?.find((p) => p.player_id === target)
 
-  const [method, setMethod] = useState<'Win' | 'BTTS'>('Win')
+  const [method, setMethod] = useState<'Win' | 'BTTS' | 'None'>('Win')
   const [team, setTeam] = useState('')
   const [secondTeam, setSecondTeam] = useState('')
-  const [odds, setOdds] = useState(1.5)
+  const [oddsText, setOddsText] = useState('1.5')
+  const oddsNum = parseFloat(oddsText)
 
   useEffect(() => {
-    if (existing) {
+    if (existing && existing.method === 'N/A') {
+      setMethod('None')
+      setTeam('')
+      setSecondTeam('')
+      setOddsText('1.5')
+    } else if (existing) {
       setMethod(existing.method === 'BTTS' ? 'BTTS' : 'Win')
       setTeam(existing.team)
       setSecondTeam(existing.second_team ?? '')
-      setOdds(Number(existing.odds))
+      setOddsText(String(Number(existing.odds)))
     } else {
       setTeam('')
       setSecondTeam('')
-      setOdds(1.5)
+      setOddsText('1.5')
       setMethod('Win')
     }
   }, [existing?.id, target])
@@ -99,19 +107,37 @@ function EnterPickInner() {
 
   const save = useMutation({
     mutationFn: () =>
-      upsertPick({
-        gameweek_id: gw!.id,
-        player_id: target!,
-        method,
-        team: team.trim(),
-        second_team: method === 'BTTS' ? secondTeam.trim() || null : null,
-        odds: Math.round(odds * 100) / 100,
-      }),
+      upsertPick(
+        method === 'None'
+          ? {
+              // Sheet convention: a no-pick is method 'N/A'. The odds here are a
+              // placeholder — insert_no_picks() sets the team-average odds and
+              // settles it 0 when the window closes.
+              gameweek_id: gw!.id,
+              player_id: target!,
+              method: 'N/A',
+              team: 'N/A',
+              second_team: null,
+              odds: 1.5,
+            }
+          : {
+              gameweek_id: gw!.id,
+              player_id: target!,
+              method,
+              team: team.trim(),
+              second_team: method === 'BTTS' ? secondTeam.trim() || null : null,
+              odds: Math.round(oddsNum * 100) / 100,
+            },
+      ),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['pickScores', gw?.id] }),
   })
 
   const valid =
-    !!target && team.trim().length > 0 && odds >= 1.5 && (method === 'Win' || secondTeam.trim().length > 0)
+    !!target &&
+    (method === 'None' ||
+      (team.trim().length > 0 &&
+        oddsNum >= 1.5 &&
+        (method === 'Win' || secondTeam.trim().length > 0)))
 
   if (!gw)
     return (
@@ -152,8 +178,9 @@ function EnterPickInner() {
           color: 'var(--color-gold)',
         }}
       >
-        <span className="font-bold">Group chat first.</span> This page only records your pick — it
-        doesn't count unless it's been posted in the group chat.
+        <span className="font-bold">Group chat first.</span> Picks are made in the group chat by
+        Friday 8 PM as always — this page just records them, and stays open until Saturday
+        midnight.
       </div>
 
       {isBreak && (
@@ -184,7 +211,8 @@ function EnterPickInner() {
         <div className="overline mb-1.5">PICKING FOR — {gwDate(gw.gw_date)}</div>
         <div className="flex flex-wrap gap-2">
           {myTeamPlayers.map((p) => {
-            const has = picks?.some((x) => x.player_id === p.id && x.method !== 'N/A')
+            const row = picks?.find((x) => x.player_id === p.id)
+            const has = !!row
             const active = target === p.id
             return (
               <button
@@ -202,7 +230,14 @@ function EnterPickInner() {
                   {p.name}
                   {p.id === me?.id ? ' (you)' : ''}
                 </span>
-                {has && <span className="font-mono text-[9px]" style={{ color: 'var(--color-win)' }}>✓</span>}
+                {has && (
+                  <span
+                    className="font-mono text-[9px]"
+                    style={{ color: row!.method === 'N/A' ? 'var(--color-muted)' : 'var(--color-win)' }}
+                  >
+                    {row!.method === 'N/A' ? '—' : '✓'}
+                  </span>
+                )}
               </button>
             )
           })}
@@ -213,24 +248,30 @@ function EnterPickInner() {
       <div className="mb-4">
         <div className="overline mb-1.5">METHOD</div>
         <div className="flex gap-2">
-          {(['Win', 'BTTS'] as const).map((m) => (
+          {(['Win', 'BTTS', 'None'] as const).map((m) => (
             <button
               key={m}
               onClick={() => setMethod(m)}
-              className="flex-1 rounded-[10px] border px-3 py-2.5 text-[13px] font-semibold"
+              className="flex-1 rounded-[10px] border px-2 py-2.5 text-[13px] font-semibold"
               style={
                 method === m
                   ? { background: 'rgba(180,227,61,0.1)', border: '1.5px solid var(--color-accent)', color: 'var(--color-accent-bright)' }
                   : { borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }
               }
             >
-              {m === 'Win' ? 'Win' : 'Both teams to score'}
+              {m === 'Win' ? 'Win' : m === 'BTTS' ? 'BTTS' : 'No pick'}
             </button>
           ))}
         </div>
+        {method === 'None' && (
+          <p className="mt-1.5 text-[11px] text-muted">
+            Records that {myTeamPlayers.find((p) => p.id === target)?.name ?? 'this player'} didn't
+            pick this week — it settles as a miss at the team's average odds (−2 on form).
+          </p>
+        )}
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4" style={{ opacity: method === 'None' ? 0.4 : 1 }}>
         <div className="overline mb-1.5">
           {isBreak ? 'SPORT' : method === 'BTTS' ? 'FIRST TEAM' : 'SELECTION'}
         </div>
@@ -238,7 +279,16 @@ function EnterPickInner() {
           value={team}
           onChange={setTeam}
           options={pickOptions}
-          placeholder={isBreak ? 'e.g. NFL' : method === 'BTTS' ? 'e.g. Bolton' : 'e.g. Charlton'}
+          disabled={method === 'None'}
+          placeholder={
+            method === 'None'
+              ? 'No pick this week'
+              : isBreak
+                ? 'e.g. NFL'
+                : method === 'BTTS'
+                  ? 'e.g. Bolton'
+                  : 'e.g. Charlton'
+          }
         />
       </div>
 
@@ -253,12 +303,15 @@ function EnterPickInner() {
         />
       </div>
 
-      {/* odds stepper */}
-      <div className="mb-5">
+      {/* odds stepper — text state so the decimal point survives typing */}
+      <div className="mb-5" style={{ opacity: method === 'None' ? 0.4 : 1 }}>
         <div className="overline mb-1.5">DECIMAL ODDS</div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setOdds((o) => Math.max(1.5, Math.round((o - 0.05) * 100) / 100))}
+            disabled={method === 'None'}
+            onClick={() =>
+              setOddsText(Math.max(1.5, Math.round(((oddsNum || 1.5) - 0.05) * 100) / 100).toFixed(2))
+            }
             className="h-11 w-11 rounded-[10px] border text-xl font-bold"
             style={{ borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }}
           >
@@ -266,17 +319,18 @@ function EnterPickInner() {
           </button>
           <input
             inputMode="decimal"
-            value={odds}
+            disabled={method === 'None'}
+            value={oddsText}
             onChange={(e) => {
-              const v = parseFloat(e.target.value)
-              if (!Number.isNaN(v)) setOdds(v)
-              else if (e.target.value === '') setOdds(0)
+              const v = e.target.value.replace(',', '.')
+              if (/^\d*\.?\d*$/.test(v)) setOddsText(v)
             }}
             className="w-24 flex-1 rounded-[10px] border bg-surface-2 py-2 text-center font-mono text-2xl font-bold"
             style={{ borderColor: 'var(--color-line-strong)' }}
           />
           <button
-            onClick={() => setOdds((o) => Math.round((o + 0.05) * 100) / 100)}
+            disabled={method === 'None'}
+            onClick={() => setOddsText((Math.round(((oddsNum || 1.5) + 0.05) * 100) / 100).toFixed(2))}
             className="h-11 w-11 rounded-[10px] border text-xl font-bold"
             style={{ borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }}
           >
@@ -289,7 +343,8 @@ function EnterPickInner() {
       <div className="mb-5 rounded-[12px] border p-3.5 text-[11.5px] text-muted" style={{ borderColor: 'var(--color-line)' }}>
         Picks are public the moment they're in, with a one-hour challenge window. If odds have
         moved, you get the lower odds unless you've got a timestamped screenshot. Saturday 2 PM+
-        kick-offs only; Bet365 Winnings Boost eligible.
+        kick-offs only; Bet365 Winnings Boost eligible. Match called off after the Friday
+        deadline? It scores 0 (rules §6) — an admin marks it postponed at settlement.
       </div>
 
       {save.isError && (
@@ -313,10 +368,12 @@ function EnterPickInner() {
           boxShadow: '0 4px 24px rgba(180,227,61,0.25)',
         }}
       >
-        {existing ? 'Update pick' : 'Lock it in'}
+        {method === 'None' ? 'Record no pick' : existing ? 'Update pick' : 'Lock it in'}
       </button>
       <p className="mt-2 text-center text-[11px] text-muted">
-        {odds2(odds)} on {team || '…'} {method === 'BTTS' ? `v ${secondTeam || '…'} (BTTS)` : 'to win'}
+        {method === 'None'
+          ? 'No pick this week — settles as a miss'
+          : `${odds2(Number.isNaN(oddsNum) ? null : oddsNum)} on ${team || '…'} ${method === 'BTTS' ? `v ${secondTeam || '…'} (BTTS)` : 'to win'}`}
       </p>
     </div>
   )

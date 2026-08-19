@@ -147,6 +147,15 @@ export async function fetchCurrentGameweek(): Promise<Gameweek | null> {
   return upcoming ?? settled ?? null
 }
 
+/** Match-day check. The entry window stays open until Saturday midnight, so
+    'open' alone no longer means pre-match — live scores are relevant from the
+    Saturday itself (and while 'closed', i.e. post-window pre-settlement). */
+export const isMatchday = (gw: Gameweek | null | undefined): boolean =>
+  !!gw &&
+  gw.live_enabled &&
+  (gw.status === 'closed' ||
+    (gw.status === 'open' && new Date().toISOString().slice(0, 10) >= gw.gw_date))
+
 // --- mutations ---
 
 export const upsertPick = (pick: {
@@ -165,8 +174,14 @@ export const upsertPick = (pick: {
       .single(),
   )
 
-export const settlePick = (pickId: string, result: 0 | 1 | null) =>
-  unwrap(supabase.rpc('settle_pick', { p_pick: pickId, p_result: result }))
+export const settlePick = (
+  pickId: string,
+  result: 0 | 1 | null,
+  voidReason: 'invalid' | 'postponed' | null = null,
+) =>
+  unwrap(
+    supabase.rpc('settle_pick', { p_pick: pickId, p_result: result, p_void_reason: voidReason }),
+  )
 
 export const matchPick = (
   pickId: string,

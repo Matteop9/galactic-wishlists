@@ -20,6 +20,7 @@ Each participant contributes one leg to their team's six-fold acca each gameweek
 ## 1. Selection deadlines
 
 - The selection window opens **Thursday 6:00 PM UK** and closes **Friday 8:00 PM UK**.
+- Picks are made **in the group chat** by that deadline; entering them into the app stays open until **Saturday midnight UK** (they'll already have been picked in the chat).
 - Only matches kicking off **Saturday 2:00 PM UK or later** are eligible.
 - Internationals are excluded, except during international breaks (see Section 11).
 - Selections must be eligible for the **Bet365 Winnings Boost**, except during international breaks.

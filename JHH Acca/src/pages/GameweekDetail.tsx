@@ -10,6 +10,7 @@ import {
   fetchPickScores,
   fetchSeasons,
   fetchTeamWeekScores,
+  isMatchday,
   raiseDispute,
   resolveDispute,
   settlePick,
@@ -26,11 +27,12 @@ import {
   StateIcon,
   TeamBadge,
   teamColor,
+  VoidChip,
 } from '../components/ui'
 import LivePickChip from '../components/LivePickChip'
 import MatchPanel from '../components/MatchPanel'
 import { gwDate, odds2, score2, ukTime } from '../lib/format'
-import type { Dispute, LiveState, PickScore } from '../lib/types'
+import type { Dispute, LiveState, PickScore, VoidReason } from '../lib/types'
 
 function suggestedResult(state: LiveState | undefined): 0 | 1 | null {
   if (state === 'WON' || state === 'LANDED') return 1
@@ -41,6 +43,20 @@ function suggestedResult(state: LiveState | undefined): 0 | 1 | null {
 /* Gameweek detail: per-team groups with week scores, sweep banner, settle
    toggles for admins, result chips for players, disputes on every pick. */
 
+/* W / L settle both ways; PP (postponed) and INV (invalid) settle 0 with the
+   void reason recorded — rules §6: void picks score 0. Tap again to unsettle. */
+const SETTLE_OPTIONS: {
+  label: string
+  result: 0 | 1
+  reason: VoidReason | null
+  title?: string
+}[] = [
+  { label: 'W', result: 1, reason: null },
+  { label: 'L', result: 0, reason: null },
+  { label: 'PP', result: 0, reason: 'postponed', title: 'Postponed/cancelled after the deadline — scores 0' },
+  { label: 'INV', result: 0, reason: 'invalid', title: 'Invalid pick — scores 0' },
+]
+
 function SettleToggle({
   pick,
   suggested,
@@ -48,20 +64,25 @@ function SettleToggle({
 }: {
   pick: PickScore
   suggested: 0 | 1 | null
-  onSettle: (r: 0 | 1 | null) => void
+  onSettle: (r: 0 | 1 | null, reason: VoidReason | null) => void
 }) {
   return (
     <div className="flex gap-1">
-      {([1, 0] as const).map((r) => {
-        const active = pick.result === r
-        const hint = pick.result == null && suggested === r
-        const solid = r === 1 ? 'var(--color-win-solid)' : 'var(--color-loss-solid)'
+      {SETTLE_OPTIONS.map((o) => {
+        const active = pick.result === o.result && (pick.void_reason ?? null) === o.reason
+        const hint = pick.result == null && o.reason === null && suggested === o.result
+        const solid =
+          o.reason !== null
+            ? 'var(--color-line-strong)'
+            : o.result === 1
+              ? 'var(--color-win-solid)'
+              : 'var(--color-loss-solid)'
         return (
           <button
-            key={r}
-            onClick={() => onSettle(active ? null : r)}
-            className="h-[26px] w-[30px] rounded-[6px] border font-mono text-[11px] font-bold"
-            title={hint ? 'Suggested by full-time score — confirm against Bet365' : undefined}
+            key={o.label}
+            onClick={() => (active ? onSettle(null, null) : onSettle(o.result, o.reason))}
+            className="h-[26px] min-w-[26px] rounded-[6px] border px-1 font-mono text-[10px] font-bold"
+            title={o.title ?? (hint ? 'Suggested by full-time score — confirm against Bet365' : undefined)}
             style={
               active
                 ? { background: solid, borderColor: solid, color: '#EAF0E6' }
@@ -70,7 +91,7 @@ function SettleToggle({
                   : { borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }
             }
           >
-            {r === 1 ? 'W' : 'L'}
+            {o.label}
           </button>
         )
       })}
@@ -195,15 +216,22 @@ function GameweekDetailInner() {
   const { data: live } = useQuery({
     queryKey: ['live', id],
     queryFn: () => fetchLiveStatuses(id!),
-    enabled: !!id && gw?.status === 'closed',
+    enabled: !!id && isMatchday(gw),
     refetchInterval: 60_000,
   })
   const { data: disputes } = useQuery({ queryKey: ['disputes'], queryFn: fetchDisputes })
   const { data: adjustments } = useQuery({ queryKey: ['adjustments'], queryFn: fetchAdjustments })
 
   const settle = useMutation({
-    mutationFn: ({ pickId, result }: { pickId: string; result: 0 | 1 | null }) =>
-      settlePick(pickId, result),
+    mutationFn: ({
+      pickId,
+      result,
+      reason,
+    }: {
+      pickId: string
+      result: 0 | 1 | null
+      reason: VoidReason | null
+    }) => settlePick(pickId, result, reason),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pickScores', id] })
       qc.invalidateQueries({ queryKey: ['teamWeekScores', id] })
@@ -287,6 +315,7 @@ function GameweekDetailInner() {
                             {p.name}
                           </span>
                           <MethodBadge method={p.method} />
+                          {p.void_reason && <VoidChip reason={p.void_reason} />}
                           {p.doubled && p.result === 1 && <DoubleChip />}
                           {dispute && (
                             <span className="rounded-[4px] border px-1.5 py-0.5 font-mono text-[8.5px] font-semibold uppercase tracking-[0.12em]"
@@ -302,16 +331,18 @@ function GameweekDetailInner() {
                           </span>
                           {p.method === 'BTTS' && p.second_team && <TeamBadge name={p.second_team} size={14} />}
                         </div>
-                        {l && gw?.status === 'closed' && <div className="mt-0.5"><LivePickChip status={l} /></div>}
+                        {l && isMatchday(gw) && <div className="mt-0.5"><LivePickChip status={l} /></div>}
                       </div>
                       <span className="font-mono text-[14px] font-semibold" style={{ color: p.result === 0 ? 'var(--color-loss)' : undefined, textDecoration: p.result === 0 ? 'line-through' : undefined }}>
                         {p.method === 'N/A' ? '–' : odds2(p.odds)}
                       </span>
-                      {isAdmin && gw?.status !== 'scheduled' && gw?.status !== 'open' ? (
+                      {/* settlement can now precede window close (Sat evening vs
+                          Sat midnight), so 'open' no longer hides the toggles */}
+                      {isAdmin && gw?.status !== 'scheduled' ? (
                         <SettleToggle
                           pick={p}
                           suggested={suggestedResult(l?.live_state)}
-                          onSettle={(r) => settle.mutate({ pickId: p.id, result: r })}
+                          onSettle={(r, reason) => settle.mutate({ pickId: p.id, result: r, reason })}
                         />
                       ) : (
                         <StateIcon result={p.result} />

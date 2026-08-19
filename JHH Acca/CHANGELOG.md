@@ -1,5 +1,17 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.6.0 — 2026-08-19
+
+Post-Test-Weekend fixes: decimal odds input, Saturday-midnight app deadline, void picks.
+
+- **Decimal input fix**: Enter Pick's odds field was a controlled *number* — typing `1.` parsed to `1` and re-rendered without the dot, so the decimal point could never be typed. Odds are now held as text while typing (digits + one dot, comma coerced to dot), parsed on save; the ± steppers still snap to 2dp.
+- **App entry deadline → Saturday 23:59 UK** (migration `0020`): picks are made in the group chat by Friday 8 PM (rules §1 unchanged) and transcribed later, so the app must not lock first. `create_gameweek()` now sets `window_closes = uk_ts(gw_date, '23:59')` and all 40 scheduled Season 7/8 windows were moved in the same migration. Knock-ons handled:
+  - `live_tick()` and the client live-score gates keyed on `status = 'closed'`, which no longer means "match day". New `isMatchday()` helper client-side (`open` on the Saturday itself, or `closed`), `status in ('open','closed')` in `live_tick()` — polling still Saturday-only via `gw_date = today`.
+  - Settlement can now precede window close, so `tick_gameweeks()` sweeps `insert_no_picks()` for any gameweek within 48h after `window_closes` (idempotent), instead of only on the open→closed transition; the settle toggles no longer hide while the window is `open`.
+- **Void picks** (rules §6): new `picks.void_reason` (`invalid` | `postponed`), exposed on `v_pick_scores` (appended last; also restores `security_invoker=on`, silently dropped by 0019). `settle_pick()` gains `p_void_reason` (old 2-arg signature dropped, not overloaded) — a void reason forces result 0. Admin settle row is now **W / L / PP / INV**; void picks show a muted POSTP/INVALID chip on gameweek pages, acca cards and pick history. Scoring is untouched: a void pick scores 0 exactly like a loss, per the rules.
+- **"No pick" on Enter Pick**: third method option records `method 'N/A'` for a teammate who didn't pick (placeholder odds, unsettled, replaceable until the window closes). At close, `insert_no_picks()` now also *finalises* manually-recorded rows to the sheet convention — odds = team average that week, result 0, locked.
+- All four `scripts/checks.sql` gates re-run clean after the migration (0 rows).
+
 ## v0.5.0 — 2026-08-10
 
 Feedback-queue items 1–4 (submitted in-app; the BTTS/scoreline item is deferred).
