@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.22",
+    date: "2026-08-24",
+    changes: [
+      "Catches are never lost to a bad signal anymore: snap a plane with no service (or if the upload stalls) and SkyDex saves it on your phone, then uploads it automatically the moment you're back online. A little “waiting to upload” note shows how many are pending.",
+    ],
+  },
+  {
     version: "0.3.21",
     date: "2026-08-24",
     changes: [

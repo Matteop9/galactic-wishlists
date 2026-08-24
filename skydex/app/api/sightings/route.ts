@@ -23,7 +23,13 @@ import {
 const RATE_LIMIT_PER_MINUTE = 5;
 const DUPE_WINDOW_MS = 5 * 60 * 1000; // matches the DB exclusion constraint
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
-const MAX_CAPTURE_AGE_MS = 10 * 60 * 1000; // how far back capturedAt may claim
+// How far back capturedAt may claim. Widened to 6 h for the offline capture
+// queue: a catch taken with no signal keeps its real shutter time when it
+// finally uploads. This does NOT enable faking VERIFIED sightings — verification
+// back-projects only ≤120 s (VERIFY_MAX_PROJECT_S), so an old capturedAt is
+// checked against the plane's live position and simply lands unverified (→
+// community review) if it's no longer there.
+const MAX_CAPTURE_AGE_MS = 6 * 60 * 60 * 1000;
 const MAX_CLOCK_SKEW_MS = 2 * 60 * 1000; // how far ahead (client clock drift)
 const VERIFY_MAX_DISTANCE_KM = 80; // plane must be plausibly visible
 // Generous pointing cone (true angular separation, not per-axis): the plane

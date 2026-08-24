@@ -14,6 +14,7 @@ import { callsignIcao } from "@/lib/airlines";
 import { RARITY_RANK, type Rarity } from "@/lib/rarity";
 import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
+import { enqueueCapture, listCaptures, removeCapture, countCaptures } from "@/lib/captureQueue";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
 import TargetOverlay from "@/components/TargetOverlay";
 import { deleteSighting } from "@/app/actions/admin";
@@ -69,6 +70,22 @@ const FEED_STALE_MS = 25_000;
 // Untrack a locked plane only after it's been missing from BOTH the sweep and
 // the fast-poll for this long — a single empty poll must not drop the lock.
 const LOCK_GRACE_MS = 30_000;
+const QUEUED_MSG =
+  "Saved — we'll upload and verify it automatically once you're back online.";
+
+// POST a capture with a hard timeout so a stalled mobile connection rejects
+// (→ we queue it) instead of hanging on "Saving…" forever. Shared by the live
+// submit and the offline-queue flusher.
+async function postCapture(blob: Blob | null, metaStr: string): Promise<Response> {
+  const fd = new FormData();
+  if (blob) fd.append("photo", blob, "sighting.jpg");
+  fd.append("meta", metaStr);
+  return fetch("/api/sightings", {
+    method: "POST",
+    body: fd,
+    signal: AbortSignal.timeout(30_000),
+  });
+}
 
 export default function SpotPage() {
   const [phase, setPhase] = useState<"idle" | "active">("idle");
@@ -88,6 +105,9 @@ export default function SpotPage() {
   const lastGoodAtRef = useRef(0); // last sweep that returned ≥1 candidate
   const lockSeenAtRef = useRef(0); // last time the locked plane was seen live
   const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null); // info (e.g. queued), not an error
+  const [pendingCount, setPendingCount] = useState(0); // captures waiting to upload
+  const flushingRef = useRef(false);
   const [result, setResult] = useState<DiscoveryResult | null>(null);
   // What this user has already caught, across the dimensions knowable on the
   // map: type codes, airline ICAO codes (callsign prefixes — the stable newness
@@ -615,93 +635,156 @@ export default function SpotPage() {
     target != null && (targetInSights || target.icao24 === lockedId || targetClose);
   const targetLabel = (c: Candidate) => c.registration || c.callsign || c.icao24;
 
+  // ---- Offline capture queue: drain anything stashed while we had no signal.
+  const flushQueue = useCallback(async () => {
+    if (flushingRef.current) return;
+    if (typeof navigator !== "undefined" && !navigator.onLine) return;
+    flushingRef.current = true;
+    try {
+      const items = await listCaptures();
+      for (const item of items) {
+        let res: Response;
+        try {
+          res = await postCapture(item.blob, item.meta);
+        } catch {
+          break; // still offline / timing out — retry on the next trigger
+        }
+        if (res.ok || res.status === 409) {
+          await removeCapture(item.id); // saved (409 = already logged)
+        } else if (res.status === 429 || res.status >= 500) {
+          break; // transient — leave it queued and retry later
+        } else {
+          await removeCapture(item.id); // 400/401/413/415 can never succeed — drop it
+        }
+      }
+    } catch {
+      /* IndexedDB hiccup — try again next trigger */
+    } finally {
+      flushingRef.current = false;
+      try {
+        setPendingCount(await countCaptures());
+      } catch {
+        /* ignore */
+      }
+    }
+  }, []);
+
+  // Flush on mount and whenever connectivity returns.
+  useEffect(() => {
+    flushQueue();
+    const onOnline = () => flushQueue();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [flushQueue]);
+
+  // Grab the current camera frame as a JPEG blob (centre-crop under digital
+  // zoom), or null if the stream isn't ready (e.g. the tab was backgrounded).
+  async function grabPhotoBlob(): Promise<Blob | null> {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!video || !canvas || !ctx || !video.videoWidth) return null;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    if (!zoomCaps && zoom > 1) {
+      const sw = video.videoWidth / zoom;
+      const sh = video.videoHeight / zoom;
+      ctx.drawImage(video, (video.videoWidth - sw) / 2, (video.videoHeight - sh) / 2, sw, sh, 0, 0, canvas.width, canvas.height);
+    } else {
+      ctx.drawImage(video, 0, 0);
+    }
+    return new Promise<Blob | null>((r) => canvas.toBlob((b) => r(b), "image/jpeg", 0.85));
+  }
+
   async function submit(target: Candidate | null) {
     if (!target) return;
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
-      const fd = new FormData();
-      if (videoRef.current && canvasRef.current) {
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d")!;
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        if (!zoomCaps && zoom > 1) {
-          // Digital zoom: capture the centre crop so the photo matches the preview.
-          const sw = video.videoWidth / zoom;
-          const sh = video.videoHeight / zoom;
-          ctx.drawImage(
-            video,
-            (video.videoWidth - sw) / 2,
-            (video.videoHeight - sh) / 2,
-            sw,
-            sh,
-            0,
-            0,
-            canvas.width,
-            canvas.height,
-          );
-        } else {
-          ctx.drawImage(video, 0, 0);
-        }
-        const blob = await new Promise<Blob | null>((r) =>
-          canvas.toBlob((b) => r(b), "image/jpeg", 0.85),
-        );
-        if (blob) fd.append("photo", blob, "sighting.jpg");
-      }
-      fd.append(
-        "meta",
-        JSON.stringify({
-          lat: coords?.lat,
-          lon: coords?.lon,
-          heading,
-          pitch,
-          capturedAt: Date.now(),
-          icao24: target.icao24,
-          callsign: target.callsign,
-          registration: target.registration,
-          aircraftType: target.aircraftType,
-          typeDesc: target.typeDesc,
-          altM: target.altM,
-          obsAltM: coords?.alt,
-          bearing: target.bearing,
-          elevation: target.elevation,
-          // Dead-reckoned plane position + ground track at capture time.
-          // Diagnostic context only — the server re-queries the live feed and
-          // does its own back-projection; it never reads these.
-          planeLat: target.lat,
-          planeLon: target.lon,
-          track: target.track,
-          // NOTE: verified/rarity are decided server-side; nothing the client
-          // sends here can assert them.
-        }),
-      );
-      const res = await fetch("/api/sightings", { method: "POST", body: fd });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Could not save sighting.");
-      const s = json.sighting ?? {};
-      setResult({
-        id: s.id,
-        photoUrl: json.photoUrl,
-        label: s.registration || s.callsign || target.icao24,
-        typeCode: s.aircraft_type ?? null,
-        typeName: json.typeName ?? s.aircraft_type ?? null,
-        airline: s.airline ?? null,
-        origin: s.origin ?? null,
-        destination: s.destination ?? null,
-        rarity: s.rarity ?? "common",
-        discoveries: json.discoveries ?? { type: false, airline: false, origin: false, destination: false },
-        specialLivery: json.specialLivery ?? null,
-        // The saved row, card-shaped — powers the standard Lightbox on photo tap.
-        sighting: {
-          ...s,
-          aircraft_type: json.typeName ?? s.aircraft_type ?? null,
-          photo_url: json.photoUrl ?? null,
-        },
+      const blob = await grabPhotoBlob();
+      const metaStr = JSON.stringify({
+        lat: coords?.lat,
+        lon: coords?.lon,
+        heading,
+        pitch,
+        capturedAt: Date.now(),
+        icao24: target.icao24,
+        callsign: target.callsign,
+        registration: target.registration,
+        aircraftType: target.aircraftType,
+        typeDesc: target.typeDesc,
+        altM: target.altM,
+        obsAltM: coords?.alt,
+        bearing: target.bearing,
+        elevation: target.elevation,
+        // Dead-reckoned plane position + ground track at capture time.
+        // Diagnostic context only — the server re-queries the live feed and
+        // does its own back-projection; it never reads these.
+        planeLat: target.lat,
+        planeLon: target.lon,
+        track: target.track,
+        // NOTE: verified/rarity are decided server-side; nothing the client
+        // sends here can assert them.
       });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save sighting.");
+
+      let res: Response;
+      try {
+        res = await postCapture(blob, metaStr);
+      } catch {
+        // No response at all — offline or timed out. Don't lose the catch.
+        if (blob) {
+          setPendingCount(await enqueueCapture(blob, metaStr));
+          setNotice(QUEUED_MSG);
+        } else {
+          setError("Couldn't grab the photo — try again.");
+        }
+        return;
+      }
+
+      if (res.ok) {
+        const json = await res.json();
+        const s = json.sighting ?? {};
+        setResult({
+          id: s.id,
+          photoUrl: json.photoUrl,
+          label: s.registration || s.callsign || target.icao24,
+          typeCode: s.aircraft_type ?? null,
+          typeName: json.typeName ?? s.aircraft_type ?? null,
+          airline: s.airline ?? null,
+          origin: s.origin ?? null,
+          destination: s.destination ?? null,
+          rarity: s.rarity ?? "common",
+          discoveries: json.discoveries ?? { type: false, airline: false, origin: false, destination: false },
+          specialLivery: json.specialLivery ?? null,
+          // The saved row, card-shaped — powers the standard Lightbox on photo tap.
+          sighting: {
+            ...s,
+            aircraft_type: json.typeName ?? s.aircraft_type ?? null,
+            photo_url: json.photoUrl ?? null,
+          },
+        });
+        flushQueue(); // opportunistic: we're clearly online, clear any backlog
+        return;
+      }
+
+      if (res.status === 409) {
+        setNotice("You've already logged this aircraft just now.");
+        return;
+      }
+      if (res.status === 429 || res.status >= 500) {
+        // Transient (rate limit / server) — queue it and let the flusher retry.
+        if (blob) {
+          setPendingCount(await enqueueCapture(blob, metaStr));
+          setNotice(QUEUED_MSG);
+        } else {
+          setError("Server busy — give it a moment and try again.");
+        }
+        return;
+      }
+      // 400 / 401 / 413 / 415 — a real rejection; queuing wouldn't help.
+      const json = await res.json().catch(() => ({}));
+      setError(json.error ?? "Could not save sighting.");
     } finally {
       setBusy(false);
     }
@@ -912,6 +995,13 @@ export default function SpotPage() {
       </div>
 
       {error && <p className="mt-3 text-sm text-stamp">{error}</p>}
+      {notice && <p className="mt-3 text-sm text-sky">{notice}</p>}
+      {pendingCount > 0 && (
+        <p className="mt-2 font-mono text-xs text-ink-soft">
+          ⏳ {pendingCount} {pendingCount === 1 ? "catch" : "catches"} waiting to upload — we&apos;ll
+          send {pendingCount === 1 ? "it" : "them"} automatically once you&apos;re back online.
+        </p>
+      )}
 
       {result && (
         <DiscoveryMoment

@@ -2,6 +2,17 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.22 — 2026-08-24
+
+Offline capture queue (spotting fix item D). A catch taken with no signal — or when the upload times out / the server is briefly busy — is no longer lost: the photo + metadata are stashed on the device and uploaded automatically once you're back online.
+
+### Added
+- **`lib/captureQueue.ts`** (new): a small IndexedDB queue (`enqueueCapture` / `listCaptures` / `removeCapture` / `countCaptures`). Browser-only; blobs stored directly.
+- **`app/spot/page.tsx`**: capture now has a hard 30 s upload timeout (`postCapture` via `AbortSignal.timeout`) so a stalled connection rejects instead of hanging on "Saving…" forever. On a network error / timeout / 429 / 5xx the catch is queued ("Saved — we'll upload… once you're back online"); a background flusher drains the queue on mount + on the `online` event (409 "already logged" = done; permanent 4xx dropped so they can't jam the queue). A "N waiting to upload" badge shows the backlog. New `grabPhotoBlob` guards a not-ready / backgrounded camera (kills the silent photo-less save). Genuine rejections (400/401/413/415) still surface as errors.
+
+### Changed
+- **`app/api/sightings/route.ts`**: `MAX_CAPTURE_AGE_MS` 10 min → 6 h so a late upload keeps its real shutter time on the card. Verification is unaffected (back-projects ≤120 s), so a long-delayed catch whose plane has moved on lands unverified → community review, never discarded.
+
 ## v0.3.21 — 2026-08-24
 
 Brand-name display fix (found while shipping v0.3.20). `normalizeBrand` stripped a trailing country word even when it was part of the airline's real name — "Air France" showed as "Air", "TAP Air Portugal" as "TAP Air"/"TAP" on cards + the scrapbook Carriers grid.
