@@ -1,5 +1,31 @@
 # Changelog — Spot On
 
+## v0.2.4 — 2026-08-24
+
+- **Fixed: every git push emailed a failed spot-on deploy.** The Vercel project was
+  git-connected to the monorepo without a Root Directory, so any push (SkyDex, Milky
+  Bay, anything) tried to build spot-on from the repo root and died in seconds on
+  "Couldn't find any pages or app directory" — one error email per push, and prod was
+  pinned to the last CLI deploy. Root Directory is now `LeaguePredictor`, and
+  `vercel.json` gains an `ignoreCommand` so pushes that don't touch this folder skip
+  the build entirely (no build, no email).
+- **Deploys now ride `git push`** — which is what the phone-fix workflow needs. Note
+  that with a Root Directory set, `vercel deploy --prod` from the subfolder no longer
+  works (the CLI upload nests the folder twice); commit + push instead.
+- This commit also lands v0.2.3 below into git — it had been deployed from a working
+  tree on 17 Aug but never committed, so git-triggered deploys would have silently
+  reverted the standings fix.
+
+## v0.2.3 — 2026-08-17
+
+- **Fixed: standings frozen after the season's first game** (Championship).
+  football-data.org caches `/competitions/{id}/standings` separately from the
+  `?season=` variant, and the bare copy went stale — it served the Championship's
+  matchday-1 Friday result only (2 games played) while the season-pinned URL had
+  the full table (22). `getStandings` now always pins the season, falling back to
+  the bare URL only if that season 404s (pre-season gap). Competitions carry a
+  `calendarYearSeason` flag so Brazil's Jan–Dec season resolves to the right year.
+
 ## v0.2.2 — 2026-08-14
 
 - **The grid** (`/leagues/[id]/table`): post-lock view with the actual league table

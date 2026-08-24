@@ -7,6 +7,9 @@ export type Competition = {
   name: string;
   country: string;
   flag: string;
+  // true = the season runs Jan–Dec, so its API season year is just the calendar year.
+  // Everything else rolls over in July (2026-27 → season year 2026).
+  calendarYearSeason?: boolean;
 };
 
 export const COMPETITIONS: Competition[] = [
@@ -18,7 +21,7 @@ export const COMPETITIONS: Competition[] = [
   { id: 2015, code: 'FL1', name: 'Ligue 1', country: 'France', flag: '🇫🇷' },
   { id: 2003, code: 'DED', name: 'Eredivisie', country: 'Netherlands', flag: '🇳🇱' },
   { id: 2017, code: 'PPL', name: 'Primeira Liga', country: 'Portugal', flag: '🇵🇹' },
-  { id: 2013, code: 'BSA', name: 'Série A', country: 'Brazil', flag: '🇧🇷' },
+  { id: 2013, code: 'BSA', name: 'Série A', country: 'Brazil', flag: '🇧🇷', calendarYearSeason: true },
 ];
 
 export const DEFAULT_COMPETITION_IDS = [2021, 2016];
@@ -29,4 +32,10 @@ export function competitionById(id: number): Competition | undefined {
 
 export function competitionName(id: number): string {
   return competitionById(id)?.name ?? `Competition ${id}`;
+}
+
+// The `season` year football-data.org uses for this competition's in-progress season.
+export function currentSeasonYear(id: number, now: Date = new Date()): number {
+  if (competitionById(id)?.calendarYearSeason) return now.getUTCFullYear();
+  return now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
 }

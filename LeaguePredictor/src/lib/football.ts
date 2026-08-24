@@ -1,4 +1,5 @@
 import { getCached } from './cache';
+import { currentSeasonYear } from './competitions';
 import type { ApiScorer, ApiTableRow, Standings, TeamsDoc, SquadPlayer, ApiTeam } from './types';
 
 const BASE = 'https://api.football-data.org/v4';
@@ -22,12 +23,26 @@ async function apiGet<T>(path: string): Promise<T> {
   return (await res.json()) as T;
 }
 
+type StandingsResponse = {
+  season: { startDate: string; endDate: string };
+  standings: { type: string; table: ApiTableRow[] }[];
+};
+
 export async function getStandings(competitionId: number): Promise<Standings> {
   return getCached(`standings:${competitionId}`, TTL.standings, async () => {
-    const data = await apiGet<{
-      season: { startDate: string; endDate: string };
-      standings: { type: string; table: ApiTableRow[] }[];
-    }>(`/competitions/${competitionId}/standings`);
+    // football-data caches the un-parameterised standings URL separately from the
+    // ?season= one, and that copy can go badly stale — the Championship sat on
+    // matchday 1's Friday-night result for days while ?season= served the real table.
+    // So always pin the season; fall back to the bare URL only if that season 404s
+    // (i.e. the new season isn't published yet, in the July/pre-season gap).
+    const path = `/competitions/${competitionId}/standings`;
+    let data: StandingsResponse;
+    try {
+      data = await apiGet<StandingsResponse>(`${path}?season=${currentSeasonYear(competitionId)}`);
+    } catch (err) {
+      console.error(`football: season-pinned standings failed for ${competitionId}`, err);
+      data = await apiGet<StandingsResponse>(path);
+    }
     const total = data.standings.find((s) => s.type === 'TOTAL') ?? data.standings[0];
     return { season: data.season, table: total?.table ?? [] };
   });
