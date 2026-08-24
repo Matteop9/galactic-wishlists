@@ -19,10 +19,10 @@ export default function AttributionsPage() {
           <h2 className="font-display text-lg font-semibold text-ink">Live aircraft data</h2>
           <ul className="mt-2 list-disc pl-5">
             <li>
-              <a href="https://airplanes.live/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
-                airplanes.live
+              <a href="https://adsb.fi/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
+                adsb.fi
               </a>{" "}
-              — independent, unfiltered ADS-B &amp; MLAT aircraft tracking.
+              — community-driven, unfiltered ADS-B &amp; MLAT aircraft tracking.
             </li>
           </ul>
         </section>

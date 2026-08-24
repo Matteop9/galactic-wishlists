@@ -1,19 +1,20 @@
-// Live aircraft data from a SINGLE source: airplanes.live.
+// Live aircraft data from a SINGLE source: adsb.fi.
 //
 // We deliberately use one provider for every live field (position, ICAO type
-// code, registration, AND the human-readable type description). The previous
-// adsb.lol-primary / airplanes.live-fallback chain produced inconsistent results:
-// adsb.lol returns the type code but `desc = null` for every aircraft, so whenever
-// it answered, friendly type names degraded to bare codes (e.g. "B788" instead of
-// "787-8 Dreamliner"). airplanes.live carries the full `desc`, so standardising on
-// it makes enrichment consistent regardless of which aircraft is overhead.
+// code, registration, AND the human-readable type description). An earlier
+// adsb.lol-primary chain produced inconsistent results: adsb.lol returns the type
+// code but `desc = null` for every aircraft, so friendly type names degraded to
+// bare codes (e.g. "B788" instead of "787-8 Dreamliner"). airplanes.live carried
+// the full `desc` and was the single source from v0.1.x — until 2026-08-14, when
+// its API began returning 403 to unregistered consumers (access is now granted
+// per-project by email). adsb.fi is the like-for-like replacement: same readsb
+// JSON shape, full `desc`, plus `ownOp`/`year` we don't yet use.
 //
-// LICENSING NOTE (FR24-acquisition goal): airplanes.live's free tier is
-// non-commercial; a paid tier exists for commercial use. adsb.lol (ODbL) was the
-// commercial-safe option but lacks descriptions. This is a known trade-off, chosen
-// for data consistency — see research/data-licences.md. Revisit before any
-// commercial launch / acquisition (take their paid tier, or re-add adsb.lol as a
-// position source with descriptions derived from the reference universe).
+// LICENSING NOTE (FR24-acquisition goal): adsb.fi is community open data with a
+// non-commercial lean and asks for ≤1 request/second per IP. adsb.lol (ODbL) is
+// still the commercial-safe option but lacks descriptions — same trade-off as
+// before, chosen for data consistency. See research/data-licences.md. Revisit
+// before any commercial launch / acquisition.
 //
 // OpenSky was removed earlier (v0.1.18): its terms require a written licence for
 // live-product use, and it firewalls datacenter IPs (never served production).
@@ -51,7 +52,9 @@ export type Aircraft = {
 
 export type AircraftResult = { aircraft: Aircraft[]; source: string };
 
-// Shared shape of the readsb-style JSON used by airplanes.live and adsb.lol.
+// Shared shape of the readsb-style JSON used by adsb.fi and adsb.lol. adsb.fi
+// keys the array `aircraft` on the point endpoint but `ac` on the hex endpoint —
+// mapReadsb accepts both.
 type AcRecord = {
   hex?: string;
   flight?: string;
@@ -69,8 +72,8 @@ type AcRecord = {
   dbFlags?: number; // bit 0 = military, per readsb's aircraft DB
 };
 
-function mapReadsb(json: { ac?: AcRecord[] }): Aircraft[] {
-  return (json.ac ?? [])
+function mapReadsb(json: { ac?: AcRecord[]; aircraft?: AcRecord[] }): Aircraft[] {
+  return (json.ac ?? json.aircraft ?? [])
     .filter(
       (a) =>
         typeof a.lat === "number" &&
@@ -105,10 +108,10 @@ function mapReadsb(json: { ac?: AcRecord[] }): Aircraft[] {
 async function fromReadsbApi(url: string): Promise<Aircraft[]> {
   const res = await undiciFetch(url, { dispatcher });
   if (!res.ok) throw new Error(`${url} responded ${res.status}`);
-  return mapReadsb((await res.json()) as { ac?: AcRecord[] });
+  return mapReadsb((await res.json()) as { ac?: AcRecord[]; aircraft?: AcRecord[] });
 }
 
-/** Fetch live aircraft within radiusKm of a point from airplanes.live. */
+/** Fetch live aircraft within radiusKm of a point from adsb.fi. */
 export async function fetchAircraftNear(
   lat: number,
   lon: number,
@@ -116,9 +119,9 @@ export async function fetchAircraftNear(
 ): Promise<AircraftResult> {
   const nm = Math.min(Math.max(Math.round(radiusKm / 1.852), 1), 250);
   const aircraft = await fromReadsbApi(
-    `https://api.airplanes.live/v2/point/${lat}/${lon}/${nm}`,
+    `https://opendata.adsb.fi/api/v2/lat/${lat}/lon/${lon}/dist/${nm}`,
   );
-  return { aircraft, source: "airplanes.live" };
+  return { aircraft, source: "adsb.fi" };
 }
 
 export type HexLookup = {
@@ -155,7 +158,7 @@ const HEX_EMPTY: HexLookup = {
   military: false,
 };
 
-// Resolve identity + live position for a single hex from airplanes.live. Used at
+// Resolve identity + live position for a single hex from adsb.fi. Used at
 // capture time to (a) backfill type/registration when the polled candidate lacked
 // them and (b) verify server-side that the claimed aircraft really is airborne
 // where the client says it is. Distinguishes "upstream says not airborne" (found:
@@ -167,7 +170,7 @@ export async function lookupLiveByHex(hex: string | null): Promise<HexLookup> {
 
   try {
     const res = await undiciFetch(
-      `https://api.airplanes.live/v2/hex/${encodeURIComponent(h)}`,
+      `https://opendata.adsb.fi/api/v2/hex/${encodeURIComponent(h)}`,
       { dispatcher },
     );
     if (!res.ok) return { ...HEX_EMPTY, unavailable: true };

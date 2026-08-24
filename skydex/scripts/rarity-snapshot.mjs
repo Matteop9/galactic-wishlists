@@ -9,7 +9,8 @@
 // European skies today" is the scarcity a spotter actually experiences.
 //
 // Primary source is adsb.lol (ODbL — commercial-safe, same readsb JSON shape
-// as airplanes.live, which falls back). Zero FR24 credits.
+// as adsb.fi, which falls back; airplanes.live dropped 2026-08-14 when its API
+// went 403-only for unregistered consumers). Zero FR24 credits.
 //
 // Resumable: state persists to scripts/.rarity-state.json after every round;
 // Ctrl+C / crash / reboot and re-run `node scripts/rarity-snapshot.mjs` to
@@ -40,7 +41,7 @@ const RADIUS_NM = 250;
 
 const SOURCES = [
   (lat, lon) => `https://api.adsb.lol/v2/point/${lat}/${lon}/${RADIUS_NM}`,
-  (lat, lon) => `https://api.airplanes.live/v2/point/${lat}/${lon}/${RADIUS_NM}`,
+  (lat, lon) => `https://opendata.adsb.fi/api/v2/lat/${lat}/lon/${lon}/dist/${RADIUS_NM}`,
 ];
 
 function loadState() {
@@ -74,7 +75,9 @@ async function fetchPoint(lat, lon) {
       const res = await fetch(mk(lat, lon), { signal: AbortSignal.timeout(20_000) });
       if (!res.ok) continue;
       const json = await res.json();
+      // adsb.lol keys the array `ac`; adsb.fi's point endpoint keys it `aircraft`
       if (Array.isArray(json.ac)) return json.ac;
+      if (Array.isArray(json.aircraft)) return json.aircraft;
     } catch {
       /* try next source */
     }

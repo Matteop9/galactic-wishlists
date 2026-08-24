@@ -93,7 +93,7 @@ export async function GET(request: Request) {
     }
     return NextResponse.json({
       count: candidates.length,
-      source: "airplanes.live",
+      source: "adsb.fi",
       fetchedAt: Date.now(),
       candidates,
     });

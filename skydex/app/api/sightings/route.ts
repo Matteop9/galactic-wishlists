@@ -271,7 +271,7 @@ export async function POST(request: Request) {
   );
 
   // Friendly type name comes from our own license-clean ICAO→name map (lib/aircraftTypes),
-  // NOT the live feed's `desc` (airplanes.live's free tier is non-commercial). Unknown
+  // NOT the live feed's `desc` (adsb.fi's open data leans non-commercial). Unknown
   // codes fall back to the raw ICAO code until curated.
   const typeName = aircraftType ? aircraftTypeDisplay(aircraftType) ?? aircraftType : null;
 
