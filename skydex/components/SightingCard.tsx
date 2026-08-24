@@ -2,6 +2,7 @@ import Link from "next/link";
 import { airlineFromCallsign } from "@/lib/airlines";
 import Avatar from "@/components/Avatar";
 import AirportCode from "@/components/AirportCode";
+import FlyerStar from "@/components/FlyerStar";
 import { RARITY_COLOR } from "@/lib/rarity";
 import { specialLivery } from "@/lib/specialLiveries";
 
@@ -21,6 +22,7 @@ export type Sighting = {
   handle?: string | null;
   avatar_seed?: string | null;
   is_admin?: boolean | null;
+  frequent_flyer?: boolean | null; // ✦ by the handle (FlyerStar)
   origin?: string | null;
   destination?: string | null;
   flight_no?: string | null;
@@ -86,7 +88,10 @@ export function SightingSpecs({ s, dark = false }: { s: Sighting; dark?: boolean
           className="mb-2.5 flex items-center gap-1.5 hover:underline"
         >
           <Avatar seed={s.avatar_seed ?? s.handle} admin={Boolean(s.is_admin)} size={18} />
-          <span className="font-mono text-xs text-sky">@{s.handle}</span>
+          <span className="font-mono text-xs text-sky">
+            @{s.handle}
+            <FlyerStar show={s.frequent_flyer} />
+          </span>
         </Link>
       ) : (
         <div className="mb-2.5" />
@@ -252,7 +257,10 @@ export default function SightingCard({
               className="mt-1 flex items-center gap-1.5 hover:underline"
             >
               <Avatar seed={s.avatar_seed ?? s.handle} admin={Boolean(s.is_admin)} size={16} />
-              <span className="font-mono text-xs text-sky">@{s.handle}</span>
+              <span className="font-mono text-xs text-sky">
+                @{s.handle}
+                <FlyerStar show={s.frequent_flyer} />
+              </span>
             </Link>
           )}
           <div className="mt-1.5 font-mono text-[11px] text-ink-soft">

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   angularSeparation,
@@ -15,7 +16,9 @@ import { RARITY_RANK, type Rarity } from "@/lib/rarity";
 import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
 import { enqueueCapture, listCaptures, removeCapture, countCaptures } from "@/lib/captureQueue";
+import { announceTicketsChanged, type CaptureTickets, type TicketStatus } from "@/lib/tickets";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
+import { TicketGlyph } from "@/components/TicketChip";
 import TargetOverlay from "@/components/TargetOverlay";
 import { deleteSighting } from "@/app/actions/admin";
 import SpotMap from "@/components/SpotMap";
@@ -109,6 +112,10 @@ export default function SpotPage() {
   const [pendingCount, setPendingCount] = useState(0); // captures waiting to upload
   const flushingRef = useRef(false);
   const [result, setResult] = useState<DiscoveryResult | null>(null);
+  // Ticket economy: quota + balance for the HUD line (the header chip owns the
+  // daily claim; this page just reads). `wall` = the 402 soft paywall notice.
+  const [tickets, setTickets] = useState<TicketStatus | null>(null);
+  const [wall, setWall] = useState(false);
   // What this user has already caught, across the dimensions knowable on the
   // map: type codes, airline ICAO codes (callsign prefixes — the stable newness
   // key, matching the server's discovery), and (normalised) registrations for the
@@ -651,8 +658,10 @@ export default function SpotPage() {
         }
         if (res.ok || res.status === 409) {
           await removeCapture(item.id); // saved (409 = already logged)
-        } else if (res.status === 429 || res.status >= 500) {
-          break; // transient — leave it queued and retry later
+        } else if (res.status === 402 || res.status === 429 || res.status >= 500) {
+          // Transient — leave it queued and retry later. 402 = out of Tickets
+          // today; tomorrow's daily grant can settle it.
+          break;
         } else {
           await removeCapture(item.id); // 400/401/413/415 can never succeed — drop it
         }
@@ -676,6 +685,20 @@ export default function SpotPage() {
     window.addEventListener("online", onOnline);
     return () => window.removeEventListener("online", onOnline);
   }, [flushQueue]);
+
+  // Ticket status for the HUD line (client created inside the effect — the
+  // react-hooks rules dislike a ref-held client feeding effect deps).
+  useEffect(() => {
+    const supabase = createClient();
+    let alive = true;
+    void supabase.rpc("ticket_status").then(({ data }) => {
+      const s = data as TicketStatus | null;
+      if (alive && s?.ok) setTickets(s);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   // Grab the current camera frame as a JPEG blob (centre-crop under digital
   // zoom), or null if the stream isn't ready (e.g. the tab was backgrounded).
@@ -701,6 +724,7 @@ export default function SpotPage() {
     setBusy(true);
     setError(null);
     setNotice(null);
+    setWall(false);
     try {
       const blob = await grabPhotoBlob();
       const metaStr = JSON.stringify({
@@ -745,6 +769,13 @@ export default function SpotPage() {
       if (res.ok) {
         const json = await res.json();
         const s = json.sighting ?? {};
+        const ct = (json.tickets ?? null) as CaptureTickets | null;
+        if (ct) {
+          setTickets((t) =>
+            t ? { ...t, balance: ct.balance, spots_used_today: ct.spotsUsedToday } : t,
+          );
+          announceTicketsChanged(ct.balance); // keep the header chip in step
+        }
         setResult({
           id: s.id,
           photoUrl: json.photoUrl,
@@ -757,6 +788,7 @@ export default function SpotPage() {
           rarity: s.rarity ?? "common",
           discoveries: json.discoveries ?? { type: false, airline: false, origin: false, destination: false },
           specialLivery: json.specialLivery ?? null,
+          tickets: ct,
           // The saved row, card-shaped — powers the standard Lightbox on photo tap.
           sighting: {
             ...s,
@@ -770,6 +802,16 @@ export default function SpotPage() {
 
       if (res.status === 409) {
         setNotice("You've already logged this aircraft just now.");
+        return;
+      }
+      if (res.status === 402) {
+        // Out of free spots AND Tickets (paywall enforced). Bank the catch —
+        // tomorrow's daily grant settles it on the next flush — and show the
+        // earn paths instead of a dead end.
+        if (blob) {
+          setPendingCount(await enqueueCapture(blob, metaStr));
+        }
+        setWall(true);
         return;
       }
       if (res.status === 429 || res.status >= 500) {
@@ -994,8 +1036,39 @@ export default function SpotPage() {
         )}
       </div>
 
+      {tickets && (
+        <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-ink-soft">
+          <span>
+            Spots today{" "}
+            <span className="font-semibold text-ink">
+              {tickets.spots_used_today}/{tickets.free_spots_per_day}
+            </span>
+          </span>
+          <span aria-hidden="true">·</span>
+          <TicketGlyph className="h-3.5 w-3.5 text-brass" />
+          <span className="font-semibold text-ink">{tickets.balance}</span>
+        </p>
+      )}
+
       {error && <p className="mt-3 text-sm text-stamp">{error}</p>}
       {notice && <p className="mt-3 text-sm text-sky">{notice}</p>}
+      {wall && (
+        <div className="mt-3 rounded-lg border border-brass bg-brass-tint p-3 text-sm text-ink">
+          <p className="font-semibold">You&apos;re out of free spots and Tickets for today.</p>
+          <p className="mt-1 text-ink-soft">
+            Earn more by{" "}
+            <Link href="/review" className="font-semibold text-sky-deep underline">
+              reviewing photos
+            </Link>{" "}
+            (+1 each), check{" "}
+            <Link href="/tickets" className="font-semibold text-sky-deep underline">
+              your Tickets
+            </Link>
+            , or get more in the SkyDex app. Fresh spots arrive tomorrow — any banked catch
+            uploads by itself.
+          </p>
+        </div>
+      )}
       {pendingCount > 0 && (
         <p className="mt-2 font-mono text-xs text-ink-soft">
           ⏳ {pendingCount} {pendingCount === 1 ? "catch" : "catches"} waiting to upload — we&apos;ll

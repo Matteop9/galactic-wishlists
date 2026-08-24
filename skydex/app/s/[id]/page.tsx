@@ -14,7 +14,7 @@ async function getSighting(id: string): Promise<Sighting | null> {
   const { data } = await supabase
     .from("shared_sightings")
     .select(
-      "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm",
+      "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, frequent_flyer, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm",
     )
     .eq("id", id)
     .maybeSingle();

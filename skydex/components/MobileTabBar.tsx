@@ -61,7 +61,7 @@ export default function MobileTabBar({ handle }: { handle: string | null }) {
     { key: "/feed", href: "/feed", label: "Feed", also: [] as string[] },
     { key: "/spot", href: "/spot", label: "Spot", also: [] as string[] },
     { key: "/leaderboards", href: "/leaderboards", label: "Boards", also: [] as string[] },
-    { key: "profile", href: profileHref, label: "Profile", also: ["/settings", "/profile", "/review"] },
+    { key: "profile", href: profileHref, label: "Profile", also: ["/settings", "/profile", "/review", "/tickets"] },
   ];
 
   return (

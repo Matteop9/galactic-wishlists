@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ShareButton from "@/components/ShareButton";
 import SightingPhoto from "@/components/SightingPhoto";
+import AdSlot from "@/components/AdSlot";
+import { TicketGlyph } from "@/components/TicketChip";
 import { type Sighting } from "@/components/SightingCard";
 import { useDialog } from "@/components/useDialog";
+import { type CaptureTickets } from "@/lib/tickets";
 
 export type DiscoveryResult = {
   id: string;
@@ -20,6 +23,7 @@ export type DiscoveryResult = {
   discoveries: { type: boolean; airline: boolean; origin: boolean; destination: boolean };
   specialLivery: string | null; // livery name when this airframe is a known special livery
   sighting: Sighting; // the saved row — feeds the standard Lightbox on photo tap
+  tickets?: CaptureTickets | null; // spend/quota info from /api/sightings (null pre-economy)
 };
 
 type Popularity = {
@@ -166,6 +170,20 @@ export default function DiscoveryMoment({
             {pop.pct}% of spotters have this type
           </p>
         )}
+
+        {result.tickets && (
+          <p className="mt-2 flex items-center justify-center gap-1.5 text-center font-mono text-xs text-ink-faint">
+            <TicketGlyph className="h-3.5 w-3.5 text-brass" />
+            {result.tickets.spentTicket
+              ? `1 Ticket used · ${result.tickets.balance} left`
+              : result.tickets.spotsUsedToday <= result.tickets.freeSpotsPerDay
+                ? `Free spot ${result.tickets.spotsUsedToday}/${result.tickets.freeSpotsPerDay} today`
+                : `Spot ${result.tickets.spotsUsedToday} today`}
+          </p>
+        )}
+
+        {/* Phase-5 interstitial point — renders nothing while ads are dark / for Frequent Flyers */}
+        <AdSlot placement="post-capture" frequentFlyer={result.tickets?.frequentFlyer} />
 
         <div className="mt-5 flex items-center justify-center gap-3">
           <ShareButton id={result.id} className="sd-btn sd-btn--log !px-4 !py-2 !text-sm" />

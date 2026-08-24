@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getViewer } from "@/lib/auth";
 import UserMenu from "@/components/UserMenu";
+import TicketChip from "@/components/TicketChip";
 
 export default async function TopNav() {
   const { user, handle, avatarSeed, isAdmin } = await getViewer();
@@ -19,6 +20,8 @@ export default async function TopNav() {
           {user ? (
             <>
               {/* primary nav now lives in the fixed bottom tab bar */}
+              {/* mounting the chip is what claims the daily Tickets (grant-on-read) */}
+              <TicketChip />
               <UserMenu handle={handle} avatarSeed={avatarSeed} isAdmin={isAdmin} />
             </>
           ) : (

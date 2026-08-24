@@ -8,13 +8,20 @@ export async function GET() {
   } = await supabase.auth.getUser();
   if (!user) return new Response("Not signed in", { status: 401 });
 
-  const [{ data: profile }, { data: sightings }, { data: comments }, { data: reactions }] =
-    await Promise.all([
-      supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
-      supabase.from("sightings").select("*").eq("user_id", user.id),
-      supabase.from("comments").select("*").eq("user_id", user.id),
-      supabase.from("reactions").select("*").eq("user_id", user.id),
-    ]);
+  const [
+    { data: profile },
+    { data: sightings },
+    { data: comments },
+    { data: reactions },
+    { data: ticketLedger },
+  ] = await Promise.all([
+    supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+    supabase.from("sightings").select("*").eq("user_id", user.id),
+    supabase.from("comments").select("*").eq("user_id", user.id),
+    supabase.from("reactions").select("*").eq("user_id", user.id),
+    // RLS already scopes this to the caller's own rows.
+    supabase.from("ticket_ledger").select("*").order("created_at", { ascending: true }),
+  ]);
 
   const payload = {
     exported_at: new Date().toISOString(),
@@ -23,6 +30,7 @@ export async function GET() {
     sightings: sightings ?? [],
     comments: comments ?? [],
     reactions: reactions ?? [],
+    ticket_ledger: ticketLedger ?? [],
   };
 
   return new Response(JSON.stringify(payload, null, 2), {

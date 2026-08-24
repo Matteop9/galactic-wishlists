@@ -18,6 +18,12 @@ import {
   angularSeparation,
   projectForward,
 } from "@/lib/geo";
+import {
+  ENFORCE_PAYWALL,
+  ABUSE_DAILY_CAP,
+  type TicketStatus,
+  type CaptureTickets,
+} from "@/lib/tickets";
 
 // ---- Abuse / verification tuning ----
 const RATE_LIMIT_PER_MINUTE = 5;
@@ -202,6 +208,33 @@ export async function POST(request: Request) {
         { status: 415 },
       );
     }
+  }
+
+  // ---- Tickets gate (V4 Phase 3) ----
+  // One cheap RPC round trip, placed before the live-feed + paid FR24 lookups.
+  // The abuse ceiling applies ALWAYS (unverified spam burns FR24 credits too);
+  // the paywall only when ENFORCE_PAYWALL is on. A failed status read skips the
+  // gate (fail-open — capture is the core loop, same philosophy as verification).
+  let tickets: TicketStatus | null = null;
+  {
+    const { data: ts } = await supabase.rpc("ticket_status");
+    if (ts && (ts as TicketStatus).ok) tickets = ts as TicketStatus;
+  }
+  if (tickets && tickets.captures_today >= ABUSE_DAILY_CAP) {
+    return NextResponse.json(
+      { error: "Daily capture limit reached — back tomorrow." },
+      { status: 429 },
+    );
+  }
+  const overFreeSpots =
+    tickets != null && tickets.spots_used_today >= tickets.free_spots_per_day;
+  if (ENFORCE_PAYWALL && tickets && overFreeSpots && tickets.balance < 1) {
+    // 402: out of free spots AND out of Tickets. The client keeps offline-queued
+    // captures on a 402 — tomorrow's daily grant can settle them.
+    return NextResponse.json(
+      { error: "You're out of free spots for today.", code: "out_of_tickets", tickets },
+      { status: 402 },
+    );
   }
 
   // ---- Server-side verification against the live feed ----
@@ -439,6 +472,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // ---- Ticket spend (only when enforced) ----
+  // Beyond the free daily spots, a VERIFIED capture costs one Ticket. Never charged
+  // while the flag is off, never on an unverified capture, and idempotent per
+  // sighting (offline retries can't double-charge). If the spend loses a race
+  // (balance drained between pre-check and here), the sighting stands — never
+  // unwind a real catch over accounting.
+  let spentTicket = false;
+  if (ENFORCE_PAYWALL && verified && tickets && overFreeSpots) {
+    const { data: spendRes } = await supabase.rpc("spend_ticket", { p_sighting: data.id });
+    const spend = spendRes as { ok?: boolean; balance?: number; already?: boolean } | null;
+    if (spend?.ok && !spend.already) {
+      spentTicket = true;
+    }
+    if (spend?.ok && typeof spend.balance === "number") {
+      tickets = { ...tickets, balance: spend.balance };
+    } else if (!spend?.ok) {
+      console.error("spend_ticket failed for sighting", data.id, spendRes);
+    }
+  }
+  const captureTickets: CaptureTickets | null = tickets
+    ? {
+        balance: tickets.balance,
+        spentTicket,
+        // the status snapshot predates this insert — count the capture itself
+        spotsUsedToday: tickets.spots_used_today + (verified ? 1 : 0),
+        freeSpotsPerDay: tickets.free_spots_per_day,
+        frequentFlyer: tickets.frequent_flyer,
+      }
+    : null;
+
   const photoUrl = photoPath
     ? supabase.storage.from("sightings").getPublicUrl(photoPath).data.publicUrl
     : null;
@@ -453,5 +516,6 @@ export async function POST(request: Request) {
     typeName,
     specialLivery: liv?.livery ?? null,
     wetLease,
+    tickets: captureTickets,
   });
 }

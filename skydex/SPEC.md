@@ -38,10 +38,10 @@ Derived from [`research/skycards-community.md`](research/skycards-community.md).
 
 ## Hard product rules (non-negotiable, learned from SkyCards' mistakes)
 - **Never reset or devalue an earned collection.** No seasons that lock old cards. **[R3 #2: the Season-1 reset revolt]**
-- **Progression is earned by spotting, never bought.** **[R4]**
-- **Never raise the cost of something players already had.** **[R3 #1: cost inflation]**
+- **Progression is earned by spotting, never bought.** Tickets (V4) respect this: rarity, discoveries, and the collection can't be purchased — Tickets only buy *extra capture attempts* past a generous 20 free verified spots/day, and grants/earn loops keep the free path wide open. **[R4]**
+- **Never raise the cost of something players already had.** Applied to V4: paywall enforcement ships OFF and only turns on announced, at native launch; everyone who signed up in 2026 keeps Frequent Flyer free forever. **[R3 #1: cost inflation]**
 - **Keep it simple** — resist feature overload; the relaxed collecting core is the product. **[R3 #3: feature overload]**
-- **No ads.** Monetisation (later) = one-off Pro unlock gating exports/high-res/history, not progress. **[R4; R3 caveat: ads unconfirmed, cost-creep is the real grievance]**
+- **No banner ads, and never anything on the camera.** *(Updated for V4, 2026-08-24 — was "No ads".)* Free users get rewarded ("watch → +1 Ticket") and occasional post-capture interstitial ads from native launch; Frequent Flyer (£4.99 once, free for all 2026 signups) removes ads entirely. Monetisation = Tickets freemium (20 free verified spots/day, then Tickets: daily grants + review-to-earn + IAP packs) + the Frequent Flyer one-off. **[R4; R3 caveat: ads unconfirmed, cost-creep is the real grievance]**
 - **Design for low-density areas too** (high-altitude overflights count; events; book goals). **[R3 #4: geographic unfairness]**
 
 ---

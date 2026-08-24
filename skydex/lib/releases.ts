@@ -12,6 +12,15 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.4.0",
+    date: "2026-08-24",
+    changes: [
+      "🎟 Tickets have landed! Every spotter starts with a 150-Ticket welcome bonus, tops up daily just by opening the app, and earns +1 for every photo reviewed. Your balance lives next to your avatar — tap it for the full Tickets screen.",
+      "✦ Frequent Flyer: everyone who joins SkyDex during 2026 gets it included free, forever — double daily Tickets, a bigger stockpile, a ✦ by your name everywhere, and never an ad. After 2026 it's a one-off £4.99 in the app.",
+      "Spotting stays free: your first 20 verified spots a day are free, and on the web nothing is charged beyond that either — Tickets come into play when the SkyDex mobile app launches.",
+    ],
+  },
+  {
     version: "0.3.22",
     date: "2026-08-24",
     changes: [

@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Routes that require an authenticated user. `/feed` is intentionally public.
-const PROTECTED = ["/spot", "/scrapbook", "/books", "/liveries", "/profile", "/settings"];
+const PROTECTED = ["/spot", "/scrapbook", "/books", "/liveries", "/profile", "/settings", "/tickets"];
 // Routes that additionally require a chosen username before use.
 const NEEDS_HANDLE = ["/spot", "/scrapbook", "/books", "/liveries"];
 

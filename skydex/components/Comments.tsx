@@ -6,13 +6,19 @@ import { createClient } from "@/lib/supabase/client";
 import { addComment } from "@/app/actions/comments";
 import ReportButton from "@/components/ReportButton";
 import Avatar from "@/components/Avatar";
+import FlyerStar from "@/components/FlyerStar";
 
 type Comment = {
   id: string;
   body: string;
   created_at: string;
   user_id: string;
-  profiles: { handle: string | null; avatar_seed: string | null; is_admin: boolean | null } | null;
+  profiles: {
+    handle: string | null;
+    avatar_seed: string | null;
+    is_admin: boolean | null;
+    frequent_flyer: boolean | null;
+  } | null;
 };
 
 export default function Comments({
@@ -37,7 +43,7 @@ export default function Comments({
   async function load() {
     const { data } = await supabase
       .from("comments")
-      .select("id, body, created_at, user_id, profiles(handle, avatar_seed, is_admin)")
+      .select("id, body, created_at, user_id, profiles(handle, avatar_seed, is_admin, frequent_flyer)")
       .eq("sighting_id", sightingId)
       .order("created_at", { ascending: true });
     const list = (data ?? []) as unknown as Comment[];
@@ -113,7 +119,10 @@ export default function Comments({
                       admin={Boolean(c.profiles.is_admin)}
                       size={20}
                     />
-                    <span className="font-mono text-xs text-sky">@{c.profiles.handle}</span>
+                    <span className="font-mono text-xs text-sky">
+                      @{c.profiles.handle}
+                      <FlyerStar show={c.profiles.frequent_flyer} />
+                    </span>
                   </Link>
                 ) : (
                   <span className="flex shrink-0 items-center gap-2">

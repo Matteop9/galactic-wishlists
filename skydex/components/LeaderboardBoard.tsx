@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
+import FlyerStar from "@/components/FlyerStar";
 
 type Row = {
   user_id: string;
   handle: string | null;
   avatar_seed: string | null;
   is_admin: boolean | null;
+  frequent_flyer: boolean | null;
   value: number;
   rank: number;
 };
@@ -112,6 +114,7 @@ export default function LeaderboardBoard({ currentUserId }: { currentUserId: str
                       <Avatar seed={r.avatar_seed ?? r.handle} admin={Boolean(r.is_admin)} size={26} />
                       <span className="truncate font-mono text-sm text-ink">
                         @{r.handle}
+                        <FlyerStar show={r.frequent_flyer} />
                         {me && <span className="ml-1 text-sky">· you</span>}
                       </span>
                     </Link>

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { announceTicketsChanged } from "@/lib/tickets";
+import { TicketGlyph } from "@/components/TicketChip";
 
 // Community photo review: random anonymous photos from other spotters, one
 // question — can you actually see an aircraft? All the trust rules live in the
@@ -26,6 +28,11 @@ export default function ReviewQueue() {
   );
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(0);
+  // Review-to-earn: the vote RPC reports Tickets earned today + the cap (10, or
+  // 20 for Frequent Flyers). justEarned drives the little "+1 Ticket" flash.
+  const [earn, setEarn] = useState<{ today: number; cap: number; justEarned: boolean } | null>(
+    null,
+  );
 
   const loadNext = useCallback(async () => {
     const supabase = createClient();
@@ -76,10 +83,24 @@ export default function ReviewQueue() {
         p_sighting: photo.sighting_id,
         p_can_see: canSee,
       });
-      const res = (data ?? {}) as { ok?: boolean; error?: string };
+      const res = (data ?? {}) as {
+        ok?: boolean;
+        error?: string;
+        earned?: boolean;
+        tickets_today?: number;
+        review_cap?: number;
+      };
       if (error || res.error) {
         setState("error");
         return;
+      }
+      if (typeof res.tickets_today === "number" && typeof res.review_cap === "number") {
+        setEarn({
+          today: res.tickets_today,
+          cap: res.review_cap,
+          justEarned: Boolean(res.earned),
+        });
+        if (res.earned) announceTicketsChanged(); // header chip re-reads its balance
       }
       setDone((n) => n + 1);
       await loadNext();
@@ -164,9 +185,17 @@ export default function ReviewQueue() {
         </button>
       </div>
 
+      {earn?.justEarned && (
+        <p className="mt-4 flex items-center justify-center gap-1.5 font-mono text-xs font-semibold text-sky-deep">
+          <TicketGlyph className="h-3.5 w-3.5 text-brass" />
+          +1 Ticket earned
+        </p>
+      )}
+
       <p className="mt-4 text-center font-mono text-[11px] text-ink-faint">
         Reviewed this session: {done}
         {elig && ` · today: ${elig.reviewed_today + done}/${elig.daily_limit}`}
+        {earn && ` · Tickets earned today: ${earn.today}/${earn.cap}`}
       </p>
     </div>
   );

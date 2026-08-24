@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
+import AdSlot from "@/components/AdSlot";
 import SectionShell from "@/components/SectionShell";
 import SightingBrowser from "@/components/SightingBrowser";
 import { createClient } from "@/lib/supabase/server";
@@ -10,7 +11,7 @@ import { type ReactionState } from "@/lib/reactions";
 export const dynamic = "force-dynamic";
 
 const COLS =
-  "id, created_at, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm";
+  "id, created_at, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, frequent_flyer, flight_no, painted_as, operating_as, eta, gspeed_kt, vspeed_fpm";
 
 // Popular window: sightings from the last 30 days, so old winners age out.
 // (Module-level helper — the page is force-dynamic, so this runs per request.)
@@ -35,6 +36,7 @@ type FeedRow = {
   destination: string | null;
   avatar_seed: string | null;
   is_admin: boolean | null;
+  frequent_flyer: boolean | null;
   flight_no: string | null;
   painted_as: string | null;
   operating_as: string | null;
@@ -155,6 +157,11 @@ export default async function FeedPage({
           </a>
         </p>
       )}
+
+      {/* Phase-5 native ad point — dark today; when live it interleaves a slot
+          roughly every 8 rows inside the browser instead of sitting up here.
+          Frequent Flyers (all 2026 signups) never see it either way. */}
+      <AdSlot placement="feed" />
 
       {sightings.length === 0 ? (
         <p className="text-sm text-ink-faint">

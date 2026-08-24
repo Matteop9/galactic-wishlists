@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import FlyerStar from "@/components/FlyerStar";
 import ProfileSightings from "@/components/ProfileSightings";
 import SightingPhoto from "@/components/SightingPhoto";
 import { createClient } from "@/lib/supabase/server";
@@ -86,7 +87,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, handle, home_airport, is_admin, avatar_seed, created_at, featured_sighting_ids")
+    .select("id, handle, home_airport, is_admin, frequent_flyer, avatar_seed, created_at, featured_sighting_ids")
     .eq("handle", handle)
     .maybeSingle();
   if (!profile) notFound();
@@ -216,6 +217,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
         <div className="min-w-0 flex-1 pb-1">
           <h1 className="truncate font-display text-3xl font-bold leading-none tracking-tight text-ink">
             @{profile.handle}
+            <FlyerStar show={profile.frequent_flyer} />
           </h1>
           <p className="mt-1.5 font-mono text-[11px] uppercase tracking-wide text-ink-soft">
             {profile.home_airport ? `${profile.home_airport} · ` : ""}SINCE {since}

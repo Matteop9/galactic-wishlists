@@ -5,7 +5,7 @@ import type { Sighting } from "@/components/SightingCard";
 export const PROFILE_PAGE_SIZE = 24;
 
 export const SIGHTING_COLS =
-  "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, user_id";
+  "id, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, photo_path, handle, origin, destination, avatar_seed, is_admin, frequent_flyer, user_id";
 
 export type SightingRow = {
   id: string;
@@ -23,6 +23,7 @@ export type SightingRow = {
   destination: string | null;
   avatar_seed: string | null;
   is_admin: boolean | null;
+  frequent_flyer: boolean | null;
 };
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
