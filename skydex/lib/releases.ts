@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.19",
+    date: "2026-08-24",
+    changes: [
+      "Behind-the-scenes security and reliability hardening — nothing changes in how the app looks or works.",
+    ],
+  },
+  {
     version: "0.3.18",
     date: "2026-08-24",
     changes: [

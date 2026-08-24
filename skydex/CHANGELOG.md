@@ -2,6 +2,22 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.19 — 2026-08-24
+
+Security hardening (part of the V4 "ready for real users" gate). No user-visible behaviour change; closes the highest-risk items from the 2026-08-24 review.
+
+### Fixed — CRITICAL: FR24 credit-burn via rate-limit bypass
+- **`app/api/sightings/route.ts`**: photo size + magic-byte validation now runs BEFORE the paid FR24 lookups (was after). The per-minute limiter counts inserted rows, so a request that failed photo validation created no row and wasn't throttled — a junk/oversized "photo" plus a registration could spam ~16-credit FR24 lookups for free (drainable in minutes). Validating up front makes that path cost 0 credits; the storage upload still happens last (failed-insert cleanup preserved). Storage errors no longer echo the raw provider message.
+
+### Fixed — HIGH: verification could fail OPEN on a fabricated hex
+- **`app/api/sightings/route.ts`**: `icao24` must now be a real 24-bit ICAO address (`^[0-9a-fA-F]{6}$`). The old `^[0-9a-fA-F~]{3,6}$` admitted `~`-prefixed / short non-ICAO values; a fabricated hex that upstream 4xx'd hit the "upstream unavailable → verified" branch and could mint a VERIFIED sighting of a non-existent plane. A malformed hex is now `null`, which skips the verification block entirely (stays unverified).
+
+### Fixed — HIGH: Origin header trusted for the magic-link redirect
+- **`app/login/actions.ts`**: the sign-in email link is built from a canonical `NEXT_PUBLIC_SITE_URL` (fallback `https://skydex-two.vercel.app`), not the request `Origin` header — a POSTed `Origin: evil.tld` could otherwise mint a magic link pointing at an attacker's host. Removed the now-unused `next/headers` import.
+
+### Fixed — HIGH: local Claude settings could leak the FR24 token
+- **`.gitignore`**: ignore `.claude/settings.local.json` (it embeds the FR24 bearer token in permission-allowlist strings); it was only kept out of the public repo by a machine-global ignore. ⚠️ The token should still be rotated in the FR24 portal.
+
 ## v0.3.18 — 2026-08-24
 
 Close-range / dodgy-signal capture reliability (part 1 of the spotting fix). Field report: "the plane is on my screen but it says the direction is well off" + trouble "picking up planes when you're close or the signal is dodgy." Root causes are all client-side — all 623 sightings in the last 45 days are `verified` with zero `verify_fail_reason`, i.e. failures happen *before* the server ever sees a capture: capture was hard-gated on a fragile compass cone, pitch used a portrait-only formula, and any poll dropout blanked the list + dropped the lock. Offline queue (D), newness reconciliation (E) and fuller detection tuning follow in later releases.

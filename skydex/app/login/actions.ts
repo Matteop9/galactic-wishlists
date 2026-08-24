@@ -1,7 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+
+// Canonical site origin for auth links — NEVER the request Origin header (a
+// POSTed `Origin: evil.tld` would otherwise mint a magic link to the attacker's
+// host). Same fallback as app/layout.tsx; set NEXT_PUBLIC_SITE_URL for a custom domain.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://skydex-two.vercel.app";
 
 export type LoginState = { error?: string; sent?: boolean };
 
@@ -20,8 +24,7 @@ export async function signInWithEmail(
   }
 
   const supabase = await createClient();
-  const origin = (await headers()).get("origin") ?? "";
-  const redirectTo = `${origin}/auth/callback?next=${encodeURIComponent(next)}`;
+  const redirectTo = `${SITE_URL}/auth/callback?next=${encodeURIComponent(next)}`;
 
   const { error } = await supabase.auth.signInWithOtp({
     email,

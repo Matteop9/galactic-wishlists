@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Claude Code LOCAL settings — can embed API tokens in permission-allowlist strings
+.claude/settings.local.json
+
 # acquisition strategy — keep out of git history
 SkyDex_Business_Proposal.docx
 *.zip

@@ -113,7 +113,12 @@ export async function POST(request: Request) {
   const obsAltM = num(meta.obsAltM, -500, 9_000) ?? 0; // observer GPS altitude (MSL)
   const bearing = num(meta.bearing, 0, 360);
   const elevation = num(meta.elevation, -90, 90);
-  const icao24 = str(meta.icao24, 6, /^[0-9a-fA-F~]{3,6}$/)?.toLowerCase() ?? null;
+  // Must be a real 24-bit ICAO address (exactly 6 hex). The old pattern also
+  // admitted `~`-prefixed / short values, which are non-ICAO anonymous targets:
+  // a fabricated hex that upstream 4xx'd would hit the "unavailable → verified"
+  // branch and mint a VERIFIED sighting of a plane that doesn't exist. A
+  // malformed hex now becomes null → the verification block is skipped entirely.
+  const icao24 = str(meta.icao24, 6, /^[0-9a-fA-F]{6}$/)?.toLowerCase() ?? null;
   const callsign = str(meta.callsign, 12);
   let registration = str(meta.registration, 12);
   let aircraftType = str(meta.aircraftType, 4, /^[A-Za-z0-9]{2,4}$/)?.toUpperCase() ?? null;
@@ -170,6 +175,29 @@ export async function POST(request: Request) {
     }
   }
 
+  // ---- Validate the photo BEFORE any upstream spend ----
+  // Magic-byte + size check up front. The rate limit above counts inserted ROWS,
+  // so a request that dies later (junk or oversized "photo") creates no row and
+  // is NOT throttled — without this, a 5-byte "photo" plus a registration could
+  // spam paid FR24 lookups for free. The actual upload still happens last, next
+  // to the insert, so a failed insert can clean up after itself.
+  const hasPhoto = photo instanceof File && photo.size > 0;
+  let photoKind: { ext: string; mime: string } | null = null;
+  if (hasPhoto) {
+    const file = photo as File;
+    if (file.size > MAX_PHOTO_BYTES) {
+      return NextResponse.json({ error: "Photo too large (8 MB max)." }, { status: 413 });
+    }
+    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    photoKind = sniffImageType(head);
+    if (!photoKind) {
+      return NextResponse.json(
+        { error: "Photo must be a JPEG, PNG, or WebP image." },
+        { status: 415 },
+      );
+    }
+  }
+
   // ---- Server-side verification against the live feed ----
   // Re-query the claimed hex: it must be airborne, near the observer, and (when
   // the client supplied pointing data) roughly where the camera was pointing.
@@ -181,7 +209,6 @@ export async function POST(request: Request) {
     registration = live.registration ?? registration;
   }
 
-  const hasPhoto = photo instanceof File && photo.size > 0;
   let verified = false;
   let verifyFailReason: string | null = null;
   if (hasPhoto && icao24 && lat != null && lon != null && live) {
@@ -333,29 +360,20 @@ export async function POST(request: Request) {
     if (typeRow?.rarity) rarity = typeRow.rarity;
   }
 
-  // ---- Photo upload — validated, and last before the insert so a failed
-  // insert can clean up after itself instead of leaking storage. ----
+  // ---- Photo upload — already validated up front (size + magic bytes); the
+  // upload itself is last, next to the insert, so a failed insert can clean up
+  // instead of leaking storage. ----
   let photoPath: string | null = null;
-  if (hasPhoto) {
+  if (hasPhoto && photoKind) {
     const file = photo as File;
-    if (file.size > MAX_PHOTO_BYTES) {
-      return NextResponse.json({ error: "Photo too large (8 MB max)." }, { status: 413 });
-    }
-    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
-    const kind = sniffImageType(head);
-    if (!kind) {
-      return NextResponse.json(
-        { error: "Photo must be a JPEG, PNG, or WebP image." },
-        { status: 415 },
-      );
-    }
-    const path = `${user.id}/${crypto.randomUUID()}.${kind.ext}`;
+    const path = `${user.id}/${crypto.randomUUID()}.${photoKind.ext}`;
     const { error: upErr } = await supabase.storage
       .from("sightings")
-      .upload(path, file, { contentType: kind.mime, upsert: false });
+      .upload(path, file, { contentType: photoKind.mime, upsert: false });
     if (upErr) {
+      // Don't echo the raw storage error to the client.
       return NextResponse.json(
-        { error: `Photo upload failed: ${upErr.message}` },
+        { error: "Photo upload failed — please try again." },
         { status: 500 },
       );
     }
