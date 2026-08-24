@@ -5,7 +5,9 @@ import { bearingDeg, elevationDeg, haversineMeters } from "@/lib/geo";
 export const runtime = "nodejs";
 
 // --- Detection cone tuning (fine-tune these) ---
-const MIN_ELEVATION = 2; // degrees above horizon to count at all
+const MIN_ELEVATION = 0; // at/above the horizon counts (was 2 — dropped low
+// approach/fence traffic); the elevation×range scaling still keeps distant
+// low-angle cruisers out, so only genuinely close low planes are added.
 const MIN_RANGE_KM = 3; // always allow very close aircraft
 const ELEV_RANGE_FACTOR = 3.5; // higher elevation → reaches further (km per degree)
 // Max ground distance an aircraft can be picked up at, scaled by its elevation.

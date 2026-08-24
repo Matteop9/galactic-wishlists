@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   angularSeparation,
   bearingDeg,
+  cameraElevation,
   elevationDeg,
   haversineMeters,
   projectForward,
@@ -57,6 +58,17 @@ type LiveCandidate = TimedCandidate & {
 const CONE_TOL = 25;
 // How often the tracked (locked) plane is re-polled, vs 6 s for the area sweep.
 const TRACKED_POLL_MS = 2000;
+// A plane this close is capturable regardless of the compass cone — you can
+// plainly see it and the compass is the unreliable part (mirrors the server's
+// VERIFY_CLOSE_RANGE_M = 2000). Also the fallback target when nothing is locked
+// or in-cone, so a close plane you can see is never un-capturable.
+const CLOSE_CAPTURE_KM = 2;
+// Keep showing the last good candidates through a brief feed dropout instead of
+// blanking to "no planes"; only clear once the sky is genuinely empty this long.
+const FEED_STALE_MS = 25_000;
+// Untrack a locked plane only after it's been missing from BOTH the sweep and
+// the fast-poll for this long — a single empty poll must not drop the lock.
+const LOCK_GRACE_MS = 30_000;
 
 export default function SpotPage() {
   const [phase, setPhase] = useState<"idle" | "active">("idle");
@@ -71,6 +83,10 @@ export default function SpotPage() {
   const [mapAircraft, setMapAircraft] = useState<Candidate[]>([]);
   const [view, setView] = useState<"camera" | "map">("camera");
   const [lockedId, setLockedId] = useState<string | null>(null);
+  // Live-feed health, so a dropout shows "reconnecting…" instead of "no planes".
+  const [feedError, setFeedError] = useState(false);
+  const lastGoodAtRef = useRef(0); // last sweep that returned ≥1 candidate
+  const lockSeenAtRef = useRef(0); // last time the locked plane was seen live
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<DiscoveryResult | null>(null);
   // What this user has already caught, across the dimensions knowable on the
@@ -112,8 +128,18 @@ export default function SpotPage() {
           ? (360 - e.alpha) % 360
           : null;
     if (h != null) setHeading(Math.round(h));
-    // Rear-camera elevation ≈ device beta − 90 (held upright → ~0 at horizon).
-    if (e.beta != null) setPitch(Math.round(e.beta - 90));
+    // Rear-camera elevation from the FULL orientation, not `beta − 90`: the old
+    // form was only correct held upright in portrait and went 90–170° wrong held
+    // sideways or aimed overhead. cameraElevation is screen-orientation-
+    // independent and stays sane at the zenith; fall back to beta−90 only if
+    // gamma is somehow missing.
+    if (e.beta != null) {
+      setPitch(
+        Math.round(
+          e.gamma != null ? cameraElevation(e.beta, e.gamma) : e.beta - 90,
+        ),
+      );
+    }
   }, []);
 
   async function start() {
@@ -179,7 +205,11 @@ export default function SpotPage() {
     }
   }
 
-  // Poll live aircraft around the observer.
+  // Poll live aircraft around the observer. On a dropout — a network error OR a
+  // valid-but-empty gap — KEEP the last good candidates and surface
+  // "reconnecting…" instead of blanking the list, and never drop the lock here
+  // (the grace timer below owns that). A single bad poll under a flight path
+  // must not wipe the plane you can plainly see.
   useEffect(() => {
     if (!coords) return;
     let cancelled = false;
@@ -190,24 +220,33 @@ export default function SpotPage() {
             coords!.alt != null ? `&alt=${Math.round(coords!.alt)}` : ""
           }`,
         );
+        if (!res.ok) {
+          if (!cancelled) setFeedError(true); // keep the last candidates
+          return;
+        }
         const json = await res.json();
-        if (!cancelled && Array.isArray(json.candidates)) {
+        if (cancelled || !Array.isArray(json.candidates)) return;
+        const now = Date.now();
+        const raw = json.candidates as Candidate[];
+        if (raw.length > 0) {
           // Anchor each fix at CLIENT receive time minus the feed's own
           // position age — server timestamps would leak clock skew into the
           // dead reckoning, and network latency (~100 ms) is far smaller.
-          const receivedAt = Date.now();
-          const list = (json.candidates as Candidate[]).map((c) => ({
+          const list = raw.map((c) => ({
             ...c,
-            sampleAt: receivedAt - (c.seenPosS ?? 0) * 1000,
+            sampleAt: now - (c.seenPosS ?? 0) * 1000,
           }));
           setCandidates(list);
-          // Drop the lock when the tracked plane leaves range.
-          setLockedId((id) =>
-            id && !list.some((c) => c.icao24 === id) ? null : id,
-          );
+          lastGoodAtRef.current = now;
+          setFeedError(false);
+        } else if (now - lastGoodAtRef.current >= FEED_STALE_MS) {
+          setCandidates([]); // sky genuinely quiet for a while
+          setFeedError(false);
+        } else {
+          setFeedError(true); // transient empty gap — keep showing the last set
         }
       } catch {
-        /* transient */
+        if (!cancelled) setFeedError(true); // keep candidates; show "reconnecting"
       }
     }
     poll();
@@ -235,10 +274,14 @@ export default function SpotPage() {
         const fresh = Array.isArray(json.candidates)
           ? (json.candidates[0] as Candidate | undefined)
           : undefined;
-        if (cancelled || !fresh) return; // missing → the sweep decides the lock's fate
+        if (cancelled || !fresh) return; // missing → the grace timer drops the lock
+        lockSeenAtRef.current = Date.now();
         const sampleAt = Date.now() - (fresh.seenPosS ?? 0) * 1000;
+        const timed = { ...fresh, sampleAt };
         setCandidates((prev) =>
-          prev.map((c) => (c.icao24 === fresh.icao24 ? { ...fresh, sampleAt } : c)),
+          prev.some((c) => c.icao24 === fresh.icao24)
+            ? prev.map((c) => (c.icao24 === fresh.icao24 ? timed : c))
+            : [...prev, timed], // re-add a locked plane the sweep momentarily dropped
         );
       } catch {
         /* transient */
@@ -251,14 +294,27 @@ export default function SpotPage() {
     };
   }, [coords, lockedId]);
 
-  // 500 ms dead-reckoning ticker — drives the extrapolation memo below.
-  // (No synchronous first set: until the first tick, nowMs is null and the
-  // memo passes raw fixes through — a half-second of the old behaviour.)
+  // 500 ms ticker: drives the dead-reckoning memo below AND retires a lock that
+  // has gone missing from both the sweep and the fast-poll for LOCK_GRACE_MS.
+  // (No synchronous first set: until the first tick nowMs is null and the memo
+  // passes raw fixes through — a half-second of the old behaviour.)
   useEffect(() => {
     if (phase !== "active") return;
-    const id = setInterval(() => setNowMs(Date.now()), 500);
+    const id = setInterval(() => {
+      const now = Date.now();
+      setNowMs(now);
+      if (lockedId && now - lockSeenAtRef.current > LOCK_GRACE_MS) {
+        setLockedId(null);
+      }
+    }, 500);
     return () => clearInterval(id);
-  }, [phase]);
+  }, [phase, lockedId]);
+
+  // Stamp the lock "just seen" the moment it's set, so the grace timer starts
+  // from now rather than 0 (which would drop it on the very next tick).
+  useEffect(() => {
+    if (lockedId) lockSeenAtRef.current = Date.now();
+  }, [lockedId]);
 
   // Own collection for the map's new-catch colouring.
   // Progressive enhancement: if this fails, markers just stay ink.
@@ -546,8 +602,21 @@ export default function SpotPage() {
               angularSeparation(heading, pitch, b.bearing, b.elevation ?? 0),
           )[0] ?? null
       : null;
-  const target = lockedCandidate ?? autoMatch;
+  // Fallback so a plane you can plainly see is still capturable when the compass
+  // is off and you haven't locked one: the single nearest candidate within close
+  // range. (Locking still overrides it when several sit close together.)
+  const nearestClose =
+    liveCandidates
+      .filter((c) => c.distanceKm <= CLOSE_CAPTURE_KM)
+      .sort((a, b) => a.distanceKm - b.distanceKm)[0] ?? null;
+  const target = lockedCandidate ?? autoMatch ?? nearestClose;
   const targetInSights = target ? inCone(target) : false;
+  // Capture is allowed when we're confidently pointing (in-cone) OR the user
+  // explicitly locked this plane OR it's close enough that the compass cone is
+  // moot. The server still verifies; a wrong aim just lands unverified → review.
+  const targetClose = target != null && target.distanceKm <= CLOSE_CAPTURE_KM;
+  const canCapture =
+    target != null && (targetInSights || target.icao24 === lockedId || targetClose);
   const targetLabel = (c: Candidate) => c.registration || c.callsign || c.icao24;
 
   async function submit(target: Candidate | null) {
@@ -735,6 +804,7 @@ export default function SpotPage() {
             {/* sensor readout */}
             <div className="absolute left-3 top-3 rounded bg-ink/70 px-2 py-1 font-mono text-[11px] text-paper">
               HDG {heading ?? "—"}° · ELV {pitch ?? "—"}° · {candidates.length} in range
+              {feedError ? " · reconnecting…" : ""}
             </div>
 
             {/* zoom overview (unzoomed corner view with the framed region) */}
@@ -757,7 +827,7 @@ export default function SpotPage() {
 
             {lockedCandidate && !targetInSights && (
               <div className="absolute left-1/2 top-12 -translate-x-1/2 rounded bg-sky px-3 py-1 font-display text-sm font-semibold uppercase tracking-wide text-paper">
-                Tracking {targetLabel(lockedCandidate)} — point at it
+                Tracking {targetLabel(lockedCandidate)} — aim to confirm, or capture anyway
               </div>
             )}
             {targetInSights && target && (
@@ -827,16 +897,16 @@ export default function SpotPage() {
       <div className="mt-4 flex flex-wrap gap-3">
         <button
           onClick={() => submit(target)}
-          disabled={!targetInSights || busy}
-          className={`sd-btn ${targetInSights ? "sd-btn--capture" : "sd-btn--disabled"}`}
+          disabled={!canCapture || busy}
+          className={`sd-btn ${canCapture ? "sd-btn--capture" : "sd-btn--disabled"}`}
         >
           {busy
             ? "Saving…"
-            : targetInSights && target
-              ? `Capture ${targetLabel(target)}`
-              : lockedCandidate
-                ? `Point at ${targetLabel(lockedCandidate)}`
-                : "No aircraft in sights"}
+            : !target
+              ? "No aircraft in sights"
+              : targetInSights
+                ? `Capture ${targetLabel(target)}`
+                : `Capture ${targetLabel(target)} — we'll check it`}
         </button>
         {lockedId && (
           <button onClick={() => setLockedId(null)} className="sd-btn sd-btn--log">
@@ -903,7 +973,13 @@ export default function SpotPage() {
         })}
         {candidates.length === 0 && (
           <li className="px-4 py-3 text-sm text-ink-faint">
-            No aircraft overhead right now — try near an airport or flight corridor.
+            {!coords
+              ? "Waiting for your location…"
+              : feedError
+                ? "Reconnecting to live flight data…"
+                : heading == null
+                  ? "Move your phone in a figure-8 to calibrate the compass."
+                  : "No aircraft overhead right now — try near an airport or flight corridor."}
           </li>
         )}
       </ul>

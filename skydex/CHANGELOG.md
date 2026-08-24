@@ -2,6 +2,23 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.18 — 2026-08-24
+
+Close-range / dodgy-signal capture reliability (part 1 of the spotting fix). Field report: "the plane is on my screen but it says the direction is well off" + trouble "picking up planes when you're close or the signal is dodgy." Root causes are all client-side — all 623 sightings in the last 45 days are `verified` with zero `verify_fail_reason`, i.e. failures happen *before* the server ever sees a capture: capture was hard-gated on a fragile compass cone, pitch used a portrait-only formula, and any poll dropout blanked the list + dropped the lock. Offline queue (D), newness reconciliation (E) and fuller detection tuning follow in later releases.
+
+### Changed — capture no longer blocked by the compass cone (fix A)
+- **`app/spot/page.tsx`**: `inCone` stays the *aim assist* (green reticle / auto-match), but the button now enables via a new `canCapture` = in-cone **OR** locked **OR** within `CLOSE_CAPTURE_KM = 2` (mirrors the server's `VERIFY_CLOSE_RANGE_M`). New `nearestClose` fallback target = the single nearest candidate ≤2 km, so a plane you can see is capturable with no lock and a wrong compass. Label softens to "Capture {reg} — we'll check it" out of cone; the server still decides `verified`, and a bad aim lands unverified → community review. Tracking banner reworded.
+
+### Changed — correct camera elevation in any orientation (fix B)
+- **`lib/geo.ts`**: new `cameraElevation(beta, gamma) = asin(−cos β · cos γ)` — the rear camera's true elevation above the horizon, independent of screen orientation and non-degenerate at the zenith.
+- **`app/spot/page.tsx`**: `onOrient` pitch now uses it (falls back to `beta − 90` only if gamma is missing). The old `beta − 90` was correct only held upright in portrait and 90–170° wrong in landscape / overhead — the direct cause of "it's right there but you're way off."
+
+### Changed — signal resilience: never blank, never lie (fix C)
+- **`app/spot/page.tsx`**: the sweep keeps the last good candidates through a network error or a valid-but-empty gap (clears only after `FEED_STALE_MS = 25 s` of genuine quiet); `feedError` surfaces "· reconnecting…" in the HUD. The lock is no longer dropped on one empty sweep — a `LOCK_GRACE_MS = 30 s` timer (fed by the sweep + the `hex=` fast-poll, which now re-adds a locked plane the sweep momentarily dropped) owns retirement. Empty-state copy distinguishes waiting-for-GPS / reconnecting / calibrate-compass / genuinely-empty.
+
+### Changed — low aircraft detection (fix F, partial)
+- **`app/api/flights/route.ts`**: `MIN_ELEVATION` 2 → 0 so low approach/fence traffic isn't filtered out before it can be locked (the elevation×range scaling still keeps distant low-angle cruisers out).
+
 ## v0.3.17 — 2026-08-14
 
 Outage: airplanes.live began returning **403 to all unregistered API consumers** ("Please contact us at contact@airplanes.live…"), taking down the live map, the nearby feed, capture verification and the tracked-plane fast poll (every `/api/flights` call 502'd). Verified the 403 reproduces from multiple egresses — their policy change, not a Vercel IP block. CARTO basemap and all app code were fine.

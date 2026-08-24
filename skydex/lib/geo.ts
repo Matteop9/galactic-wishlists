@@ -75,6 +75,25 @@ export function angularSeparation(
 }
 
 /**
+ * Elevation of the REAR camera's optical axis above the horizon, in degrees
+ * (−90 = straight down, 0 = horizon, +90 = straight up), from the device's
+ * `beta`/`gamma` orientation angles.
+ *
+ * The rear camera looks along the device's −Z axis, whose world-up component is
+ * −cos(beta)·cos(gamma), so elevation = asin(−cos β · cos γ). Two properties the
+ * old `beta − 90` lacked: it is INDEPENDENT of screen orientation (portrait vs
+ * landscape is a rotation about that same Z axis, which never moves where the
+ * camera points), and it neither wraps nor degenerates near the zenith. `beta −
+ * 90` was only correct held upright in portrait and went 90–170° wrong held
+ * sideways or aimed overhead — the "plane is on screen but the direction is well
+ * off" bug.
+ */
+export function cameraElevation(betaDeg: number, gammaDeg: number): number {
+  const up = -Math.cos(toRad(betaDeg)) * Math.cos(toRad(gammaDeg));
+  return toDeg(Math.asin(Math.min(1, Math.max(-1, up))));
+}
+
+/**
  * Project a moving aircraft along its ground track. Flat-earth offset — plenty
  * accurate over the ≤2 min horizons we use it for (dead-reckoning between
  * polls, back-projecting a live sample to the shutter instant). Negative

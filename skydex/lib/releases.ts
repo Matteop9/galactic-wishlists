@@ -12,6 +12,16 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.18",
+    date: "2026-08-24",
+    changes: [
+      "Catching close-up planes is far more forgiving: if a plane is right in front of you — or you've tapped to track it — you can capture it even when the compass won't quite agree. We double-check it on our side.",
+      "Fixed aiming when you hold the phone sideways or point it straight up: the app now reads your camera angle correctly in any orientation, so “the plane's right there but it says you're way off” should be gone.",
+      "A dodgy signal no longer wipes the screen. If the feed skips a beat, your nearby planes (and the one you're tracking) stay put and you'll see “reconnecting…” instead of a false “no planes”.",
+      "Low and approaching aircraft show up sooner.",
+    ],
+  },
+  {
     version: "0.3.17",
     date: "2026-08-14",
     changes: [
