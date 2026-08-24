@@ -12,6 +12,15 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.4.1",
+    date: "2026-08-24",
+    changes: [
+      "The live plane feed now switches between three data networks automatically — if one goes down (like the outage that blanked the map in mid-August), SkyDex fails over in seconds instead of showing an empty sky.",
+      "Verification gets a second opinion: if the first network can't see the plane you captured, SkyDex asks another before ruling, so fewer honest catches land unverified.",
+      "Refreshed the Attributions page to credit every source SkyDex uses today — including Flightradar24, which powers the flight details on your cards.",
+    ],
+  },
+  {
     version: "0.4.0",
     date: "2026-08-24",
     changes: [

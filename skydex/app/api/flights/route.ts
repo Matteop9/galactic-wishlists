@@ -1,8 +1,37 @@
 import { NextResponse } from "next/server";
 import { fetchAircraftNear, lookupLiveByHex } from "@/lib/aircraft";
 import { bearingDeg, elevationDeg, haversineMeters } from "@/lib/geo";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
+
+// Positions age out in seconds; a tiny private max-age only lets a client reuse
+// an identical in-flight response (sweep + map polling the same URL) — the
+// dead-reckoning anchors on seen_pos, so a ≤2 s-old body is as good as fresh.
+const CACHE_HEADERS = { "Cache-Control": "private, max-age=2" };
+
+// Per-user request ceiling. Organic worst case is ~50/min (6 s sweep + 2 s
+// locked fast-poll + the map open at once); the cap exists to stop a scripted
+// account using SkyDex as a free proxy for the upstream feeds from our egress
+// IPs. Counted in-memory per instance (same trade-off as the provider
+// cooldown) — an abuse damper, not an exact global quota.
+const RATE_LIMIT_PER_MIN = 150;
+const rateWindows = new Map<string, { windowStart: number; count: number }>();
+function overRateLimit(userId: string): boolean {
+  const now = Date.now();
+  if (rateWindows.size > 5000) {
+    for (const [id, w] of rateWindows) {
+      if (now - w.windowStart >= 60_000) rateWindows.delete(id);
+    }
+  }
+  const w = rateWindows.get(userId);
+  if (!w || now - w.windowStart >= 60_000) {
+    rateWindows.set(userId, { windowStart: now, count: 1 });
+    return false;
+  }
+  w.count += 1;
+  return w.count > RATE_LIMIT_PER_MIN;
+}
 
 // --- Detection cone tuning (fine-tune these) ---
 const MIN_ELEVATION = 0; // at/above the horizon counts (was 2 — dropped low
@@ -49,8 +78,25 @@ export type Candidate = {
  * that hex directly (cheaper upstream than the area sweep), annotates it with
  * the same geometry, skips the cone filter, and returns it as a one-item
  * `candidates` array so the client merge is uniform.
+ *
+ * Signed-in users only. The sole consumer (/spot) is auth-gated anyway; an open
+ * endpoint was a free scraping proxy for the upstream feeds (2026-08-24 review).
  */
 export async function GET(request: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Sign in to use the live feed" }, { status: 401 });
+  }
+  if (overRateLimit(user.id)) {
+    return NextResponse.json(
+      { error: "Too many lookups — give it a minute" },
+      { status: 429 },
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   // Number(null) is 0, so a missing param would silently pass the finite check
   // and query the live feed at (0,0) — require the params to actually exist.
@@ -93,12 +139,15 @@ export async function GET(request: Request) {
         military: live.military,
       });
     }
-    return NextResponse.json({
-      count: candidates.length,
-      source: "adsb.fi",
-      fetchedAt: Date.now(),
-      candidates,
-    });
+    return NextResponse.json(
+      {
+        count: candidates.length,
+        source: live.source ?? "unavailable",
+        fetchedAt: Date.now(),
+        candidates,
+      },
+      { headers: CACHE_HEADERS },
+    );
   }
 
   let result;
@@ -144,10 +193,13 @@ export async function GET(request: Request) {
     )
     .sort((a, b) => a.distanceKm - b.distanceKm);
 
-  return NextResponse.json({
-    count: candidates.length,
-    source: result.source,
-    fetchedAt: Date.now(),
-    candidates,
-  });
+  return NextResponse.json(
+    {
+      count: candidates.length,
+      source: result.source,
+      fetchedAt: Date.now(),
+      candidates,
+    },
+    { headers: CACHE_HEADERS },
+  );
 }

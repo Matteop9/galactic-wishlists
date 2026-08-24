@@ -17,25 +17,47 @@ export default function AttributionsPage() {
 
         <section>
           <h2 className="font-display text-lg font-semibold text-ink">Live aircraft data</h2>
+          <p className="mt-2">
+            Live positions are transient — shown on the spotting screen, never
+            stored. They come from community ADS-B networks, tried in this order:
+          </p>
           <ul className="mt-2 list-disc pl-5">
+            <li>
+              <a href="https://adsb.lol/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
+                adsb.lol
+              </a>{" "}
+              — primary. Data © adsb.lol contributors, made available under the{" "}
+              <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
+                Open Database License (ODbL)
+              </a>
+              .
+            </li>
             <li>
               <a href="https://adsb.fi/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
                 adsb.fi
               </a>{" "}
-              — community-driven, unfiltered ADS-B &amp; MLAT aircraft tracking.
+              — fallback. Community-driven, unfiltered ADS-B &amp; MLAT aircraft
+              tracking.
+            </li>
+            <li>
+              <a href="https://airplanes.live/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
+                airplanes.live
+              </a>{" "}
+              — fallback. Community-driven ADS-B network.
             </li>
           </ul>
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-ink">Flight routes</h2>
+          <h2 className="font-display text-lg font-semibold text-ink">Flight data on cards</h2>
           <p className="mt-2">
-            Route information (origin, destination and airline) is provided by{" "}
-            <a href="https://www.adsbdb.com/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
-              adsbdb
+            The flight details stamped onto a verified sighting — route, operating
+            airline, flight number and status — are provided by the{" "}
+            <a href="https://fr24api.flightradar24.com/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
+              Flightradar24 API
             </a>
-            . The flight-route data is the work of David Taylor (Edinburgh) and
-            Jim Mason (Glasgow).
+            . Aircraft type names are SkyDex&apos;s own compilation of the public
+            ICAO type designators.
           </p>
         </section>
 
@@ -59,18 +81,6 @@ export default function AttributionsPage() {
         </section>
 
         <section>
-          <h2 className="font-display text-lg font-semibold text-ink">Airline logos</h2>
-          <p className="mt-2">
-            Airline logos shown in the scrapbook are served by the{" "}
-            <a href="https://www.kiwi.com/" target="_blank" rel="noopener noreferrer" className="text-sky underline">
-              Kiwi.com
-            </a>{" "}
-            logo service and remain the trademarks of their respective airlines.
-            They&apos;re used here only to identify each carrier.
-          </p>
-        </section>
-
-        <section>
           <h2 className="font-display text-lg font-semibold text-ink">Reference photos</h2>
           <p className="mt-2">
             Reference photographs of the exact aircraft are sourced from{" "}
@@ -83,8 +93,8 @@ export default function AttributionsPage() {
         </section>
 
         <p className="text-sm text-ink-faint">
-          SkyDex is an early, non-commercial project. If you own data shown here
-          and would like a credit changed or removed, get in touch.
+          If you own data shown here and would like a credit changed or removed,
+          get in touch.
         </p>
       </div>
     </SectionShell>

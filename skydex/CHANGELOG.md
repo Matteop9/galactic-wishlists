@@ -2,6 +2,28 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.4.1 — 2026-08-24
+
+**V4 Phase 2 (commercial licensing + infra) — the code half.** The live feed now rides a commercial-safe failover chain, the last open API endpoint is authed and throttled, and the attributions/licence docs match reality again. The rest of Phase 2 is account actions (custom domain, Vercel Pro, Supabase Pro, analytics toggle, error monitoring).
+
+### Changed — live feed becomes an adsb.lol-primary failover chain
+- **`lib/aircraft.ts`**: single-source adsb.fi → provider chain **adsb.lol (ODbL, commercial-safe) → adsb.fi → airplanes.live**, each a name + two URL builders over the same readsb JSON. A provider that errors goes into a cooldown so polls during an outage fail over instantly instead of re-paying its timeout (per-instance state, like the FR24 airline cache; a repeat of the v0.3.17 single-provider outage now costs seconds, not the app). **Two cooldown tiers:** hard failure (403/5xx/timeout/DNS) = 60 s, **429 = 5 s** — measured 2026-08-24: adsb.lol rate-limits ≈1 req/s per IP with a small burst (sustained overage escalates to a temporary connection-level block), which one spotter's sweep + fast-poll can graze; a 60 s exile per 429 would have pushed most traffic onto the non-commercial fallbacks. The area sweep treats a valid-but-empty answer as real (quiet sky ≠ failover). The **hex lookup falls through on empty/positionless answers** for a second opinion before ruling "not airborne" — coverage gaps differ per network and a false negative marks an honest catch unverified; `unavailable` only when every provider errored. `HexLookup` gains `source` (the provider that supplied the verdict). Chain behaviour verified against the live APIs (happy path on adsb.lol; hard-failover + 429 + all-providers-cooling paths all exercised for real).
+- **`typeDesc` fallback**: adsb.lol serves no `desc`, so the human type name now falls back to our own `lib/aircraftTypes.ts` map (kills the v0.2.2 "bare codes" blocker that kept adsb.lol off primary; the map has been the persisted-name source since v0.2.7).
+- **`app/api/flights/route.ts`** hex mode reports the provider that actually answered (was hardcoded `adsb.fi`). `scripts/rarity-snapshot.mjs` already ran adsb.lol-primary — unchanged.
+
+### Changed — /api/flights hardened (closes a HIGH from the 2026-08-24 review)
+- **Signed-in only**: `getUser()` gate → 401. The sole consumer (`/spot`) is proxy-authed anyway; the open endpoint was a free scraping proxy for the upstream feeds from our egress IPs.
+- **Per-user rate limit** 150/min (organic worst case ≈ 50/min: 6 s sweep + 2 s locked fast-poll + map open together) → 429; in-memory per instance — an abuse damper, not a quota. Success responses get `Cache-Control: private, max-age=2`.
+- Client impact: none — the spot page already treats any non-OK poll as a transient feed error (keeps last candidates, shows "reconnecting…").
+
+### Changed — attributions + licence audit refreshed
+- **`app/attributions/page.tsx`**: live-data section lists the chain (adsb.lol with an explicit ODbL credit, adsb.fi, airplanes.live); **Flightradar24 credited for persisted card data** (was missing entirely); own-compilation type names noted; dead **adsbdb** and **Kiwi.com logo** sections removed; the stale "early, non-commercial project" line dropped.
+- **`research/data-licences.md`**: re-audited — adsb.lol §1 PRIMARY ✅, adsb.fi §2 fallback-only ⚠️, adsbdb §3 marked REMOVED (the 🚩 route-persistence flag was closed by v0.2.6's FR24 switch; the doc still showed it open), new §6 Flightradar24, TL;DR + review date updated.
+
+### Removed
+- **`lib/airlines.ts`**: dead `AIRLINE_IATA` map + `airlineIata`/`airlineLogoUrl` (Kiwi.com logo CDN helpers) — nothing has rendered them for several versions, and hotlinking a third-party logo CDN was a flagged licensing risk for a commercial product.
+- Comment/docs sync: `README.md` stack line, `lib/fr24.ts` architecture note, `/api/sightings` licence comment.
+
 ## v0.4.0 — 2026-08-24
 
 **The Tickets economy (V4 Phase 3 milestone), dark-launched.** Full freemium currency — append-only ledger, grants, review-to-earn, spend gate, balance UI — plus the **Frequent Flyer** premium tier and ad plumbing. Two feature flags in `lib/tickets.ts` keep it harmless today: `ENFORCE_PAYWALL = false` (nobody is blocked or charged — no 402, no spending) and `ADS_ENABLED = false` (every AdSlot renders nothing). Flip both at native launch (Phase 5/6). Design: `docs/tickets-economy-plan.md` (untracked) — D1-A/D2 8-50-150/D3-B/D4 daily+review/D6 UTC/D7 flag-off, plus Frequent Flyer £4.99 lifetime **included free for all 2026 signups ("Founding Flyers")**.
