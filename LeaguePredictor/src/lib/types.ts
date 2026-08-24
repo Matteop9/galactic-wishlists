@@ -79,6 +79,18 @@ export type ApiScorer = {
   playedMatches: number;
 };
 
+export type ApiMatch = {
+  id: number;
+  utcDate: string; // ISO kickoff
+  // Documented values are SCHEDULED/TIMED/IN_PLAY/PAUSED/FINISHED/…, but some
+  // competitions (e.g. the Championship) return a datetime-ish string here.
+  status: 'SCHEDULED' | 'TIMED' | 'IN_PLAY' | 'PAUSED' | (string & {});
+  matchday: number | null;
+  homeTeam: ApiTeam;
+  awayTeam: ApiTeam;
+  score: { winner?: string | null; fullTime: { home: number | null; away: number | null } };
+};
+
 export type SquadPlayer = {
   id: number;
   name: string;

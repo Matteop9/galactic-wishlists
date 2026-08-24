@@ -50,12 +50,20 @@ export default async function LeaguePage({ params }: { params: Promise<{ id: str
             My predictions
           </Link>
         ) : (
-          <Link
-            href={`/leagues/${league.id}/table`}
-            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-display font-bold hover:border-muted transition-colors"
-          >
-            The grid — everyone’s picks
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href={`/leagues/${league.id}/table`}
+              className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-display font-bold hover:border-muted transition-colors"
+            >
+              Everyone’s picks
+            </Link>
+            <Link
+              href={`/leagues/${league.id}/fixtures`}
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-display font-bold text-primary-ink hover:brightness-110 transition"
+            >
+              Who to cheer for
+            </Link>
+          </div>
         )}
       </div>
 
@@ -97,6 +105,7 @@ function PreLock({
             month: 'short',
             hour: '2-digit',
             minute: '2-digit',
+            timeZone: 'Europe/London',
           })}
         </p>
         <p className="mt-1 text-xs text-muted">

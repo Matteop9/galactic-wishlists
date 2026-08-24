@@ -1,5 +1,30 @@
 # Changelog — Spot On
 
+## v0.3.0 — 2026-08-24
+
+- **Everyone's picks, side by side.** The grid page is now two tabbed views, and the new
+  default finally answers "who did everyone go for?": rows are predicted positions, one
+  column per player, each cell that player's team for the slot (crest + code, tinted by
+  how close the call is right now). A ⚽ row shows everyone's top-scorer pick (lit up
+  while it's the live leader), and each competition gets a one-line consensus — "Title
+  calls" and "Spoon". The original v0.2.2 grid lives on the second tab ("vs the actual
+  table").
+- **Who to cheer for** (`/leagues/[id]/fixtures`): every fixture in the next 10 days,
+  grouped by day in UK time, with your stake on each team (▲ n to climb / ▼ n to drop /
+  ● spot on, from your prediction vs the live table) and a verdict per match — cheer
+  for/against, "a draw suits you" when both need to drop, torn-with-a-lean when both
+  need to climb, or happy either way. Post-lock, "The room" line shows which way every
+  league member is pulling. In-play matches get a LIVE score badge. The logic is a pure
+  module (`src/lib/rooting.ts`), unit-tested.
+- New cached `getFixtures` (1 h TTL, 10-day window). Filtering is a deny-list of dead
+  states plus a `score.winner` check, because football-data returns junk datetime
+  strings as `status` for some competitions (the Championship does) — an allow-list
+  silently blanked the whole ELC section.
+- League page: the post-lock header now links both views ("Everyone's picks" + "Who to
+  cheer for"), and the lock time renders in UK time regardless of server timezone.
+- Dev tooling: `scripts/dev-session.mjs` mints a 1 h local session; `scripts/smoke.mjs`
+  runs an authed smoke test over the four league pages against `next dev`.
+
 ## v0.2.4 — 2026-08-24
 
 - **Fixed: every git push emailed a failed spot-on deploy.** The Vercel project was

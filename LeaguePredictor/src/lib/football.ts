@@ -1,6 +1,6 @@
 import { getCached } from './cache';
 import { currentSeasonYear } from './competitions';
-import type { ApiScorer, ApiTableRow, Standings, TeamsDoc, SquadPlayer, ApiTeam } from './types';
+import type { ApiMatch, ApiScorer, ApiTableRow, Standings, TeamsDoc, SquadPlayer, ApiTeam } from './types';
 
 const BASE = 'https://api.football-data.org/v4';
 
@@ -8,6 +8,7 @@ const TTL = {
   standings: 15 * 60, // 15 min — the "live" leaderboard freshness
   scorers: 60 * 60, // 1 hour
   teams: 7 * 24 * 60 * 60, // 7 days — season roster barely changes
+  fixtures: 60 * 60, // 1 hour — kickoff times move rarely; live scores are a bonus, not a promise
 };
 
 async function apiGet<T>(path: string): Promise<T> {
@@ -46,6 +47,42 @@ export async function getStandings(competitionId: number): Promise<Standings> {
     const total = data.standings.find((s) => s.type === 'TOTAL') ?? data.standings[0];
     return { season: data.season, table: total?.table ?? [] };
   });
+}
+
+// Upcoming fixtures in the next 10 days (includes any match currently in play).
+export async function getFixtures(competitionId: number): Promise<ApiMatch[]> {
+  return getCached(`fixtures:${competitionId}`, TTL.fixtures, async () => {
+    const day = (offset: number) => new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+    const data = await apiGet<{ matches: ApiMatch[] }>(
+      `/competitions/${competitionId}/matches?dateFrom=${day(0)}&dateTo=${day(10)}`,
+    );
+    // Deny-list rather than allow-list: for some competitions (the Championship, at
+    // least) the API fills `status` with a datetime-ish string instead of the
+    // documented enum, so unknown statuses must be treated as upcoming. A decided
+    // match always carries score.winner, which catches finished games regardless.
+    const dead = new Set(['FINISHED', 'AWARDED', 'CANCELLED', 'POSTPONED', 'SUSPENDED']);
+    return (data.matches ?? [])
+      .filter((m) => !dead.has(m.status) && !m.score?.winner)
+      .sort((a, b) => a.utcDate.localeCompare(b.utcDate))
+      .map((m) => ({
+        id: m.id,
+        utcDate: m.utcDate,
+        status: m.status,
+        matchday: m.matchday ?? null,
+        homeTeam: trimTeam(m.homeTeam),
+        awayTeam: trimTeam(m.awayTeam),
+        score: {
+          fullTime: {
+            home: m.score?.fullTime?.home ?? null,
+            away: m.score?.fullTime?.away ?? null,
+          },
+        },
+      }));
+  });
+}
+
+function trimTeam(t: ApiTeam): ApiTeam {
+  return { id: t.id, name: t.name, shortName: t.shortName ?? t.name, tla: t.tla, crest: t.crest };
 }
 
 export async function getScorers(competitionId: number): Promise<ApiScorer[]> {
