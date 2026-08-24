@@ -7,7 +7,7 @@ import {
   lookupFr24AirlineName,
   EMPTY_FR24,
 } from "@/lib/fr24";
-import { normalizeBrand, airlineFromCallsign } from "@/lib/airlines";
+import { normalizeBrand, airlineFromCallsign, callsignIcao } from "@/lib/airlines";
 import { specialLivery } from "@/lib/specialLiveries";
 import { aircraftTypeName, aircraftTypeDisplay, aircraftCategory } from "@/lib/aircraftTypes";
 import {
@@ -291,6 +291,10 @@ export async function POST(request: Request) {
   // to the callsign-derived operator when FR24 has nothing.
   const fr24Airline = fr.operatingAs ? await lookupFr24AirlineName(fr.operatingAs) : null;
   const brand = normalizeBrand(fr24Airline) ?? airlineFromCallsign(callsign);
+  // Newness keys on the stable ICAO callsign code, NOT the display brand — see
+  // callsignIcao. `brand` is still what we persist + show; `airlineIcao` is what
+  // decides "new airline" so the map hint and this discovery always agree.
+  const airlineIcao = callsignIcao(callsign);
 
   // Wet-lease: airframe wears one airline's livery but is operated by another.
   const wetLease = Boolean(
@@ -338,13 +342,13 @@ export async function POST(request: Request) {
   };
   const [seenType, seenAirline, seenOrigin, seenDestination] = await Promise.all([
     seenBefore("aircraft_type", aircraftType),
-    seenBefore("airline", brand),
+    seenBefore("airline_icao", airlineIcao),
     seenBefore("origin", origin),
     seenBefore("destination", destination),
   ]);
   const discoveries = {
     type: Boolean(aircraftType) && !seenType,
-    airline: Boolean(brand) && !seenAirline,
+    airline: Boolean(airlineIcao) && !seenAirline,
     origin: Boolean(origin) && !seenOrigin,
     destination: Boolean(destination) && !seenDestination,
   };
@@ -395,6 +399,7 @@ export async function POST(request: Request) {
       registration: registration,
       aircraft_type: aircraftType,
       airline: brand,
+      airline_icao: airlineIcao,
       origin: origin,
       destination: destination,
       altitude_m: altM,

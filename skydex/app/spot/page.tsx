@@ -10,7 +10,7 @@ import {
   projectForward,
 } from "@/lib/geo";
 import { aircraftCategory, mapKind } from "@/lib/aircraftTypes";
-import { airlineFromCallsign } from "@/lib/airlines";
+import { callsignIcao } from "@/lib/airlines";
 import { RARITY_RANK, type Rarity } from "@/lib/rarity";
 import { specialLivery, normalizeReg } from "@/lib/specialLiveries";
 import { createClient } from "@/lib/supabase/client";
@@ -90,13 +90,14 @@ export default function SpotPage() {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<DiscoveryResult | null>(null);
   // What this user has already caught, across the dimensions knowable on the
-  // map: type codes, airline brands, and (normalised) registrations for the
+  // map: type codes, airline ICAO codes (callsign prefixes — the stable newness
+  // key, matching the server's discovery), and (normalised) registrations for the
   // livery check. Colours the markers gold/green/ink. null until loaded;
   // re-fetched after each capture. (Airports are NOT knowable pre-capture —
   // routes only come from FR24 at capture time.)
   const [collection, setCollection] = useState<{
     types: Set<string>;
-    airlines: Set<string>;
+    airlineIcaos: Set<string>;
     regs: Set<string>;
   } | null>(null);
   // Pre-capture rarity per type code, from the predict_rarity RPC (universe
@@ -329,23 +330,18 @@ export default function SpotPage() {
         if (!user) return;
         const { data } = await supabase
           .from("sightings")
-          .select("aircraft_type, airline, registration, callsign")
+          .select("aircraft_type, registration, callsign")
           .eq("user_id", user.id);
         if (!cancelled && data) {
           setCollection({
             types: new Set(
               data.map((r) => (r.aircraft_type as string | null)?.toUpperCase()).filter(Boolean) as string[],
             ),
-            // Stored airline is the FR24 operator name, but candidates only have a
-            // callsign — so index BOTH the stored name and the callsign-derived
-            // brand, making the newness check symmetric with newness() below.
-            airlines: new Set(
-              data
-                .flatMap((r) => [
-                  r.airline as string | null,
-                  airlineFromCallsign(r.callsign as string | null),
-                ])
-                .filter(Boolean) as string[],
+            // Key on the ICAO callsign code — the same stable value the server's
+            // discovery uses (sightings.airline_icao) — so the map's "new airline"
+            // hint and the post-capture reward can never disagree.
+            airlineIcaos: new Set(
+              data.map((r) => callsignIcao(r.callsign as string | null)).filter(Boolean) as string[],
             ),
             regs: new Set(
               data.map((r) => normalizeReg(r.registration as string | null)).filter(Boolean),
@@ -374,9 +370,9 @@ export default function SpotPage() {
       dims.push(n);
       if (n) bits.push("type");
     }
-    const brand = airlineFromCallsign(c.callsign);
-    if (brand) {
-      const n = !collection.airlines.has(brand);
+    const airlineIcao = callsignIcao(c.callsign);
+    if (airlineIcao) {
+      const n = !collection.airlineIcaos.has(airlineIcao);
       dims.push(n);
       if (n) bits.push("airline");
     }

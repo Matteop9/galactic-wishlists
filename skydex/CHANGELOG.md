@@ -2,6 +2,16 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.20 — 2026-08-24
+
+Fixes the "it says a new airline then it isn't" whiplash (spotting fix item E). The map predicted airline-newness from `airlineFromCallsign(callsign)` while the server decided it from FR24's `operating_as` — two different resolutions of the same flight, so they disagreed on franchises/wet-leases (BA CityFlyer/Euroflyer, Malta Air-operated Ryanair). Both now key on the **stable ICAO callsign code**, so the pre-capture hint and the post-capture reward always agree. Brand names are unchanged as the display label.
+
+### Changed
+- **`lib/airlines.ts`**: new `callsignIcao(callsign)` → the 3-letter ICAO airline code (or null) = the newness key.
+- **DB migration `add_airline_icao_to_sightings`**: nullable `sightings.airline_icao` + `(user_id, airline_icao)` index, backfilled from stored callsigns (768/786 rows).
+- **`app/api/sightings/route.ts`**: persists `airline_icao`; the "new airline?" discovery probe + flag key on it (`seenBefore("airline_icao", …)`) instead of the FR24 brand.
+- **`app/spot/page.tsx`**: the map's own-collection set + `newness()` key on `callsignIcao` (was the resolved brand); `collection.airlines` → `collection.airlineIcaos`. Scrapbook/leaderboard/display brand names untouched.
+
 ## v0.3.19 — 2026-08-24
 
 Security hardening (part of the V4 "ready for real users" gate). No user-visible behaviour change; closes the highest-risk items from the 2026-08-24 review.

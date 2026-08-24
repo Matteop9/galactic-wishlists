@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.20",
+    date: "2026-08-24",
+    changes: [
+      "Fixed the “new airline!” flag that could flip to “not new” once you'd caught it (or the reverse): the map and the catch screen now agree on which airlines you already have, including franchise carriers like BA CityFlyer.",
+    ],
+  },
+  {
     version: "0.3.19",
     date: "2026-08-24",
     changes: [

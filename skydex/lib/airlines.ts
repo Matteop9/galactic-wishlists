@@ -61,6 +61,21 @@ export function airlineFromCallsign(callsign?: string | null): string | null {
   return ICAO_AIRLINES[code] ?? code;
 }
 
+/**
+ * The raw ICAO airline code from a callsign (first three letters), or null.
+ * This is the STABLE key for airline *newness*: unlike a resolved brand name it
+ * is identical pre-capture (live callsign on the map) and post-capture (stored
+ * callsign in the discovery probe), so the two can never disagree. `airlineFrom-
+ * Callsign` and FR24's `operating_as` resolved the SAME callsign to different
+ * names for franchises/wet-leases (BA CityFlyer vs British Airways, Malta Air vs
+ * Ryanair) — the "it says a new airline then it isn't" whiplash. The brand name
+ * is still used for *display*; only the new/not-new decision keys on this code.
+ */
+export function callsignIcao(callsign?: string | null): string | null {
+  const code = callsign?.trim().slice(0, 3).toUpperCase();
+  return code && /^[A-Z]{3}$/.test(code) ? code : null;
+}
+
 // Brand name → IATA code, for fetching airline logos (the logo CDN keys on
 // IATA). Keyed by lowercased brand name to tolerate casing variants. Carriers
 // we can't map simply get no logo (the UI falls back to the name alone).
