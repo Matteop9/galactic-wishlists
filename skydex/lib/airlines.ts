@@ -40,16 +40,26 @@ const ICAO_AIRLINES: Record<string, string> = {
   RAM: "Royal Air Maroc",
 };
 
-/** Consolidate an airline name to its brand (drops AOC region suffixes). */
+/**
+ * Consolidate an airline name to its brand by dropping a trailing AOC region
+ * suffix ("easyJet Europe" → "easyJet", "Eurowings Europe" → "Eurowings").
+ *
+ * BUT never strip the region word when it's part of the brand itself — i.e. an
+ * "…Air <Region>" name: "Air France", "Air Malta", "TAP Air Portugal", "Wizz Air
+ * Malta". The old blanket strip turned "Air France" into "Air" and "TAP Air
+ * Portugal" into "TAP Air" (visible on cards + the scrapbook Carriers grid).
+ */
 export function normalizeBrand(name?: string | null): string | null {
   if (!name) return null;
-  const n = name
-    .trim()
-    .replace(
-      /\s+(UK|Europe|Switzerland|Austria|Malta|Germany|France|Italy|Portugal|International)$/i,
-      "",
-    )
-    .trim();
+  const n = name.trim();
+  const m = n.match(
+    /^(.*\S)\s+(UK|Europe|Switzerland|Austria|Malta|Germany|France|Italy|Portugal|International)$/i,
+  );
+  // Keep the whole name when the part before the region word is (or ends in) the
+  // word "Air" — there the region is the brand, not an AOC suffix.
+  if (m && !/(^|\s)air$/i.test(m[1])) {
+    return m[1].trim() || null;
+  }
   return n || null;
 }
 

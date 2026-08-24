@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.3.21",
+    date: "2026-08-24",
+    changes: [
+      "Fixed airline names that showed up truncated — e.g. “Air France” appearing as just “Air”, and “TAP Air Portugal” as “TAP”. Your existing catches have been corrected too.",
+    ],
+  },
+  {
     version: "0.3.20",
     date: "2026-08-24",
     changes: [

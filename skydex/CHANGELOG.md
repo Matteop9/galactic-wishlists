@@ -2,6 +2,14 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.3.21 — 2026-08-24
+
+Brand-name display fix (found while shipping v0.3.20). `normalizeBrand` stripped a trailing country word even when it was part of the airline's real name — "Air France" showed as "Air", "TAP Air Portugal" as "TAP Air"/"TAP" on cards + the scrapbook Carriers grid.
+
+### Fixed
+- **`lib/airlines.ts`**: `normalizeBrand` keeps the region word when the part before it is (or ends in) "Air" — so "Air France" / "Air Malta" / "TAP Air Portugal" / "Wizz Air Malta" are preserved, while genuine AOC suffixes still consolidate ("easyJet Europe" → "easyJet").
+- **DB migration `fix_normalizebrand_corrupted_airlines`**: backfilled the corrupted display brand on existing rows (AFR "Air" → "Air France" ×17; TAP "TAP"/"TAP Air" → "TAP Air Portugal" ×8) and removed the junk "Air"/"TAP"/"TAP Air" entries from the Carriers universe.
+
 ## v0.3.20 — 2026-08-24
 
 Fixes the "it says a new airline then it isn't" whiplash (spotting fix item E). The map predicted airline-newness from `airlineFromCallsign(callsign)` while the server decided it from FR24's `operating_as` — two different resolutions of the same flight, so they disagreed on franchises/wet-leases (BA CityFlyer/Euroflyer, Malta Air-operated Ryanair). Both now key on the **stable ICAO callsign code**, so the pre-capture hint and the post-capture reward always agree. Brand names are unchanged as the display label.
