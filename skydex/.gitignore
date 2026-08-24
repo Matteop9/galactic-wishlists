@@ -39,6 +39,7 @@ yarn-error.log*
 # acquisition strategy — keep out of git history
 SkyDex_Business_Proposal.docx
 *.zip
+research/
 
 # rarity snapshot working state (large hex sets; summary SQL is what gets reviewed)
 scripts/.rarity-state.json
