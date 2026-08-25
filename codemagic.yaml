@@ -1,0 +1,45 @@
+# Codemagic CI — SkyDex iOS (Capacitor shell → TestFlight).
+# This file must sit at the repo root (Codemagic only discovers it here); the app
+# itself lives in skydex/. No automatic triggers — start builds from the Codemagic
+# dashboard (this is a shared monorepo; most pushes have nothing to do with iOS).
+workflows:
+  skydex-ios:
+    name: SkyDex iOS → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: SkyDex # ASC API key uploaded in Codemagic → Team → Integrations
+    environment:
+      node: latest
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.skydex.mobile
+    scripts:
+      - name: Install dependencies
+        script: |
+          cd skydex
+          npm ci
+      - name: Sync Capacitor iOS
+        script: |
+          cd skydex
+          npx cap sync ios
+      - name: Apply provisioning profiles
+        script: |
+          xcode-project use-profiles
+      - name: Set build number
+        script: |
+          cd skydex/ios/App
+          agvtool new-version -all $PROJECT_BUILD_NUMBER
+      - name: Build signed IPA
+        script: |
+          xcode-project build-ipa \
+            --project skydex/ios/App/App.xcodeproj \
+            --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

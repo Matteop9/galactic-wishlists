@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.5.1",
+    date: "2026-08-25",
+    changes: [
+      "SkyDex is officially on its way to the App Store 📱 — the native iOS app shell is built and the automated pipeline that ships it to TestFlight is live. Nothing changes on the web today; TestFlight invites for testers come next.",
+    ],
+  },
+  {
     version: "0.5.0",
     date: "2026-08-25",
     changes: [

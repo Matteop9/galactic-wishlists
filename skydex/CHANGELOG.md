@@ -2,6 +2,21 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.5.1 — 2026-08-25
+
+**Capacitor iOS shell + Codemagic TestFlight pipeline (V4 Phase 5 kickoff).** The native iOS app exists: a Capacitor 8 hosted-mode shell (`server.url: https://sky-dex.com` — the web app stays the product; web deploys update the app instantly) wired to a cloud CI pipeline that signs and uploads to TestFlight. No web-visible changes beyond the release note.
+
+### Added
+- **`capacitor.config.ts`**: appId `com.skydex.mobile`, appName SkyDex, hosted-mode `server.url` + `allowNavigation` covering sky-dex.com, the Supabase auth host, `accounts.google.com`, and `appleid.apple.com` so the OAuth redirect chain stays inside the webview.
+- **`www/index.html`**: stub webDir (required by `cap sync`; unused at runtime in hosted mode).
+- **`ios/`**: Capacitor-generated Xcode project (Capacitor 8 = Swift Package Manager, no CocoaPods). Bundle id `com.skydex.mobile`, iOS 15 deployment target, MARKETING_VERSION 1.0 (native shell versions independently of the web app; build number set by CI). `Info.plist` gains the three permission strings the spotting mechanic needs: `NSCameraUsageDescription`, `NSLocationWhenInUseUsageDescription`, `NSMotionUsageDescription`.
+- **`codemagic.yaml`** (at the **repo root** — Codemagic only discovers it there): workflow `skydex-ios` on a free-tier M2 Mac — `npm ci` + `cap sync ios` in `skydex/`, automatic signing via the Codemagic App Store Connect integration named `SkyDex` (`ios_signing: app_store` for `com.skydex.mobile`), `agvtool` build number from `PROJECT_BUILD_NUMBER`, `xcode-project build-ipa`, publish `submit_to_testflight`. Manual trigger only (shared monorepo).
+- Deps: `@capacitor/core` + `@capacitor/ios` (runtime), `@capacitor/cli` (dev).
+
+### Notes
+- First TestFlight build requires the App Store Connect **app record** (name SkyDex, bundle `com.skydex.mobile`) to exist before the publish step.
+- The TestFlight spike checklist (camera/compass/GPS/OAuth/offline queue inside the WKWebView) decides whether the hosted-shell bet holds — known risk: Google OAuth can refuse embedded webviews (`disallowed_useragent`); fallback is a native auth/browser plugin.
+
 ## v0.5.0 — 2026-08-25
 
 **Store-grade auth (V4 Phase 4 milestone).** Sign-in is now **Google + Apple only**; the email magic-link path is gone. Apple side configured same day: App ID **`com.skydex.mobile`** (canonical, hyphen-free — doubles as the future Capacitor/Android id), Services ID `com.skydex.mobile.web` (domain + return URL on the Supabase project), SIWA key `X68BQN3W5M`, client secret generated locally (PyJWT ES256; **expires 2027-02-21** — regenerate from the .p8 before then), Supabase Apple provider enabled.
