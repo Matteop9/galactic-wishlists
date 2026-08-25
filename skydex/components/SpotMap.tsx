@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Map as MLMap, Marker as MLMarker, Popup as MLPopup } from "maplibre-gl";
 import type { MapKind } from "@/lib/aircraftTypes";
+import { SpinnerBlock } from "@/components/Loading";
 
 // A read-only situational map: what's overhead right now, where you'd point.
 // It never captures — tapping a plane only tracks it and hands back to the camera.
@@ -225,6 +226,9 @@ export default function SpotMap({
   const planesRef = useRef<Record<string, { marker: MLMarker; el: HTMLButtonElement; sig: string }>>({});
   const popupRef = useRef<MLPopup | null>(null);
   const readyRef = useRef(false);
+  // Basemap load state — a spinner covers the container until the style +
+  // first tiles are in, so the map never sits as a blank dark box.
+  const [loaded, setLoaded] = useState(false);
 
   // Latest props for use inside DOM event handlers without re-binding.
   const aircraftRef = useRef(aircraft);
@@ -317,6 +321,7 @@ export default function SpotMap({
           .addTo(map);
 
         readyRef.current = true;
+        setLoaded(true);
         syncPlanes();
       });
     })();
@@ -474,6 +479,11 @@ export default function SpotMap({
   return (
     <div className="absolute inset-0">
       <div ref={containerRef} className="h-full w-full" />
+      {!loaded && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-ink">
+          <SpinnerBlock tone="paper" label="Loading map…" />
+        </div>
+      )}
       <div className="pointer-events-none absolute right-3 top-3 flex flex-col gap-1.5 rounded bg-ink/85 px-2.5 py-2 font-mono text-[11px] leading-4 text-paper">
         <span className="flex items-center gap-1.5">
           <LegendGlyph color={BRAND.brass} /> all new for you

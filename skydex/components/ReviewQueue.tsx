@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { announceTicketsChanged } from "@/lib/tickets";
 import { TicketGlyph } from "@/components/TicketChip";
+import { SpinnerBlock } from "@/components/Loading";
 
 // Community photo review: random anonymous photos from other spotters, one
 // question — can you actually see an aircraft? All the trust rules live in the
@@ -110,7 +111,7 @@ export default function ReviewQueue() {
   }
 
   if (state === "loading") {
-    return <p className="text-sm text-ink-faint">Loading…</p>;
+    return <SpinnerBlock className="py-10" />;
   }
 
   if (state === "error") {

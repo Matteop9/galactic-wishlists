@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.5.3",
+    date: "2026-08-25",
+    changes: [
+      "SkyDex now always shows you it's working: every page shows an instant placeholder while it loads — no more blank screens between taps.",
+      "The Spot map tells you what it's doing too: a spinner while the map loads, \"Scanning the sky…\" while we look for aircraft, and a clear \"no aircraft in range\" when the sky is genuinely quiet.",
+    ],
+  },
+  {
     version: "0.5.2",
     date: "2026-08-25",
     changes: [

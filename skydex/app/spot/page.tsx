@@ -18,6 +18,7 @@ import { createClient } from "@/lib/supabase/client";
 import { enqueueCapture, listCaptures, removeCapture, countCaptures } from "@/lib/captureQueue";
 import { announceTicketsChanged, type CaptureTickets, type TicketStatus } from "@/lib/tickets";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
+import { PlaneSpinner, SpinnerBlock } from "@/components/Loading";
 import { TicketGlyph } from "@/components/TicketChip";
 import TargetOverlay from "@/components/TargetOverlay";
 import { deleteSighting } from "@/app/actions/admin";
@@ -105,6 +106,9 @@ export default function SpotPage() {
   // in state so render stays pure — no Date.now() during render).
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [mapAircraft, setMapAircraft] = useState<Candidate[]>([]);
+  // First wide-radius sweep landed — before it, the map shows "scanning" rather
+  // than claiming the sky is empty.
+  const [mapSwept, setMapSwept] = useState(false);
   const [view, setView] = useState<"camera" | "map">("map");
   const [lockedId, setLockedId] = useState<string | null>(null);
   // Live-feed health, so a dropout shows "reconnecting…" instead of "no planes".
@@ -531,7 +535,10 @@ export default function SpotPage() {
           }`,
         );
         const json = await res.json();
-        if (!cancelled && Array.isArray(json.candidates)) setMapAircraft(json.candidates);
+        if (!cancelled && Array.isArray(json.candidates)) {
+          setMapAircraft(json.candidates);
+          setMapSwept(true);
+        }
       } catch {
         /* transient */
       }
@@ -1033,30 +1040,48 @@ export default function SpotPage() {
 
         {view === "map" &&
           (coords ? (
-            <SpotMap
-              observer={coords}
-              heading={heading}
-              aircraft={mapAircraft.map((c) => {
-                const n = newness(c);
-                return {
-                  ...c,
-                  kind: mapKind(c.aircraftType, c.adsbCategory),
-                  newness: n.level,
-                  newBits: n.bits,
-                  liveryName: n.liveryName,
-                  rarity: mapRarity(c),
-                };
-              })}
-              lockedId={lockedId}
-              onSelect={(id) => {
-                setLockedId(id);
-                setView("camera");
-                startCamera(); // the map tap is a gesture too — no extra gate
-              }}
-            />
+            <>
+              <SpotMap
+                observer={coords}
+                heading={heading}
+                aircraft={mapAircraft.map((c) => {
+                  const n = newness(c);
+                  return {
+                    ...c,
+                    kind: mapKind(c.aircraftType, c.adsbCategory),
+                    newness: n.level,
+                    newBits: n.bits,
+                    liveryName: n.liveryName,
+                    rarity: mapRarity(c),
+                  };
+                })}
+                lockedId={lockedId}
+                onSelect={(id) => {
+                  setLockedId(id);
+                  setView("camera");
+                  startCamera(); // the map tap is a gesture too — no extra gate
+                }}
+              />
+              {/* sweep status chip — a bare map must say whether it's still
+                  looking or the sky is genuinely quiet */}
+              {/* no z-index — SpotMap's own z-10 "Loading map…" overlay covers
+                  this chip until the basemap is in */}
+              {(!mapSwept || mapAircraft.length === 0) && (
+                <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded bg-ink/85 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper">
+                  {!mapSwept ? (
+                    <>
+                      <PlaneSpinner size={16} tone="paper" />
+                      Scanning the sky…
+                    </>
+                  ) : (
+                    "No aircraft in range right now"
+                  )}
+                </div>
+              )}
+            </>
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center font-display text-sm uppercase tracking-wide text-paper/80">
-              Waiting for location…
+            <div className="absolute inset-0 flex items-center justify-center">
+              <SpinnerBlock tone="paper" label="Waiting for location…" />
             </div>
           ))}
       </div>

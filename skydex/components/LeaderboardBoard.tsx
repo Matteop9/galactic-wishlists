@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Avatar from "@/components/Avatar";
 import FlyerStar from "@/components/FlyerStar";
+import { SpinnerBlock } from "@/components/Loading";
 
 type Row = {
   user_id: string;
@@ -87,7 +88,7 @@ export default function LeaderboardBoard({ currentUserId }: { currentUserId: str
 
       <div className="mt-5 overflow-hidden rounded-lg border border-paper-edge">
         {loading ? (
-          <p className="px-4 py-6 text-center text-sm text-ink-faint">Loading…</p>
+          <SpinnerBlock className="px-4 py-8" />
         ) : data?.failed ? (
           <p className="px-4 py-6 text-center text-sm text-stamp">
             Couldn&apos;t load the board — try again in a moment.

@@ -2,6 +2,29 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.5.3 — 2026-08-25
+
+**Loading states everywhere** — instant skeletons on navigation, a branded spinner, and honest map wait states. Previously route changes rendered nothing until the server responded, and an empty Spot map was indistinguishable from a still-loading one.
+
+### Added — loading primitives
+- **`components/Loading.tsx`** — the app's loading language, server- and client-safe:
+  - `PlaneSpinner` — the map key's narrowbody jet circling a dashed range ring (tones: `ink` for paper surfaces, `paper` for dark ones).
+  - `Skeleton` — paper-deep placeholder block with a soft light sweep.
+  - `SpinnerBlock` (spinner + uppercase label) and `SectionLoading` (SectionShell with a real title over placeholder copy — the title renders instantly so the user knows where they landed).
+- **`app/globals.css`** — `.sd-spin` / `.sd-skeleton` keyframes; under `prefers-reduced-motion` the spinner fades instead of rotating and the skeleton sweep stops.
+
+### Added — route `loading.tsx` files (instant loading UI on every navigation)
+- Layout-matched skeletons: `app/feed/`, `app/scrapbook/`, `app/leaderboards/`, `app/u/[handle]/`, `app/liveries/`, `app/review/`, `app/tickets/`, `app/settings/`, `app/s/[id]/`.
+- Spinner pages: `app/loading.tsx` (root fallback), `app/books/`, `app/u/[handle]/books/` ("Opening the book…"), `app/feedback/`, `app/reports/`.
+
+### Changed — Spot map wait states (`app/spot/page.tsx`, `components/SpotMap.tsx`)
+- SpotMap covers itself with a "Loading map…" spinner (z-10, solid ink) until the maplibre `load` event — no more blank dark box while the basemap style/tiles fetch.
+- "Waiting for location…" is now a spinner block, not bare text.
+- New `mapSwept` state (set by the first successful wide-radius `/api/flights` sweep) drives a bottom-center chip on the map: "Scanning the sky…" with a mini spinner before the first sweep, "No aircraft in range right now" after it when the sky is empty. The chip carries no z-index by design so SpotMap's load overlay covers it.
+
+### Changed — client "Loading…" texts upgraded to the spinner
+- `components/LeaderboardBoard.tsx`, `components/ReviewQueue.tsx`.
+
 ## v0.5.2 — 2026-08-25
 
 **Spot opens on the map, permission gate removed** — first feedback from the native shell (TestFlight spike passed same day: OAuth, camera, compass, GPS, capture all working in the WKWebView).

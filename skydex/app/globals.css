@@ -193,6 +193,54 @@ body {
   animation: sd-card-rise 0.45s ease-out both;
 }
 
+/* ---- Loading language ---------------------------------------------------- */
+/* Spinner: the jet circling a dashed range ring (components/Loading.tsx). */
+@keyframes sd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.sd-spin {
+  transform-origin: center;
+  animation: sd-spin 1.4s linear infinite;
+}
+/* Skeleton: paper-deep placeholder block with a soft light sweep. */
+.sd-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--color-paper-deep);
+}
+.sd-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    100deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 75%
+  );
+  animation: sd-shimmer 1.8s ease-in-out infinite;
+}
+@keyframes sd-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+/* Reduced-motion swap for the spinner: a gentle fade still says "working"
+   without the rotation. */
+@keyframes sd-fade-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sd-livery {
     animation: none;
@@ -205,5 +253,13 @@ body {
   .sd-stamp-thunk,
   .sd-card-rise {
     animation: none !important;
+  }
+  /* loading stays legible without motion: spinner fades instead of spinning,
+     skeletons hold their static fill */
+  .sd-spin {
+    animation: sd-fade-pulse 2s ease-in-out infinite;
+  }
+  .sd-skeleton::after {
+    animation: none;
   }
 }
