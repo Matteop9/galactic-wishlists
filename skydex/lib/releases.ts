@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.5.2",
+    date: "2026-08-25",
+    changes: [
+      "Spot now opens straight onto the live map — no more \"Allow camera & motion\" screen in the way. See what's flying around you instantly.",
+      "The camera starts when you actually need it: switch to Camera view or tap a plane to track it, and any permission prompts happen right there — once, not every visit. In the iOS app there are no repeat prompts at all.",
+    ],
+  },
+  {
     version: "0.5.1",
     date: "2026-08-25",
     changes: [

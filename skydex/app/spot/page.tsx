@@ -91,7 +91,11 @@ async function postCapture(blob: Blob | null, metaStr: string): Promise<Response
 }
 
 export default function SpotPage() {
-  const [phase, setPhase] = useState<"idle" | "active">("idle");
+  // Camera lifecycle: off until the user first opens Camera view. There is no
+  // permission gate screen — the tap that opens the camera IS the user gesture
+  // iOS wants for the motion-permission prompt, and the map needs only GPS,
+  // which starts on mount with no gesture at all.
+  const [camera, setCamera] = useState<"off" | "starting" | "on">("off");
   const [error, setError] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lon: number; alt: number | null } | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
@@ -101,7 +105,7 @@ export default function SpotPage() {
   // in state so render stays pure — no Date.now() during render).
   const [nowMs, setNowMs] = useState<number | null>(null);
   const [mapAircraft, setMapAircraft] = useState<Candidate[]>([]);
-  const [view, setView] = useState<"camera" | "map">("camera");
+  const [view, setView] = useState<"camera" | "map">("map");
   const [lockedId, setLockedId] = useState<string | null>(null);
   // Live-feed health, so a dropout shows "reconnecting…" instead of "no planes".
   const [feedError, setFeedError] = useState(false);
@@ -170,27 +174,91 @@ export default function SpotPage() {
     }
   }, []);
 
-  async function start() {
-    setError(null);
-    try {
+  // Attach the compass listener exactly once (Android's plain deviceorientation
+  // alpha is relative to whatever way the phone was pointing at page load, not
+  // north — use the absolute variant where it exists; iOS supplies
+  // webkitCompassHeading instead).
+  const orientAttachedRef = useRef(false);
+  const attachOrientation = useCallback(() => {
+    if (orientAttachedRef.current) return;
+    orientAttachedRef.current = true;
+    const orientEvent =
+      "ondeviceorientationabsolute" in window
+        ? "deviceorientationabsolute"
+        : "deviceorientation";
+    orientEventRef.current = orientEvent;
+    window.addEventListener(orientEvent, onOrient as EventListener, true);
+  }, [onOrient]);
+
+  // Ask for motion/orientation access. iOS only prompts from a user gesture:
+  // the silent (mount-time) attempt resolves without a prompt where permission
+  // is already granted or moot (Android, desktop, the native shell — whose
+  // webview auto-grants) and quietly gives up otherwise, leaving the Camera
+  // tap to retry with a gesture in hand.
+  const requestOrientation = useCallback(
+    async (silent: boolean) => {
       const DOE = window.DeviceOrientationEvent as unknown as {
         requestPermission?: () => Promise<"granted" | "denied">;
       };
       if (DOE && typeof DOE.requestPermission === "function") {
-        const granted = await DOE.requestPermission();
-        if (granted !== "granted") setError("Motion access denied — targeting won't work.");
+        try {
+          const granted = await DOE.requestPermission();
+          if (granted !== "granted") {
+            if (!silent) setError("Motion access denied — targeting won't work.");
+            return;
+          }
+        } catch {
+          return; // needs a user gesture — the Camera tap will retry
+        }
       }
-      // Android's plain deviceorientation alpha is relative to whatever way the
-      // phone was pointing at page load, not north — use the absolute variant
-      // where it exists (iOS supplies webkitCompassHeading instead).
-      const orientEvent =
-        "ondeviceorientationabsolute" in window
-          ? "deviceorientationabsolute"
-          : "deviceorientation";
-      orientEventRef.current = orientEvent;
-      window.addEventListener(orientEvent, onOrient as EventListener, true);
+      attachOrientation();
+    },
+    [attachOrientation],
+  );
 
-      if (!navigator.geolocation) throw new Error("No geolocation on this device.");
+  async function startCamera() {
+    if (camera !== "off") return;
+    setCamera("starting");
+    setError(null);
+    try {
+      // Gesture context: a real motion prompt can show now if it's still needed.
+      await requestOrientation(false);
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      });
+      // The <video> is attached in an effect once camera flips to "on".
+      streamRef.current = stream;
+
+      // Detect native zoom support (mostly Android Chrome); else digital fallback.
+      const track = stream.getVideoTracks()[0];
+      trackRef.current = track ?? null;
+      const caps = (track?.getCapabilities?.() ?? {}) as {
+        zoom?: { min: number; max: number; step?: number };
+      };
+      if (caps.zoom) {
+        setZoomCaps({ min: caps.zoom.min, max: caps.zoom.max, step: caps.zoom.step ?? 0.1 });
+        setZoom((track.getSettings() as { zoom?: number }).zoom ?? caps.zoom.min);
+      }
+
+      setCamera("on");
+    } catch (err) {
+      setCamera("off");
+      setError(err instanceof Error ? err.message : "Could not start the camera.");
+    }
+  }
+
+  // GPS + a silent compass attempt start on mount — the map (the default view)
+  // only needs these, so Spot opens with no gate and no tap. Cleanup releases
+  // every sensor: camera tracks, the GPS watch, and the compass listener
+  // (otherwise they keep firing after client-side nav, holding the OS location
+  // indicator on and setting state on a dead component).
+  useEffect(() => {
+    // Deferred a tick: react-hooks/set-state-in-effect follows the call into
+    // requestOrientation's setError paths (none of which fire silently anyway).
+    const t = setTimeout(() => requestOrientation(true), 0);
+    if (navigator.geolocation) {
       geoWatchRef.current = navigator.geolocation.watchPosition(
         (pos) => {
           const { latitude, longitude, altitude } = pos.coords;
@@ -208,30 +276,21 @@ export default function SpotPage() {
         (err) => setError(err.message),
         { enableHighAccuracy: true, maximumAge: 5000 },
       );
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
-        audio: false,
-      });
-      // The <video> only mounts once phase is "active"; attach in an effect.
-      streamRef.current = stream;
-
-      // Detect native zoom support (mostly Android Chrome); else digital fallback.
-      const track = stream.getVideoTracks()[0];
-      trackRef.current = track ?? null;
-      const caps = (track?.getCapabilities?.() ?? {}) as {
-        zoom?: { min: number; max: number; step?: number };
-      };
-      if (caps.zoom) {
-        setZoomCaps({ min: caps.zoom.min, max: caps.zoom.max, step: caps.zoom.step ?? 0.1 });
-        setZoom((track.getSettings() as { zoom?: number }).zoom ?? caps.zoom.min);
-      }
-
-      setPhase("active");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not start capture.");
+    } else {
+      setTimeout(() => setError("No geolocation on this device."), 0);
     }
-  }
+    return () => {
+      clearTimeout(t);
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      if (geoWatchRef.current != null) {
+        navigator.geolocation.clearWatch(geoWatchRef.current);
+      }
+      if (orientEventRef.current) {
+        window.removeEventListener(orientEventRef.current, onOrient as EventListener, true);
+        orientAttachedRef.current = false;
+      }
+    };
+  }, [requestOrientation, onOrient]);
 
   // Poll live aircraft around the observer. On a dropout — a network error OR a
   // valid-but-empty gap — KEEP the last good candidates and surface
@@ -327,7 +386,7 @@ export default function SpotPage() {
   // (No synchronous first set: until the first tick nowMs is null and the memo
   // passes raw fixes through — a half-second of the old behaviour.)
   useEffect(() => {
-    if (phase !== "active") return;
+    if (!coords) return;
     const id = setInterval(() => {
       const now = Date.now();
       setNowMs(now);
@@ -336,7 +395,7 @@ export default function SpotPage() {
       }
     }, 500);
     return () => clearInterval(id);
-  }, [phase, lockedId]);
+  }, [coords, lockedId]);
 
   // Stamp the lock "just seen" the moment it's set, so the grace timer starts
   // from now rather than 0 (which would drop it on the very next tick).
@@ -485,9 +544,9 @@ export default function SpotPage() {
     };
   }, [coords, view]);
 
-  // Attach the camera stream once the <video> has mounted (phase → active).
+  // Attach the camera stream once it's running (camera → on).
   useEffect(() => {
-    if (phase !== "active") return;
+    if (camera !== "on") return;
     const video = videoRef.current;
     const stream = streamRef.current;
     if (video && stream) {
@@ -499,7 +558,7 @@ export default function SpotPage() {
       minimapRef.current.srcObject = stream;
       minimapRef.current.play().catch(() => {});
     }
-  }, [phase]);
+  }, [camera]);
 
   // Keep the corner overview playing whenever digital zoom is engaged.
   useEffect(() => {
@@ -508,23 +567,7 @@ export default function SpotPage() {
       if (mm.srcObject !== streamRef.current) mm.srcObject = streamRef.current;
       mm.play().catch(() => {});
     }
-  }, [zoom, zoomCaps, phase]);
-
-  // Release every sensor when leaving the page: camera tracks, the GPS watch,
-  // and the compass listener (otherwise they keep firing after client-side nav,
-  // holding the OS location indicator on and setting state on a dead component).
-  useEffect(
-    () => () => {
-      streamRef.current?.getTracks().forEach((t) => t.stop());
-      if (geoWatchRef.current != null) {
-        navigator.geolocation.clearWatch(geoWatchRef.current);
-      }
-      if (orientEventRef.current) {
-        window.removeEventListener(orientEventRef.current, onOrient as EventListener, true);
-      }
-    },
-    [onOrient],
-  );
+  }, [zoom, zoomCaps, camera]);
 
   const minZoom = zoomCaps?.min ?? 1;
   const maxZoom = zoomCaps?.max ?? 4;
@@ -833,30 +876,18 @@ export default function SpotPage() {
   }
 
   // ---- render ----
-  if (phase === "idle") {
-    return (
-      <main className="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-6 py-20 text-center">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Spot</h1>
-        <p className="mt-3 max-w-md text-ink-soft">
-          We&apos;ll use your location, the compass, and your camera to verify the
-          aircraft you photograph. Nothing is recorded until you capture.
-        </p>
-        <button onClick={start} className="sd-btn sd-btn--capture mt-8">
-          Allow camera &amp; motion
-        </button>
-        {error && <p className="mt-4 text-sm text-stamp">{error}</p>}
-      </main>
-    );
-  }
-
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6">
-      {/* view toggle — Camera captures, Map is a read-only spotting aid */}
+      {/* view toggle — Camera captures, Map is a read-only spotting aid. The
+          Camera tap doubles as the permission gesture that starts the camera. */}
       <div className="mb-3 inline-flex rounded-lg border border-paper-edge bg-paper p-0.5 font-display text-sm font-semibold uppercase tracking-wide">
-        {(["camera", "map"] as const).map((v) => (
+        {(["map", "camera"] as const).map((v) => (
           <button
             key={v}
-            onClick={() => setView(v)}
+            onClick={() => {
+              setView(v);
+              if (v === "camera") startCamera();
+            }}
             className={`rounded-md px-4 py-1.5 ${
               view === v ? "bg-ink text-paper" : "text-ink-soft"
             }`}
@@ -889,7 +920,28 @@ export default function SpotPage() {
         />
         <canvas ref={canvasRef} className="hidden" />
 
-        {view === "camera" && (
+        {/* camera warming up / not yet started (e.g. permission denied earlier) */}
+        {view === "camera" && camera !== "on" && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
+            {camera === "starting" ? (
+              <p className="font-display text-sm uppercase tracking-wide text-paper/80">
+                Starting camera…
+              </p>
+            ) : (
+              <>
+                <p className="max-w-sm text-sm text-paper/80">
+                  We&apos;ll use your camera and compass to verify the aircraft you
+                  photograph. Nothing is recorded until you capture.
+                </p>
+                <button onClick={startCamera} className="sd-btn sd-btn--capture">
+                  Open camera
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
+        {view === "camera" && camera === "on" && (
           <>
             {/* targeting reticle */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -999,6 +1051,7 @@ export default function SpotPage() {
               onSelect={(id) => {
                 setLockedId(id);
                 setView("camera");
+                startCamera(); // the map tap is a gesture too — no extra gate
               }}
             />
           ) : (
@@ -1016,19 +1069,32 @@ export default function SpotPage() {
       )}
 
       <div className="mt-4 flex flex-wrap gap-3">
-        <button
-          onClick={() => submit(target)}
-          disabled={!canCapture || busy}
-          className={`sd-btn ${canCapture ? "sd-btn--capture" : "sd-btn--disabled"}`}
-        >
-          {busy
-            ? "Saving…"
-            : !target
-              ? "No aircraft in sights"
-              : targetInSights
-                ? `Capture ${targetLabel(target)}`
-                : `Capture ${targetLabel(target)} — we'll check it`}
-        </button>
+        {camera === "on" ? (
+          <button
+            onClick={() => submit(target)}
+            disabled={!canCapture || busy}
+            className={`sd-btn ${canCapture ? "sd-btn--capture" : "sd-btn--disabled"}`}
+          >
+            {busy
+              ? "Saving…"
+              : !target
+                ? "No aircraft in sights"
+                : targetInSights
+                  ? `Capture ${targetLabel(target)}`
+                  : `Capture ${targetLabel(target)} — we'll check it`}
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              setView("camera");
+              startCamera();
+            }}
+            disabled={camera === "starting"}
+            className={`sd-btn ${camera === "starting" ? "sd-btn--disabled" : "sd-btn--capture"}`}
+          >
+            {camera === "starting" ? "Starting camera…" : "Open camera to capture"}
+          </button>
+        )}
         {lockedId && (
           <button onClick={() => setLockedId(null)} className="sd-btn sd-btn--log">
             Stop tracking

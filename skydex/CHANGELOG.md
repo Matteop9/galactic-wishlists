@@ -2,6 +2,16 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.5.2 — 2026-08-25
+
+**Spot opens on the map, permission gate removed** — first feedback from the native shell (TestFlight spike passed same day: OAuth, camera, compass, GPS, capture all working in the WKWebView).
+
+### Changed — `app/spot/page.tsx`
+- **Default view is now the map** (was camera). The map needs only GPS, which starts on mount with no user gesture — so Spot renders useful content immediately.
+- **The full-page "Allow camera & motion" gate is gone.** The old `phase: idle|active` state (which hid the whole page behind a button because iOS requires a user gesture for `DeviceOrientationEvent.requestPermission()`) is replaced by a `camera: off|starting|on` lifecycle scoped to the camera alone. The tap that opens Camera view (toggle, map "Track & aim", or the "Open camera to capture" button) doubles as the permission gesture. A silent motion-permission attempt runs on mount so environments that don't need a prompt (Android, desktop, the native shell) get a live compass with zero taps; where iOS insists on a gesture, the Camera tap retries.
+- Camera view shows a "Starting camera…" / "Open camera" panel until the stream is up; the capture button becomes "Open camera to capture" while the camera is off. Sensor teardown consolidated into the mount effect's cleanup.
+- **Native shell note:** Capacitor 8's `WebViewDelegationHandler` auto-grants both WKWebView permission callbacks (`requestMediaCapturePermissionFor`, `requestDeviceOrientationAndMotionPermissionFor`), so in the iOS app there are no repeat permission prompts at all — the recurring screen users saw was purely this web gate. No native change needed; hosted mode ships this fix to the installed app instantly.
+
 ## v0.5.1 — 2026-08-25
 
 **Capacitor iOS shell + Codemagic TestFlight pipeline (V4 Phase 5 kickoff).** The native iOS app exists: a Capacitor 8 hosted-mode shell (`server.url: https://sky-dex.com` — the web app stays the product; web deploys update the app instantly) wired to a cloud CI pipeline that signs and uploads to TestFlight. No web-visible changes beyond the release note.
