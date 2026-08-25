@@ -15,7 +15,7 @@ export const RELEASES: Release[] = [
     version: "0.4.2",
     date: "2026-08-24",
     changes: [
-      "SkyDex has its own home: sky-dex.com ✈️ — update your bookmarks! Existing skydex-two.vercel.app links keep working.",
+      "SkyDex has its own home: sky-dex.com ✈️ — old skydex-two.vercel.app links now redirect here automatically. You'll be asked to sign in again once (your catches are all safe).",
     ],
   },
   {

@@ -12,6 +12,9 @@
 ### Manual (dashboard) — Supabase Auth → URL Configuration
 - Site URL → `https://sky-dex.com`; add `https://sky-dex.com/auth/callback` to Redirect URLs (keep the skydex-two entries). Until done, sign-ins started on the new domain land back on the old one (allowlist fallback) — degraded, not broken.
 
+### Follow-up — old domain + www now redirect (user: "flip it")
+- **`next.config.ts`**: host-based 308s — `skydex-two.vercel.app/*` and `www.sky-dex.com/*` → `https://sky-dex.com/*` (path + query preserved, so old `/s/[id]` share links resolve). Config redirects run before proxy.ts, so no auth round-trip on the legacy host. Known one-time costs: legacy-domain sessions don't carry over (one re-sign-in; the redirect hop also self-heals the allowlist fallback — the auth code bounces back to the origin holding the PKCE cookie), and PWAs installed from the old domain should be reinstalled from sky-dex.com. Chose config-level redirects over the dashboard "Redirect to" toggle so the cutover is versioned in the repo.
+
 ## v0.4.1 — 2026-08-24
 
 **V4 Phase 2 (commercial licensing + infra) — the code half.** The live feed now rides a commercial-safe failover chain, the last open API endpoint is authed and throttled, and the attributions/licence docs match reality again. The rest of Phase 2 is account actions (custom domain, Vercel Pro, Supabase Pro, analytics toggle, error monitoring).
