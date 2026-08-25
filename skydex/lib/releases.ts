@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.4.2",
+    date: "2026-08-24",
+    changes: [
+      "SkyDex has its own home: sky-dex.com ✈️ — update your bookmarks! Existing skydex-two.vercel.app links keep working.",
+    ],
+  },
+  {
     version: "0.4.1",
     date: "2026-08-24",
     changes: [

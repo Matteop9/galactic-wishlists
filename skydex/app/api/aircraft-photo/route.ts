@@ -8,7 +8,7 @@ const dispatcher = new Agent({
   headersTimeout: 10_000,
   bodyTimeout: 10_000,
 });
-const UA = "SkyDex/0.1 (+https://skydex-two.vercel.app)";
+const UA = "SkyDex (+https://sky-dex.com)";
 
 // Airframe photos change rarely and Planespotters is a rate-limited courtesy
 // API — let Vercel's edge cache absorb repeat card renders.

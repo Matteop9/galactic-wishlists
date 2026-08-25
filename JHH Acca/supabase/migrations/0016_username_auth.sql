@@ -6,7 +6,11 @@
 
 create extension if not exists pgcrypto schema extensions;
 
-insert into app_config (key, value) values ('join_code', '"ACCA2627"')
+-- Placeholder only. This repo is PUBLIC, so the real join code must NOT live
+-- here — set it after deploy via Admin → Join code (app_config.join_code).
+-- A fresh DB seeds an unusable placeholder so registration stays closed until
+-- an admin sets the real code.
+insert into app_config (key, value) values ('join_code', '"CHANGE-ME-IN-ADMIN"')
 on conflict (key) do nothing;
 
 -- Who can still be claimed (name picker on the join screen; anon-callable,

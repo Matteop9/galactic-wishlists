@@ -2,12 +2,8 @@ node_modules
 dist
 football-data key.txt
 Open Router Key.txt
-.env
-.env.local
-.env.*.local
 *.log
+*.tsbuildinfo
 .vercel
 .DS_Store
-
-.vercel
 .env*

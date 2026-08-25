@@ -2,6 +2,16 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.4.2 — 2026-08-24
+
+**Custom domain: sky-dex.com (V4 Phase 2 infra).** Domain purchased by the user, delegated to Vercel nameservers (ns1/ns2.vercel-dns.com), attached to the project (apex + www). `NEXT_PUBLIC_SITE_URL=https://sky-dex.com` set in Vercel production — flips metadataBase/canonical, robots, sitemap, and the magic-link redirect (all already read the env; only fallbacks reference the old host). Google OAuth is origin-based so both domains sign in regardless. The old skydex-two.vercel.app URL keeps serving (nothing redirects yet).
+
+### Changed
+- **`app/api/aircraft-photo/route.ts`**: Planespotters User-Agent contact URL → sky-dex.com (last hardcoded old-domain reference).
+
+### Manual (dashboard) — Supabase Auth → URL Configuration
+- Site URL → `https://sky-dex.com`; add `https://sky-dex.com/auth/callback` to Redirect URLs (keep the skydex-two entries). Until done, sign-ins started on the new domain land back on the old one (allowlist fallback) — degraded, not broken.
+
 ## v0.4.1 — 2026-08-24
 
 **V4 Phase 2 (commercial licensing + infra) — the code half.** The live feed now rides a commercial-safe failover chain, the last open API endpoint is authed and throttled, and the attributions/licence docs match reality again. The rest of Phase 2 is account actions (custom domain, Vercel Pro, Supabase Pro, analytics toggle, error monitoring).

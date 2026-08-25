@@ -7,7 +7,11 @@
 -- admin_unlink_player only deletes the auth user when the OTHER schema no
 -- longer references it (see JHH 0022 for the mirror-image guard).
 
-insert into milkybay.app_config (key, value) values ('join_code', '"MILKY2526"')
+-- Placeholder only. This repo is PUBLIC, so the real join code must NOT live
+-- here — set it after deploy via Admin → Join code (app_config.join_code).
+-- A fresh DB seeds an unusable placeholder so registration stays closed until
+-- an admin sets the real code.
+insert into milkybay.app_config (key, value) values ('join_code', '"CHANGE-ME-IN-ADMIN"')
 on conflict (key) do nothing;
 
 -- Includes non-playing admins: Matteo must be able to claim his own row
