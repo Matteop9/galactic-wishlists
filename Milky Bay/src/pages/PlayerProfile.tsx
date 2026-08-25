@@ -192,6 +192,11 @@ export default function PlayerProfile() {
             >
               {sendFeedback.isPending ? 'Sending…' : 'Send feedback'}
             </button>
+            {sendFeedback.isError && (
+              <p className="mt-2 text-[11px]" style={{ color: 'var(--color-loss)' }}>
+                Couldn't send — check your connection and try again.
+              </p>
+            )}
             {myFeedback.length > 0 && (
               <div className="mt-3 flex flex-col gap-1.5">
                 {myFeedback.map((f) => (

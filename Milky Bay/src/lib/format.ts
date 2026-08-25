@@ -3,10 +3,17 @@ export const odds2 = (n: number | null | undefined) =>
 
 export const score2 = odds2
 
-/** e.g. 15/8 (grid headers) */
-export const dayMonth = (iso: string) => {
-  const d = new Date(iso + 'T12:00:00')
-  return `${d.getDate()}/${d.getMonth() + 1}`
+/** Today's date (YYYY-MM-DD) in Europe/London — matches how the DB stores
+    gw_date, so it stays correct in the 00:00–01:00 BST window where UTC still
+    reads yesterday. */
+export const londonToday = () =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London' }).format(new Date())
+
+/** Shift a YYYY-MM-DD date string by whole days (noon-UTC anchored, DST-safe). */
+export function addDays(iso: string, days: number): string {
+  const d = new Date(iso + 'T12:00:00Z')
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
 }
 
 /** e.g. SAT 15 AUG */
@@ -15,14 +22,6 @@ export const gwDate = (iso: string) =>
     .toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
     .toUpperCase()
     .replace(/,/g, '')
-
-/** e.g. 15 Aug 2026 */
-export const longDate = (iso: string) =>
-  new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
 
 export const initials = (name: string) => name.slice(0, 2).toUpperCase()
 

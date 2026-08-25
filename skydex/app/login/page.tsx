@@ -1,35 +1,46 @@
 "use client";
 
-import { useActionState, Suspense, useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { signInWithEmail, type LoginState } from "./actions";
 import { createClient } from "@/lib/supabase/client";
 
+type OAuthProvider = "google" | "apple";
+
+// Apple mark for the Sign in with Apple button (Apple's guidelines want their
+// logo on the button; the  glyph renders as tofu off Apple devices).
+function AppleMark() {
+  return (
+    <svg viewBox="0 0 814 1000" className="h-4 w-4 fill-current" aria-hidden="true">
+      <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" />
+    </svg>
+  );
+}
+
 function LoginForm() {
-  const rawNext = useSearchParams().get("next") ?? "/scrapbook";
+  const params = useSearchParams();
+  const rawNext = params.get("next") ?? "/scrapbook";
   // Same-origin paths only — mirrors the check in /auth/callback.
   const next = /^\/(?![/\\])/.test(rawNext) ? rawNext : "/scrapbook";
+  // /auth/callback bounces here with ?error=auth when the code exchange fails
+  // or the user cancels at the provider — surface it instead of dead-ending.
+  const bounced = params.get("error") != null;
   const [oauthError, setOauthError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
-  const [emailState, emailAction, emailPending] = useActionState<LoginState, FormData>(
-    signInWithEmail,
-    {},
-  );
+  const [pending, setPending] = useState<OAuthProvider | null>(null);
 
-  async function google() {
+  async function oauth(provider: OAuthProvider) {
     setOauthError(null);
-    setPending(true);
+    setPending(provider);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
     if (error) {
       setOauthError(error.message);
-      setPending(false);
+      setPending(null);
     }
     // On success the browser navigates away — leave `pending` on.
   }
@@ -40,45 +51,30 @@ function LoginForm() {
         ← SkyDex
       </Link>
       <h1 className="mt-6 font-display text-3xl font-bold tracking-tight">Sign in</h1>
-      <p className="mt-2 text-ink-soft">
-        One tap with Google, or a magic link by email. No passwords.
-      </p>
+      <p className="mt-2 text-ink-soft">One tap with Google or Apple. No passwords, no email links.</p>
+
+      {bounced && !pending && !oauthError && (
+        <p className="mt-4 rounded-lg border border-paper-edge bg-paper-deep p-3 text-sm text-stamp">
+          That sign-in didn&apos;t complete — give it another try.
+        </p>
+      )}
 
       <button
-        onClick={google}
-        disabled={pending}
+        onClick={() => oauth("google")}
+        disabled={pending != null}
         className="sd-btn sd-btn--capture mt-6 w-full justify-center"
       >
-        {pending ? "Opening Google…" : "Continue with Google"}
+        {pending === "google" ? "Opening Google…" : "Continue with Google"}
+      </button>
+      <button
+        onClick={() => oauth("apple")}
+        disabled={pending != null}
+        className="sd-btn mt-3 w-full justify-center bg-black text-white hover:bg-neutral-800"
+      >
+        <AppleMark />
+        {pending === "apple" ? "Opening Apple…" : "Continue with Apple"}
       </button>
       {oauthError && <p className="mt-2 text-sm text-stamp">{oauthError}</p>}
-
-      <div className="my-5 flex items-center gap-3 text-ink-faint">
-        <span className="h-px flex-1 bg-paper-edge" />
-        <span className="font-mono text-xs uppercase tracking-widest">or email</span>
-        <span className="h-px flex-1 bg-paper-edge" />
-      </div>
-
-      {emailState.sent ? (
-        <div className="rounded-lg border border-paper-edge bg-paper-deep p-4">
-          Check your inbox — we&apos;ve sent you a sign-in link. You can close this tab.
-        </div>
-      ) : (
-        <form action={emailAction} className="flex flex-col gap-3">
-          <input type="hidden" name="next" value={next} />
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="you@example.com"
-            className="rounded-md border border-paper-edge bg-paper-deep px-3 py-2.5 font-mono text-sm text-ink outline-none focus:border-sky"
-          />
-          {emailState.error && <p className="text-sm text-stamp">{emailState.error}</p>}
-          <button type="submit" disabled={emailPending} className="sd-btn sd-btn--log">
-            {emailPending ? "Sending…" : "Send magic link"}
-          </button>
-        </form>
-      )}
     </div>
   );
 }

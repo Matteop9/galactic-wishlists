@@ -5,7 +5,7 @@ import { usePlayer } from '../hooks/usePlayer'
 /* Session + claimed-player guard. RLS is the real enforcement; this is UX. */
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
-  const { session, me, loading } = usePlayer()
+  const { session, me, loading, error, loaded } = usePlayer()
 
   if (loading)
     return (
@@ -16,9 +16,26 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
 
   if (!session) return <Navigate to="/login" replace />
 
+  // A failed players fetch must NOT masquerade as "you have no player row" —
+  // that would bounce a fully-linked user to /link ("every name is claimed").
+  if (error)
+    return (
+      <div className="flex min-h-[60dvh] flex-col items-center justify-center gap-3 px-6 text-center">
+        <span className="overline">Couldn't reach Milky Bay</span>
+        <p className="text-[13px] text-muted">Check your connection and try again.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded-[10px] px-4 py-2 text-[13px] font-bold"
+          style={{ background: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
+        >
+          Retry
+        </button>
+      </div>
+    )
+
   // Signed in (possibly with an Acca account) but not yet linked to a Milky
   // Bay player — send them to the link screen to claim their name.
-  if (!me) return <Navigate to="/link" replace />
+  if (loaded && !me) return <Navigate to="/link" replace />
 
   return <>{children}</>
 }

@@ -68,6 +68,23 @@ Requested in chat after the Test Weekend.
       0.3 × height. Same grammar shipped to Milky Bay v0.3.0 (evolving crown/spoon +
       drawn poo). Dev-only gallery at `/emblem-lab.html` (vite dev, not built).
 
+## Shipped in v0.8.1 (2026-08-25) — review fixes
+
+Not feedback-queue items — from a full security / usability / stale-data review.
+
+- [x] Dates/deadlines computed in Europe/London, not UTC (fixed the 00:00–01:00 BST
+      off-by-one across This Week, Gameweeks, Standings, Admin and live-score gating).
+- [x] This Week keeps showing the just-played weekend Sun–Tue instead of jumping to next
+      week's empty card.
+- [x] Rules page handles a failed fetch (loading + error state).
+- [x] Admin: JHP team-level adjustments (was hardcoded to VDL); masked inline password reset
+      instead of `prompt()`; stale Test Weekend checklist removed.
+- [x] `create_gameweek` (migration `0024`): friendly errors + Saturday guard.
+- [x] `scripts/checks.sql` gate 1 pinned to the pre-Season-7 range.
+- [x] Dead code removed: magic-link path, unused `Card`/`Overline`, `TeamWeekHeader`/`pickRowLink`.
+- [x] Security hardening (migration `0023`) + public-repo cleanup (join-code literal scrubbed,
+      duplicate zips + `New Additions/` removed).
+
 ## Backlog / deferred
 
 - [ ] **BTTS both teams + tick/cross showing the actual result** (feedback, deferred from v0.5.0

@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { addDays, londonToday } from './format'
 import type {
   Adjustment,
   AuditRow,
@@ -127,14 +128,23 @@ export const fetchAudit = (limit = 100) =>
     supabase.from('audit_log').select('*').order('at', { ascending: false }).limit(limit),
   )
 
-/** The gameweek the app should focus on: active/upcoming, else latest settled. */
+/** The gameweek the app should focus on. Prefers a live window, then the
+    weekend that just happened (so Sun–Tue still shows last week's results
+    instead of jumping to next week's empty card), then the next upcoming,
+    then the latest settled ever. `today` is Europe/London, matching gw_date. */
 export async function fetchCurrentGameweek(): Promise<Gameweek | null> {
   const gws = await fetchGameweeks()
-  const today = new Date().toISOString().slice(0, 10)
+  const today = londonToday()
   const active = gws.find(
     (g) => ['open', 'closed'].includes(g.status) && g.gw_date >= today,
   )
   if (active) return active
+  // A weekend that finished in the last few days — keep showing it until the
+  // next window opens (status flips to 'open' and the check above catches it).
+  const recentlyPlayed = [...gws]
+    .reverse()
+    .find((g) => g.status !== 'scheduled' && g.gw_date >= addDays(today, -4))
+  if (recentlyPlayed) return recentlyPlayed
   const upcoming = gws.find((g) => g.status === 'scheduled' && g.gw_date >= today)
   const settled = [...gws].reverse().find((g) => g.status === 'settled')
   return upcoming ?? settled ?? null
@@ -142,6 +152,10 @@ export async function fetchCurrentGameweek(): Promise<Gameweek | null> {
 
 // --- mutations ---
 
+/** Picks go through an RPC, not a table upsert: `picks` has column-level
+    grants (result/locked/stamps are un-writable) and PostgREST's upsert puts
+    the conflict-target columns in its DO UPDATE SET list, which trips the
+    UPDATE privilege check on every insert. See mb_0016. */
 export const upsertPick = (pick: {
   gameweek_id: string
   player_id: string
@@ -151,12 +165,16 @@ export const upsertPick = (pick: {
   odds: number
   odds_display: string | null
 }) =>
-  unwrap(
-    supabase
-      .from('picks')
-      .upsert(pick, { onConflict: 'gameweek_id,player_id,acca_kind' })
-      .select()
-      .single(),
+  unwrap<string>(
+    supabase.rpc('upsert_pick', {
+      p_gameweek: pick.gameweek_id,
+      p_player: pick.player_id,
+      p_kind: pick.acca_kind,
+      p_selection: pick.selection,
+      p_odds: pick.odds,
+      p_game: pick.game,
+      p_odds_display: pick.odds_display,
+    }),
   )
 
 export const settlePick = (

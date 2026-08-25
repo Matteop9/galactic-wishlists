@@ -10,6 +10,16 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.8.1',
+    date: '2026-08-25',
+    title: 'Reliability tune-up',
+    items: [
+      'This Week keeps showing the weekend just gone right through to midweek — no more skipping ahead to next week\'s empty card',
+      'Dates and deadlines now always read in UK time, fixing a midnight-hour glitch that could show the wrong day',
+      'Under-the-hood robustness: a steadier rules page, tidier admin tools (including team-level adjustments for JHP), and a good clear-out of retired code',
+    ],
+  },
+  {
     version: '0.8.0',
     date: '2026-08-19',
     title: 'Emblems get a career path',

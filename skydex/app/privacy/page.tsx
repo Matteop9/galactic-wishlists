@@ -9,7 +9,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-display text-lg font-semibold text-ink">What we collect</h2>
           <ul className="mt-2 list-disc pl-5">
-            <li>Your email address (to sign you in via a magic link).</li>
+            <li>Your email address, from your Google or Apple account (to identify your sign-in).</li>
             <li>Your chosen username and optional home airport.</li>
             <li>
               For each capture: the photo you take, the time, your GPS location, and the

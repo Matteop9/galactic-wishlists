@@ -1,5 +1,19 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.8.1 — 2026-08-25
+
+Fixes from a full security / usability / stale-data review (no new features).
+
+- **Timezone**: `today` is computed in `Europe/London` via a `londonToday()` helper, not a UTC slice — fixes an off-by-one day in the 00:00–01:00 BST window across `fetchCurrentGameweek`, `isMatchday`, Admin, Gameweeks and Standings.
+- **`fetchCurrentGameweek`**: keeps returning the just-played weekend for a few days after it closes (was jumping to next week's empty gameweek from Sunday).
+- **Rules page**: explicit loading + error states on the markdown fetch (was a silent blank card + unhandled rejection).
+- **`useCountdown`**: clears its text when the target goes null.
+- **Admin**: team-level adjustments can target **JHP** as well as VDL (was hardcoded); password reset uses a masked inline input, not a native `prompt()`; stale Test Weekend checklist removed.
+- **`create_gameweek`** (migration `0024`): friendly errors (no season covers the date / not a Saturday) instead of a raw `P0002`.
+- **`scripts/checks.sql`**: gate 1 pinned to `'2026-08-09'` so it stops false-alarming as `ALL-TIME MISMATCH` once Season 7 settles.
+- **Security hardening** (migration `0023`): internal cron-only functions (`live_tick`, `insert_no_picks`, `tick_gameweeks`, `process_poll_responses`, `audit`, `stamp_pick`) revoked from `PUBLIC`; `app_config` and `feedback` reads scoped to author/admin.
+- **Dead code**: retired magic-link flow removed (Claim/AuthCallback pages + routes + claim-token/`claimPlayer`/`renameSeasonTeam` queries); unused `Card`/`Overline`, `TeamWeekHeader`/`pickRowLink`. Public-repo hygiene: join-code literal scrubbed to a placeholder, duplicate zips + `New Additions/` removed, `*.tsbuildinfo` untracked.
+
 ## v0.8.0 — 2026-08-19
 
 Emblem grammar: champion stars extended to tiers 5–8+ from the design canvas (`docs/Emblem Grammar.dc.html`, brief in `docs/emblem-design-brief.md`).

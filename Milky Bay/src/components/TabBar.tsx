@@ -59,7 +59,7 @@ export default function TabBar() {
               <div key="pick" className="relative flex justify-center">
                 <NavLink
                   to="/pick"
-                  className="absolute -top-[38px] flex h-11 w-11 items-center justify-center rounded-full bg-accent shadow-[0_4px_18px_rgba(180,227,61,0.35)]"
+                  className="absolute -top-[38px] flex h-11 w-11 items-center justify-center rounded-full bg-accent shadow-[0_4px_18px_rgba(116,192,232,0.35)]"
                   aria-label="Enter pick"
                 >
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-on-accent)" strokeWidth="2.5" strokeLinecap="round">

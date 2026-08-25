@@ -22,7 +22,7 @@ Live at **https://skydex-two.vercel.app**
 ## Stack
 
 - **Next.js 16** (App Router, `proxy.ts` middleware) + React 19 + Tailwind 4
-- **Supabase** — Postgres (RLS), magic-link auth, photo storage
+- **Supabase** — Postgres (RLS), Google + Apple OAuth, photo storage
 - **Live positions:** adsb.lol → adsb.fi → airplanes.live failover chain (transient — never persisted)
 - **Persisted card data:** Flightradar24 API (routes, operator, flight state)
   + curated license-clean static maps for type names, airports, airlines,

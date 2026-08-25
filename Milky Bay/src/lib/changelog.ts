@@ -10,6 +10,24 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.3.2',
+    date: '2026-08-25',
+    title: 'Reliability tune-up',
+    items: [
+      'This Week keeps showing the weekend just gone right through to midweek, instead of jumping to next week\'s empty card',
+      'The pick window now opens bang on Wednesday noon instead of taking a few minutes to catch up, and the close time reads correctly',
+      'Dates always read in UK time, and a dropped connection shows a proper "try again" instead of pretending you\'re logged out',
+    ],
+  },
+  {
+    version: '0.3.1',
+    date: '2026-08-20',
+    title: 'Picks actually save',
+    items: [
+      'Entering a pick failed with a permission error every time — nobody had managed to save one through the app until now. Fixed: picks go in properly, and the app still records who typed each one in',
+    ],
+  },
+  {
     version: '0.3.0',
     date: '2026-08-19',
     title: 'The honours cabinet, redesigned',

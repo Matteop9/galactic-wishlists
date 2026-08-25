@@ -1,5 +1,44 @@
 # Changelog — Milky Bay
 
+## 0.3.2 — 2026-08-25
+
+Fixes from a full security / usability / stale-data review.
+
+- **Timezone**: `today` computed in `Europe/London` (`londonToday()` helper) — fixes an off-by-one in the 00:00–01:00 BST window in `fetchCurrentGameweek` and Standings.
+- **`fetchCurrentGameweek`**: shows the just-played weekend Sun–Tue instead of jumping to next week's empty card.
+- **Pick window**: EnterPick/ThisWeek derive "open" from the `window_opens`/`window_closes` timestamps, not just status — usable the moment it opens (Wed noon) rather than up to 5 minutes later when the cron flips the status. "Sat midnight" copy corrected to "Sat 23:59".
+- **Resilience**: a failed players fetch no longer bounces a signed-in user to `/link` ("every name is claimed") — `RequireAuth` shows a retry screen; feedback submit surfaces errors; `useCountdown` clears on null.
+- **`create_gameweek`** (migration `mb_0018`): friendly errors + Saturday guard instead of a raw `P0002`.
+- **Security hardening** (migration `mb_0017`): `uk_ts` search_path pinned; `app_config`/`feedback` reads scoped to author/admin.
+- **Fixes**: Pick button glow recoloured to Milky Bay blue (was The Acca's lime); dead `Card`/`dayMonth`/`longDate` removed.
+
+## 0.3.1 — 2026-08-20
+
+- **Saving a pick failed with `permission denied for table picks`** — the first
+  real pick entry in the app's life (only mb_0007 seed rows existed until now).
+  The client used a PostgREST upsert, which compiles to
+  `insert ... on conflict (gameweek_id, player_id, acca_kind) do update set
+  gameweek_id = excluded.gameweek_id, player_id = ..., acca_kind = ..., ...` —
+  every payload column lands in the SET list, conflict target included.
+  Postgres checks UPDATE privilege on every column in that SET list **at plan
+  time**, even for a row that never conflicts, so the deliberately tight column
+  grants from mb_0003 (`grant update (game, selection, odds, odds_display)`)
+  rejected the statement outright with 42501. Reproduced in-database as
+  `authenticated`, then verified fixed the same way.
+- **Fix (mb_0016)**: picks now write through `milkybay.upsert_pick(...)`, a
+  security-definer RPC, matching `settle_pick`/`lock_pick`. Same authorisation
+  as the mb_0011 policies (anyone in the syndicate transcribes anyone's picks
+  while the window's open; admins any time), same four mutable columns, and the
+  stamp trigger still records who typed it in. Grants stay tight —
+  `result`/`void_reason`/`is_no_pick`/`locked` and the `submitted_*` stamps are
+  still un-writable from the client.
+- **One write path**: the now-redundant `insert`/`update` grants and the
+  `mb_picks_insert`/`mb_picks_update` policies are dropped, so a client can't
+  route around the RPC's checks. Direct table inserts as `authenticated` now
+  fail, as intended.
+- Min odds (W 1.50 / Random 1.70) stay a UI warning, never a constraint — real
+  chat picks must always transcribe.
+
 ## 0.3.0 — 2026-08-19
 
 Emblem grammar: honours emblems redesigned from the shared design canvas (`JHH Acca/docs/Emblem Grammar.dc.html`).

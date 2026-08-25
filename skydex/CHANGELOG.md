@@ -2,6 +2,21 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.5.0 — 2026-08-25
+
+**Store-grade auth (V4 Phase 4 milestone).** Sign-in is now **Google + Apple only**; the email magic-link path is gone. Apple side configured same day: App ID **`com.skydex.mobile`** (canonical, hyphen-free — doubles as the future Capacitor/Android id), Services ID `com.skydex.mobile.web` (domain + return URL on the Supabase project), SIWA key `X68BQN3W5M`, client secret generated locally (PyJWT ES256; **expires 2027-02-21** — regenerate from the .p8 before then), Supabase Apple provider enabled.
+
+### Changed
+- **`app/login/page.tsx`**: full rework — Google (primary) + **Sign in with Apple** (black button, inline Apple-mark SVG; the  glyph is tofu off Apple devices) via one shared `signInWithOAuth` path; email form + divider removed. The callback's `?error=auth` bounce is now surfaced ("That sign-in didn't complete") instead of dead-ending silently (review items U9/U10); per-provider pending labels.
+- **`app/auth/callback/route.ts`**: error redirect now carries the validated `next` so a retry keeps its destination; comment updated (OAuth PKCE, not magic-link).
+- Copy sync: `app/privacy/page.tsx` (email comes from your Google/Apple account), `README.md`, `SPEC.md` (Apple/Google marked shipped).
+
+### Removed
+- **`app/login/actions.ts`** (magic-link `signInWithEmail` server action) — closes the "unauthenticated email-send, no throttle" review item by removing the surface entirely.
+
+### Notes
+- **4 email-only accounts existed at cutover** (1 gmail, 2 external, 1 owner test account): they keep their logbooks by signing in with Google or Apple **on the same email address** (Supabase auto-links verified same-email identities). The Supabase **Email provider stays enabled as a transition backstop** (no UI path reaches it); disable it in the dashboard at v1.0 along with the leaked-password advisor item.
+
 ## v0.4.2 — 2026-08-24
 
 **Custom domain: sky-dex.com (V4 Phase 2 infra).** Domain purchased by the user, delegated to Vercel nameservers (ns1/ns2.vercel-dns.com), attached to the project (apex + www). `NEXT_PUBLIC_SITE_URL=https://sky-dex.com` set in Vercel production — flips metadataBase/canonical, robots, sitemap, and the magic-link redirect (all already read the env; only fallbacks reference the old host). Google OAuth is origin-based so both domains sign in regardless. The old skydex-two.vercel.app URL keeps serving (nothing redirects yet).

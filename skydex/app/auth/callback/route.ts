@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-/** Exchanges the magic-link code for a session, then redirects into the app. */
+/** Exchanges the OAuth (PKCE) code for a session, then redirects into the app. */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
@@ -18,5 +18,6 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth`);
+  // Carry `next` (already validated same-origin) so a retry keeps its destination.
+  return NextResponse.redirect(`${origin}/login?error=auth&next=${encodeURIComponent(next)}`);
 }

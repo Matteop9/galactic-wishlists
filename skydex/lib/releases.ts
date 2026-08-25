@@ -12,6 +12,15 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.5.0",
+    date: "2026-08-25",
+    changes: [
+      "Sign in with Apple has landed — pick Apple or Google, whichever suits. If you originally joined by email, sign in with Google or Apple using the same address and your logbook carries straight over.",
+      "Email magic links are retired — no more waiting on sign-in emails.",
+      "A sign-in that fails or gets cancelled now tells you, instead of silently dropping you back at the login screen.",
+    ],
+  },
+  {
     version: "0.4.2",
     date: "2026-08-24",
     changes: [

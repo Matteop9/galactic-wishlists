@@ -19,7 +19,10 @@ export default function ThisWeek() {
     queryFn: () => fetchPlayerWeeks(gw!.id),
     enabled: !!gw,
   })
-  const windowOpen = gw?.status === 'open'
+  const now = Date.now()
+  const windowOpen =
+    gw?.status === 'open' ||
+    (!!gw && Date.parse(gw.window_opens) <= now && now < Date.parse(gw.window_closes))
   const closesIn = useCountdown(windowOpen ? gw?.window_closes : null)
 
   const wPicks = (picks ?? []).filter((p) => p.acca_kind === 'W')
@@ -43,7 +46,7 @@ export default function ThisWeek() {
       {windowOpen && (
         <div className="mt-3 flex items-center justify-between rounded-[12px] bg-surface px-3.5 py-2.5">
           <span className="text-[12px] text-muted">
-            App entry closes <span className="font-semibold text-text">Sat midnight</span>
+            App entry closes <span className="font-semibold text-text">Sat 23:59</span>
             <span className="block text-[10.5px]">Real deadline: Thursday 8pm in the chat</span>
           </span>
           <span className="font-mono text-[15px] font-bold" style={{ color: 'var(--color-accent)' }}>

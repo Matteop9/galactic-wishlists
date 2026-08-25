@@ -116,7 +116,14 @@ export default function EnterPick() {
   })
 
   const target = forPlayer ?? me?.id ?? null
-  const windowOpen = gw?.status === 'open' || (isAdmin && gw?.status !== 'settled')
+  // Derive from the actual timestamps, not just status: the cron flips status
+  // only every 5 min, so for a few minutes after Wed noon a 'scheduled' GW is
+  // really open (and the server upsert agrees). Admins can edit until settled.
+  const now = Date.now()
+  const withinWindow =
+    !!gw && Date.parse(gw.window_opens) <= now && now < Date.parse(gw.window_closes)
+  const windowOpen =
+    gw?.status === 'open' || withinWindow || (isAdmin && gw?.status !== 'settled')
 
   // Prefill from existing picks for the target player
   useEffect(() => {
@@ -171,7 +178,7 @@ export default function EnterPick() {
           <>
             <span className="font-semibold text-text">{gwDate(gw.gw_date)}</span> — picks go in
             the group chat by <span className="font-semibold text-text">Thursday 8pm</span>;
-            transcribe them here by Saturday midnight.
+            transcribe them here by Saturday 23:59.
           </>
         ) : (
           'No gameweek is set up yet.'

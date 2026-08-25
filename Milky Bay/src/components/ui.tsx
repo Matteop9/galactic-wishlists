@@ -14,10 +14,6 @@ const PLAYER_COLORS: Record<string, string> = {
 
 export const playerColor = (name: string) => PLAYER_COLORS[name] ?? 'var(--color-accent)'
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-[14px] bg-surface ${className}`}>{children}</div>
-}
-
 export function Overline({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`overline ${className}`}>{children}</div>
 }

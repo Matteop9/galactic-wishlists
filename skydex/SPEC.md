@@ -32,7 +32,7 @@ Derived from [`research/skycards-community.md`](research/skycards-community.md).
 - **Public profile**: handle, home airport, headline stats.
 
 ## Accounts (must-have)
-- Sign-up / sign-in (email magic-link to start). Each user owns their own sightings (RLS).
+- Sign-up / sign-in with Google or Apple (email magic-link retired in v0.5.0). Each user owns their own sightings (RLS).
 
 ---
 
@@ -52,7 +52,7 @@ Derived from [`research/skycards-community.md`](research/skycards-community.md).
 - **Route (origin/destination) enrichment** — not in OpenSky state vectors; MVP cards lean on type + airline, route marked unknown. (Proposal's known data gap.)
 - **Native iOS app** — web first; Expo/React Native migration is Phase 1.
 - **Anti-replay / liveness hardening, photo moderation, geofencing of sensitive/military zones** — stubbed in MVP, hardened in Phase 1. **[risk register]**
-- **Sign in with Apple / Google** — magic-link only for MVP (zero external setup).
+- ~~Sign in with Apple / Google~~ — SHIPPED v0.5.0 (both are now the only sign-in methods).
 - **Friends, leaderboards, private leagues, events** — proposal Phase 2.
 
 ---

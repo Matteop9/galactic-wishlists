@@ -19,5 +19,7 @@ export function usePlayer() {
     me,
     isAdmin: me?.is_admin ?? false,
     loading: loading || (!!session && query.isLoading),
+    error: (query.error as Error | null) ?? null,
+    loaded: query.isSuccess,
   }
 }
