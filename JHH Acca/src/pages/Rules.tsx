@@ -13,12 +13,51 @@ function renderInline(s: string) {
 }
 
 function RulesInner() {
-  const [md, setMd] = useState('')
+  const [md, setMd] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
   useEffect(() => {
+    let alive = true
     fetch('/rules/acca-rules-2026-27.md')
-      .then((r) => r.text())
-      .then(setMd)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.text()
+      })
+      .then((text) => {
+        if (alive) setMd(text)
+      })
+      .catch(() => {
+        if (alive) setFailed(true)
+      })
+    return () => {
+      alive = false
+    }
   }, [])
+
+  if (failed)
+    return (
+      <div className="px-4 pb-6">
+        <PageTitle>RULES</PageTitle>
+        <div className="rounded-[14px] bg-surface px-4 py-6 text-center text-[13px] text-muted">
+          Couldn't load the rules.{' '}
+          <button
+            onClick={() => window.location.reload()}
+            className="underline"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            Reload
+          </button>
+        </div>
+      </div>
+    )
+  if (md === null)
+    return (
+      <div className="px-4 pb-6">
+        <PageTitle>RULES</PageTitle>
+        <div className="rounded-[14px] bg-surface px-4 py-6 text-center">
+          <span className="overline">Loading…</span>
+        </div>
+      </div>
+    )
 
   const blocks: React.ReactNode[] = []
   const lines = md.split('\n')

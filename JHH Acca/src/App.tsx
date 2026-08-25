@@ -10,8 +10,6 @@ import PlayerProfile from './pages/PlayerProfile'
 import Admin from './pages/Admin'
 import Rules from './pages/Rules'
 import Login from './pages/Login'
-import Claim from './pages/Claim'
-import AuthCallback from './pages/AuthCallback'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
@@ -23,8 +21,6 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/claim/:token" element={<Claim />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route element={<Shell />}>
             <Route path="/" element={<ThisWeek />} />
             <Route path="/standings" element={<Leaderboards />} />

@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { addDays, londonToday } from './format'
 import type {
   Adjustment,
   AuditRow,
@@ -139,14 +140,23 @@ export const fetchLlmUsage = () =>
     supabase.from('llm_usage').select('*').order('at', { ascending: false }).limit(200),
   )
 
-/** The gameweek the app should focus on: earliest not settled/skipped, else latest settled. */
+/** The gameweek the app should focus on. Prefers a live window, then the
+    weekend that just happened (so Sun–Tue still shows last week's results
+    instead of jumping to next week's empty card), then the next upcoming,
+    then the latest settled ever. `today` is Europe/London, matching gw_date. */
 export async function fetchCurrentGameweek(): Promise<Gameweek | null> {
   const gws = await fetchGameweeks()
-  const today = new Date().toISOString().slice(0, 10)
+  const today = londonToday()
   const active = gws.find(
     (g) => ['open', 'closed'].includes(g.status) && g.gw_date >= today,
   )
   if (active) return active
+  // A weekend that finished in the last few days — keep showing it until the
+  // next window opens (status flips to 'open' and the check above catches it).
+  const recentlyPlayed = [...gws]
+    .reverse()
+    .find((g) => g.status !== 'scheduled' && g.gw_date >= addDays(today, -4))
+  if (recentlyPlayed) return recentlyPlayed
   const upcoming = gws.find((g) => g.status === 'scheduled' && g.gw_date >= today)
   const settled = [...gws].reverse().find((g) => g.status === 'settled')
   return upcoming ?? settled ?? null
@@ -159,7 +169,7 @@ export const isMatchday = (gw: Gameweek | null | undefined): boolean =>
   !!gw &&
   gw.live_enabled &&
   (gw.status === 'closed' ||
-    (gw.status === 'open' && new Date().toISOString().slice(0, 10) >= gw.gw_date))
+    (gw.status === 'open' && londonToday() >= gw.gw_date))
 
 // --- mutations ---
 
@@ -227,9 +237,6 @@ export const setIntlBreak = (id: string, on: boolean) =>
       .single(),
   )
 
-export const claimPlayer = (token: string) =>
-  unwrap(supabase.rpc('claim_player', { claim_token: token }))
-
 // --- username auth ---
 
 export const usernameToEmail = (username: string) =>
@@ -261,24 +268,6 @@ export const fetchPlayerAccounts = () =>
   )
 
 // --- admin ---
-
-export interface ClaimToken {
-  token: string
-  player_id: string
-  created_at: string
-  claimed_at: string | null
-}
-
-export const fetchClaimTokens = () =>
-  unwrap<ClaimToken[]>(supabase.from('claim_tokens').select('*'))
-
-export const createClaimToken = (playerId: string) =>
-  unwrap<ClaimToken>(
-    supabase.from('claim_tokens').insert({ player_id: playerId }).select().single(),
-  )
-
-export const deleteClaimToken = (playerId: string) =>
-  unwrap(supabase.from('claim_tokens').delete().eq('player_id', playerId))
 
 export const fetchAdjustments = () =>
   unwrap<Adjustment[]>(
@@ -342,13 +331,3 @@ export const requestPickMatching = (gw: string) =>
   unwrap(supabase.rpc('request_pick_matching', { p_gw: gw }))
 
 export const ingestResponses = () => unwrap(supabase.rpc('ingest_responses'))
-
-export const renameSeasonTeam = (seasonId: string, oldName: string, newName: string) =>
-  unwrap(
-    supabase
-      .from('season_team_members')
-      .update({ team_name: newName })
-      .eq('season_id', seasonId)
-      .eq('team_name', oldName)
-      .select(),
-  )

@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom'
 import type { LivePickStatus, PickScore } from '../lib/types'
-import { odds2, score2 } from '../lib/format'
+import { odds2 } from '../lib/format'
 import { Avatar, DoubleChip, MethodBadge, StateIcon, TeamBadge, teamColor, VoidChip } from './ui'
 import { ChampStars } from './ChampStars'
 import LivePickChip from './LivePickChip'
@@ -135,18 +134,4 @@ export default function AccaCard({ teamName, displayColor, picks, live }: Props)
       </div>
     </div>
   )
-}
-
-export function TeamWeekHeader({ teamName, score, color }: { teamName: string; score: number; color?: string }) {
-  return (
-    <div className="overline px-1 pb-1.5" style={{ color: color ?? teamColor(teamName) }}>
-      {teamName} — WEEK SCORE {score2(score)}
-    </div>
-  )
-}
-
-export { combinedOdds }
-
-export function pickRowLink(playerId: string) {
-  return <Link to={`/players/${playerId}`} />
 }

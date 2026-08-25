@@ -3,6 +3,18 @@ export const odds2 = (n: number | null | undefined) =>
 
 export const score2 = odds2
 
+/** Today (YYYY-MM-DD) in Europe/London — matches how the DB stores gw_date,
+    unlike a UTC slice which reads yesterday during the 00:00–01:00 BST window. */
+export const londonToday = () =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London' }).format(new Date())
+
+/** Shift a YYYY-MM-DD string by whole days (noon-UTC anchored, DST-safe). */
+export function addDays(iso: string, days: number): string {
+  const d = new Date(iso + 'T12:00:00Z')
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
 /** e.g. 15/8 (grid headers) */
 export const dayMonth = (iso: string) => {
   const d = new Date(iso + 'T12:00:00')

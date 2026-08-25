@@ -5,14 +5,6 @@ import { crestUrl, SPORT_EMOJI } from '../lib/teams'
 export const teamColor = (team: string) =>
   team === 'VDL' ? 'var(--color-vdl)' : team === 'JHP' ? 'var(--color-jhp)' : 'var(--color-accent)'
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-[14px] bg-surface ${className}`}>{children}</div>
-}
-
-export function Overline({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`overline ${className}`}>{children}</div>
-}
-
 /** Method badge: mono 9px uppercase, transparent bg, 1px border at 40% alpha. */
 export function MethodBadge({ method }: { method: string }) {
   if (method === 'N/A')

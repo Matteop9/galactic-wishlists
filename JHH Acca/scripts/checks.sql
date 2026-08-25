@@ -3,7 +3,9 @@
 -- reproduces the workbook - e.g. after the Test Weekend, to prove test picks
 -- never touched real stats.
 
--- 1. Full all-time table vs the reconciliation doc
+-- 1. Historical table vs the reconciliation doc. Pinned to the pre-Season-7
+-- cutoff ('2026-08-09') — the figures below are the through-Season-6 totals, so
+-- an open '..2100-01-01' range would (correctly) diverge once S7 picks settle.
 with expected (name, entries, wins, score2, spm4) as (
   values ('George',108,66,119.73,1.1086),('Ausy',108,60,118.58,1.0979),
          ('Henry',108,61,117.95,1.0922),('Luke',99,59,105.23,1.0630),
@@ -14,7 +16,7 @@ with expected (name, entries, wins, score2, spm4) as (
 )
 select 'ALL-TIME MISMATCH' as problem, e.name
 from expected e
-join leaderboard('2023-01-01','2100-01-01') l on l.name = e.name
+join leaderboard('2023-01-01','2026-08-09') l on l.name = e.name
 where l.entries <> e.entries or l.wins <> e.wins
    or round(l.score,2) <> e.score2 or round(l.score_per_match,4) <> e.spm4;
 

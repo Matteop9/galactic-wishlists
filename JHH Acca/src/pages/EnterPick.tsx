@@ -181,7 +181,7 @@ function EnterPickInner() {
       >
         <span className="font-bold">Group chat first.</span> Picks are made in the group chat by
         Friday 8 PM as always — this page just records them, and stays open until Saturday
-        midnight.
+        23:59.
       </div>
 
       {isBreak && (

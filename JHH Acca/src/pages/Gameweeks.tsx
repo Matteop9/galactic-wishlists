@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { fetchAllTeamWeekScores, fetchGameweeks, fetchSeasons } from '../lib/queries'
 import RequireAuth from '../components/RequireAuth'
 import { GwStatusChip, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
-import { gwDate, score2 } from '../lib/format'
+import { gwDate, londonToday, score2 } from '../lib/format'
 import type { TeamWeekScore } from '../lib/types'
 
 /** "9/12 · VDL +2.01" — legs landed for the week, then who took it and by how much.
@@ -27,7 +27,7 @@ function GameweeksInner() {
   const seasonName = (id: string) => seasons?.find((s) => s.id === id)?.name ?? ''
   const summaryFor = (gwId: string) => weekSummary((allTws ?? []).filter((w) => w.gameweek_id === gwId))
 
-  const today = new Date().toISOString().slice(0, 10)
+  const today = londonToday()
   const upcoming = (gws ?? []).filter((g) => g.gw_date >= today && g.status !== 'settled')
   const past = (gws ?? []).filter((g) => g.gw_date < today || g.status === 'settled').reverse()
 

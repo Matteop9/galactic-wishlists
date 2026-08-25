@@ -16,7 +16,7 @@ import {
   isMatchday,
 } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
-import { odds2, score2 } from '../lib/format'
+import { londonToday, odds2, score2 } from '../lib/format'
 import FormGrid from '../components/FormGrid'
 import GwHistoryChart from '../components/GwHistoryChart'
 import TugBar from '../components/TugBar'
@@ -68,7 +68,7 @@ function tabLabel(t: Tab) {
 function LeaderboardsInner() {
   const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
   const { data: allGws } = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks })
-  const today = new Date().toISOString().slice(0, 10)
+  const today = londonToday()
 
   const tabs = useMemo<Tab[]>(() => {
     if (!seasons) return [{ kind: 'all' }]

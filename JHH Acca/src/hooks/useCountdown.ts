@@ -4,7 +4,10 @@ import { countdown } from '../lib/format'
 export function useCountdown(toIso: string | null | undefined) {
   const [text, setText] = useState('')
   useEffect(() => {
-    if (!toIso) return
+    if (!toIso) {
+      setText('')
+      return
+    }
     const tick = () => setText(countdown(toIso))
     tick()
     const id = setInterval(tick, 1000)
