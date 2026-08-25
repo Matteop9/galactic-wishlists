@@ -12,6 +12,9 @@
 - Camera view shows a "Starting camera…" / "Open camera" panel until the stream is up; the capture button becomes "Open camera to capture" while the camera is off. Sensor teardown consolidated into the mount effect's cleanup.
 - **Native shell note:** Capacitor 8's `WebViewDelegationHandler` auto-grants both WKWebView permission callbacks (`requestMediaCapturePermissionFor`, `requestDeviceOrientationAndMotionPermissionFor`), so in the iOS app there are no repeat permission prompts at all — the recurring screen users saw was purely this web gate. No native change needed; hosted mode ships this fix to the installed app instantly.
 
+### Follow-up — native pull-to-refresh in the iOS shell (same day, no version bump per user call)
+- **`ios/App/App/SceneDelegate.swift`**: new `SkyDexBridgeViewController` (subclasses `CAPBridgeViewController`, used as the window's root VC) attaches a `UIRefreshControl` to the webview's scroll view — swipe down from the top of any page to reload it. `alwaysBounceVertical` so the pull works on pages shorter than the screen; spinner ends on a 1 s timer while the reload visually takes over. Touch-owning regions (Spot map/camera, `touch-none`) can't trigger it, by design. Also closes the old "refresh feed control" backlog quick-win for app users. **Native change → needs a new Codemagic/TestFlight build**; web deploys can't deliver it.
+
 ## v0.5.1 — 2026-08-25
 
 **Capacitor iOS shell + Codemagic TestFlight pipeline (V4 Phase 5 kickoff).** The native iOS app exists: a Capacitor 8 hosted-mode shell (`server.url: https://sky-dex.com` — the web app stays the product; web deploys update the app instantly) wired to a cloud CI pipeline that signs and uploads to TestFlight. No web-visible changes beyond the release note.
