@@ -1,12 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { fetchCurrentGameweek, fetchPickScores, upsertPick } from '../lib/queries'
+import { fetchCurrentGameweek, fetchPickScores, fetchTeamDictionary, upsertPick } from '../lib/queries'
+import type { TeamUsage } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
-import { gwDate, isFractional, parseOdds } from '../lib/format'
+import { gwDate, parseOdds } from '../lib/format'
 import { Avatar, GwStatusChip, Overline, PageTitle } from '../components/ui'
+import TeamCombobox from '../components/TeamCombobox'
+import { KNOWN_TEAMS } from '../lib/teams'
 import type { AccaKind } from '../lib/types'
 
 const MIN_ODDS: Record<AccaKind, number> = { W: 1.5, random: 1.7 }
+
+/* Odds live as TEXT while typing — a controlled number would swallow the
+   decimal point ("1." parses to 1 and re-renders without the dot). Fractional
+   odds from the chat get converted to decimal on entry now (the stepper is
+   decimal-only); old picks saved as "4/5" prefill as their decimal value. */
 
 interface Draft {
   game: string
@@ -14,27 +22,41 @@ interface Draft {
   odds: string
 }
 
+const blankDraft = (kind: AccaKind): Draft => ({
+  game: '',
+  selection: '',
+  odds: MIN_ODDS[kind].toFixed(2),
+})
+
 function AccaSection({
   kind,
   draft,
   setDraft,
   disabled,
+  teamOptions,
 }: {
   kind: AccaKind
   draft: Draft
   setDraft: (d: Draft) => void
   disabled: boolean
+  teamOptions: TeamUsage[]
 }) {
   const color = kind === 'W' ? 'var(--color-win)' : 'var(--color-gold)'
+  const min = MIN_ODDS[kind]
   const parsed = draft.odds ? parseOdds(draft.odds) : null
-  const tooLow = parsed != null && parsed < MIN_ODDS[kind]
+  const tooLow = parsed != null && parsed < min
+  const step = (dir: 1 | -1) => {
+    const cur = parsed ?? min
+    const next = Math.max(min, Math.round((cur + dir * 0.05) * 100) / 100)
+    setDraft({ ...draft, odds: next.toFixed(2) })
+  }
   const input = 'w-full rounded-[10px] border bg-surface-2 px-3.5 py-3 text-[15px] mb-3 disabled:opacity-40'
   const inputStyle = { borderColor: 'var(--color-line-strong)' }
 
   return (
-    <div className="overflow-hidden rounded-[14px] bg-surface">
+    <div className="rounded-[14px] bg-surface">
       <div
-        className="h-[3px]"
+        className="h-[3px] rounded-t-[14px]"
         style={{ background: `linear-gradient(90deg, ${color}, color-mix(in srgb, ${color} 30%, transparent))` }}
       />
       <div className="p-4">
@@ -42,7 +64,7 @@ function AccaSection({
           <div className="display text-[19px]" style={{ color }}>
             {kind === 'W' ? 'W Acca' : 'Random Acca'}
           </div>
-          <span className="overline">MIN ODDS {MIN_ODDS[kind].toFixed(2)}</span>
+          <span className="overline">MIN ODDS {min.toFixed(2)}</span>
         </div>
 
         {kind === 'random' && (
@@ -62,36 +84,71 @@ function AccaSection({
         <label className="overline mb-1.5 block">
           {kind === 'W' ? 'TEAM TO WIN' : 'SELECTION'}
         </label>
-        <input
-          value={draft.selection}
-          onChange={(e) => setDraft({ ...draft, selection: e.target.value })}
-          placeholder={kind === 'W' ? 'e.g. West Ham' : 'e.g. BTTS + over 2.5 goals'}
-          className={input}
-          style={inputStyle}
-          disabled={disabled}
-        />
+        {kind === 'W' ? (
+          <div className="mb-3">
+            <TeamCombobox
+              value={draft.selection}
+              onChange={(v) => setDraft({ ...draft, selection: v })}
+              options={teamOptions}
+              placeholder="e.g. West Ham"
+              disabled={disabled}
+            />
+          </div>
+        ) : (
+          <input
+            value={draft.selection}
+            onChange={(e) => setDraft({ ...draft, selection: e.target.value })}
+            placeholder="e.g. BTTS + over 2.5 goals"
+            className={input}
+            style={inputStyle}
+            disabled={disabled}
+          />
+        )}
 
-        <label className="overline mb-1.5 block">ODDS (DECIMAL OR FRACTIONAL)</label>
-        <input
-          value={draft.odds}
-          onChange={(e) => setDraft({ ...draft, odds: e.target.value })}
-          inputMode="text"
-          placeholder="e.g. 1.80 or 4/5"
-          className={input}
-          style={inputStyle}
-          disabled={disabled}
-        />
-        {draft.odds && parsed == null && (
-          <p className="-mt-1 mb-2 text-[11px]" style={{ color: 'var(--color-loss)' }}>
-            Can't read those odds — use 1.80 or 4/5 format
+        <label className="overline mb-1.5 block">DECIMAL ODDS</label>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => step(-1)}
+            className="h-11 w-11 shrink-0 rounded-[10px] border text-xl font-bold disabled:opacity-40"
+            style={{ borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }}
+          >
+            −
+          </button>
+          <input
+            inputMode="decimal"
+            value={draft.odds}
+            onChange={(e) => {
+              const v = e.target.value.replace(',', '.')
+              if (/^\d*\.?\d*$/.test(v)) setDraft({ ...draft, odds: v })
+            }}
+            placeholder={min.toFixed(2)}
+            className="w-24 flex-1 rounded-[10px] border bg-surface-2 py-2 text-center font-mono text-2xl font-bold disabled:opacity-40"
+            style={inputStyle}
+            disabled={disabled}
+          />
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => step(1)}
+            className="h-11 w-11 shrink-0 rounded-[10px] border text-xl font-bold disabled:opacity-40"
+            style={{ borderColor: 'var(--color-line-strong)', color: 'var(--color-muted)' }}
+          >
+            +
+          </button>
+        </div>
+        <p className="mt-1.5 text-[11px] text-muted">
+          Steps of 0.05 — or type exact odds. Fractional from the chat? 4/5 = 1.80.
+        </p>
+        {draft.odds !== '' && parsed == null && (
+          <p className="mt-1 text-[11px]" style={{ color: 'var(--color-loss)' }}>
+            Can't read those odds — decimal like 1.80
           </p>
         )}
-        {parsed != null && isFractional(draft.odds) && (
-          <p className="-mt-1 mb-2 text-[11px] text-muted">= {parsed.toFixed(2)} decimal</p>
-        )}
         {tooLow && (
-          <p className="-mt-1 mb-2 text-[11px]" style={{ color: 'var(--color-gold)' }}>
-            Below the {MIN_ODDS[kind].toFixed(2)} minimum (rules §2) — saving anyway is on you
+          <p className="mt-1 text-[11px]" style={{ color: 'var(--color-gold)' }}>
+            Below the {min.toFixed(2)} minimum (rules §2) — saving anyway is on you
           </p>
         )}
       </div>
@@ -103,8 +160,8 @@ export default function EnterPick() {
   const { me, players, isAdmin } = usePlayer()
   const qc = useQueryClient()
   const [forPlayer, setForPlayer] = useState<string | null>(null)
-  const [w, setW] = useState<Draft>({ game: '', selection: '', odds: '' })
-  const [r, setR] = useState<Draft>({ game: '', selection: '', odds: '' })
+  const [w, setW] = useState<Draft>(blankDraft('W'))
+  const [r, setR] = useState<Draft>(blankDraft('random'))
   const [saved, setSaved] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -114,6 +171,19 @@ export default function EnterPick() {
     queryFn: () => fetchPickScores(gw!.id),
     enabled: !!gw,
   })
+  const { data: teamDict } = useQuery({
+    queryKey: ['teamDictionary'],
+    queryFn: fetchTeamDictionary,
+    staleTime: 10 * 60_000,
+  })
+
+  // Group history first (ranked by how often each club gets picked), then the
+  // rest of the known-club list at 0 uses so search works from week one.
+  const teamOptions = useMemo(() => {
+    const used = teamDict ?? []
+    const seen = new Set(used.map((u) => u.name))
+    return [...used, ...KNOWN_TEAMS.filter((n) => !seen.has(n)).map((name) => ({ name, uses: 0 }))]
+  }, [teamDict])
 
   const target = forPlayer ?? me?.id ?? null
   // Derive from the actual timestamps, not just status: the cron flips status
@@ -125,14 +195,15 @@ export default function EnterPick() {
   const windowOpen =
     gw?.status === 'open' || withinWindow || (isAdmin && gw?.status !== 'settled')
 
-  // Prefill from existing picks for the target player
+  // Prefill from existing picks for the target player. Odds prefill as
+  // decimal even when the pick was saved fractional — the field is decimal-only.
   useEffect(() => {
     if (!picks || !target) return
     const mine = picks.filter((p) => p.player_id === target && !p.is_no_pick)
     const wp = mine.find((p) => p.acca_kind === 'W')
     const rp = mine.find((p) => p.acca_kind === 'random')
-    setW(wp ? { game: wp.game ?? '', selection: wp.selection, odds: wp.odds_display ?? String(wp.odds) } : { game: '', selection: '', odds: '' })
-    setR(rp ? { game: rp.game ?? '', selection: rp.selection, odds: rp.odds_display ?? String(rp.odds) } : { game: '', selection: '', odds: '' })
+    setW(wp ? { game: wp.game ?? '', selection: wp.selection, odds: Number(wp.odds).toFixed(2) } : blankDraft('W'))
+    setR(rp ? { game: rp.game ?? '', selection: rp.selection, odds: Number(rp.odds).toFixed(2) } : blankDraft('random'))
   }, [picks, target])
 
   const save = useMutation({
@@ -140,18 +211,18 @@ export default function EnterPick() {
       if (!gw || !target) throw new Error('No gameweek')
       const jobs: Promise<unknown>[] = []
       for (const [kind, d] of [['W', w], ['random', r]] as const) {
-        if (!d.selection && !d.odds) continue
+        if (!d.selection.trim()) continue // odds are prefilled, so blank = no selection typed
         const odds = parseOdds(d.odds)
-        if (!d.selection || odds == null) throw new Error(`${kind === 'W' ? 'W' : 'Random'} acca: needs a selection and readable odds`)
+        if (odds == null) throw new Error(`${kind === 'W' ? 'W' : 'Random'} acca: needs readable decimal odds`)
         jobs.push(
           upsertPick({
             gameweek_id: gw.id,
             player_id: target,
             acca_kind: kind,
             game: d.game || null,
-            selection: d.selection,
+            selection: d.selection.trim(),
             odds,
-            odds_display: isFractional(d.odds) ? d.odds.trim() : null,
+            odds_display: null, // decimal-only entry now; clears stale fractional displays on edit
           }),
         )
       }
@@ -221,8 +292,8 @@ export default function EnterPick() {
       )}
 
       <div className="flex flex-col gap-4">
-        <AccaSection kind="W" draft={w} setDraft={setW} disabled={!windowOpen || !target} />
-        <AccaSection kind="random" draft={r} setDraft={setR} disabled={!windowOpen || !target} />
+        <AccaSection kind="W" draft={w} setDraft={setW} disabled={!windowOpen || !target} teamOptions={teamOptions} />
+        <AccaSection kind="random" draft={r} setDraft={setR} disabled={!windowOpen || !target} teamOptions={teamOptions} />
       </div>
 
       {error && <p className="mt-3 text-[12px]" style={{ color: 'var(--color-loss)' }}>{error}</p>}

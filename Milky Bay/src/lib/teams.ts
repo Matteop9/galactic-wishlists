@@ -1,0 +1,153 @@
+/* Club crest lookup, forked from The Acca. IDs are football-data.org team
+   ids, served as small PNGs from crests.football-data.org. Anything unmapped
+   falls back to an initials chip (see TeamBadge in components/ui.tsx), so
+   missing entries are cosmetic only. Keys are the canonical names the pick
+   combobox suggests — free-typed picks that don't match just get the chip. */
+
+import { SDB_BADGES } from './badges'
+
+const CRESTS: Record<string, number> = {
+  // Premier League / EFL
+  Arsenal: 57,
+  'Aston Villa': 58,
+  Blackburn: 59,
+  Bolton: 60,
+  Chelsea: 61,
+  Everton: 62,
+  Fulham: 63,
+  Liverpool: 64,
+  'Man City': 65,
+  'Man United': 66,
+  Newcastle: 67,
+  Norwich: 68,
+  QPR: 69,
+  Stoke: 70,
+  Sunderland: 71,
+  Swansea: 72,
+  Tottenham: 73,
+  'West Brom': 74,
+  Wigan: 75,
+  Wolves: 76,
+  Hull: 322,
+  Portsmouth: 325,
+  Burnley: 328,
+  Birmingham: 332,
+  Leicester: 338,
+  Southampton: 340,
+  Leeds: 341,
+  Derby: 342,
+  Middlesbrough: 343,
+  'Sheffield Wednesday': 345,
+  Watford: 346,
+  Charlton: 348,
+  Ipswich: 349,
+  'Nottingham Forest': 351,
+  'Crystal Palace': 354,
+  Reading: 355,
+  'Sheffield United': 356,
+  Barnsley: 357,
+  Millwall: 384,
+  Rotherham: 385,
+  'Bristol City': 387,
+  Luton: 389,
+  Huddersfield: 394,
+  Brighton: 397,
+  Brentford: 402,
+  'West Ham': 563,
+  Cardiff: 715,
+  Bournemouth: 1044,
+  Coventry: 1076,
+  Preston: 1081,
+  // La Liga
+  'Athletic Bilbao': 77,
+  'Atletico Madrid': 78,
+  Barcelona: 81,
+  Getafe: 82,
+  Mallorca: 89,
+  'Real Betis': 90,
+  'Real Sociedad': 92,
+  Villarreal: 94,
+  Valencia: 95,
+  'Real Madrid': 86,
+  Girona: 298,
+  'Celta Vigo': 558,
+  Sevilla: 559,
+  // Bundesliga
+  Cologne: 1,
+  Hoffenheim: 2,
+  'Bayer Leverkusen': 3,
+  Dortmund: 4,
+  'Bayern Munich': 5,
+  Schalke: 6,
+  Hamburg: 7,
+  'Hertha Berlin': 9,
+  Stuttgart: 10,
+  Wolfsburg: 11,
+  'Werder Bremen': 12,
+  Mainz: 15,
+  Augsburg: 16,
+  Freiburg: 17,
+  Gladbach: 18,
+  Frankfurt: 19,
+  'St Pauli': 20,
+  'Union Berlin': 28,
+  'RB Leipzig': 721,
+  // Serie A
+  'AC Milan': 98,
+  Fiorentina: 99,
+  Roma: 100,
+  Atalanta: 102,
+  Bologna: 103,
+  Cagliari: 104,
+  Genoa: 107,
+  'Inter Milan': 108,
+  Juventus: 109,
+  Lazio: 110,
+  Parma: 112,
+  Napoli: 113,
+  Empoli: 445,
+  Venezia: 454,
+  Sassuolo: 471,
+  Sampdoria: 584,
+  Torino: 586,
+  // Ligue 1
+  Toulouse: 511,
+  Brest: 512,
+  Marseille: 516,
+  Lille: 521,
+  Nice: 522,
+  Lyon: 523,
+  PSG: 524,
+  Lorient: 525,
+  Rennes: 529,
+  Nantes: 543,
+  Lens: 546,
+  Monaco: 548,
+  Strasbourg: 576,
+  // Eredivisie
+  'FC Twente': 666,
+  Heerenveen: 673,
+  PSV: 674,
+  Feyenoord: 675,
+  'FC Utrecht': 676,
+  Groningen: 677,
+  Ajax: 678,
+  AZ: 682,
+  // Primeira Liga
+  'Sporting Lisbon': 498,
+  Porto: 503,
+  Benfica: 1903,
+}
+
+export function crestUrl(team: string): string | null {
+  const id = CRESTS[team]
+  if (id) return `https://crests.football-data.org/${id}.png`
+  const badge = SDB_BADGES[team]
+  return badge ? `${badge}/small` : null
+}
+
+/** Every club with a badge — seeds the W-acca combobox so search works from
+    week one, before the picks table has any history to mine. */
+export const KNOWN_TEAMS: string[] = [
+  ...new Set([...Object.keys(CRESTS), ...Object.keys(SDB_BADGES)]),
+].sort((a, b) => a.localeCompare(b))

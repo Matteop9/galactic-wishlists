@@ -69,6 +69,36 @@ export const fetchHonours = () =>
 export const fetchHonoursList = () =>
   unwrap<Honour[]>(supabase.from('honours').select('*').order('season_label'))
 
+/** Every team ever picked in a W acca, with usage counts — feeds the pick
+    combobox. Reads the scores view (the client has no direct grant on picks)
+    in pages because PostgREST caps a single response at 1,000 rows. */
+export interface TeamUsage {
+  name: string
+  uses: number
+}
+
+export async function fetchTeamDictionary(): Promise<TeamUsage[]> {
+  const counts = new Map<string, number>()
+  const page = 1000
+  for (let from = 0; ; from += page) {
+    const rows = await unwrap<{ selection: string; is_no_pick: boolean }[]>(
+      supabase
+        .from('v_pick_scores')
+        .select('selection,is_no_pick')
+        .eq('acca_kind', 'W')
+        .range(from, from + page - 1),
+    )
+    for (const r of rows) {
+      const name = r.selection?.trim()
+      if (!r.is_no_pick && name) counts.set(name, (counts.get(name) ?? 0) + 1)
+    }
+    if (rows.length < page) break
+  }
+  return [...counts.entries()]
+    .map(([name, uses]) => ({ name, uses }))
+    .sort((a, b) => b.uses - a.uses || a.name.localeCompare(b.name))
+}
+
 // --- mini leagues ---
 
 export const fetchMiniLeagues = () =>

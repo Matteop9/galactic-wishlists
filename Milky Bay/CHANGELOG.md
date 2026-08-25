@@ -1,5 +1,39 @@
 # Changelog — Milky Bay
 
+## 0.4.0 — 2026-08-25
+
+Pick entry and pick display upgrades, ported from The Acca where noted.
+
+- **Tap-to-expand pick legs**: long selections (Random acca bet-builders
+  especially) truncated with no way to read the full text. Legs with a game
+  line or a selection over ~22 chars now show a small chevron and toggle
+  open on tap — on the acca cards (This Week / gameweek detail) and in the
+  player-profile pick history. Expanded view puts the game on its own muted
+  line and wraps the selection in full; void/sole-loser chips stay visible
+  in both states.
+- **W acca team combobox** (ported from The Acca's `TeamCombobox`): the
+  "team to win" field suggests clubs as you type — crest, name, and how
+  often the group has picked them. Options = usage counts mined from
+  `v_pick_scores` (W-kind, paged at 1,000 like The Acca — same PostgREST
+  cap, same Supabase project) merged with a seeded `KNOWN_TEAMS` list from
+  the crest tables, so search works from week one. Free text still always
+  allowed — the dropdown is a shortcut, not a gate.
+- **Club crests**: new `lib/teams.ts` (football-data.org crest ids) +
+  `lib/badges.ts` (generated TheSportsDB URLs, copied from The Acca) and a
+  `TeamBadge` component with initials-chip fallback. Badges show in the
+  combobox and next to W acca picks on the cards.
+- **Decimal odds stepper** replaces the free-text odds field on both accas:
+  −/+ buttons in 0.05 steps (clamped at the per-acca minimum, W 1.50 /
+  Random 1.70), decimal-only typing for exact odds. Odds state stays TEXT
+  while typing so the decimal point survives re-renders (same trick as The
+  Acca). Fractional entry is retired: `odds_display` is written as null
+  (edits clear stale fractional displays; settled rows keep theirs), and
+  prefill converts to decimal. `parseOdds`/`isFractional` stay in
+  `format.ts` for display of historical rows.
+- **Save semantics**: an acca is skipped when its selection is blank (odds
+  are now prefilled, so the old "both fields empty" skip no longer worked);
+  selections are trimmed before save.
+
 ## 0.3.2 — 2026-08-25
 
 Fixes from a full security / usability / stale-data review.

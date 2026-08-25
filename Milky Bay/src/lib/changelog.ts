@@ -10,6 +10,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.4.0',
+    date: '2026-08-25',
+    title: 'Easier picks, fuller cards',
+    items: [
+      'Long Random acca picks no longer get chopped off — tap any leg to expand the full bet, tap again to tuck it away',
+      'The W acca team box is now a proper picker: start typing and it suggests clubs with their badges and how often the group has picked them — new teams still just type in full',
+      'Club badges now show next to W acca picks on the cards',
+      'Odds are entered with a −/+ decimal stepper (0.05 steps) instead of free text — type exact odds if the steps don\'t land on yours; fractional odds from the chat go in as decimal (4/5 = 1.80)',
+    ],
+  },
+  {
     version: '0.3.2',
     date: '2026-08-25',
     title: 'Reliability tune-up',

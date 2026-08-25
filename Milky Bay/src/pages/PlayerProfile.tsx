@@ -28,6 +28,15 @@ export default function PlayerProfile() {
   const qc = useQueryClient()
   const [shown, setShown] = useState(10)
   const [fbText, setFbText] = useState('')
+  // Long selections truncate to one line — tapping a pick row expands it.
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const toggleExpanded = (pid: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(pid)) next.delete(pid)
+      else next.add(pid)
+      return next
+    })
 
   const playerId = id === 'me' ? me?.id : id
   const player = players.find((p) => p.id === playerId)
@@ -131,29 +140,54 @@ export default function PlayerProfile() {
                   {allSettled ? `${pts > 0 ? '+' : ''}${score2(pts)}` : 'pending'}
                 </span>
               </div>
-              {(weekPicks ?? []).map((p) => (
-                <div
-                  key={p.id}
-                  className="flex items-center gap-2.5 border-t px-3.5 py-2"
-                  style={{ borderColor: 'var(--color-line)' }}
-                >
-                  <KindBadge kind={p.acca_kind} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="truncate text-[12.5px]">
-                        {p.is_no_pick ? 'No pick' : p.game ? `${p.game} — ${p.selection}` : p.selection}
-                      </span>
-                      {p.is_no_pick && <NoPickChip />}
-                      {p.void_reason && <VoidChip reason={p.void_reason} />}
-                      {p.sole_loser && <SoleLoserChip />}
+              {(weekPicks ?? []).map((p) => {
+                const expandable = !p.is_no_pick && (!!p.game || p.selection.length > 22)
+                const isOpen = expandable && expanded.has(p.id)
+                return (
+                  <div
+                    key={p.id}
+                    role={expandable ? 'button' : undefined}
+                    onClick={expandable ? () => toggleExpanded(p.id) : undefined}
+                    className={`flex gap-2.5 border-t px-3.5 py-2 ${isOpen ? 'items-start' : 'items-center'} ${expandable ? 'cursor-pointer' : ''}`}
+                    style={{ borderColor: 'var(--color-line)' }}
+                  >
+                    <KindBadge kind={p.acca_kind} />
+                    <div className="min-w-0 flex-1">
+                      {isOpen ? (
+                        <div className="text-[12.5px]">
+                          {p.game && <div className="text-[11px] text-muted">{p.game}</div>}
+                          <div className="whitespace-normal break-words">{p.selection}</div>
+                          {(p.void_reason || p.sole_loser) && (
+                            <div className="mt-1 flex items-center gap-1.5">
+                              {p.void_reason && <VoidChip reason={p.void_reason} />}
+                              {p.sole_loser && <SoleLoserChip />}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5">
+                          <span className="truncate text-[12.5px]">
+                            {p.is_no_pick ? 'No pick' : p.game ? `${p.game} — ${p.selection}` : p.selection}
+                          </span>
+                          {p.is_no_pick && <NoPickChip />}
+                          {p.void_reason && <VoidChip reason={p.void_reason} />}
+                          {p.sole_loser && <SoleLoserChip />}
+                          {expandable && (
+                            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted)"
+                              strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 opacity-70">
+                              <path d="M6 9l6 6 6-6" />
+                            </svg>
+                          )}
+                        </div>
+                      )}
                     </div>
+                    <span className="font-mono text-[12.5px] text-muted">
+                      {p.is_no_pick ? '–' : (p.odds_display ?? odds2(p.odds))}
+                    </span>
+                    <StateIcon result={p.result} />
                   </div>
-                  <span className="font-mono text-[12.5px] text-muted">
-                    {p.is_no_pick ? '–' : (p.odds_display ?? odds2(p.odds))}
-                  </span>
-                  <StateIcon result={p.result} />
-                </div>
-              ))}
+                )
+              })}
             </div>
           )
         })}
