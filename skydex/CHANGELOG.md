@@ -13,6 +13,9 @@
 - **`components/AnnouncementBanner.tsx`**: client strip mounted in `app/layout.tsx` under `TopNav` (below the header so safe-area padding isn't double-counted). Renders nothing until mounted — dismissal state lives in `localStorage` (`skydex_banner_dismissed` = banner id), so SSR can't know it; per-id dismissal means closing the campaign never hides future release banners and each version pops up exactly once. External hrefs open in a new tab; `.sd-banner` drop-in animation in `globals.css` (disabled under `prefers-reduced-motion`).
 - **`lib/announcement.ts`**: the single source of truth described above.
 
+### Follow-up — iPhone-only build target (same day, native change, no version bump)
+- **`ios/App/App.xcodeproj/project.pbxproj`**: `TARGETED_DEVICE_FAMILY` `"1,2"` → `1` in both configs (the `2` was Capacitor scaffold default); dropped the `UISupportedInterfaceOrientations~ipad` block from `Info.plist`. ASC demanded 13″ iPad screenshots because the build declared iPad support — iPhone-only removes the requirement, and this is the last moment it can be reduced (device families can't shrink after first release). **Needs a new Codemagic build, selected on version 1.0 in ASC.** iPad users still have the full web app.
+
 ## v1.0.0 — 2026-08-26
 
 **Public launch (V4 complete).** MAJOR bump per the versioning convention — this is the web release that accompanies the App Store submission. Content: the TestFlight feedback batch (26 Aug + two older queue items). Monetization remains dark (`ENFORCE_PAYWALL`/`ADS_ENABLED`/`PACKS_AVAILABLE` all false) until ~6 weeks post-launch.
