@@ -25,6 +25,12 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Universal Links: Apple's CDN requires the AASA to serve as JSON; the
+        // extension-less file in public/ would otherwise go out as octet-stream.
+        source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+      {
         source: "/(.*)",
         headers: [
           // User-uploaded photos are served from public storage URLs; never let

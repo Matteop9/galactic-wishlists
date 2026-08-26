@@ -4,7 +4,7 @@ import SectionShell from "@/components/SectionShell";
 import AdSlot from "@/components/AdSlot";
 import { TicketGlyph } from "@/components/TicketChip";
 import { createClient } from "@/lib/supabase/server";
-import { FF_PRICE_GBP, PACKS, type TicketStatus } from "@/lib/tickets";
+import { FF_PRICE_GBP, PACKS, PACKS_AVAILABLE, type TicketStatus } from "@/lib/tickets";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Tickets — SkyDex" };
@@ -79,7 +79,7 @@ export default async function TicketsPage() {
   return (
     <SectionShell
       title="Tickets"
-      subtitle={`Your first ${freeSpots} verified spots each day are free — Tickets cover anything beyond that. Right now spotting on the web stays free past the line too; Tickets come into play when the SkyDex app launches.`}
+      subtitle={`Your first ${freeSpots} verified spots each day are free — Tickets cover anything beyond that. Right now spotting stays free past the line too; Tickets come into play down the road.`}
     >
       <div className="space-y-8">
         {/* Balance — styled as the boarding-pass stub */}
@@ -205,9 +205,12 @@ export default async function TicketsPage() {
                 <div className="font-display text-xl font-bold uppercase tracking-[0.15em] text-ink">
                   ✦ Frequent Flyer
                 </div>
-                <div className="font-mono text-sm font-semibold text-ink">
-                  £{FF_PRICE_GBP.toFixed(2)} <span className="text-ink-faint">once, forever</span>
-                </div>
+                {PACKS_AVAILABLE && (
+                  <div className="font-mono text-sm font-semibold text-ink">
+                    £{FF_PRICE_GBP.toFixed(2)}{" "}
+                    <span className="text-ink-faint">once, forever</span>
+                  </div>
+                )}
               </div>
               <ul className="mt-3 space-y-1.5 text-sm text-ink-soft">
                 {FF_BENEFITS.map((b) => (
@@ -218,35 +221,38 @@ export default async function TicketsPage() {
                 ))}
               </ul>
               <p className="mt-4 rounded-md bg-paper px-3 py-2 font-mono text-xs text-ink-soft">
-                Upgrade in the SkyDex app — coming to the App Store &amp; Google Play.
+                {PACKS_AVAILABLE
+                  ? "Upgrade in the SkyDex app."
+                  : "Included free, forever, for everyone who joins SkyDex in 2026 — open the app each day and it's yours."}
               </p>
             </div>
           )}
         </section>
 
-        {/* Packs (native IAP — previewed on web) */}
-        <section>
-          <h2 className="font-display text-lg font-bold uppercase tracking-wide text-ink">
-            Ticket packs
-          </h2>
-          <div className="mt-3 grid grid-cols-3 gap-3">
-            {PACKS.map((p) => (
-              <div
-                key={p.sku}
-                className="rounded-xl border border-dashed border-paper-edge bg-paper-deep p-4 text-center opacity-80"
-              >
-                <TicketGlyph className="mx-auto h-6 w-6 text-brass" />
-                <div className="mt-1 font-display text-2xl font-bold tabular-nums text-ink">
-                  {p.tickets}
+        {/* Packs (native IAP) — hidden until RevenueCat ships: a purchasable-looking
+            pack the app can't actually sell is an App Store rejection risk. */}
+        {PACKS_AVAILABLE && (
+          <section>
+            <h2 className="font-display text-lg font-bold uppercase tracking-wide text-ink">
+              Ticket packs
+            </h2>
+            <div className="mt-3 grid grid-cols-3 gap-3">
+              {PACKS.map((p) => (
+                <div
+                  key={p.sku}
+                  className="rounded-xl border border-dashed border-paper-edge bg-paper-deep p-4 text-center opacity-80"
+                >
+                  <TicketGlyph className="mx-auto h-6 w-6 text-brass" />
+                  <div className="mt-1 font-display text-2xl font-bold tabular-nums text-ink">
+                    {p.tickets}
+                  </div>
+                  <div className="font-mono text-xs text-ink-soft">£{p.gbp.toFixed(2)}</div>
                 </div>
-                <div className="font-mono text-xs text-ink-soft">£{p.gbp.toFixed(2)}</div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 font-mono text-xs text-ink-soft">
-            Buy packs in the SkyDex app — coming to the App Store &amp; Google Play.
-          </p>
-        </section>
+              ))}
+            </div>
+            <p className="mt-3 font-mono text-xs text-ink-soft">Buy packs in the SkyDex app.</p>
+          </section>
+        )}
 
         {/* Ledger */}
         <section>

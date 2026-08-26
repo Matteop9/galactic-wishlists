@@ -5,7 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 
 export type AdminResult = { ok?: boolean; error?: string };
 
-/** Delete a sighting and its photo. RLS permits the owner or an admin. */
+/** RLS already gates every statement below; this makes the admin requirement
+ *  explicit so a policy regression fails loudly instead of silently no-opping. */
+async function isAdmin(supabase: Awaited<ReturnType<typeof createClient>>): Promise<boolean> {
+  const { data } = await supabase.rpc("is_admin");
+  return data === true;
+}
+
+/** Delete a sighting and its photo. Owner or admin only. */
 export async function deleteSighting(id: string): Promise<AdminResult> {
   const supabase = await createClient();
   const {
@@ -13,13 +20,18 @@ export async function deleteSighting(id: string): Promise<AdminResult> {
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
 
-  // Remove the stored photo first (owner/admin storage-delete policies permit it).
   const { data: row } = await supabase
     .from("sightings")
-    .select("photo_path")
+    .select("user_id, photo_path")
     .eq("id", id)
     .maybeSingle();
-  if (row?.photo_path) {
+  if (!row) return { error: "Sighting not found." };
+  if (row.user_id !== user.id && !(await isAdmin(supabase))) {
+    return { error: "Not allowed." };
+  }
+
+  // Remove the stored photo first (owner/admin storage-delete policies permit it).
+  if (row.photo_path) {
     await supabase.storage.from("sightings").remove([row.photo_path]);
   }
 
@@ -38,6 +50,7 @@ export async function resolveReport(id: string): Promise<AdminResult> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
+  if (!(await isAdmin(supabase))) return { error: "Not allowed." };
 
   const { error } = await supabase
     .from("reports")
@@ -62,6 +75,7 @@ export async function resolvePhotoFlag(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
+  if (!(await isAdmin(supabase))) return { error: "Not allowed." };
 
   let photoPath: string | null = null;
   if (approve) {
@@ -96,6 +110,7 @@ export async function resolveFeedback(id: string): Promise<AdminResult> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
+  if (!(await isAdmin(supabase))) return { error: "Not allowed." };
 
   const { error } = await supabase.from("feedback").update({ resolved: true }).eq("id", id);
   if (error) return { error: error.message };

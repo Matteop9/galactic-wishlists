@@ -30,7 +30,8 @@ export default function ReportButton({
       reporter_id: currentUserId,
       target_type: targetType,
       target_id: targetId,
-      reason: reason || null,
+      // DB caps reason at 500 chars; trim here so a long prompt entry still lands.
+      reason: reason ? reason.slice(0, 500) : null,
     });
     setBusy(false);
     if (error) {

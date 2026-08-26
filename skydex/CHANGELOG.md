@@ -2,6 +2,27 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v0.5.4 — 2026-08-26
+
+**App Store pre-flight (V4 Phase 6 hardening + native launch assets).** Everything code-side that had to happen before the public v1.0.0 submission, shipped as one batch: real app icon/splash, Universal Links, error boundaries + monitoring, abuse hardening, and store-safe Tickets copy. Monetization (RevenueCat/AdMob/paywall flip) is deferred until ~6 weeks post-launch.
+
+### Added — native launch assets (needs a new Codemagic build)
+- **App icon + splash**: replaced the stock Capacitor placeholders in `ios/App/App/Assets.xcassets` with the SkyDex luggage-tag mark (1024×1024 icon, 2732×2732 splash ×3, both 24-bit no-alpha, rendered from the same vector art as `app/apple-icon.tsx` via sharp).
+- **Universal Links**: `public/.well-known/apple-app-site-association` (appID `ZA2J8HGL4V.com.skydex.mobile`, `/api/*` + `/auth/*` excluded) served as `application/json` via a `headers()` rule in `next.config.ts`; `proxy.ts` matcher now skips `/.well-known/`. iOS side: `ios/App/App/App.entitlements` (`applinks:sky-dex.com`) wired as `CODE_SIGN_ENTITLEMENTS` in both build configs. ⚠️ User steps: enable Associated Domains on the App ID at developer.apple.com, regenerate the "SkyDex distribution" provisioning profile, re-fetch in Codemagic.
+
+### Added — error boundaries + monitoring
+- **`app/error.tsx` + `app/global-error.tsx`**: branded "Turbulence" boundaries (retry + back-to-base; global one is inline-styled since it replaces the root layout). Both report via `lib/reportClientError.ts` → `POST /api/client-error` (unauthenticated by design, 5/min/IP + hard field caps).
+- **`lib/monitor.ts` + `instrumentation.ts`**: every uncaught server error (`onRequestError` — RSC render, route handler, server action, proxy) is console-logged for Vercel logs and, when `SENTRY_DSN` is set, forwarded to Sentry as a bare envelope — no SDK dependency, no build-time plugin, no-op without the env var. ⚠️ User step: create a Sentry project and `vercel env add SENTRY_DSN` to activate alerts.
+
+### Changed — abuse hardening (migrations `launch_abuse_hardening` + `review_unvote_anon_revoke`, tracked in `supabase/migrations/`)
+- `sightings` storage bucket: `allowed_mime_types` = jpeg/png/webp + 8 MB `file_size_limit` enforced by the storage API (a direct anon-key upload can no longer host non-image content); upload policy also requires an image file extension.
+- `feedback`/`reports`: DB-enforced per-user throttles (5/hr, 20/hr) via SECURITY DEFINER triggers (covers the direct client-insert path, not just the UI); `reports.reason` capped at 500 chars (`ReportButton` slices to match).
+- Admin server actions (`app/actions/admin.ts`): explicit `is_admin()` guards on `resolveReport`/`resolveFeedback`/`resolvePhotoFlag`, owner-or-admin check in `deleteSighting` — RLS regressions now fail loudly instead of silently no-opping.
+- Advisors: `search_path` pinned on `epoch_seconds`/`rarity_rank`/`rarity_floor`; `handle_new_user` EXECUTE revoked from API roles; `review_unvote` EXECUTE revoked from anon/PUBLIC (kept for authenticated). Remaining advisor items are known-intentional (SECURITY DEFINER feed views, user-callable RPCs) or user-dashboard actions (leaked-password toggle — moot once the Email provider is disabled at v1.0).
+
+### Changed — store-safe Tickets page
+- New `PACKS_AVAILABLE = false` flag in `lib/tickets.ts`: the Ticket-packs section and Frequent Flyer price/upgrade copy render nothing until RevenueCat IAP ships — a purchasable-looking pack the app can't sell is an App Store guideline 2.1 rejection risk, and "coming to Google Play" copy violated 2.3.10. Non-FF card now pitches the Founding Flyer freebie instead.
+
 ## v0.5.3 — 2026-08-25
 
 **Loading states everywhere** — instant skeletons on navigation, a branded spinner, and honest map wait states. Previously route changes rendered nothing until the server responded, and an empty Spot map was indistinguishable from a still-loading one.

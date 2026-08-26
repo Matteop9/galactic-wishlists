@@ -35,6 +35,10 @@ export const PACKS = [
 ] as const;
 
 // ---- Feature flags (dark launch) ----
+// Ticket packs / Frequent Flyer purchase UI: hidden everywhere until RevenueCat
+// IAP ships (post-launch). Showing a purchasable-looking pack the app can't sell
+// is an App Store rejection risk (guideline 2.1), so the sections render nothing.
+export const PACKS_AVAILABLE = false;
 // Paywall enforcement: when false there is no 402 and no spending — the economy is
 // visible but nobody is blocked or charged. Flip ON at native launch (V4 Phase 5/6).
 export const ENFORCE_PAYWALL = false;

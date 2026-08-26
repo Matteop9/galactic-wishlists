@@ -1,0 +1,14 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["ZA2J8HGL4V.com.skydex.mobile"],
+        "components": [
+          { "/": "/api/*", "exclude": true },
+          { "/": "/auth/*", "exclude": true },
+          { "/": "*" }
+        ]
+      }
+    ]
+  }
+}

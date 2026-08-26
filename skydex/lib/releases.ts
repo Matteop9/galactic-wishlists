@@ -12,6 +12,15 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "0.5.4",
+    date: "2026-08-26",
+    changes: [
+      "Pre-flight checks for the App Store: the iOS app got its real SkyDex icon and launch screen, and sky-dex.com links will open straight in the app once the next build lands.",
+      "If something ever goes wrong mid-flight, you now get a proper \"turbulence\" screen with a retry button instead of a blank page — and the crew is notified automatically.",
+      "Behind-the-scenes hardening: stricter rate limits on feedback and reports, tighter photo-upload rules, and locked-down admin tools, ready for new spotters arriving from the App Store.",
+    ],
+  },
+  {
     version: "0.5.3",
     date: "2026-08-25",
     changes: [

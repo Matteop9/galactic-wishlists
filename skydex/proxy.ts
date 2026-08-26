@@ -82,6 +82,6 @@ export const config = {
   // /api/* — API routes do their own auth, and the polled /api/flights was
   // paying a Supabase auth round-trip on every call.
   matcher: [
-    "/((?!api/|_next/static|_next/image|favicon\\.ico|manifest\\.webmanifest|icon|apple-icon|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
+    "/((?!api/|_next/static|_next/image|favicon\\.ico|manifest\\.webmanifest|icon|apple-icon|\\.well-known/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
