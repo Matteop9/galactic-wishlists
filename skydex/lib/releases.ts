@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.1",
+    date: "2026-08-26",
+    changes: [
+      "New announcement banner at the top of the app — it'll tell you when SkyDex hits the App Store, and pops up for a few days whenever a new version lands. Close it with the ✕ and it stays closed.",
+    ],
+  },
+  {
     version: "1.0.0",
     date: "2026-08-26",
     changes: [

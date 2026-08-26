@@ -6,6 +6,7 @@ import "./globals.css";
 import TopNav from "@/components/TopNav";
 import MobileTabBar from "@/components/MobileTabBar";
 import GuideModal from "@/components/GuideModal";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 import WeeklyReview from "@/components/WeeklyReview";
 import { getViewer } from "@/lib/auth";
 import { CURRENT_VERSION } from "@/lib/releases";
@@ -82,6 +83,7 @@ export default async function RootLayout({
         }`}
       >
         <TopNav />
+        <AnnouncementBanner />
         <div className="flex flex-1 flex-col">{children}</div>
         <GuideModal />
         {user && <WeeklyReview userId={user.id} />}

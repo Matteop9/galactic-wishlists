@@ -60,7 +60,8 @@ export default async function Home() {
         </ol>
       </section>
 
-      <section className="mt-20">
+      {/* scroll-margin clears the sticky-free header when the banner deep-links here */}
+      <section id="whats-new" className="mt-20 scroll-mt-6">
         <h2 className="border-b border-paper-edge pb-2 font-display text-xl font-semibold uppercase tracking-wide text-ink-soft">
           Release log
         </h2>

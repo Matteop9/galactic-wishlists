@@ -241,7 +241,25 @@ body {
   }
 }
 
+/* announcement strip drops in from under the header */
+@keyframes sd-banner-drop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.sd-banner {
+  animation: sd-banner-drop 0.3s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .sd-banner {
+    animation: none;
+  }
   .sd-livery {
     animation: none;
     background-position: 0 0, 50% 0;

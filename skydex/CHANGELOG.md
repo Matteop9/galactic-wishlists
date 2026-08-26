@@ -2,6 +2,17 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.1 — 2026-08-26
+
+**Announcement banner** — a dismissible strip at the top of every page, two modes driven by `lib/announcement.ts`:
+
+- **Campaign** (`CAMPAIGN`): pinned banner that overrides everything while active. Configured for the App Store launch ("Download" CTA); **armed by setting `href` to the apps.apple.com URL** (null until then, so nothing shows prematurely) and retires itself after `until` (2026-09-21, ~a few weeks).
+- **Release banner** (automatic): for `RELEASE_BANNER_DAYS` (4) after `RELEASES[0].date`, announces "SkyDex vX.Y.Z just landed" linking to the home release log (new `#whats-new` anchor on `app/page.tsx`).
+
+### Added
+- **`components/AnnouncementBanner.tsx`**: client strip mounted in `app/layout.tsx` under `TopNav` (below the header so safe-area padding isn't double-counted). Renders nothing until mounted — dismissal state lives in `localStorage` (`skydex_banner_dismissed` = banner id), so SSR can't know it; per-id dismissal means closing the campaign never hides future release banners and each version pops up exactly once. External hrefs open in a new tab; `.sd-banner` drop-in animation in `globals.css` (disabled under `prefers-reduced-motion`).
+- **`lib/announcement.ts`**: the single source of truth described above.
+
 ## v1.0.0 — 2026-08-26
 
 **Public launch (V4 complete).** MAJOR bump per the versioning convention — this is the web release that accompanies the App Store submission. Content: the TestFlight feedback batch (26 Aug + two older queue items). Monetization remains dark (`ENFORCE_PAYWALL`/`ADS_ENABLED`/`PACKS_AVAILABLE` all false) until ~6 weeks post-launch.
