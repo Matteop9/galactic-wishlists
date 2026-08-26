@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { coverGradient } from "@/lib/coverThemes";
 import Avatar from "@/components/Avatar";
 import FlyerStar from "@/components/FlyerStar";
 import ProfileSightings from "@/components/ProfileSightings";
@@ -87,7 +88,7 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, handle, home_airport, is_admin, frequent_flyer, avatar_seed, created_at, featured_sighting_ids")
+    .select("id, handle, home_airport, is_admin, frequent_flyer, avatar_seed, created_at, featured_sighting_ids, cover_theme")
     .eq("handle", handle)
     .maybeSingle();
   if (!profile) notFound();
@@ -157,7 +158,10 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
       {/* cover band — a flight chart: dotted grid, dashed route arcing to a
           plane top-right, home-base code stamped top-left. Bottom-left stays
           clear for the overlapping avatar. */}
-      <div className="relative h-28 overflow-hidden rounded-xl bg-gradient-to-r from-sky to-sky-deep">
+      <div
+        className="relative h-28 overflow-hidden rounded-xl"
+        style={{ background: coverGradient(profile.cover_theme) }}
+      >
         {/* faint chart-paper dot grid */}
         <div
           aria-hidden

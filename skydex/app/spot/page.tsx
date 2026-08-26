@@ -259,9 +259,21 @@ export default function SpotPage() {
   // (otherwise they keep firing after client-side nav, holding the OS location
   // indicator on and setting state on a dead component).
   useEffect(() => {
+    // Attach the compass listener up front — registration needs no permission
+    // anywhere (events are simply withheld until granted), and on Android /
+    // desktop this alone lights up the map's facing cone with zero taps.
+    attachOrientation();
     // Deferred a tick: react-hooks/set-state-in-effect follows the call into
     // requestOrientation's setError paths (none of which fire silently anyway).
     const t = setTimeout(() => requestOrientation(true), 0);
+    // iOS (Safari AND the shell's webview) rejects requestPermission without a
+    // user gesture, and Spot now opens on the map — so before v1.0 the facing
+    // cone stayed empty until the user happened to open the Camera. Retry with
+    // the FIRST tap anywhere as the gesture instead: once granted, the already-
+    // attached listener starts receiving events immediately.
+    const retryOnGesture = () => requestOrientation(true);
+    window.addEventListener("click", retryOnGesture, { once: true, capture: true });
+    window.addEventListener("touchend", retryOnGesture, { once: true, capture: true });
     if (navigator.geolocation) {
       geoWatchRef.current = navigator.geolocation.watchPosition(
         (pos) => {
@@ -285,6 +297,8 @@ export default function SpotPage() {
     }
     return () => {
       clearTimeout(t);
+      window.removeEventListener("click", retryOnGesture, true);
+      window.removeEventListener("touchend", retryOnGesture, true);
       streamRef.current?.getTracks().forEach((t) => t.stop());
       if (geoWatchRef.current != null) {
         navigator.geolocation.clearWatch(geoWatchRef.current);
@@ -294,7 +308,7 @@ export default function SpotPage() {
         orientAttachedRef.current = false;
       }
     };
-  }, [requestOrientation, onOrient]);
+  }, [requestOrientation, attachOrientation, onOrient]);
 
   // Poll live aircraft around the observer. On a dropout — a network error OR a
   // valid-but-empty gap — KEEP the last good candidates and surface

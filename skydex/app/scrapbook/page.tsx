@@ -20,6 +20,7 @@ type Row = {
   altitude_m: number | null;
   rarity: string;
   verified: boolean;
+  verify_fail_reason: string | null;
   origin: string | null;
   destination: string | null;
 };
@@ -35,7 +36,7 @@ export default async function ScrapbookPage() {
       supabase
         .from("sightings")
         .select(
-          "id, photo_path, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, origin, destination",
+          "id, photo_path, captured_at, callsign, registration, aircraft_type, airline, altitude_m, rarity, verified, verify_fail_reason, origin, destination",
         )
         .eq("user_id", user!.id)
         .order("created_at", { ascending: false }),

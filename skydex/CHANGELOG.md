@@ -2,6 +2,28 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.0 — 2026-08-26
+
+**Public launch (V4 complete).** MAJOR bump per the versioning convention — this is the web release that accompanies the App Store submission. Content: the TestFlight feedback batch (26 Aug + two older queue items). Monetization remains dark (`ENFORCE_PAYWALL`/`ADS_ENABLED`/`PACKS_AVAILABLE` all false) until ~6 weeks post-launch.
+
+### Fixed — stuck page zoom in the iOS shell (feedback 26 Aug)
+- **`app/layout.tsx`** viewport: `maximumScale: 1` + `userScalable: false`. Page-level pinch zoom in the WKWebView could leave the app stuck zoomed-in with no way back; in-app zoom surfaces (MapLibre map, camera pinch, lightbox) have their own gesture handlers and are unaffected. Safari on the open web ignores the hint, which is fine.
+
+### Fixed — compass empty on first open (feedback 26 Aug)
+- **`app/spot/page.tsx`**: the orientation listener now attaches on mount (registration never needs permission — events are gated at delivery), and if the silent `DeviceOrientationEvent.requestPermission()` is refused for lack of a user gesture (iOS Safari AND the shell's webview), the FIRST tap anywhere (`click`/`touchend`, once, capture) retries with the gesture in hand. Previously Spot opened on the map with an empty facing cone until the user happened to open the Camera.
+
+### Added — "why isn't this verified?" (feedback 19 Jul)
+- **`components/SightingCard.tsx`**: `Sighting` gains `verify_fail_reason`; `SightingSpecs` renders a `STATUS UNVERIFIED — <friendly reason>` row plus a one-line explanation of what verification checks (own cards + lightbox only — the public feed is verified-only and its views don't carry the column). `verifyFailText()` maps the server's terse reasons (`not_airborne`/`no_position`/`distance…`/`heading|cone|pitch…`) to actionable sentences.
+- **`app/scrapbook/page.tsx`**: selects `verify_fail_reason` for own rows.
+
+### Added — personalisable profile banner (feedback 25 Aug)
+- Migration **`profile_cover_theme`** (tracked in `supabase/migrations/`): `profiles.cover_theme` text default `'day'`, CHECK-constrained to `day|sunset|night|gold`.
+- **`lib/coverThemes.ts`**: the four preset skies + `coverGradient()`; **`app/u/[handle]/page.tsx`** paints the cover band from the profile's theme (chart-paper art unchanged); **`components/CoverThemePicker.tsx`** in Settings (optimistic, reverts on error) via new `updateCoverTheme` action in `app/profile/actions.ts` (server-validated against the theme keys).
+
+### Notes
+- Swipe-down refresh (also in the 26 Aug feedback) ships natively: the shell's `UIRefreshControl` (v0.5.2 follow-up) is in the icon/entitlements Codemagic build — no web change.
+- Feedback rows addressed by this release marked resolved in the `feedback` table; still open (deliberately): review-threshold scaling note, airline logos in scrapbook (licensing), "GPS recalibration" (too vague — ask), open-source suggestion.
+
 ## v0.5.4 — 2026-08-26
 
 **App Store pre-flight (V4 Phase 6 hardening + native launch assets).** Everything code-side that had to happen before the public v1.0.0 submission, shipped as one batch: real app icon/splash, Universal Links, error boundaries + monitoring, abuse hardening, and store-safe Tickets copy. Monetization (RevenueCat/AdMob/paywall flip) is deferred until ~6 weeks post-launch.

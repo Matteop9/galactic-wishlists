@@ -19,6 +19,10 @@ export type Sighting = {
   altitude_m: number | null;
   rarity: string;
   verified: boolean;
+  // Why verification failed (own rows only — the public feed is verified-only
+  // and its views don't carry this). Shapes: not_airborne / no_position /
+  // "distance Nkm" / "heading X vs Y" / "pitch X vs Y" / "cone N vs 70".
+  verify_fail_reason?: string | null;
   handle?: string | null;
   avatar_seed?: string | null;
   is_admin?: boolean | null;
@@ -47,6 +51,17 @@ function zuluDateTime(iso: string): string | null {
   return Number.isNaN(d.getTime())
     ? null
     : `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${zuluTime(iso)}`;
+}
+
+// "What makes it verified?" (feedback 19 Jul) — turn the server's terse
+// verify_fail_reason into a sentence a spotter can act on.
+function verifyFailText(reason: string | null | undefined): string {
+  if (reason === "not_airborne") return "no airborne aircraft matched at capture time";
+  if (reason === "no_position") return "the aircraft had no live position to check against";
+  if (reason?.startsWith("distance")) return "the aircraft was too far away to confirm";
+  if (reason?.startsWith("heading") || reason?.startsWith("cone") || reason?.startsWith("pitch"))
+    return "the camera wasn't pointing at the aircraft";
+  return "it couldn't be matched against live flight data";
 }
 
 // The card's info block — reg headline, type · airline, linked spotter, and the
@@ -144,7 +159,21 @@ export function SightingSpecs({ s, dark = false }: { s: Sighting; dark?: boolean
         <div>
           SEEN&nbsp;&nbsp;&nbsp;&nbsp;<b className={`font-semibold ${c.strong}`}>{seen}</b>
         </div>
+        {!s.verified && (
+          <div>
+            STATUS&nbsp;&nbsp;
+            <b className="font-semibold text-stamp">
+              UNVERIFIED — {verifyFailText(s.verify_fail_reason)}
+            </b>
+          </div>
+        )}
       </div>
+      {!s.verified && (
+        <p className={`mt-2 font-serif text-xs ${c.sub}`}>
+          A sighting verifies when your GPS, the direction you aimed and the aircraft&apos;s
+          live position all agree at the moment you press the shutter.
+        </p>
+      )}
     </>
   );
 }

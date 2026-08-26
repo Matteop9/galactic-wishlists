@@ -12,6 +12,18 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.0",
+    date: "2026-08-26",
+    changes: [
+      "SkyDex 1.0 🛫 — the version headed to the App Store. Thank you to every Founding Flyer who spotted, reported and reviewed along the way: this one's yours.",
+      "Make your profile yours: pick the sky behind your banner — Day, Sunset, Night or Gold — in Settings.",
+      "Unverified catches now tell you exactly why they didn't verify, right on the card — and what verification actually checks.",
+      "The Spot map shows the direction you're facing from your very first tap — no need to open the camera first.",
+      "Fixed: pinch-zooming the app could leave you stuck zoomed in. Pages no longer zoom; the map, camera and photos still do.",
+      "In the iOS app: swipe down from the top of any page to refresh it.",
+    ],
+  },
+  {
     version: "0.5.4",
     date: "2026-08-26",
     changes: [

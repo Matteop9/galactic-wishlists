@@ -56,6 +56,12 @@ export const viewport: Viewport = {
   // Required for env(safe-area-inset-*) to resolve in standalone/PWA mode —
   // without it the tab bar sits under the iPhone home indicator.
   viewportFit: "cover",
+  // SkyDex is an app, not a document: page-level pinch zoom in the iOS shell
+  // gets stuck zoomed-in with no way back (feedback 26 Aug). Surfaces that
+  // should zoom (map, camera, lightbox) carry their own gestures. Browsers
+  // that ignore this on the open web (Safari) are unaffected either way.
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default async function RootLayout({

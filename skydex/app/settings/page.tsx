@@ -6,6 +6,7 @@ import FeedbackForm from "@/components/FeedbackForm";
 import DevModeToggle from "@/components/DevModeToggle";
 import OpenGuideButton from "@/components/OpenGuideButton";
 import AvatarEditor from "@/components/AvatarEditor";
+import CoverThemePicker from "@/components/CoverThemePicker";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("handle, home_airport, is_admin, avatar_seed, avatar_updated_at")
+    .select("handle, home_airport, is_admin, avatar_seed, avatar_updated_at, cover_theme")
     .eq("id", user!.id)
     .single();
 
@@ -60,6 +61,8 @@ export default async function SettingsPage() {
         initialHandle={profile?.handle ?? ""}
         initialHome={profile?.home_airport ?? ""}
       />
+
+      <CoverThemePicker initial={profile?.cover_theme ?? "day"} />
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">
         <div>

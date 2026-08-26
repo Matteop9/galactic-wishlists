@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { containsProfanity } from "@/lib/profanity";
 import { AVATAR_SEED_RE, validAvatarParts } from "@/lib/avatar";
+import { isCoverTheme } from "@/lib/coverThemes";
 import { fetchUserSightings, PROFILE_PAGE_SIZE } from "@/lib/profileSightings";
 import type { Sighting } from "@/components/SightingCard";
 
@@ -91,6 +92,28 @@ export async function updateAvatar(
 
   revalidatePath("/settings");
   revalidatePath("/feed");
+  return { ok: true };
+}
+
+/** Update the user's profile cover theme (banner). DB CHECK mirrors the keys. */
+export async function updateCoverTheme(
+  theme: string,
+): Promise<{ ok?: boolean; error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  if (!isCoverTheme(theme)) return { error: "Invalid banner theme." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ cover_theme: theme })
+    .eq("id", user.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/settings");
   return { ok: true };
 }
 
