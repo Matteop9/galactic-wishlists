@@ -1,5 +1,37 @@
 # Changelog — Milky Bay
 
+## 0.5.0 — 2026-08-27
+
+Team logos are editable at runtime — ported from The Acca v0.9.0 (its
+migrations `0025`–`0027` folded into one here, with the gotchas already fixed).
+
+- **`milkybay.team_badges`** (`mb_0019`): admin-writable, player-readable
+  override layer above the build-time crest maps. Resolution order is now
+  `team_badges` → football-data `CRESTS` → `SDB_BADGES` → initials chip.
+  `badge_url` null means “deliberately no logo”, which keeps a selection that
+  isn't a club out of the admin's missing list. Stamped (`updated_at` /
+  `updated_by` server-side) and audited like every other mutable table.
+- **Admin → Team logos**: checks every W-acca selection ever picked against the
+  crest maps and lists whatever is still on an initials chip, with pick counts.
+  Per row: **FIND** (TheSportsDB search straight from the browser — the API
+  sends `Access-Control-Allow-Origin: *`, so no proxy or edge function),
+  **URL** (paste any https image link) and **SKIP** (not a club). Saved crests
+  are live for every player on their next load; overrides can be changed or
+  removed from the same panel. The panel only reads the picks table when the
+  section is expanded.
+- **`src/lib/sportsdb.ts`** + **`src/hooks/useTeamBadges.ts`**: client-side club
+  search (TheSportsDB free key `123`) and a single shared react-query read of
+  the override table — one request per session, not one per chip.
+- Carried over from The Acca's fixes so MB never hits them: the column grant
+  includes `team` (PostgREST's upsert writes the conflict column, so a
+  `badge_url`-only grant fails `42501` on every re-save), and `milkybay.audit()`
+  now falls back to a `team` key for `row_id` on text-keyed tables. Static
+  `CRESTS` also gains `Monza` (5911) and `Deportivo la Coruna` (560).
+- Verified against the live schema by replaying the client's exact statements:
+  admin upsert/skip/delete all succeed and audit with the right actor, a
+  non-admin player can read but is blocked from insert (grant) and update
+  (policy).
+
 ## 0.4.0 — 2026-08-25
 
 Pick entry and pick display upgrades, ported from The Acca where noted.

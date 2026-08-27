@@ -286,3 +286,23 @@ export const fetchAppConfig = async (key: string) => {
 
 export const setAppConfig = (key: string, value: unknown) =>
   unwrap(supabase.from('app_config').upsert({ key, value }).select().single())
+
+/* Team logos (mb_0019). Runtime overrides for the build-time crest maps in
+   lib/teams.ts: a row wins over both, and badge_url null means "this name
+   deliberately has no logo", which keeps it out of the admin's missing list.
+   Admin-write, everyone-read. */
+export interface TeamBadgeRow {
+  team: string
+  badge_url: string | null
+  updated_at: string
+  updated_by: string | null
+}
+
+export const fetchTeamBadges = () =>
+  unwrap<TeamBadgeRow[]>(supabase.from('team_badges').select('*').order('team'))
+
+export const saveTeamBadge = (team: string, badgeUrl: string | null) =>
+  unwrap(supabase.from('team_badges').upsert({ team, badge_url: badgeUrl }).select().single())
+
+export const deleteTeamBadge = (team: string) =>
+  unwrap(supabase.from('team_badges').delete().eq('team', team))

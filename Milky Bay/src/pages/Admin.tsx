@@ -31,6 +31,7 @@ import {
 import { usePlayer } from '../hooks/usePlayer'
 import { gwDate, odds2, ukTime } from '../lib/format'
 import { GwStatusChip, Overline, PageTitle, playerColor, KindBadge } from '../components/ui'
+import AdminTeamLogos from '../components/AdminTeamLogos'
 import type { RulesSection } from '../lib/types'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
@@ -481,6 +482,10 @@ export default function Admin() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section title="Team logos">
+        <AdminTeamLogos />
       </Section>
 
       <Section title="Feedback">

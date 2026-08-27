@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { initials } from '../lib/format'
 import { crestUrl } from '../lib/teams'
+import { useTeamBadges } from '../hooks/useTeamBadges'
 
 /* Design primitives — forked from The Acca's Friday Night Slip system.
    No teams in Milky Bay: each member wears a fixed personal colour instead. */
@@ -96,11 +97,13 @@ export function Avatar({ name, size = 30 }: { name: string; size?: number }) {
 }
 
 /** Club crest where we have one, otherwise a two-letter initials chip.
-    Crests come from crests.football-data.org / TheSportsDB (see lib/teams.ts);
-    a failed load silently falls back to the chip. */
+    Order: admin override (team_badges, mb_0019) → the build-time maps in
+    lib/teams.ts → chip. A failed image load, or an override deliberately set
+    to no-logo, silently falls back to the chip. */
 export function TeamBadge({ name, size = 18 }: { name: string; size?: number }) {
   const [failed, setFailed] = useState(false)
-  const url = crestUrl(name)
+  const overrides = useTeamBadges()
+  const url = name in overrides ? overrides[name] : crestUrl(name)
   if (!url || failed)
     return (
       <span
