@@ -1,4 +1,9 @@
-/* Resolves club badges for every team name that has no football-data.org
+/* BULK SWEEP ONLY. For a single new club, use Admin → Team logos in the app
+   (team_badges, migration 0025) — it searches the same API from the browser and
+   is live for everyone instantly, no rerun and no deploy. Reach for this script
+   when you want to re-resolve the whole set into the build-time baseline.
+
+   Resolves club badges for every team name that has no football-data.org
    crest (lower-league + obscure European sides) via TheSportsDB search API,
    and generates src/lib/badges.ts. Rerun with:  npx tsx scripts/fetch-badges.ts
    Add new names to NAMES (and QUERY_ALIASES if the app name is a nickname).

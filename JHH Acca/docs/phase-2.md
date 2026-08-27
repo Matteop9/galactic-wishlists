@@ -85,6 +85,18 @@ Not feedback-queue items — from a full security / usability / stale-data revie
 - [x] Security hardening (migration `0023`) + public-repo cleanup (join-code literal scrubbed,
       duplicate zips + `New Additions/` removed).
 
+## Shipped in v0.9.0 (2026-08-27)
+
+Asked for in chat: “can we have a way to update team logos as they get added — I just
+added Barnet”.
+
+- [x] Team logos are admin-editable in the app (Admin → Team logos, migration `0025`):
+      lists every picked club still showing an initials chip, with a TheSportsDB lookup,
+      a paste-a-URL option and a skip for names that aren't clubs. Live for everyone
+      immediately — no `fetch-badges.ts` rerun, no deploy.
+- [x] Long-standing gaps closed: Barnet, St Gallen, APOEL (overrides), Monza and
+      Deportivo la Coruna (static football-data ids).
+
 ## Backlog / deferred
 
 - [ ] **BTTS both teams + tick/cross showing the actual result** (feedback, deferred from v0.5.0
@@ -102,6 +114,8 @@ Not feedback-queue items — from a full security / usability / stale-data revie
 - [ ] Screenshot ingestion (deferred from v0.1 checklist)
 - [ ] Announcement graphic (deferred from v0.1 checklist)
 - [ ] Feedback-driven items — see Admin → Feedback Queue
+- [ ] Fold accumulated `team_badges` overrides back into `src/lib/badges.ts` on the next bulk
+      sweep, so the build-time baseline keeps up with what admins have set by hand
 
 ## Conventions
 

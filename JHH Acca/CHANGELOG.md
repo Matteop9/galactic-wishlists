@@ -1,5 +1,17 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.9.0 — 2026-08-27
+
+Team logos are editable at runtime — a new club no longer needs a code change.
+
+- **`team_badges` table** (migration `0025`): admin-writable, player-readable override layer that sits on top of the build-time crest maps. Resolution order is now sport emoji → `team_badges` → football-data `CRESTS` → `SDB_BADGES` → initials chip. `badge_url` null means “deliberately no logo” (e.g. `Draw`), which keeps a non-club name out of the admin's missing list. Stamped (`updated_at`/`updated_by` server-side) and audited like every other mutable table.
+- **Admin → Team logos**: checks every team name ever picked against the crest maps and lists whatever is still on an initials chip, with usage counts. Per row: **FIND** (TheSportsDB search straight from the browser — the API sends `Access-Control-Allow-Origin: *`, so no proxy/edge function), **URL** (paste any https image link) and **SKIP** (not a club). Saved crests are live for every player on their next load; overrides can be changed or removed from the same panel.
+- **`src/lib/sportsdb.ts`** + **`src/hooks/useTeamBadges.ts`**: client-side club search (free key `123`, same one the bulk script uses) and a single shared react-query read of the override table — one request per session, not one per chip.
+- **Gaps closed on the way in**: `Monza` (football-data 5911) and `Deportivo la Coruna` (560) added to the static `CRESTS` map — both were plain football-data clubs that had never been mapped. `Barnet` (the club that prompted this), `St Gallen` and `Apoel Nicosia` seeded into `team_badges`; the latter two are the names `fetch-badges.ts` could never resolve by name search (its aliases hit a reserve side / nothing), so they had been stuck on initials since v0.4.0.
+- **`grant update (team)`** (migration `0026`): PostgREST's upsert compiles to `on conflict (team) do update set team = excluded.team, …`, so a `badge_url`-only column grant made every re-save of an existing override fail with `42501`. Caught by replaying the client's exact statement under the `authenticated` role.
+- **`audit()`** (migration `0027`): `row_id` now falls back to a `team` key after `id`/`token`, so text-keyed tables land identifiable audit rows. Tables with an `id` are unaffected (it short-circuits first); `EXECUTE` revokes re-issued with the replace.
+- `scripts/fetch-badges.ts` stays the bulk-sweep tool; its header now points one-off additions at the admin panel.
+
 ## v0.8.1 — 2026-08-25
 
 Fixes from a full security / usability / stale-data review (no new features).

@@ -24,11 +24,12 @@ import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
 import { GwStatusChip, PageTitle, teamColor } from '../components/ui'
 import { ChampStars } from '../components/ChampStars'
+import AdminTeamLogos from '../components/AdminTeamLogos'
 import { gwDate, londonToday, longDate } from '../lib/format'
 import type { Feedback } from '../lib/types'
 
-/* Admin: account management, gameweeks, dispute queue, adjustments,
-   the audit trail (who/what/when/IP/device) and LLM usage tracking. */
+/* Admin: account management, gameweeks, dispute queue, adjustments, team
+   logos, the audit trail (who/what/when/IP/device) and LLM usage tracking. */
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -389,6 +390,10 @@ function AdminInner() {
             })}
           </div>
         )}
+      </Section>
+
+      <Section title="TEAM LOGOS">
+        <AdminTeamLogos />
       </Section>
 
       <Section title="LLM USAGE (OPENROUTER — LIMITED KEY)">

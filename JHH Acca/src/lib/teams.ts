@@ -2,7 +2,12 @@
    the live-score poller uses — served as small PNGs from
    crests.football-data.org. Anything unmapped falls back to an initials chip
    (see TeamBadge in components/ui.tsx), so missing entries are cosmetic only.
-   Keys must match the canonical names used in picks (see migration 0017). */
+   Keys must match the canonical names used in picks (see migration 0017).
+
+   These two maps are the BASELINE, fixed at build time. Clubs that turn up
+   after a deploy are fixed at runtime instead, from the admin-editable
+   team_badges table (migration 0025) — see Admin → Team logos. Full order:
+   sport emoji → team_badges → CRESTS → SDB_BADGES → initials chip. */
 
 import { SDB_BADGES } from './badges'
 
@@ -72,6 +77,7 @@ const CRESTS: Record<string, number> = {
   Girona: 298,
   'Celta Vigo': 558,
   Sevilla: 559,
+  'Deportivo la Coruna': 560,
   // Bundesliga
   Cologne: 1,
   Hoffenheim: 2,
@@ -105,6 +111,7 @@ const CRESTS: Record<string, number> = {
   Lazio: 110,
   Parma: 112,
   Napoli: 113,
+  Monza: 5911,
   Empoli: 445,
   Venezia: 454,
   Sassuolo: 471,
@@ -165,6 +172,8 @@ export const SPORT_EMOJI: Record<string, string> = {
 
 export const SPORTS = new Set(Object.keys(SPORT_EMOJI))
 
+/** Baseline crest for a team name, ignoring any runtime override — callers
+    that want the full order should use TeamBadge (or useTeamBadges + this). */
 export function crestUrl(team: string): string | null {
   const id = CRESTS[team]
   if (id) return `https://crests.football-data.org/${id}.png`

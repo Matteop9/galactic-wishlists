@@ -10,6 +10,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.9.0',
+    date: '2026-08-27',
+    title: 'Every club gets its badge',
+    items: [
+      'Pick a club nobody has picked before and its badge can be live the same night — admin looks it up in the app, no update needed',
+      'Barnet, St Gallen, APOEL, Monza and Deportivo have all swapped their two-letter chips for real crests',
+    ],
+  },
+  {
     version: '0.8.1',
     date: '2026-08-25',
     title: 'Reliability tune-up',

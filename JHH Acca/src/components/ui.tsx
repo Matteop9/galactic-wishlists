@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { initials } from '../lib/format'
 import { crestUrl, SPORT_EMOJI } from '../lib/teams'
+import { useTeamBadges } from '../hooks/useTeamBadges'
 
 export const teamColor = (team: string) =>
   team === 'VDL' ? 'var(--color-vdl)' : team === 'JHP' ? 'var(--color-jhp)' : 'var(--color-accent)'
@@ -118,10 +119,12 @@ export function Avatar({ name, team, size = 30 }: { name: string; team: string; 
 }
 
 /** Club crest where we have one, otherwise a two-letter initials chip.
-    Crests come from crests.football-data.org (see lib/teams.ts); a failed
-    load silently falls back to the chip. */
+    Order: sport emoji → admin override (team_badges, migration 0025) → the
+    build-time crest maps in lib/teams.ts → chip. A failed image load, or an
+    override deliberately set to no-logo, silently falls back to the chip. */
 export function TeamBadge({ name, size = 18 }: { name: string; size?: number }) {
   const [failed, setFailed] = useState(false)
+  const overrides = useTeamBadges()
   const emoji = SPORT_EMOJI[name]
   if (emoji)
     return (
@@ -129,7 +132,7 @@ export function TeamBadge({ name, size = 18 }: { name: string; size?: number }) 
         {emoji}
       </span>
     )
-  const url = crestUrl(name)
+  const url = name in overrides ? overrides[name] : crestUrl(name)
   if (!url || failed)
     return (
       <span
