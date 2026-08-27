@@ -33,6 +33,9 @@ type Props = {
   aircraft: MapAircraft[];
   lockedId: string | null;
   heading: number | null; // device compass — drives the field-of-view cone
+  // The compass says it can't be trusted (iOS accuracy worse than the cone
+  // itself) — draw the wedge as a hint, not a claim.
+  headingUncertain?: boolean;
   rangeKm?: number;
   onSelect: (icao24: string) => void;
 };
@@ -216,6 +219,7 @@ export default function SpotMap({
   aircraft,
   lockedId,
   heading,
+  headingUncertain = false,
   rangeKm = 40,
   onSelect,
 }: Props) {
@@ -472,6 +476,15 @@ export default function SpotMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [heading, observer, rangeKm]);
 
+  // Fade the cone when the compass admits it's unsure, so a wrong wedge never
+  // looks as certain as a good one.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !readyRef.current) return;
+    map.setPaintProperty("fov-fill", "fill-opacity", headingUncertain ? 0.07 : 0.18);
+    map.setPaintProperty("fov-line", "line-opacity", headingUncertain ? 0.25 : 0.6);
+  }, [headingUncertain, loaded]);
+
   function recenter() {
     mapRef.current?.flyTo({ center: [observer.lon, observer.lat], zoom: 9.5, duration: 600 });
   }
@@ -515,10 +528,13 @@ export default function SpotMap({
           special livery
         </span>
       </div>
+      {/* bottom-10, not bottom-3: MapLibre's compact attribution owns the bottom
+          ~34 px of the container (more when expanded) and was sitting on top of
+          this button. The credit itself has to stay visible — CARTO/OSM licence. */}
       <button
         type="button"
         onClick={recenter}
-        className="absolute bottom-3 right-3 rounded bg-ink/80 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper"
+        className="absolute bottom-10 right-3 rounded bg-ink/80 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper"
       >
         Recenter
       </button>

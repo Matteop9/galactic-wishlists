@@ -12,6 +12,16 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.3",
+    date: "2026-08-27",
+    changes: [
+      "The Spot map now tells you when your compass can't be trusted — and it never leaves a stale direction cone pointing the wrong way after you've switched back into the app.",
+      "A calmer camera view while you're aiming: far less text over the sky. Tap the small round button in the top corner whenever you want the full readout back — heading, elevation, distance and how many aircraft are in range.",
+      "The zoom slider gets out of the way when you're not using it. Pinch, or tap the zoom level, to bring it back.",
+      "Fixed: on the map, the status message and the Recenter button no longer hide behind the map copyright.",
+    ],
+  },
+  {
     version: "1.0.2",
     date: "2026-08-27",
     changes: [

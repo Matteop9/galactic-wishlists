@@ -53,6 +53,7 @@ export default function TargetOverlay({
   track,
   target,
   ghost,
+  details = false,
 }: {
   heading: number;
   pitch: number;
@@ -64,6 +65,8 @@ export default function TargetOverlay({
   target: Fix;
   /** Raw last-fix position, when extrapolation moved the target off it. */
   ghost: Fix | null;
+  /** Diagnostics on: the raw-fix ghost and the distance in the caption. */
+  details?: boolean;
 }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState<{ w: number; h: number } | null>(null);
@@ -95,12 +98,17 @@ export default function TargetOverlay({
     angularSeparation(heading, pitch, target.bearing, target.elevation),
   );
   const rotation = track != null ? track - heading : 0;
-  const caption = `${label} · ${distanceKm} km · ${sep}° off`;
+  // Clean caption is the reg plus how far off you're aiming — the one number
+  // that changes what you do next. Distance is a diagnostic; it rides with the
+  // ghost behind the viewfinder's details chip.
+  const caption = details
+    ? `${label} · ${distanceKm} km · ${sep}° off`
+    : `${label} · ${sep}°`;
 
   return (
     <div ref={boxRef} className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* ghost: the raw last fix — where the feed last SAW it */}
-      {g && g.onScreen && (
+      {/* ghost: the raw last fix — where the feed last SAW it (details only) */}
+      {details && g && g.onScreen && (
         <div
           className="absolute -translate-x-1/2 -translate-y-1/2 text-paper/35"
           style={{ left: `${g.x}%`, top: `${g.y}%` }}

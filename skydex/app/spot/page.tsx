@@ -61,6 +61,19 @@ type LiveCandidate = TimedCandidate & {
 // is degenerate — a plane at 85° elevation can swing 90° of bearing while
 // moving ~5° across the sky. Phone compasses drift; keep it generous.
 const CONE_TOL = 25;
+// How far off the magnetometer could be, as iOS itself reports it
+// (`webkitCompassAccuracy`, degrees; negative = uncalibrated/invalid). Past this
+// the error bar is wider than the cone, so SAY so instead of drawing a confident
+// wedge in the wrong direction.
+const HEADING_ACCURACY_TOL = 30;
+// Orientation events fire continuously while motion access is live (~60 Hz on
+// iOS and Chrome alike), so silence this long means the sensor stream died —
+// typically after the app was backgrounded — and the last heading is a frozen
+// lie. Drop it and re-arm rather than keep aiming where the phone WAS.
+const HEADING_STALE_MS = 6000;
+// The viewfinder is clean by default; this remembers a spotter who wants the
+// telemetry back (per device).
+const HUD_KEY = "skydex_hud_details";
 // How often the tracked (locked) plane is re-polled, vs 6 s for the area sweep.
 const TRACKED_POLL_MS = 2000;
 // A plane this close is capturable regardless of the compass cone — you can
@@ -91,6 +104,18 @@ async function postCapture(blob: Blob | null, metaStr: string): Promise<Response
   });
 }
 
+// Screen rotation relative to the device's natural (portrait) orientation: 0
+// portrait, 90 landscape rotated anticlockwise (top edge to the LEFT), 270
+// clockwise. Turns a device-frame compass reading into where the rear camera
+// actually points — see onOrient.
+function screenAngle(): number {
+  const a =
+    typeof screen !== "undefined" && screen.orientation
+      ? screen.orientation.angle
+      : ((window as unknown as { orientation?: number }).orientation ?? 0);
+  return ((a % 360) + 360) % 360;
+}
+
 export default function SpotPage() {
   // Camera lifecycle: off until the user first opens Camera view. There is no
   // permission gate screen — the tap that opens the camera IS the user gesture
@@ -100,7 +125,28 @@ export default function SpotPage() {
   const [error, setError] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lon: number; alt: number | null } | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
+  // iOS's own error bar on that heading (degrees; negative = uncalibrated).
+  // null where the platform reports none (Android/desktop).
+  const [headingAcc, setHeadingAcc] = useState<number | null>(null);
+  // The compass WAS reporting and went quiet — the watchdog below cleared it.
+  const [headingLost, setHeadingLost] = useState(false);
+  const headingAtRef = useRef(0);
+  // Trust gate on the compass: iOS's own accuracy figure, negative when the
+  // magnetometer wants calibrating. Once it's wider than the capture cone the
+  // cone is a hint, not a claim — both HUDs say so and the wedge fades.
+  const headingUncertain =
+    headingAcc != null && (headingAcc < 0 || headingAcc > HEADING_ACCURACY_TOL);
   const [pitch, setPitch] = useState<number | null>(null);
+  // Viewfinder chrome. Aiming at a plane is the moment the screen should be
+  // mostly sky, so the HDG/ELV telemetry, the raw-fix ghost and the distance in
+  // the target caption are all aim *diagnostics* now, behind the corner chip —
+  // not things to read on every catch.
+  const [details, setDetails] = useState(false);
+  // The zoom slider used to be permanent furniture across the bottom of the
+  // frame. Pinch is the real gesture, so it appears for a beat after a zoom
+  // change (or a tap on the level chip) and then gets out of the way.
+  const [zoomUi, setZoomUi] = useState(false);
+  const zoomUiTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [candidates, setCandidates] = useState<TimedCandidate[]>([]);
   // Wall-clock driving dead reckoning, bumped by a 500 ms ticker effect (kept
   // in state so render stays pure — no Date.now() during render).
@@ -156,14 +202,30 @@ export default function SpotPage() {
   const lastTapRef = useRef(0);
 
   const onOrient = useCallback((e: DeviceOrientationEvent) => {
-    const anyE = e as DeviceOrientationEvent & { webkitCompassHeading?: number };
-    const h =
+    const anyE = e as DeviceOrientationEvent & {
+      webkitCompassHeading?: number;
+      webkitCompassAccuracy?: number;
+    };
+    const raw =
       typeof anyE.webkitCompassHeading === "number"
         ? anyE.webkitCompassHeading
         : e.alpha != null
           ? (360 - e.alpha) % 360
           : null;
-    if (h != null) setHeading(Math.round(h));
+    // Both forms are DEVICE-frame: the yaw of the phone's own top edge, which is
+    // where the camera looks ONLY in portrait. Roll the phone sideways to frame a
+    // plane and the reading swings ~90° off the aim (iOS's CLHeading is
+    // portrait-referenced and WebKit never tells it otherwise) — the heading twin
+    // of the portrait-only pitch bug cameraElevation fixed. Add the screen's own
+    // rotation back in. Device sanity check: aim at a landmark, rotate the phone
+    // to landscape — HDG must not move.
+    if (raw != null) {
+      setHeading(Math.round((raw + screenAngle()) % 360) % 360);
+      const acc = anyE.webkitCompassAccuracy;
+      setHeadingAcc(typeof acc === "number" ? acc : null);
+      headingAtRef.current = Date.now();
+      setHeadingLost(false);
+    }
     // Rear-camera elevation from the FULL orientation, not `beta − 90`: the old
     // form was only correct held upright in portrait and went 90–170° wrong held
     // sideways or aimed overhead. cameraElevation is screen-orientation-
@@ -247,6 +309,7 @@ export default function SpotPage() {
       }
 
       setCamera("on");
+      bumpZoomUi(); // one glance at the zoom control, then it hides itself
     } catch (err) {
       setCamera("off");
       setError(err instanceof Error ? err.message : "Could not start the camera.");
@@ -309,6 +372,86 @@ export default function SpotPage() {
       }
     };
   }, [requestOrientation, attachOrientation, onOrient]);
+
+  // Re-arm the sensor stream: WebKit starts/stops CoreMotion off the listener
+  // count, so a genuine remove + add is what restarts a dead stream (asking for
+  // permission again is a no-op once it's granted).
+  const reattachOrientation = useCallback(() => {
+    if (orientEventRef.current) {
+      window.removeEventListener(orientEventRef.current, onOrient as EventListener, true);
+      orientAttachedRef.current = false;
+    }
+    attachOrientation();
+    void requestOrientation(true);
+  }, [attachOrientation, requestOrientation, onOrient]);
+
+  // Watchdog. iOS silently stops delivering orientation events when the webview
+  // is suspended (an app resume, a long screen-off) and doesn't always restart —
+  // leaving the cone frozen where the phone happened to face at the time, which
+  // is exactly the "the app points a different way to the compass" report. A
+  // frozen heading is worse than none: clear it (the cone disappears and the copy
+  // asks for a figure-8) and re-arm the stream once.
+  useEffect(() => {
+    const id = setInterval(() => {
+      const at = headingAtRef.current;
+      if (!at || Date.now() - at <= HEADING_STALE_MS) return;
+      headingAtRef.current = 0; // don't re-fire until events actually resume
+      setHeading(null);
+      setHeadingAcc(null);
+      setHeadingLost(true);
+      reattachOrientation();
+    }, 1000);
+    return () => clearInterval(id);
+  }, [reattachOrientation]);
+
+  // Coming back to the foreground is the usual moment the stream is found dead;
+  // re-arm there instead of waiting out the watchdog.
+  useEffect(() => {
+    const onVis = () => {
+      if (document.visibilityState === "visible") reattachOrientation();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [reattachOrientation]);
+
+  // Restore the chrome preference (client-only; deferred a tick for the same
+  // reason as the motion request — no set-state straight out of an effect).
+  useEffect(() => {
+    const t = setTimeout(() => {
+      try {
+        setDetails(localStorage.getItem(HUD_KEY) === "1");
+      } catch {
+        /* private mode — the clean view is the safe default */
+      }
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (zoomUiTimer.current) clearTimeout(zoomUiTimer.current);
+    };
+  }, []);
+
+  function toggleDetails() {
+    setDetails((d) => {
+      const next = !d;
+      try {
+        localStorage.setItem(HUD_KEY, next ? "1" : "0");
+      } catch {
+        /* nothing to persist to — the toggle still works for this session */
+      }
+      return next;
+    });
+  }
+
+  // Show the zoom control briefly: any pinch, wheel, slider drag, camera start,
+  // or a tap on the level chip.
+  function bumpZoomUi() {
+    setZoomUi(true);
+    if (zoomUiTimer.current) clearTimeout(zoomUiTimer.current);
+    zoomUiTimer.current = setTimeout(() => setZoomUi(false), 2500);
+  }
 
   // Poll live aircraft around the observer. On a dropout — a network error OR a
   // valid-but-empty gap — KEEP the last good candidates and surface
@@ -595,6 +738,7 @@ export default function SpotPage() {
   const clampZoom = (v: number) => Math.min(maxZoom, Math.max(minZoom, v));
 
   function applyZoom(v: number) {
+    bumpZoomUi();
     setZoom(v);
     const track = trackRef.current as
       | (MediaStreamTrack & { applyConstraints?: (c: object) => Promise<void> })
@@ -984,6 +1128,7 @@ export default function SpotPage() {
                 label={targetLabel(target)}
                 distanceKm={target.distanceKm}
                 track={target.track}
+                details={details}
                 target={{ bearing: target.bearing, elevation: target.elevation }}
                 ghost={
                   target.rawElevation != null &&
@@ -995,11 +1140,32 @@ export default function SpotPage() {
               />
             )}
 
-            {/* sensor readout */}
-            <div className="absolute left-3 top-3 rounded bg-ink/70 px-2 py-1 font-mono text-[11px] text-paper">
-              HDG {heading ?? "—"}° · ELV {pitch ?? "—"}° · {candidates.length} in range
-              {feedError ? " · reconnecting…" : ""}
-            </div>
+            {/* Sensor readout, collapsed to a corner chip you tap to expand. A
+                compass warning still shows through collapsed (⚠) because that
+                one is actionable — the rest is diagnostics. */}
+            <button
+              type="button"
+              onClick={toggleDetails}
+              aria-label={details ? "Hide sensor details" : "Show sensor details"}
+              className={`absolute left-3 top-3 bg-ink/60 font-mono text-[11px] leading-none text-paper/90 ${
+                details
+                  ? "rounded px-2 py-1"
+                  : "flex h-6 w-6 items-center justify-center rounded-full"
+              }`}
+            >
+              {details ? (
+                <>
+                  HDG {heading ?? "—"}°
+                  {headingAcc != null && headingAcc >= 0 ? ` ±${Math.round(headingAcc)}°` : ""}
+                  {headingUncertain ? " ⚠" : ""} · ELV {pitch ?? "—"}° ·{" "}
+                  {candidates.length} in range{feedError ? " · reconnecting…" : ""}
+                </>
+              ) : headingUncertain || headingLost ? (
+                <span className="text-stamp">⚠</span>
+              ) : (
+                "i"
+              )}
+            </button>
 
             {/* zoom overview (unzoomed corner view with the framed region) */}
             <div
@@ -1019,36 +1185,55 @@ export default function SpotPage() {
               />
             </div>
 
-            {lockedCandidate && !targetInSights && (
-              <div className="absolute left-1/2 top-12 -translate-x-1/2 rounded bg-sky px-3 py-1 font-display text-sm font-semibold uppercase tracking-wide text-paper">
-                Tracking {targetLabel(lockedCandidate)} — aim to confirm, or capture anyway
-              </div>
-            )}
-            {targetInSights && target && (
-              <div className="absolute left-1/2 top-12 -translate-x-1/2 rounded bg-stamp px-3 py-1 font-display text-sm font-semibold uppercase tracking-wide text-paper">
-                In sights: {targetLabel(target)}
+            {/* State pill — two words, no registration: the reg is already on the
+                target caption AND on the capture button, and "aim to confirm, or
+                capture anyway" was a sentence of instructions laid across the
+                sky. Sits on the top line with the chip instead of below it. */}
+            {(targetInSights ? target : lockedCandidate) && (
+              <div
+                className={`absolute left-1/2 top-3 -translate-x-1/2 rounded-full px-2.5 py-0.5 font-display text-[11px] font-semibold uppercase tracking-wide text-paper ${
+                  targetInSights ? "bg-stamp" : "bg-sky/80"
+                }`}
+              >
+                {targetInSights ? "In sights" : "Tracking"}
               </div>
             )}
 
-            {/* zoom — pinch anywhere on the preview OR the legacy slider;
-                double-tap resets, wheel works on desktop. touch-auto +
-                stopPropagation keep slider drags out of the pinch handlers. */}
-            <div
-              className="absolute bottom-3 left-1/2 flex -translate-x-1/2 touch-auto items-center gap-2 rounded bg-ink/70 px-3 py-1.5"
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              <span className="font-mono text-[11px] text-paper">{zoom.toFixed(1)}×</span>
-              <input
-                type="range"
-                min={zoomCaps?.min ?? 1}
-                max={zoomCaps?.max ?? 4}
-                step={zoomCaps?.step ?? 0.1}
-                value={zoom}
-                onChange={(e) => applyZoom(parseFloat(e.target.value))}
-                className="w-36 accent-sky"
-                aria-label="Zoom"
-              />
-            </div>
+            {/* zoom — pinch anywhere on the preview OR the slider; double-tap
+                resets, wheel works on desktop. touch-auto + stopPropagation keep
+                slider drags out of the pinch handlers. The slider shows for a
+                beat after any zoom change (applyZoom bumps it) and then leaves
+                just the level chip, which taps to bring it back. */}
+            {zoomUi ? (
+              <div
+                className="absolute bottom-3 left-1/2 flex -translate-x-1/2 touch-auto items-center gap-2 rounded bg-ink/70 px-3 py-1.5"
+                onTouchStart={(e) => e.stopPropagation()}
+              >
+                <span className="font-mono text-[11px] text-paper">{zoom.toFixed(1)}×</span>
+                <input
+                  type="range"
+                  min={zoomCaps?.min ?? 1}
+                  max={zoomCaps?.max ?? 4}
+                  step={zoomCaps?.step ?? 0.1}
+                  value={zoom}
+                  onChange={(e) => applyZoom(parseFloat(e.target.value))}
+                  className="w-36 accent-sky"
+                  aria-label="Zoom"
+                />
+              </div>
+            ) : (
+              zoom > minZoom && (
+                <button
+                  type="button"
+                  onClick={bumpZoomUi}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  className="absolute bottom-3 left-1/2 -translate-x-1/2 touch-auto rounded bg-ink/60 px-2 py-0.5 font-mono text-[11px] text-paper/90"
+                  aria-label="Zoom"
+                >
+                  {zoom.toFixed(1)}×
+                </button>
+              )
+            )}
           </>
         )}
 
@@ -1070,6 +1255,7 @@ export default function SpotPage() {
                   };
                 })}
                 lockedId={lockedId}
+                headingUncertain={headingUncertain}
                 onSelect={(id) => {
                   setLockedId(id);
                   setView("camera");
@@ -1079,9 +1265,10 @@ export default function SpotPage() {
               {/* sweep status chip — a bare map must say whether it's still
                   looking or the sky is genuinely quiet */}
               {/* no z-index — SpotMap's own z-10 "Loading map…" overlay covers
-                  this chip until the basemap is in */}
+                  this chip until the basemap is in. bottom-10 clears MapLibre's
+                  attribution control, which was hiding it (see SpotMap). */}
               {(!mapSwept || mapAircraft.length === 0) && (
-                <div className="pointer-events-none absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded bg-ink/85 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper">
+                <div className="pointer-events-none absolute bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded bg-ink/85 px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-wide text-paper">
                   {!mapSwept ? (
                     <>
                       <PlaneSpinner size={16} tone="paper" />
@@ -1104,6 +1291,21 @@ export default function SpotPage() {
         <p className="mt-2 text-sm text-ink-soft">
           Live aircraft around you — tap one to track it, then switch to Camera to capture.
           The map never logs a sighting; only a verified photo does.
+        </p>
+      )}
+
+      {/* Compass readout on the MAP too, not just the camera HUD: when the cone
+          disagrees with where you're facing, this is the number to compare
+          against the phone's own compass app. */}
+      {view === "map" && (
+        <p className="mt-1 font-mono text-xs text-ink-faint">
+          HDG {heading ?? "—"}°
+          {headingAcc != null && headingAcc >= 0 ? ` ±${Math.round(headingAcc)}°` : ""}
+          {headingUncertain ? (
+            <span className="text-stamp"> · compass unreliable — wave the phone in a figure-8</span>
+          ) : headingLost ? (
+            <span className="text-stamp"> · compass dropped out — reconnecting…</span>
+          ) : null}
         </p>
       )}
 
