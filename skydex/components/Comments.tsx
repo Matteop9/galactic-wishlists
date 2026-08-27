@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { addComment } from "@/app/actions/comments";
+import BlockButton from "@/components/BlockButton";
 import ReportButton from "@/components/ReportButton";
 import Avatar from "@/components/Avatar";
 import FlyerStar from "@/components/FlyerStar";
@@ -134,12 +135,21 @@ export default function Comments({
               </div>
               <span className="flex shrink-0 items-center gap-2">
                 {currentUserId && c.user_id !== currentUserId && (
-                  <ReportButton
-                    targetType="comment"
-                    targetId={c.id}
-                    currentUserId={currentUserId}
-                    className="font-mono text-[11px] uppercase text-ink-faint hover:text-stamp disabled:opacity-60"
-                  />
+                  <>
+                    <ReportButton
+                      targetType="comment"
+                      targetId={c.id}
+                      currentUserId={currentUserId}
+                      className="font-mono text-[11px] uppercase text-ink-faint hover:text-stamp disabled:opacity-60"
+                    />
+                    <BlockButton
+                      targetUserId={c.user_id}
+                      handle={c.profiles?.handle ?? null}
+                      currentUserId={currentUserId}
+                      onChanged={load}
+                      className="font-mono text-[11px] uppercase text-ink-faint hover:text-stamp disabled:opacity-60"
+                    />
+                  </>
                 )}
                 {(isAdmin || c.user_id === currentUserId) && (
                   <button

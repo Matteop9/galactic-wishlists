@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.2",
+    date: "2026-08-27",
+    changes: [
+      "You can now block another spotter — from their profile or any of their comments. Their sightings and comments disappear for you, and neither of you can comment on the other's catches. Manage your list under Settings → Blocked spotters.",
+      "A small \"App Review sign-in\" on the login screen for Apple's reviewers. For everyone else, signing in stays Google and Apple only.",
+    ],
+  },
+  {
     version: "1.0.1",
     date: "2026-08-26",
     changes: [

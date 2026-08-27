@@ -7,6 +7,7 @@ import DevModeToggle from "@/components/DevModeToggle";
 import OpenGuideButton from "@/components/OpenGuideButton";
 import AvatarEditor from "@/components/AvatarEditor";
 import CoverThemePicker from "@/components/CoverThemePicker";
+import BlockedUsersList, { type BlockedRow } from "@/components/BlockedUsersList";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -18,11 +19,19 @@ export default async function SettingsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("handle, home_airport, is_admin, avatar_seed, avatar_updated_at, cover_theme")
-    .eq("id", user!.id)
-    .single();
+  const [{ data: profile }, { data: blockedRows }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("handle, home_airport, is_admin, avatar_seed, avatar_updated_at, cover_theme")
+      .eq("id", user!.id)
+      .single(),
+    // RLS scopes blocks to the caller's own rows; !blocked_id picks the right
+    // FK of the two pointing at profiles.
+    supabase
+      .from("blocks")
+      .select("blocked_id, profile:profiles!blocked_id(handle, avatar_seed, is_admin, frequent_flyer)")
+      .order("created_at", { ascending: false }),
+  ]);
 
   const devMode =
     Boolean(profile?.is_admin) && (await cookies()).get("skydex_dev")?.value === "1";
@@ -88,6 +97,8 @@ export default async function SettingsPage() {
           Start reviewing
         </a>
       </div>
+
+      <BlockedUsersList initial={(blockedRows ?? []) as unknown as BlockedRow[]} />
 
       {profile?.is_admin && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">

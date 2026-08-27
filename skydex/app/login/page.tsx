@@ -27,6 +27,11 @@ function LoginForm() {
   const bounced = params.get("error") != null;
   const [oauthError, setOauthError] = useState<string | null>(null);
   const [pending, setPending] = useState<OAuthProvider | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [pwPending, setPwPending] = useState(false);
+  const [pwError, setPwError] = useState<string | null>(null);
 
   async function oauth(provider: OAuthProvider) {
     setOauthError(null);
@@ -43,6 +48,24 @@ function LoginForm() {
       setPending(null);
     }
     // On success the browser navigates away — leave `pending` on.
+  }
+
+  // App Review requires sign-in credentials, but SkyDex is OAuth-only — this
+  // password path exists solely for Apple's one-off review account. There is
+  // no email signup (signInWithPassword can't create accounts).
+  async function reviewSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    if (pwPending) return;
+    setPwError(null);
+    setPwPending(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setPwError("Email sign-in is reserved for App Review.");
+      setPwPending(false);
+      return;
+    }
+    window.location.assign(next);
   }
 
   return (
@@ -75,6 +98,47 @@ function LoginForm() {
         {pending === "apple" ? "Opening Apple…" : "Continue with Apple"}
       </button>
       {oauthError && <p className="mt-2 text-sm text-stamp">{oauthError}</p>}
+
+      {!reviewOpen ? (
+        <button
+          onClick={() => setReviewOpen(true)}
+          className="mt-8 font-mono text-[10px] uppercase tracking-widest text-ink-faint hover:text-ink"
+        >
+          App Review sign-in
+        </button>
+      ) : (
+        <form onSubmit={reviewSignIn} className="mt-8 flex flex-col gap-2">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-ink-faint">
+            App Review sign-in
+          </p>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Review account email"
+            autoComplete="username"
+            required
+            className="rounded-md border border-paper-edge bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-sky"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            autoComplete="current-password"
+            required
+            className="rounded-md border border-paper-edge bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-sky"
+          />
+          <button
+            type="submit"
+            disabled={pwPending || pending != null}
+            className="sd-btn sd-btn--log w-full justify-center"
+          >
+            {pwPending ? "Signing in…" : "Sign in"}
+          </button>
+          {pwError && <p className="text-sm text-stamp">{pwError}</p>}
+        </form>
+      )}
     </div>
   );
 }

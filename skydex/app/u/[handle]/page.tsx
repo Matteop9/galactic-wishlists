@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { coverGradient } from "@/lib/coverThemes";
 import Avatar from "@/components/Avatar";
+import BlockButton from "@/components/BlockButton";
 import FlyerStar from "@/components/FlyerStar";
 import ProfileSightings from "@/components/ProfileSightings";
 import SightingPhoto from "@/components/SightingPhoto";
@@ -94,6 +95,42 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
   if (!profile) notFound();
 
   const isOwner = viewer.user?.id === profile.id;
+
+  // Blocked interstitial: the feed view already hides their sightings for this
+  // viewer, but the profile_stats RPC doesn't — an empty history next to real
+  // stat numbers would look broken, so short-circuit before the heavy fetches.
+  if (viewer.user && !isOwner) {
+    const { data: block } = await supabase
+      .from("blocks")
+      .select("blocked_id")
+      .eq("blocker_id", viewer.user.id)
+      .eq("blocked_id", profile.id)
+      .maybeSingle();
+    if (block) {
+      return (
+        <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-8">
+          <div className="flex flex-col items-center gap-4 rounded-lg border border-paper-edge bg-paper-deep px-6 py-12 text-center">
+            <Avatar seed={profile.avatar_seed ?? profile.handle} admin={Boolean(profile.is_admin)} size={64} />
+            <h1 className="font-display text-2xl font-bold tracking-tight text-ink">
+              @{profile.handle}
+            </h1>
+            <p className="max-w-sm text-sm text-ink-soft">
+              You&apos;ve blocked this spotter — their sightings and comments are hidden
+              from you.
+            </p>
+            <BlockButton
+              targetUserId={profile.id}
+              handle={profile.handle}
+              currentUserId={viewer.user.id}
+              initiallyBlocked
+              className="sd-btn sd-btn--log !px-3.5 !py-1.5 !text-xs"
+            />
+          </div>
+        </main>
+      );
+    }
+  }
+
   const featuredIds: string[] = profile.featured_sighting_ids ?? [];
 
   // Rarest catches probe per tier (rarest first) — derived from the user's whole
@@ -227,10 +264,17 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
             {profile.home_airport ? `${profile.home_airport} · ` : ""}SINCE {since}
           </p>
         </div>
-        {isOwner && (
+        {isOwner ? (
           <a href="/settings" className="mb-1 sd-btn sd-btn--log !px-3.5 !py-1.5 !text-xs">
             Edit
           </a>
+        ) : (
+          <BlockButton
+            targetUserId={profile.id}
+            handle={profile.handle}
+            currentUserId={viewer.user?.id ?? null}
+            className="mb-1 font-mono text-[11px] uppercase text-ink-faint hover:text-stamp disabled:opacity-60"
+          />
         )}
       </div>
 

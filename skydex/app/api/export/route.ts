@@ -14,6 +14,7 @@ export async function GET() {
     { data: comments },
     { data: reactions },
     { data: ticketLedger },
+    { data: blocks },
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
     supabase.from("sightings").select("*").eq("user_id", user.id),
@@ -21,6 +22,7 @@ export async function GET() {
     supabase.from("reactions").select("*").eq("user_id", user.id),
     // RLS already scopes this to the caller's own rows.
     supabase.from("ticket_ledger").select("*").order("created_at", { ascending: true }),
+    supabase.from("blocks").select("*").eq("blocker_id", user.id),
   ]);
 
   const payload = {
@@ -31,6 +33,7 @@ export async function GET() {
     comments: comments ?? [],
     reactions: reactions ?? [],
     ticket_ledger: ticketLedger ?? [],
+    blocks: blocks ?? [],
   };
 
   return new Response(JSON.stringify(payload, null, 2), {

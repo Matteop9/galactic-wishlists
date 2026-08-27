@@ -2,6 +2,25 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.2 — 2026-08-27
+
+**User blocking + App Review pack.** Apple's review response asked for a standing set of reviewer notes, and its recording checklist expects a block mechanism (guideline 1.2 requires one for UGC anyway). Blocking ships almost entirely in the DB at the two existing chokepoints; the review requirements live in `APP_REVIEW.md`.
+
+### Added — user blocking (migration `user_blocks`, tracked as `supabase/migrations/20260827090001_user_blocks.sql`)
+- **`blocks` table**: blocker/blocked pair → `profiles(id)` (cascade), no-self CHECK, RLS own-rows-only, plus a 60/hr insert throttle in the `throttle_reports()` pattern.
+- **Read-side filtering is DB-only, two chokepoints, zero app-query changes:** `feed_sightings` (every sighting list — feed, profiles, books, load-more) gains `and not viewer_blocked(s.user_id)`; `comments` gains a RESTRICTIVE `comments_hide_blocked` select policy that ANDs with `comments_select_all` (also shrinks the feed's comment counts). `viewer_blocked(uuid)` is a STABLE SECURITY DEFINER predicate; anonymous viewers are unaffected. Visibility is deliberately one-way — filtering the reverse direction would leak block status.
+- **Two-way comment-insert guard**: `block_comment_insert()` BEFORE INSERT trigger — neither party can comment on the other's sightings; covers the direct anon-key insert path; generic error text so a block is never confirmed outright.
+- **Deliberately unfiltered** (documented decisions): leaderboards (handle + number only, and per-viewer filtering would desync the RPC's `rank()` from `profile_stats`), `shared_sightings`/`/s/[id]` + OG images (public, mostly anonymous viewers), the review queue (anonymous by design), reactions (anonymous aggregates), `all_sightings` (admin moderation surface). Account deletion cleans block rows via FK cascade — `delete-account` Edge Function unchanged.
+- **`app/actions/blocks.ts`**: `blockUser`/`unblockUser` — author from the server session, UUID-validated input, duplicate insert (23505) treated as success, revalidates `/feed` + `/settings`.
+- **`components/BlockButton.tsx`** (ReportButton conventions, `window.confirm`, `router.refresh()` on success), wired in: `app/u/[handle]/page.tsx` header (the non-owner slot opposite Edit) and `components/Comments.tsx` next to Report (`onChanged={load}` so a blocked author's comments vanish immediately).
+- **Blocked-profile interstitial** in `app/u/[handle]/page.tsx`: short-circuits before the heavy fetches — the filtered view would show an empty history next to real `profile_stats` numbers — with an Unblock button in place.
+- **`components/BlockedUsersList.tsx`** + "Blocked spotters" card in `app/settings/page.tsx` (fetched via the `profiles!blocked_id` embed; optimistic unblock with revert on error).
+- **`app/api/export/route.ts`**: the export now includes the caller's `blocks` rows.
+
+### Added — App Review requirements (Apple response, 27 Aug)
+- **`APP_REVIEW.md`**: paste-ready ASC Notes block (~3,300 chars — description/audience, devices tested, access instructions, external services, regional consistency, data licensing), the screen-recording shot list, and the one-time manual checklist (re-enable the Supabase Email provider, create + seed the review account, credentials go in ASC only — never this repo).
+- **`app/login/page.tsx`**: discreet "App Review sign-in" reveal → email + password via `signInWithPassword`. SkyDex stays OAuth-only for everyone else; there is no email signup path.
+
 ## v1.0.1 — 2026-08-26
 
 **Announcement banner** — a dismissible strip at the top of every page, two modes driven by `lib/announcement.ts`:
