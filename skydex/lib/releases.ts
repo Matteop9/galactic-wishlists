@@ -12,6 +12,16 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.4",
+    date: "2026-08-28",
+    changes: [
+      "Fixed: tapping \"Retake — delete this catch\" no longer freezes the camera. The preview now restarts itself any time it stalls — including after backgrounding the app — and a stalled frame can never be captured by mistake.",
+      "\"Spot another\" now really starts you fresh: the plane you just logged is untracked, so the capture button is ready for your next catch. Retaking keeps the same plane tracked for a better shot.",
+      "Deleting a catch asks you to confirm right there in the card instead of a system pop-up.",
+      "Fixed: a long registration no longer pushes the \"Stop tracking\" button off the row — the label now trims neatly instead.",
+    ],
+  },
+  {
     version: "1.0.3",
     date: "2026-08-27",
     changes: [

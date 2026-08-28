@@ -43,10 +43,14 @@ export default function DiscoveryMoment({
   result: DiscoveryResult;
   onClose: () => void;
   /** Delete this just-saved catch and return to the camera. */
-  onRetake?: () => Promise<void>;
+  onRetake?: () => Promise<{ ok?: boolean; error?: string }>;
 }) {
   const [pop, setPop] = useState<Popularity | null>(null);
   const [retaking, setRetaking] = useState(false);
+  // Two-step inline confirm — a native window.confirm here interrupts the
+  // camera stream in WKWebView (the delete → frozen-preview bug).
+  const [confirmRetake, setConfirmRetake] = useState(false);
+  const [retakeError, setRetakeError] = useState<string | null>(null);
   const dialogRef = useDialog(onClose);
 
   // Just-in-time: the screen renders instantly, the numbers fill in a beat later.
@@ -196,21 +200,47 @@ export default function DiscoveryMoment({
         </div>
 
         {onRetake && (
-          <button
-            onClick={async () => {
-              if (!window.confirm("Delete this catch and return to the camera?")) return;
-              setRetaking(true);
-              try {
-                await onRetake();
-              } finally {
-                setRetaking(false);
-              }
-            }}
-            disabled={retaking}
-            className="mx-auto mt-3 block font-mono text-[11px] uppercase tracking-wide text-ink-faint underline decoration-dotted underline-offset-2 hover:text-stamp disabled:opacity-60"
-          >
-            {retaking ? "Removing…" : "Retake — delete this catch"}
-          </button>
+          <div className="mt-3 text-center font-mono text-[11px] uppercase tracking-wide">
+            {!confirmRetake ? (
+              <button
+                onClick={() => setConfirmRetake(true)}
+                className="text-ink-faint underline decoration-dotted underline-offset-2 hover:text-stamp"
+              >
+                Retake — delete this catch
+              </button>
+            ) : (
+              <div className="flex items-center justify-center gap-4">
+                <span className="text-ink-faint">Delete this catch?</span>
+                <button
+                  onClick={async () => {
+                    setRetaking(true);
+                    setRetakeError(null);
+                    try {
+                      const res = await onRetake();
+                      if (res?.error) setRetakeError(res.error);
+                    } finally {
+                      setRetaking(false);
+                    }
+                  }}
+                  disabled={retaking}
+                  className="text-stamp underline decoration-dotted underline-offset-2 disabled:opacity-60"
+                >
+                  {retaking ? "Removing…" : "Delete it"}
+                </button>
+                <button
+                  onClick={() => {
+                    setConfirmRetake(false);
+                    setRetakeError(null);
+                  }}
+                  disabled={retaking}
+                  className="text-ink-faint underline decoration-dotted underline-offset-2 hover:text-ink disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
+            {retakeError && <p className="mt-1 normal-case text-stamp">{retakeError}</p>}
+          </div>
         )}
       </div>
     </div>

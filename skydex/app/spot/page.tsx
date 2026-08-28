@@ -282,8 +282,45 @@ export default function SpotPage() {
     [attachOrientation],
   );
 
+  // Camera acquisition is re-entrant and recoverable. WKWebView interrupts
+  // media streams freely (app backgrounded, native dialogs, RSC refreshes) and
+  // never restarts them itself, so every entry point goes through
+  // ensureCamera(), which revives a paused preview in place or re-acquires a
+  // dead stream — the old `camera !== "off"` guard made a dead-while-"on"
+  // stream permanently unrecoverable.
+  const startingRef = useRef(false);
+  // A stream has been acquired at least once this visit — gates the
+  // visibility auto-revive so a user who never opened the camera is never
+  // prompted by a mere tab switch.
+  const everStartedRef = useRef(false);
+
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    trackRef.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+    if (minimapRef.current) minimapRef.current.srcObject = null;
+    setCamera("off");
+  }, []);
+
+  // The stream is attached, live, and actually painting frames — the gate a
+  // capture must pass so a stale or blank frame can never be uploaded.
+  function previewReady() {
+    const video = videoRef.current;
+    return (
+      trackRef.current?.readyState === "live" &&
+      streamRef.current?.active === true &&
+      video != null &&
+      video.srcObject === streamRef.current &&
+      !video.paused &&
+      video.readyState >= 2
+    );
+  }
+
   async function startCamera() {
-    if (camera !== "off") return;
+    if (startingRef.current) return;
+    startingRef.current = true;
+    stopCamera(); // idempotent — release a dead (or live) stream before re-acquiring
     setCamera("starting");
     setError(null);
     try {
@@ -308,12 +345,39 @@ export default function SpotPage() {
         setZoom((track.getSettings() as { zoom?: number }).zoom ?? caps.zoom.min);
       }
 
+      everStartedRef.current = true;
       setCamera("on");
       bumpZoomUi(); // one glance at the zoom control, then it hides itself
     } catch (err) {
       setCamera("off");
       setError(err instanceof Error ? err.message : "Could not start the camera.");
+    } finally {
+      startingRef.current = false;
     }
+  }
+
+  // The single camera entry point: revive a paused-but-live preview in place
+  // (a suspended webview pauses the <video> without ending the track),
+  // otherwise (re)acquire the stream. Safe to call repeatedly.
+  async function ensureCamera() {
+    const video = videoRef.current;
+    if (trackRef.current?.readyState === "live" && streamRef.current?.active && video) {
+      try {
+        if (video.srcObject !== streamRef.current) video.srcObject = streamRef.current;
+        await video.play();
+        if (minimapRef.current) {
+          if (minimapRef.current.srcObject !== streamRef.current) {
+            minimapRef.current.srcObject = streamRef.current;
+          }
+          minimapRef.current.play().catch(() => {});
+        }
+        setCamera("on");
+        return;
+      } catch {
+        /* fall through to a full restart */
+      }
+    }
+    await startCamera();
   }
 
   // GPS + a silent compass attempt start on mount — the map (the default view)
@@ -362,7 +426,7 @@ export default function SpotPage() {
       clearTimeout(t);
       window.removeEventListener("click", retryOnGesture, true);
       window.removeEventListener("touchend", retryOnGesture, true);
-      streamRef.current?.getTracks().forEach((t) => t.stop());
+      stopCamera();
       if (geoWatchRef.current != null) {
         navigator.geolocation.clearWatch(geoWatchRef.current);
       }
@@ -371,7 +435,7 @@ export default function SpotPage() {
         orientAttachedRef.current = false;
       }
     };
-  }, [requestOrientation, attachOrientation, onOrient]);
+  }, [requestOrientation, attachOrientation, onOrient, stopCamera]);
 
   // Re-arm the sensor stream: WebKit starts/stops CoreMotion off the listener
   // count, so a genuine remove + add is what restarts a dead stream (asking for
@@ -724,6 +788,37 @@ export default function SpotPage() {
     }
   }, [camera]);
 
+  // Liveness: drop to the "Open camera" CTA the moment the OS ends the track
+  // (nobody should aim a dead frame), and revive the preview whenever the page
+  // comes back to the foreground — WKWebView kills camera streams on
+  // backgrounding and never restarts them. ensureCamera rides in a ref so the
+  // effect's dep list stays [camera, view, stopCamera].
+  const ensureCameraRef = useRef<() => Promise<void>>(async () => {});
+  useEffect(() => {
+    ensureCameraRef.current = ensureCamera;
+  }); // every render — ensureCamera closes over fresh state
+  useEffect(() => {
+    const track = camera === "on" ? trackRef.current : null;
+    const onEnded = () => stopCamera();
+    track?.addEventListener("ended", onEnded);
+    const revive = () => {
+      if (
+        document.visibilityState === "visible" &&
+        view === "camera" &&
+        everStartedRef.current
+      ) {
+        void ensureCameraRef.current();
+      }
+    };
+    document.addEventListener("visibilitychange", revive);
+    window.addEventListener("pageshow", revive);
+    return () => {
+      track?.removeEventListener("ended", onEnded);
+      document.removeEventListener("visibilitychange", revive);
+      window.removeEventListener("pageshow", revive);
+    };
+  }, [camera, view, stopCamera]);
+
   // Keep the corner overview playing whenever digital zoom is engaged.
   useEffect(() => {
     const mm = minimapRef.current;
@@ -914,7 +1009,9 @@ export default function SpotPage() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!video || !canvas || !ctx || !video.videoWidth) return null;
+    // previewReady also rejects a paused-but-attached video, which keeps a
+    // non-zero videoWidth and would otherwise upload a stale frame.
+    if (!video || !canvas || !ctx || !video.videoWidth || !previewReady()) return null;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     if (!zoomCaps && zoom > 1) {
@@ -935,6 +1032,15 @@ export default function SpotPage() {
     setWall(false);
     try {
       const blob = await grabPhotoBlob();
+      // A dead preview means the frame on screen is stale or blank — refuse to
+      // burn a spot/Ticket on it; restart the camera and let the user re-aim.
+      // (A null blob with a HEALTHY preview — a rare toBlob failure — keeps the
+      // old path below.)
+      if (!blob && !previewReady()) {
+        setError("The camera preview stalled — restarting it. Aim and try again.");
+        void ensureCamera();
+        return;
+      }
       const metaStr = JSON.stringify({
         lat: coords?.lat,
         lon: coords?.lon,
@@ -1051,7 +1157,7 @@ export default function SpotPage() {
             key={v}
             onClick={() => {
               setView(v);
-              if (v === "camera") startCamera();
+              if (v === "camera") void ensureCamera();
             }}
             className={`rounded-md px-4 py-1.5 ${
               view === v ? "bg-ink text-paper" : "text-ink-soft"
@@ -1098,7 +1204,7 @@ export default function SpotPage() {
                   We&apos;ll use your camera and compass to verify the aircraft you
                   photograph. Nothing is recorded until you capture.
                 </p>
-                <button onClick={startCamera} className="sd-btn sd-btn--capture">
+                <button onClick={() => void ensureCamera()} className="sd-btn sd-btn--capture">
                   Open camera
                 </button>
               </>
@@ -1259,7 +1365,7 @@ export default function SpotPage() {
                 onSelect={(id) => {
                   setLockedId(id);
                   setView("camera");
-                  startCamera(); // the map tap is a gesture too — no extra gate
+                  void ensureCamera(); // the map tap is a gesture too — no extra gate
                 }}
               />
               {/* sweep status chip — a bare map must say whether it's still
@@ -1309,26 +1415,33 @@ export default function SpotPage() {
         </p>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-3">
+      {/* NO flex-wrap here: in a wrapping row the line-break beats shrinking
+          (base size decides the wrap), so a long label would still push "Stop
+          tracking" to a second row instead of truncating — measured, not
+          theoretical. Two buttons max, so a single line always works. */}
+      <div className="mt-4 flex gap-3">
         {camera === "on" ? (
           <button
             onClick={() => submit(target)}
             disabled={!canCapture || busy}
-            className={`sd-btn ${canCapture ? "sd-btn--capture" : "sd-btn--disabled"}`}
+            className={`sd-btn min-w-0 ${canCapture ? "sd-btn--capture" : "sd-btn--disabled"}`}
           >
-            {busy
-              ? "Saving…"
-              : !target
-                ? "No aircraft in sights"
-                : targetInSights
-                  ? `Capture ${targetLabel(target)}`
-                  : `Capture ${targetLabel(target)} — we'll check it`}
+            {/* One label for both aim states — the "we'll check it" qualifier
+                lives on the helper line below, so a long registration truncates
+                instead of wrapping "Stop tracking" onto a second row. */}
+            <span className="min-w-0 truncate">
+              {busy
+                ? "Saving…"
+                : !target
+                  ? "No aircraft in sights"
+                  : `Capture ${targetLabel(target)}`}
+            </span>
           </button>
         ) : (
           <button
             onClick={() => {
               setView("camera");
-              startCamera();
+              void ensureCamera();
             }}
             disabled={camera === "starting"}
             className={`sd-btn ${camera === "starting" ? "sd-btn--disabled" : "sd-btn--capture"}`}
@@ -1337,11 +1450,19 @@ export default function SpotPage() {
           </button>
         )}
         {lockedId && (
-          <button onClick={() => setLockedId(null)} className="sd-btn sd-btn--log">
+          <button
+            onClick={() => setLockedId(null)}
+            className="sd-btn sd-btn--log shrink-0 whitespace-nowrap"
+          >
             Stop tracking
           </button>
         )}
       </div>
+      {camera === "on" && target && !targetInSights && !busy && (
+        <p className="mt-1 font-mono text-xs text-ink-faint">
+          Not confirmed in your sights — we&apos;ll check it after capture.
+        </p>
+      )}
 
       {tickets && (
         <p className="mt-2 flex items-center gap-1.5 font-mono text-xs text-ink-soft">
@@ -1386,11 +1507,27 @@ export default function SpotPage() {
       {result && (
         <DiscoveryMoment
           result={result}
-          onClose={() => setResult(null)}
+          onClose={() => {
+            // "Spot another" (also backdrop click / Escape) — a fresh target:
+            // keeping the lock re-offered the plane just logged, and re-tapping
+            // it could only 409.
+            setResult(null);
+            setLockedId(null);
+            setNotice(null);
+            setWall(false);
+            setError(null);
+            void ensureCamera();
+          }}
           onRetake={async () => {
+            // "Retake" — same plane, better shot: the lock is deliberately
+            // KEPT. The hard delete clears the server's dupe window, so the
+            // re-capture succeeds.
             const res = await deleteSighting(result.id);
-            if (res.ok) setResult(null);
-            else window.alert(res.error ?? "Could not remove — try again.");
+            if (!res.ok) return { error: res.error ?? "Could not remove — try again." };
+            setResult(null);
+            setNotice(null);
+            void ensureCamera();
+            return { ok: true };
           }}
         />
       )}

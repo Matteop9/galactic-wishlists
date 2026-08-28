@@ -57,6 +57,10 @@ body {
   border: 1.8px solid transparent;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.05s;
+  /* A long label (e.g. an aircraft registration) must truncate inside the
+     button, never overflow it and force its flex row to wrap. */
+  max-width: 100%;
+  min-width: 0;
 }
 .sd-btn:active {
   transform: translateY(1px);

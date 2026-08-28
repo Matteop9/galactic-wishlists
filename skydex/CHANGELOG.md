@@ -2,6 +2,24 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.4 — 2026-08-28
+
+**Capture flow, from three field reports on the post-capture return path** (28 Aug; root-caused in the V4 to-do doc §6). All in `app/spot/page.tsx` + `components/DiscoveryMoment.tsx`.
+
+### Fixed — delete → recapture froze the camera (app restart required)
+There was exactly one `getTracks().stop()` in the codebase (the unmount cleanup) and **no re-acquire path at all**: `startCamera()` returned early unless `camera === "off"`, nothing ever set it back, and the attach effect keys on `[camera]` — so once WKWebView killed the stream (the retake path's native `window.confirm` + awaited `deleteSighting` Server Action → RSC refresh are both media-interruption triggers) every entry point was a no-op on a dead frame.
+- **Recoverable camera lifecycle**: new `stopCamera()` (releases tracks, detaches both `<video>`s, `camera → "off"`; also replaces the inline unmount cleanup), `previewReady()` (track live + stream active + attached + playing + `readyState ≥ 2`), and `ensureCamera()` — the single entry point that revives a paused-but-live preview in place or falls through to a full `startCamera()`, whose `camera !== "off"` state guard became a `startingRef` re-entrancy guard (+ self-cleaning `stopCamera()` first).
+- **Every camera entry point** (view toggle, in-frame "Open camera", map `onSelect`, "Open camera to capture") now goes through `ensureCamera()`.
+- **Liveness effect**: track `ended` → `stopCamera()` (the "Open camera" CTA reappears instead of a dead frame); `visibilitychange`/`pageshow` → `ensureCamera()` when the camera view is up and a stream was ever acquired (`everStartedRef` — so a user who never opened the camera is never prompted by a tab switch). This also fixes the app-backgrounding freeze.
+- **Capture refuses a dead preview**: `grabPhotoBlob()` requires `previewReady()` (a paused-but-attached video keeps a non-zero `videoWidth` and used to upload a stale frame); `submit()` bails before POSTing when the blob is null and the preview is dead — a stale/blank frame can no longer burn a spot/Ticket. A null blob with a healthy preview (rare `toBlob` failure) keeps the old path.
+- **Native dialogs off the camera path**: `DiscoveryMoment`'s `window.confirm` → an inline two-step confirm ("Delete this catch?" / Delete it / Cancel); `onRetake` now returns `{ ok?, error? }` and failures render inline instead of `window.alert` (removed). Other `window.confirm` sites (Comments, SightingBrowser, BlockButton, DangerZone) deliberately untouched — not on the camera path.
+
+### Fixed — "Spot another" kept the previous plane selected
+`onClose` was `setResult(null)` and nothing else, and `lockedId` wins target resolution — so the capture button re-offered the plane just logged, and re-tapping it 409'd. Now "Spot another" (and backdrop/Escape) clears `lockedId`/`notice`/`wall`/`error` and calls `ensureCamera()`. **Retake deliberately keeps the lock** — same plane, better shot; the hard delete clears the server's live-rows-only dupe window so the re-capture succeeds.
+
+### Fixed — long callsign pushed "Stop tracking" onto a second row
+`CAPTURE VP-BXYZ — WE'LL CHECK IT` overflowed the ~343 px content width on a 375 px iPhone. The "— we'll check it" qualifier moved out of the button into a helper line under the row (shown while tracking out-of-cone); the label truncates (`min-w-0` + `truncate` span); "Stop tracking" is `shrink-0 whitespace-nowrap`; `.sd-btn` gains `max-width: 100%; min-width: 0` in `app/globals.css` as the systemic guard. **The row's `flex-wrap` had to go** (measured in the browser: in a wrapping flex row the line-break decision uses the item's base size, so wrapping always beat shrinking and the label never truncated) — two buttons max, single line always works.
+
 ## v1.0.3 — 2026-08-27
 
 **Spot page, from three field reports on launch day.** The facing cone could point somewhere the phone wasn't, the camera view was all chrome and no sky, and the map's own overlays sat underneath MapLibre's copyright control.
