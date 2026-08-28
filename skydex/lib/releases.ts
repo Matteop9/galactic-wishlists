@@ -12,6 +12,13 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.5",
+    date: "2026-08-28",
+    changes: [
+      "The zoom slider is back for good — it no longer hides itself after a couple of seconds. Pinch still works too.",
+    ],
+  },
+  {
     version: "1.0.4",
     date: "2026-08-28",
     changes: [

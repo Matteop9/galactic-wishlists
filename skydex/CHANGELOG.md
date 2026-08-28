@@ -2,6 +2,11 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.5 — 2026-08-28
+
+### Changed — zoom slider is permanent again (field report, 28 Aug)
+The v1.0.3 auto-hide (slider for 2.5 s after a zoom change, then a tappable level chip, nothing at 1×) read as "the zoom control is only sometimes there". Reverted to the always-visible slider across the bottom of the camera preview; pinch/double-tap/wheel unchanged. Removed the whole auto-hide apparatus in `app/spot/page.tsx` (`zoomUi` state, `zoomUiTimer`, `bumpZoomUi()`, its timer-cleanup effect and the level-chip branch).
+
 ## v1.0.4 — 2026-08-28
 
 **Capture flow, from three field reports on the post-capture return path** (28 Aug; root-caused in the V4 to-do doc §6). All in `app/spot/page.tsx` + `components/DiscoveryMoment.tsx`.

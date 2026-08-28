@@ -142,11 +142,6 @@ export default function SpotPage() {
   // the target caption are all aim *diagnostics* now, behind the corner chip —
   // not things to read on every catch.
   const [details, setDetails] = useState(false);
-  // The zoom slider used to be permanent furniture across the bottom of the
-  // frame. Pinch is the real gesture, so it appears for a beat after a zoom
-  // change (or a tap on the level chip) and then gets out of the way.
-  const [zoomUi, setZoomUi] = useState(false);
-  const zoomUiTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [candidates, setCandidates] = useState<TimedCandidate[]>([]);
   // Wall-clock driving dead reckoning, bumped by a 500 ms ticker effect (kept
   // in state so render stays pure — no Date.now() during render).
@@ -347,7 +342,6 @@ export default function SpotPage() {
 
       everStartedRef.current = true;
       setCamera("on");
-      bumpZoomUi(); // one glance at the zoom control, then it hides itself
     } catch (err) {
       setCamera("off");
       setError(err instanceof Error ? err.message : "Could not start the camera.");
@@ -491,12 +485,6 @@ export default function SpotPage() {
     return () => clearTimeout(t);
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (zoomUiTimer.current) clearTimeout(zoomUiTimer.current);
-    };
-  }, []);
-
   function toggleDetails() {
     setDetails((d) => {
       const next = !d;
@@ -507,14 +495,6 @@ export default function SpotPage() {
       }
       return next;
     });
-  }
-
-  // Show the zoom control briefly: any pinch, wheel, slider drag, camera start,
-  // or a tap on the level chip.
-  function bumpZoomUi() {
-    setZoomUi(true);
-    if (zoomUiTimer.current) clearTimeout(zoomUiTimer.current);
-    zoomUiTimer.current = setTimeout(() => setZoomUi(false), 2500);
   }
 
   // Poll live aircraft around the observer. On a dropout — a network error OR a
@@ -833,7 +813,6 @@ export default function SpotPage() {
   const clampZoom = (v: number) => Math.min(maxZoom, Math.max(minZoom, v));
 
   function applyZoom(v: number) {
-    bumpZoomUi();
     setZoom(v);
     const track = trackRef.current as
       | (MediaStreamTrack & { applyConstraints?: (c: object) => Promise<void> })
@@ -1305,41 +1284,27 @@ export default function SpotPage() {
               </div>
             )}
 
-            {/* zoom — pinch anywhere on the preview OR the slider; double-tap
-                resets, wheel works on desktop. touch-auto + stopPropagation keep
-                slider drags out of the pinch handlers. The slider shows for a
-                beat after any zoom change (applyZoom bumps it) and then leaves
-                just the level chip, which taps to bring it back. */}
-            {zoomUi ? (
-              <div
-                className="absolute bottom-3 left-1/2 flex -translate-x-1/2 touch-auto items-center gap-2 rounded bg-ink/70 px-3 py-1.5"
-                onTouchStart={(e) => e.stopPropagation()}
-              >
-                <span className="font-mono text-[11px] text-paper">{zoom.toFixed(1)}×</span>
-                <input
-                  type="range"
-                  min={zoomCaps?.min ?? 1}
-                  max={zoomCaps?.max ?? 4}
-                  step={zoomCaps?.step ?? 0.1}
-                  value={zoom}
-                  onChange={(e) => applyZoom(parseFloat(e.target.value))}
-                  className="w-36 accent-sky"
-                  aria-label="Zoom"
-                />
-              </div>
-            ) : (
-              zoom > minZoom && (
-                <button
-                  type="button"
-                  onClick={bumpZoomUi}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  className="absolute bottom-3 left-1/2 -translate-x-1/2 touch-auto rounded bg-ink/60 px-2 py-0.5 font-mono text-[11px] text-paper/90"
-                  aria-label="Zoom"
-                >
-                  {zoom.toFixed(1)}×
-                </button>
-              )
-            )}
+            {/* zoom — the slider stays put (the v1.0.3 auto-hide made it feel
+                like zoom was only sometimes there — field report, 28 Aug);
+                pinch anywhere on the preview also works, double-tap resets,
+                wheel works on desktop. touch-auto + stopPropagation keep
+                slider drags out of the pinch handlers. */}
+            <div
+              className="absolute bottom-3 left-1/2 flex -translate-x-1/2 touch-auto items-center gap-2 rounded bg-ink/70 px-3 py-1.5"
+              onTouchStart={(e) => e.stopPropagation()}
+            >
+              <span className="font-mono text-[11px] text-paper">{zoom.toFixed(1)}×</span>
+              <input
+                type="range"
+                min={zoomCaps?.min ?? 1}
+                max={zoomCaps?.max ?? 4}
+                step={zoomCaps?.step ?? 0.1}
+                value={zoom}
+                onChange={(e) => applyZoom(parseFloat(e.target.value))}
+                className="w-36 accent-sky"
+                aria-label="Zoom"
+              />
+            </div>
           </>
         )}
 
