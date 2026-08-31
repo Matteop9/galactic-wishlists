@@ -44,8 +44,8 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     q: "How do I export or delete my data?",
     a: (
       <>
-        From <Link href="/settings" className="text-sky underline">Settings</Link> you
-        can export everything you&apos;ve created as a file, or permanently delete your
+        From <Link href="/settings" className="text-sky underline">Settings</Link>{" "}
+        you can export everything you&apos;ve created as a file, or permanently delete your
         account with every sighting, photo and comment tied to it. Deletion is
         immediate and irreversible.
       </>
