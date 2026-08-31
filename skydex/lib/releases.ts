@@ -12,6 +12,14 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.6",
+    date: "2026-08-31",
+    changes: [
+      "New support page — common questions answered, plus a direct line to the team that works even when you're signed out. Linked from the footer on every page.",
+      "The privacy policy now spells out exactly what the leaderboards show (your username and sighting stats — never your location), and the sign-in screen says so up front.",
+    ],
+  },
+  {
     version: "1.0.5",
     date: "2026-08-28",
     changes: [

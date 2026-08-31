@@ -91,6 +91,7 @@ export default async function RootLayout({
           <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-5 py-4 font-mono text-xs text-ink-faint">
             <span>SkyDex · v{CURRENT_VERSION}</span>
             <span className="flex gap-4">
+              <Link href="/support" className="hover:text-ink">Support</Link>
               <Link href="/privacy" className="hover:text-ink">Privacy</Link>
               <Link href="/terms" className="hover:text-ink">Terms</Link>
               <Link href="/attributions" className="hover:text-ink">Attributions</Link>

@@ -2,6 +2,17 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.6 — 2026-08-31
+
+**App Review response (submission 99babdee, reviewed 31 Aug): Guideline 1.5 (Support URL) + 5.1.2 (leaderboard data-use disclosure).** Both were metadata/web-side — the same build can be resubmitted once ASC's Support URL points at the new page and the Privacy Policy URL points at `/privacy`.
+
+### Added — public support page (`/support`) — Guideline 1.5
+`app/support/page.tsx`: FAQ (verification failures, frozen camera, report/block, data export/deletion, location use) + `components/SupportForm.tsx`, a signed-out-capable contact form. Submissions reuse the existing `feedback` queue with `user_id null` (migration `support_requests_anon_feedback_insert`: `grant insert … to anon` + `feedback_insert_support` policy — `user_id is null and char_length(body) between 1 and 2200`), so they surface in the existing admin triage at `/feedback`; an optional reply-to email is composed into the body (`[support] reply-to: … — …`). Honeypot field client-side; DB length cap server-side. Footer link added in `app/layout.tsx`; sitemap entry in `app/sitemap.ts`.
+
+### Changed — leaderboard disclosure — Guideline 5.1.2
+- `app/privacy/page.tsx`: "How it's used" now names the public leaderboards explicitly (username + spot counts/types/carriers/airports/rarity derived from verified sightings; still no coordinates anywhere public) + a Questions section linking `/support`.
+- `app/login/page.tsx`: consent line under the OAuth buttons — continuing means agreeing to terms + privacy policy, including username/verified sightings appearing on the public feed and leaderboards.
+
 ## v1.0.5 — 2026-08-28
 
 ### Changed — zoom slider is permanent again (field report, 28 Aug)

@@ -99,6 +99,14 @@ function LoginForm() {
       </button>
       {oauthError && <p className="mt-2 text-sm text-stamp">{oauthError}</p>}
 
+      <p className="mt-4 text-xs text-ink-faint">
+        By continuing you agree to the{" "}
+        <Link href="/terms" className="underline hover:text-ink">terms</Link> and the{" "}
+        <Link href="/privacy" className="underline hover:text-ink">privacy policy</Link> —
+        including your username and verified sightings appearing on the public feed and
+        leaderboards.
+      </p>
+
       {!reviewOpen ? (
         <button
           onClick={() => setReviewOpen(true)}

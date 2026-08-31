@@ -23,9 +23,12 @@ export default function PrivacyPage() {
           <p className="mt-2">
             Location, time and camera direction are used only to confirm you could genuinely
             have seen the aircraft. Your photo, username and aircraft details appear on your
-            scrapbook and — for verified sightings — on the public feed.
+            scrapbook and — for verified sightings — on the public feed. Your username and
+            sighting statistics (spot counts, aircraft types, carriers, airports and rarity
+            scores derived from your verified sightings) appear on the public leaderboards,
+            which every SkyDex user can see.
             <strong className="text-ink"> Your precise location is never shown publicly</strong>;
-            the feed excludes exact coordinates.
+            the feed and leaderboards exclude exact coordinates.
           </p>
         </section>
         <section>
@@ -41,6 +44,13 @@ export default function PrivacyPage() {
             From your <a href="/settings" className="text-sky underline">settings</a> you can
             export all of your data as a file, or permanently delete your account and every
             sighting, photo and comment tied to it.
+          </p>
+        </section>
+        <section>
+          <h2 className="font-display text-lg font-semibold text-ink">Questions</h2>
+          <p className="mt-2">
+            Anything unclear, or a request about your data? Reach the team via the{" "}
+            <a href="/support" className="text-sky underline">support page</a>.
           </p>
         </section>
         <p className="text-sm text-ink-faint">
