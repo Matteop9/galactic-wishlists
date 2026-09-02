@@ -361,7 +361,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
           isYou: p.profileId === profile.id,
         })),
         verification: 'live',
-        highlights: [],
+        highlights: cardWinner.profileId ? (finish.data?.byProfile[cardWinner.profileId] ?? []) : [],
         strikes: score(cardWinner.frames).frames.filter((f) => f.isStrike).length,
         groupName: state.groupName ?? null,
         venueName: state.venueName ?? null,

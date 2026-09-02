@@ -1,5 +1,21 @@
 # Changelog — 10 Pins
 
+## 2026-09-02 — Fix: review follow-ups (demo button, share card, sign-out caches) — LIVE
+
+A from-scratch review of milestone 8 against the live database and the deployed origin found five things worth fixing before anyone else did.
+
+- **The demo button was dead in production.** "Anonymous sign-ins" is still off on the Supabase project (the auth settings endpoint reports `anonymous_users: false`, and there are zero anonymous users), yet `SignIn` defaulted the button to visible and only hid it after a failed tap — so every visitor saw a button that errored the first time they pressed it. It now starts hidden and asks GoTrue’s public `/auth/v1/settings` endpoint whether anonymous sign-ins are enabled, appearing only on a yes. The moment the setting is switched on in the dashboard the button shows up, with no redeploy. ⚠️ Until then there is deliberately no demo.
+- **The share card could brag about the wrong player.** `feed_events.highlights` is the union across every bowler in a live game, and the card passed it straight through — so Dave’s card could carry Matt’s NEW PB pill. Game detail now pins the feed highlights to the card only when the winner is the only profile player on the sheet; the live scorer’s card uses the per-profile split that `finishLiveGame` already returns, so it is exact.
+- **The unverified stinger said something false every time it appeared.** "totals only, unverified" — but the card is only offered for frame-scored games, so a totals-only card can never exist. Now "scored frame by frame, unverified".
+- **Sign-out left the previous account behind.** The service worker’s `supabase-rest` cache keys on URL and ignores the Authorization header, and react-query’s `['feed']` key has no user in it — so on a shared device the next account could be served the last one’s rows when offline or on a slow connection. `SIGNED_OUT` now clears the query cache and deletes the REST cache.
+- **A failed font embed was cached for the whole session.** One rejected `getFontEmbedCSS` became a permanent empty string, so every later card rendered in fallback faces. A failure is now retried on the next card; only a success is cached.
+
+Left as documented rather than fixed: anonymous-user cleanup (no pg_cron job yet; `profiles.id` cascades from `auth.users`, so a weekly delete of anonymous users older than seven days is the shape), a `search_path` on `freeze_friendship_endpoints`, `.env.example` being swallowed by the `.env.*` ignore rule, and the obsolete `interest-cohort` token in the Permissions-Policy header.
+
+Verified: `tsc --noEmit` clean, 217 unit tests green (the stinger test updated), prod build clean. On the deployed origin: the new bundle contains the settings probe, the new stinger string and the cache deletion, and the old stinger string is gone.
+
+Deployed to https://10pins.vercel.app via `npm run deploy` (dpl_5UADMoQCpf5hehKLWHYTNqL7Ze4N).
+
 ## 2026-09-02 — Milestone 8: celebrations, share card, PWA — and the security debt — LIVE
 
 The last milestone in the build spec (§11: "Polish: celebrations, share card, skeletons/empty states, PWA manifest/SW, copy pass"), with the still-live items from the project's own review doc folded in. **10 Pins is now feature-complete against the spec.**

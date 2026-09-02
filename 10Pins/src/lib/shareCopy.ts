@@ -89,7 +89,7 @@ export function shareCopy(input: ShareCopyInput): ShareCopy | null {
       ? 'pics attached, so it counts'
       : input.verification === 'live'
         ? 'scored live, frame by frame'
-        : 'totals only, unverified';
+        : 'scored frame by frame, unverified';
 
   const meta = [
     input.playedAt

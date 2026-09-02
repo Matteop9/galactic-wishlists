@@ -58,7 +58,9 @@ describe('shareCopy', () => {
   });
 
   it('never brags on a game nobody photographed', () => {
-    expect(shareCopy(input({ verification: 'unverified' }))!.stinger).toContain('totals only, unverified');
+    expect(shareCopy(input({ verification: 'unverified' }))!.stinger).toContain(
+      'scored frame by frame, unverified',
+    );
     expect(shareCopy(input({ verification: 'live' }))!.stinger).toContain('scored live, frame by frame');
   });
 

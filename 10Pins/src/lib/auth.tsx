@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from './supabase';
 import type { Tables } from './database.types';
 
@@ -16,6 +16,7 @@ const AuthContext = createContext<AuthContextValue>({ session: null, loading: tr
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     supabase.auth
@@ -26,11 +27,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => setLoading(false));
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
       setSession(next);
+      if (event === 'SIGNED_OUT') {
+        // Nothing from the previous account may survive into the next one: not
+        // the query cache (the feed key has no user in it), and not the service
+        // worker's REST cache, which keys on URL and ignores the Authorization
+        // header — offline, it would hand the last account's rows to this one.
+        queryClient.clear();
+        if ('caches' in window) void caches.delete('supabase-rest').catch(() => undefined);
+      }
     });
     return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   return <AuthContext.Provider value={{ session, loading }}>{children}</AuthContext.Provider>;
 }

@@ -32,7 +32,7 @@ async function ensureFonts(): Promise<void> {
   await document.fonts.ready;
 }
 
-/** Inlining three font families is expensive; do it once per session. */
+/** Inlining three font families is expensive; do it once per session — but only cache a success. */
 let fontEmbedCache: Promise<string> | null = null;
 
 /**
@@ -64,9 +64,12 @@ export async function renderShareCard(node: HTMLElement): Promise<Blob> {
   await ensureFonts();
 
   if (!fontEmbedCache) {
-    fontEmbedCache = getFontEmbedCSS(node).catch(() => '');
+    fontEmbedCache = getFontEmbedCSS(node).catch((err: unknown) => {
+      fontEmbedCache = null; // a failure is retried on the next card, not remembered
+      throw err;
+    });
   }
-  const fontEmbedCSS = await fontEmbedCache;
+  const fontEmbedCSS = await fontEmbedCache.catch(() => '');
 
   const options = {
     pixelRatio: 2, // 540×675 CSS px → 1080×1350

@@ -88,6 +88,12 @@ export default function GameDetail({ profile }: { profile: Profile }) {
   const cardWinner = [...players]
     .filter((p) => p.frames.length > 0 && p.final_score !== null)
     .sort((a, b) => (b.final_score ?? 0) - (a.final_score ?? 0))[0];
+  // The feed event stores the union of everyone's highlights, so it can only be
+  // pinned to the winner when the winner is the only profile player on the sheet.
+  const profilePlayers = players.filter((p) => p.profile_id !== null).length;
+  const feedHighlights = Array.isArray(feedEvent.data?.highlights)
+    ? (feedEvent.data.highlights as string[])
+    : [];
   const shareData: ShareCardData | null =
     data.status === 'complete' && cardWinner
       ? {
@@ -98,9 +104,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
             isYou: p.profile_id === profile.id,
           })),
           verification: data.verification_status as 'verified' | 'live' | 'unverified',
-          highlights: Array.isArray(feedEvent.data?.highlights)
-            ? (feedEvent.data.highlights as string[])
-            : [],
+          highlights: profilePlayers === 1 ? feedHighlights : [],
           strikes: cardWinner.strikes ?? undefined,
           venueName: venueName ?? null,
           playedAt: data.played_at,

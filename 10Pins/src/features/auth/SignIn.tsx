@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Wordmark from '../../components/Wordmark';
 import { supabase } from '../../lib/supabase';
 
@@ -7,14 +7,47 @@ import { supabase } from '../../lib/supabase';
 // It used to sign in to a shared account with VITE_DEMO_EMAIL/PASSWORD — but
 // VITE_ vars are inlined into the deployed bundle, so those credentials were
 // readable by anyone (COUNCIL_REVIEW_TODO item 2). No credential now exists
-// to leak. Requires "Anonymous sign-ins" enabled on the Supabase project; the
-// button hides itself if the call comes back rejected.
+// to leak. Requires "Anonymous sign-ins" enabled on the Supabase project.
+//
+// The button only appears once the project has confirmed that setting. It
+// used to default to visible and hide itself after a failed tap — which, with
+// the setting off in production, meant every visitor saw a button that
+// errored the first time they pressed it.
+
+/**
+ * Ask GoTrue whether anonymous sign-ins are on. `/auth/v1/settings` is the
+ * public, unauthenticated capability endpoint; supabase-js has no wrapper for
+ * it. Any failure means "don’t offer the demo" — the Google button still works.
+ */
+async function anonymousSignInEnabled(): Promise<boolean> {
+  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+  if (!url || !key) return false;
+  try {
+    const res = await fetch(`${url}/auth/v1/settings`, { headers: { apikey: key } });
+    if (!res.ok) return false;
+    const body = (await res.json()) as { external?: { anonymous_users?: boolean } };
+    return body.external?.anonymous_users === true;
+  } catch {
+    return false;
+  }
+}
 
 /** Google is the only sign-in method (product decision, 2026-07-06). */
 export default function SignIn() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [demoAvailable, setDemoAvailable] = useState(true);
+  const [demoAvailable, setDemoAvailable] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    anonymousSignInEnabled().then((enabled) => {
+      if (!cancelled) setDemoAvailable(enabled);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function signInWithGoogle() {
     setBusy(true);
