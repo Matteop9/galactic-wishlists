@@ -12,6 +12,7 @@ import { supabase } from '../lib/supabase'
 import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
 import { Avatar, DoubleChip, MethodBadge, TeamBadge, TeamChip, teamColor, VoidChip } from '../components/ui'
+import { PageSkeleton, Skeleton, SkeletonPanel } from '../components/Skeleton'
 import { ChampStars } from '../components/ChampStars'
 import { dayMonth, longDate, odds2, score2 } from '../lib/format'
 
@@ -80,7 +81,7 @@ function FeedbackSection({ playerId }: { playerId: string }) {
   )
 }
 
-function StatTile({ label, value, highlight = false, sub }: { label: string; value: string; highlight?: boolean; sub?: string }) {
+function StatTile({ label, value, highlight = false, sub, loading = false }: { label: string; value: string; highlight?: boolean; sub?: string; loading?: boolean }) {
   return (
     <div
       className="rounded-[12px] bg-surface p-3.5"
@@ -91,30 +92,37 @@ function StatTile({ label, value, highlight = false, sub }: { label: string; val
         className="mt-0.5 font-mono text-[22px] font-bold"
         style={highlight ? { color: 'var(--color-accent)' } : undefined}
       >
-        {value}
+        {/* a real-looking 0.00 while the board loads is worse than a placeholder */}
+        {loading ? <Skeleton w={78} h={22} /> : value}
       </div>
-      {sub && <div className="text-[10px] text-muted">{sub}</div>}
+      {sub && !loading && <div className="text-[10px] text-muted">{sub}</div>}
     </div>
   )
 }
 
 function PlayerProfileInner() {
   const { id } = useParams<{ id: string }>()
-  const { me, players } = usePlayer()
+  const { me, players, ready } = usePlayer()
   const [shown, setShown] = useState(15)
   const playerId = id === 'me' ? me?.id : id
   const player = players.find((p) => p.id === playerId)
 
-  const { data: board } = useQuery({
+  const boardQ = useQuery({
     queryKey: ['leaderboard', ...ALL_TIME],
     queryFn: () => fetchLeaderboard(...ALL_TIME),
   })
-  const { data: history } = useQuery({
+  const board = boardQ.data
+  const historyQ = useQuery({
     queryKey: ['playerPicks', playerId],
     queryFn: () => fetchPlayerPickScores(playerId!),
     enabled: !!playerId,
   })
+  const history = historyQ.data
+  /* enabled:false keeps a query pending forever — only wait on history once we
+     know who we're looking at. */
+  const historyLoading = !!playerId && historyQ.isPending
 
+  if (!ready) return <PageSkeleton />
   if (!player) return <div className="p-6 text-center text-sm text-muted">Player not found.</div>
 
   const row = board?.find((r) => r.player_id === player.id)
@@ -132,7 +140,7 @@ function PlayerProfileInner() {
   const bttsSplit = byMethod('BTTS')
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <div className="flex items-center gap-3 pb-4 pt-5">
         <Avatar name={player.name} team={player.acca_team} size={48} />
         <div>
@@ -143,25 +151,27 @@ function PlayerProfileInner() {
             <TeamChip team={player.acca_team} />
             <ChampStars playerId={player.id} size={12} />
             <span className="font-mono text-[10px] text-muted">
-              {row?.entries ?? 0} entries · all-time #{rank || '–'}
+              {boardQ.isPending ? '—' : `${row?.entries ?? 0} entries · all-time #${rank || '–'}`}
             </span>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2.5">
-        <StatTile label="ALL-TIME SCORE" value={score2(row?.score ?? 0)} />
+        <StatTile label="ALL-TIME SCORE" value={score2(row?.score ?? 0)} loading={boardQ.isPending} />
         <StatTile
           label="SCORE / MATCH"
           value={row?.score_per_match == null ? '–' : Number(row.score_per_match).toFixed(4)}
           highlight
           sub={`ranked #${rank || '–'} of 12`}
+          loading={boardQ.isPending}
         />
-        <StatTile label="WINS" value={`${row?.wins ?? 0}`} sub={`${row?.win_pct ?? 0}% strike rate`} />
+        <StatTile label="WINS" value={`${row?.wins ?? 0}`} sub={`${row?.win_pct ?? 0}% strike rate`} loading={boardQ.isPending} />
         <StatTile
           label="WIN STREAK"
           value={`${row?.win_streak ?? 0}`}
           sub={row?.days_since_win != null ? `${row.days_since_win}d since last win` : undefined}
+          loading={boardQ.isPending}
         />
       </div>
 
@@ -187,7 +197,10 @@ function PlayerProfileInner() {
 
       <div className="mt-5">
         <div className="overline mb-2 px-1">RECENT PICKS</div>
-        <div className="rounded-[14px] bg-surface">
+        {historyLoading ? (
+          <SkeletonPanel rows={8} rowHeight={42} avatar={false} />
+        ) : (
+        <div className="page-in rounded-[14px] bg-surface">
           {real.slice(0, shown).map((h) => (
             <div key={h.id} className="flex items-center gap-2.5 border-b px-3.5 py-2.5 last:border-b-0" style={{ borderColor: 'var(--color-line)' }}>
               <span className="w-9 font-mono text-[10px] text-muted">{dayMonth(h.gw_date)}</span>
@@ -216,13 +229,14 @@ function PlayerProfileInner() {
           {real.length > shown && (
             <button
               onClick={() => setShown((s) => s + 25)}
-              className="w-full border-t py-2.5 text-[11px] font-semibold"
+              className="pressable w-full border-t py-2.5 text-[11px] font-semibold"
               style={{ borderColor: 'var(--color-line)', color: 'var(--color-muted)' }}
             >
               Load more — showing {shown} of {real.length}
             </button>
           )}
         </div>
+        )}
       </div>
 
       {me && playerId === me.id && <FeedbackSection playerId={me.id} />}

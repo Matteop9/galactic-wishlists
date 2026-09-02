@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import {
   ALL_TIME,
@@ -21,7 +21,8 @@ import FormGrid from '../components/FormGrid'
 import GwHistoryChart from '../components/GwHistoryChart'
 import TugBar from '../components/TugBar'
 import RequireAuth from '../components/RequireAuth'
-import { PageTitle, SandboxChip, teamColor } from '../components/ui'
+import { LoadFailed, PageTitle, SandboxChip, teamColor } from '../components/ui'
+import { Skeleton, SkeletonPanel } from '../components/Skeleton'
 import { ChampStars } from '../components/ChampStars'
 import type { LeaderboardRow, Season } from '../lib/types'
 
@@ -44,7 +45,7 @@ function SortHeader({
   return (
     <button
       onClick={() => onSort(col)}
-      className={`${className} font-mono text-[8.5px] uppercase tracking-[0.12em]`}
+      className={`pressable ${className} font-mono text-[8.5px] uppercase tracking-[0.12em]`}
       style={{ color: active ? 'var(--color-accent)' : 'var(--color-muted)' }}
     >
       {label}
@@ -66,8 +67,16 @@ function tabLabel(t: Tab) {
 }
 
 function LeaderboardsInner() {
-  const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
-  const { data: allGws } = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks })
+  const { data: seasons } = useQuery({
+    queryKey: ['seasons'],
+    queryFn: fetchSeasons,
+    staleTime: 5 * 60_000,
+  })
+  const { data: allGws } = useQuery({
+    queryKey: ['gameweeks'],
+    queryFn: fetchGameweeks,
+    staleTime: 5 * 60_000,
+  })
   const today = londonToday()
 
   const tabs = useMemo<Tab[]>(() => {
@@ -133,25 +142,40 @@ function LeaderboardsInner() {
         ? [customStart, customEnd]
         : [tab.season.start_date, tab.season.end_date]
 
-  const { data: rows } = useQuery({
+  /* These four re-key when the user touches a control on this very screen, so
+     they hold the old rows and dim rather than emptying the table. Never do
+     this globally — a route-param query would then show the wrong player's data. */
+  const rowsQ = useQuery({
     queryKey: ['leaderboard', range[0], range[1], excludeBreaks],
     queryFn: () => fetchLeaderboard(range[0], range[1], excludeBreaks),
     enabled: tab.kind !== 'test',
+    placeholderData: keepPreviousData,
   })
-  const { data: teamRows } = useQuery({
+  const rows = rowsQ.data
+  const teamRowsQ = useQuery({
     queryKey: ['teamLeaderboard', range[0], range[1], excludeBreaks],
     queryFn: () => fetchTeamLeaderboard(range[0], range[1], excludeBreaks),
     enabled: tab.kind !== 'test',
+    placeholderData: keepPreviousData,
   })
-  const { data: testRows } = useQuery({
+  const teamRows = teamRowsQ.data
+  const testQ = useQuery({
     queryKey: ['seasonLeaderboard', tab.kind === 'test' ? tab.season.id : ''],
     queryFn: () => fetchSeasonLeaderboard((tab as Extract<Tab, { kind: 'test' }>).season.id),
     enabled: tab.kind === 'test',
+    placeholderData: keepPreviousData,
   })
+  const testRows = testQ.data
   const { data: rawFormCells } = useQuery({
     queryKey: ['formGrid', formN],
     queryFn: () => fetchFormGrid(formN),
+    placeholderData: keepPreviousData,
   })
+
+  /* Disabled queries stay isPending forever, so pick the one that's actually running. */
+  const boardQ = tab.kind === 'test' ? testQ : rowsQ
+  const loading = boardQ.isPending
+  const stale = boardQ.isPlaceholderData
   const { data: allTws } = useQuery({ queryKey: ['allTeamWeekScores'], queryFn: fetchAllTeamWeekScores })
 
   // column sorting — default ranks All Time by score-per-match, else by score
@@ -215,7 +239,7 @@ function LeaderboardsInner() {
   for (const r of testRows ?? []) testTeams.set(r.team_name, (testTeams.get(r.team_name) ?? 0) + r.score)
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <PageTitle right={tab.kind === 'test' ? <SandboxChip /> : undefined}>STANDINGS</PageTitle>
 
       <div className="mb-3 grid grid-cols-2 gap-2 pt-1">
@@ -262,7 +286,7 @@ function LeaderboardsInner() {
 
       {tab.kind !== 'test' && (
         <div className="mb-4 rounded-[14px] bg-surface p-3.5">
-          <TugBar vdl={vdl} jhp={jhp} />
+          {teamRowsQ.isPending ? <Skeleton h={8} r={99} /> : <TugBar vdl={vdl} jhp={jhp} />}
         </div>
       )}
 
@@ -271,7 +295,7 @@ function LeaderboardsInner() {
           <span className="overline">PROVISIONAL LIVE TABLE</span>
           <button
             onClick={() => setLiveOn(!liveActive)}
-            className="rounded-full border px-3 py-1 font-mono text-[10px] font-bold"
+            className="pressable rounded-full border px-3 py-1 font-mono text-[10px] font-bold"
             style={
               liveActive
                 ? { background: 'var(--color-accent)', borderColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }
@@ -283,7 +307,11 @@ function LeaderboardsInner() {
         </div>
       )}
 
-      {tab.kind === 'test' ? (
+      {loading ? (
+        <SkeletonPanel rows={12} rowHeight={38} header avatar={false} lines={1} />
+      ) : boardQ.isError ? (
+        <LoadFailed what="the standings" />
+      ) : tab.kind === 'test' ? (
         <div className="rounded-[14px] bg-surface">
           <div className="grid grid-cols-[24px_1fr_44px_56px_48px] gap-2 border-b px-3.5 py-2 font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted" style={{ borderColor: 'var(--color-line)' }}>
             <span>#</span><span>Player</span><span className="text-right">W</span><span className="text-right">Score</span><span className="text-right">S/M</span>
@@ -308,7 +336,10 @@ function LeaderboardsInner() {
           )}
         </div>
       ) : (
-        <div className="rounded-[14px] bg-surface">
+        <div
+          className="rounded-[14px] bg-surface transition-opacity duration-150"
+          style={{ opacity: stale ? 0.5 : 1 }}
+        >
           <div className="grid grid-cols-[24px_1fr_30px_44px_56px_48px] gap-2 border-b px-3.5 py-2 font-mono text-[8.5px] uppercase tracking-[0.12em] text-muted" style={{ borderColor: 'var(--color-line)' }}>
             <span>#</span><span>Player</span>
             <SortHeader label="P" col="entries" sort={sort} onSort={onSort} />
@@ -322,7 +353,7 @@ function LeaderboardsInner() {
               <Link
                 to={`/players/${r.player_id}`}
                 key={r.player_id}
-                className="grid grid-cols-[24px_1fr_30px_44px_56px_48px] items-center gap-2 border-b px-3.5 py-2.5"
+                className="pressable grid grid-cols-[24px_1fr_30px_44px_56px_48px] items-center gap-2 border-b px-3.5 py-2.5"
                 style={{
                   borderColor: 'var(--color-line)',
                   background: leader ? 'rgba(180,227,61,0.05)' : undefined,
@@ -374,7 +405,7 @@ function LeaderboardsInner() {
       {tab.kind !== 'test' && (
         <div className="mt-5">
           <div className="overline mb-2 px-1">GW HISTORY — WEEKLY MARGIN</div>
-          <div className="rounded-[14px] bg-surface p-3.5">
+          <div className="rounded-[14px] bg-surface p-3.5" style={{ minHeight: 168 }}>
             <GwHistoryChart rows={gwHistory} />
           </div>
         </div>
@@ -389,7 +420,7 @@ function LeaderboardsInner() {
                 <button
                   key={n}
                   onClick={() => setFormN(n)}
-                  className="rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold"
+                  className="pressable rounded-full px-2.5 py-0.5 font-mono text-[10px] font-bold"
                   style={
                     n === formN
                       ? { background: 'var(--color-accent)', color: 'var(--color-on-accent)' }

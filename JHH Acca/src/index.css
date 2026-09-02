@@ -39,6 +39,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   font-variant-numeric: tabular-nums;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Overline micro-label — design guide §2 type scale */
@@ -69,4 +70,77 @@ body {
 }
 .live-dot {
   animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* ── Loading + motion (v0.10.0) ────────────────────────────────────────
+   One shimmer, one page fade, one press affordance. The shimmer runs on
+   the same 1.6s tempo as pulse-dot so the app has a single heartbeat. */
+
+@keyframes skel-sweep {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+
+/* A placeholder bar. Sized by the caller to match the real row it stands in for. */
+.skel {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.05);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.055) 45%,
+    rgba(255, 255, 255, 0.055) 55%,
+    transparent 100%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: skel-sweep 1.6s linear infinite;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.page-in {
+  animation: page-in 180ms ease-out both;
+}
+
+/* Tap feedback — the app had none before v0.10.0. */
+.pressable {
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.pressable:active {
+  opacity: 0.55;
+}
+.cta {
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+.cta:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel,
+  .page-in {
+    animation: none;
+  }
+  .live-dot {
+    animation: none;
+    opacity: 0.7;
+  }
+  .pressable:active,
+  .cta:active {
+    transition: none;
+    transform: none;
+  }
 }

@@ -23,12 +23,14 @@ import {
   GwStatusChip,
   MethodBadge,
   IntlBreakChip,
+  LoadFailed,
   SandboxChip,
   StateIcon,
   TeamBadge,
   teamColor,
   VoidChip,
 } from '../components/ui'
+import { Skeleton, SkeletonAccaCard } from '../components/Skeleton'
 import LivePickChip from '../components/LivePickChip'
 import MatchPanel from '../components/MatchPanel'
 import { ChampStars } from '../components/ChampStars'
@@ -202,13 +204,19 @@ function GameweekDetailInner() {
   const { me, isAdmin, players } = usePlayer()
   const [disputing, setDisputing] = useState<PickScore | null>(null)
 
-  const { data: gw } = useQuery({ queryKey: ['gw', id], queryFn: () => fetchGameweek(id!), enabled: !!id })
-  const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
-  const { data: picks } = useQuery({
+  const gwQ = useQuery({ queryKey: ['gw', id], queryFn: () => fetchGameweek(id!), enabled: !!id })
+  const gw = gwQ.data
+  const { data: seasons } = useQuery({
+    queryKey: ['seasons'],
+    queryFn: fetchSeasons,
+    staleTime: 5 * 60_000,
+  })
+  const picksQ = useQuery({
     queryKey: ['pickScores', id],
     queryFn: () => fetchPickScores(id!),
     enabled: !!id,
   })
+  const picks = picksQ.data
   const { data: weekScores } = useQuery({
     queryKey: ['teamWeekScores', id],
     queryFn: () => fetchTeamWeekScores(id!),
@@ -264,17 +272,21 @@ function GameweekDetailInner() {
   const openDisputeFor = (pickId: string) =>
     disputes?.find((d) => d.pick_id === pickId && d.status === 'open')
 
+  const loading = gwQ.isPending || picksQ.isPending
+
   const sweeps = (weekScores ?? []).filter((w) => w.doubled)
   const liveFor = (pid: string) => live?.find((l) => l.pick_id === pid)
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <div className="flex items-center justify-between pb-3 pt-5">
         <div className="flex items-center gap-2.5">
-          <Link to="/gameweeks" className="text-muted">
+          <Link to="/gameweeks" className="pressable text-muted">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
           </Link>
-          <span className="display text-xl leading-none">{gw ? gwDate(gw.gw_date) : '…'}</span>
+          <span className="display text-xl leading-none">
+            {gw ? gwDate(gw.gw_date) : <Skeleton w={118} h={20} />}
+          </span>
           {isTest && <SandboxChip />}
           {gw?.is_international_break && <IntlBreakChip />}
         </div>
@@ -294,6 +306,15 @@ function GameweekDetailInner() {
       {isAdmin && gw && ['open', 'closed'].includes(gw.status) && (picks?.length ?? 0) > 0 && (
         <MatchPanel gwId={gw.id} picks={picks!} />
       )}
+
+      {loading && (
+        <div className="flex flex-col gap-4">
+          <SkeletonAccaCard rows={6} />
+          <SkeletonAccaCard rows={6} />
+        </div>
+      )}
+
+      {!loading && (gwQ.isError || picksQ.isError) && <LoadFailed what="this gameweek" />}
 
       {[...teams.keys()].sort().map((t) => {
         const ws = weekScores?.find((w) => w.team_name === t)
@@ -368,7 +389,7 @@ function GameweekDetailInner() {
         )
       })}
 
-      {picks?.length === 0 && (
+      {!loading && picks?.length === 0 && (
         <div className="rounded-[14px] bg-surface p-6 text-center text-sm text-muted">No picks recorded for this gameweek.</div>
       )}
 

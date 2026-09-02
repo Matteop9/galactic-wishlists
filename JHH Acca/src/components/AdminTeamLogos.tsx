@@ -4,6 +4,7 @@ import { deleteTeamBadge, fetchTeamBadges, fetchTeamDictionary, saveTeamBadge } 
 import { searchClubBadges, smallBadge, type BadgeCandidate } from '../lib/sportsdb'
 import { crestUrl, SPORTS } from '../lib/teams'
 import { TeamBadge } from './ui'
+import { SkeletonPanel } from './Skeleton'
 
 /* Admin -> Team logos. Every club anyone has ever picked is checked against the
    build-time crest maps (lib/teams.ts); anything still on an initials chip is
@@ -130,7 +131,7 @@ export default function AdminTeamLogos() {
 
   return (
     <div>
-      {dictLoading && <p className="text-[12px] text-muted">Reading every pick…</p>}
+      {dictLoading && <SkeletonPanel rows={4} rowHeight={40} />}
 
       {!dictLoading && (
         <>

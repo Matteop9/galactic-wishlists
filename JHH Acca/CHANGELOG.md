@@ -1,5 +1,49 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.10.0 — 2026-09-02
+
+Loading states and motion. Feedback-queue request: *"Loading pages, animations"* — clarified as
+pages looking broken while data loads, not the v0.9.1 hang.
+
+- **New primitives**: `.skel` shimmer, `.page-in` fade, `.pressable`/`.cta` press affordances in
+  `src/index.css` (all on the existing 1.6s `pulse-dot` tempo, all disabled under
+  `prefers-reduced-motion` — which now also silences the live dot), plus
+  `src/components/Skeleton.tsx` (`Skeleton` / `SkeletonPanel` / `SkeletonAccaCard` /
+  `PageSkeleton`) and a shared `LoadFailed` card in `ui.tsx`. Skeleton geometry mirrors the real
+  rows (acca 44px, leaderboard 38px, gameweek 48px, banner 44px) so the swap doesn't shift layout.
+  No new dependency — still the same five.
+- **`RequireAuth`** takes an optional `skeleton` and defaults to `PageSkeleton`. The old gate was a
+  9px "Loading…" centred in `min-h-[60dvh]`; top-anchoring it alone removes most of the
+  "broken screen" read. `usePlayer` now also returns `ready`, and `['players']` gets a 5-minute
+  `staleTime` so a cache eviction no longer re-gates the whole app.
+- **The `isPending` trap**: a react-query v5 query with `enabled: false` reports `isPending`
+  forever, and half the queries here are dependent. Every page composes
+  `parentQ.isPending || (!!parentQ.data && childQ.isPending)` with a comment at the site — a naive
+  `childQ.isPending` would turn "No gameweek scheduled" into a permanent shimmer.
+  `isError` is explicitly *not* loading and falls through to `LoadFailed`.
+- **Empty states that were lies** are now gated on `!loading`: ThisWeek's "No gameweek scheduled."
+  / "No picks in yet", EnterPick's "No gameweek scheduled." and "You're not taking part…" (which
+  every player saw for a beat before `stm` resolved), Admin's "Admins only.", GameweekDetail's
+  literal `…` title, PlayerProfile's `0.00`/`#–` stat tiles (wrong numbers, worse than a
+  placeholder), and Login's full sign-in form flashing at an already-signed-in user.
+- **`placeholderData: keepPreviousData` per-query, never global** — only on the four queries that
+  re-key from a control on the screen the user is already looking at (`leaderboard`,
+  `teamLeaderboard`, `seasonLeaderboard`, `formGrid`), paired with `isPlaceholderData` dimming.
+  Global would make `['pickScores', gwId]` show last week's picks under this week's date and
+  `['playerPicks', id]` show one player's history under another's name. `['seasons']` and
+  `['gameweeks']` get 5-minute `staleTime` instead — a cached query never enters `isPending`.
+- **Bundle**: vendor `manualChunks` in `vite.config.ts` (309 KB app + 312 KB vendor, was one
+  621 KB chunk), so a weekly release only invalidates the app half. Route-level `React.lazy` was
+  rejected: the pages are small next to vendor, and a chunk fetch per tab would add exactly the
+  blank frame this release removes.
+- **Motion**: `pressable` on rows/tabs/toggles and `cta` on the accent buttons (the app had zero
+  touch feedback), 140ms TabBar colour transition, `-webkit-tap-highlight-color: transparent`, and
+  a `ScrollToTop` in `Shell` — React Router preserved scroll, so a deep gameweek link landed
+  mid-page. Deliberately out: count-up numbers, staggered list entry, minimum skeleton dwell,
+  spinners, route slide transitions.
+- Dev-only `/skeleton-lab.html` (vite dev only, not in the build, same pattern as
+  `/emblem-lab.html`) renders every placeholder for height/rhythm checking without signing in.
+
 ## v0.9.1 — 2026-08-28
 
 Fixes the app hanging indefinitely on `Loading…` (reported twice in two days, hit more than one player, on both apps).

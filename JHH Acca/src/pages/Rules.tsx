@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import RequireAuth from '../components/RequireAuth'
 import { PageTitle } from '../components/ui'
+import { Skeleton } from '../components/Skeleton'
 
 /* Renders the official rules markdown with a light-touch parser (headings,
    tables, lists, bold) - no dependency needed for one document. */
@@ -41,7 +42,7 @@ function RulesInner() {
           Couldn't load the rules.{' '}
           <button
             onClick={() => window.location.reload()}
-            className="underline"
+            className="pressable underline"
             style={{ color: 'var(--color-accent)' }}
           >
             Reload
@@ -51,10 +52,12 @@ function RulesInner() {
     )
   if (md === null)
     return (
-      <div className="px-4 pb-6">
+      <div className="page-in px-4 pb-6">
         <PageTitle>RULES</PageTitle>
-        <div className="rounded-[14px] bg-surface px-4 py-6 text-center">
-          <span className="overline">Loading…</span>
+        <div className="flex flex-col gap-2.5 rounded-[14px] bg-surface px-4 py-6">
+          {[18, 96, 88, 92, 60, 18, 94, 86, 90, 72, 40].map((w, i) => (
+            <Skeleton key={i} w={`${w}%`} h={w === 18 ? 16 : 11} />
+          ))}
         </div>
       </div>
     )

@@ -3,6 +3,23 @@
 Running list of everything requested after v0.1/v0.2 shipped. New requests land
 here first (or in the in-app feedback queue), then get ticked off per release.
 
+## Shipped in v0.10.0 (2026-09-02)
+
+From the in-app feedback queue — "Loading pages, animations" (Matteo, 1 Sept). Clarified with
+him: this is about pages looking broken while data loads, **not** the v0.9.1 hang.
+
+- [x] Skeleton placeholders on every page instead of a blank body or a 9px "Loading…" — new
+      `Skeleton`/`SkeletonPanel`/`SkeletonAccaCard`/`PageSkeleton` primitives, geometry matched to
+      the real rows so nothing jumps on the swap
+- [x] Stop pages claiming "No gameweek scheduled." / "No picks in yet" / "You're not taking part…"
+      / "Admins only." / `0.00` stats while they're actually still loading
+- [x] Standings keeps the old table and dims it when you change period or breaks filter, instead
+      of emptying and refilling
+- [x] Failed loads show a Reload card rather than shimmering forever
+- [x] Tap feedback on rows, tabs and buttons; 180ms page fade; scroll resets on navigation; all
+      motion off under `prefers-reduced-motion` (which now silences the live dot too)
+- [x] Vendor chunk split so a weekly release only invalidates the app half of the bundle
+
 ## Shipped in v0.9.1 (2026-08-28)
 
 Reported in chat — hit more than one player, on both apps.

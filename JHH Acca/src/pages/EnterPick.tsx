@@ -14,6 +14,7 @@ import RequireAuth from '../components/RequireAuth'
 import LiveBanner from '../components/LiveBanner'
 import TeamCombobox from '../components/TeamCombobox'
 import { Avatar, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
+import { Skeleton } from '../components/Skeleton'
 import { ChampStars } from '../components/ChampStars'
 import { gwDate, odds2, ukTime } from '../lib/format'
 import { SPORTS } from '../lib/teams'
@@ -27,19 +28,36 @@ import { SPORTS } from '../lib/teams'
 function EnterPickInner() {
   const qc = useQueryClient()
   const { me, players } = usePlayer()
-  const { data: gw } = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
-  const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
+  const gwQ = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
+  const gw = gwQ.data
+  const seasonsQ = useQuery({
+    queryKey: ['seasons'],
+    queryFn: fetchSeasons,
+    staleTime: 5 * 60_000,
+  })
+  const seasons = seasonsQ.data
   const season = seasons?.find((s) => s.id === gw?.season_id)
-  const { data: stm } = useQuery({
+  const stmQ = useQuery({
     queryKey: ['stm', season?.id],
     queryFn: () => fetchSeasonTeamMembers(season!.id),
     enabled: !!season,
   })
-  const { data: picks } = useQuery({
+  const stm = stmQ.data
+  const picksQ = useQuery({
     queryKey: ['pickScores', gw?.id],
     queryFn: () => fetchPickScores(gw!.id),
     enabled: !!gw,
   })
+  const picks = picksQ.data
+
+  /* Dependent queries stay isPending while disabled, so each one only counts
+     once its parent has actually produced something to key off. Without this
+     every player saw "you're not taking part" for a beat, before stm landed. */
+  const loading =
+    gwQ.isPending ||
+    seasonsQ.isPending ||
+    (!!season && stmQ.isPending) ||
+    (!!gw && picksQ.isPending)
   const { data: teamDict } = useQuery({
     queryKey: ['teamDictionary'],
     queryFn: fetchTeamDictionary,
@@ -140,9 +158,23 @@ function EnterPickInner() {
         oddsNum >= 1.5 &&
         (method === 'Win' || secondTeam.trim().length > 0)))
 
+  if (loading)
+    return (
+      <div className="page-in px-4">
+        <PageTitle>ENTER PICK</PageTitle>
+        <div className="flex flex-col gap-3">
+          <Skeleton h={64} r={12} />
+          <Skeleton h={40} r={10} />
+          <Skeleton h={52} r={12} />
+          <Skeleton h={52} r={12} />
+          <Skeleton h={48} r={12} />
+        </div>
+      </div>
+    )
+
   if (!gw)
     return (
-      <div className="px-4">
+      <div className="page-in px-4">
         <PageTitle>ENTER PICK</PageTitle>
         <div className="rounded-[14px] bg-surface p-6 text-center text-sm text-muted">No gameweek scheduled.</div>
       </div>
@@ -150,7 +182,7 @@ function EnterPickInner() {
 
   if (me && myTeamPlayers.length === 0)
     return (
-      <div className="px-4">
+      <div className="page-in px-4">
         <PageTitle>ENTER PICK</PageTitle>
         <div className="rounded-[14px] bg-surface p-6 text-center text-sm text-muted">
           You're not taking part in this gameweek — {gwDate(gw.gw_date)} is
@@ -160,7 +192,7 @@ function EnterPickInner() {
     )
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <PageTitle
         right={
           windowOpen ? (
@@ -363,14 +395,20 @@ function EnterPickInner() {
       <button
         disabled={!valid || !windowOpen || save.isPending}
         onClick={() => save.mutate()}
-        className="w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
+        className="cta w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
         style={{
           background: 'var(--color-accent)',
           color: 'var(--color-on-accent)',
           boxShadow: '0 4px 24px rgba(180,227,61,0.25)',
         }}
       >
-        {method === 'None' ? 'Record no pick' : existing ? 'Update pick' : 'Lock it in'}
+        {save.isPending
+          ? 'Saving…'
+          : method === 'None'
+            ? 'Record no pick'
+            : existing
+              ? 'Update pick'
+              : 'Lock it in'}
       </button>
       <p className="mt-2 text-center text-[11px] text-muted">
         {method === 'None'

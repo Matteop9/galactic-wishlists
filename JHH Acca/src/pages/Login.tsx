@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { fetchUnclaimedPlayers, registerPlayer, usernameToEmail } from '../lib/queries'
 import { Avatar } from '../components/ui'
+import { PageSkeleton } from '../components/Skeleton'
 
 /* Username + password auth for a fixed group: sign in, or - first time -
    pick your name, choose a username/password, enter the group code. */
@@ -26,7 +27,10 @@ export default function Login() {
     enabled: mode === 'join',
   })
 
-  if (!loading && session) return <Navigate to="/" replace />
+  /* hold a placeholder rather than flashing the whole sign-in form at someone
+     who is already signed in and about to be redirected */
+  if (loading) return <PageSkeleton />
+  if (session) return <Navigate to="/" replace />
 
   const signIn = async () => {
     setBusy(true)
@@ -163,7 +167,7 @@ export default function Login() {
         <button
           onClick={mode === 'signin' ? signIn : join}
           disabled={busy || !username || !password || (mode === 'join' && (!pickedPlayer || !code))}
-          className="w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
+          className="cta w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
           style={{
             background: 'var(--color-accent)',
             color: 'var(--color-on-accent)',

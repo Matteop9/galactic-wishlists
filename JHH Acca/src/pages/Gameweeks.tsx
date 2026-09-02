@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { fetchAllTeamWeekScores, fetchGameweeks, fetchSeasons } from '../lib/queries'
 import RequireAuth from '../components/RequireAuth'
-import { GwStatusChip, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
+import { GwStatusChip, IntlBreakChip, LoadFailed, PageTitle, teamColor } from '../components/ui'
+import { SkeletonPanel } from '../components/Skeleton'
 import { gwDate, londonToday, score2 } from '../lib/format'
 import type { TeamWeekScore } from '../lib/types'
 
@@ -18,8 +19,13 @@ function weekSummary(rows: TeamWeekScore[]) {
 }
 
 function GameweeksInner() {
-  const { data: gws } = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks })
-  const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
+  const gwsQ = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks, staleTime: 5 * 60_000 })
+  const gws = gwsQ.data
+  const { data: seasons } = useQuery({
+    queryKey: ['seasons'],
+    queryFn: fetchSeasons,
+    staleTime: 5 * 60_000,
+  })
   const { data: allTws } = useQuery({
     queryKey: ['allTeamWeekScores'],
     queryFn: fetchAllTeamWeekScores,
@@ -31,17 +37,22 @@ function GameweeksInner() {
   const upcoming = (gws ?? []).filter((g) => g.gw_date >= today && g.status !== 'settled')
   const past = (gws ?? []).filter((g) => g.gw_date < today || g.status === 'settled').reverse()
 
+  /* The week summaries (allTws) load separately on purpose — rows appear first
+     and "9/12 · VDL +2.01" fills in after, rather than holding the whole list. */
   const Section = ({ title, list }: { title: string; list: typeof upcoming }) => (
     <>
       <div className="overline mb-2 mt-4 px-1">{title}</div>
-      <div className="rounded-[14px] bg-surface">
+      {gwsQ.isPending ? (
+        <SkeletonPanel rows={4} rowHeight={48} avatar={false} />
+      ) : (
+      <div className="page-in rounded-[14px] bg-surface">
         {list.map((g) => {
           const s = g.status === 'settled' ? summaryFor(g.id) : null
           return (
             <Link
               key={g.id}
               to={`/gameweeks/${g.id}`}
-              className="flex items-center justify-between border-b px-3.5 py-3"
+              className="pressable flex items-center justify-between border-b px-3.5 py-3"
               style={{ borderColor: 'var(--color-line)' }}
             >
               <div>
@@ -75,14 +86,21 @@ function GameweeksInner() {
         })}
         {list.length === 0 && <div className="p-5 text-center text-sm text-muted">Nothing here.</div>}
       </div>
+      )}
     </>
   )
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <PageTitle>GAMEWEEKS</PageTitle>
-      <Section title="UPCOMING" list={upcoming.slice(0, 6)} />
-      <Section title="HISTORY" list={past} />
+      {gwsQ.isError ? (
+        <LoadFailed what="the gameweeks" />
+      ) : (
+        <>
+          <Section title="UPCOMING" list={upcoming.slice(0, 6)} />
+          <Section title="HISTORY" list={past} />
+        </>
+      )}
     </div>
   )
 }

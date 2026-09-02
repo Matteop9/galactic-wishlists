@@ -23,6 +23,7 @@ import {
 import { usePlayer } from '../hooks/usePlayer'
 import RequireAuth from '../components/RequireAuth'
 import { GwStatusChip, PageTitle, teamColor } from '../components/ui'
+import { PageSkeleton } from '../components/Skeleton'
 import { ChampStars } from '../components/ChampStars'
 import AdminTeamLogos from '../components/AdminTeamLogos'
 import { gwDate, londonToday, longDate } from '../lib/format'
@@ -42,7 +43,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function AdminInner() {
   const qc = useQueryClient()
-  const { players, isAdmin } = usePlayer()
+  const { players, isAdmin, ready } = usePlayer()
   const [showAudit, setShowAudit] = useState(false)
   const [newGwDate, setNewGwDate] = useState('')
   const [resetting, setResetting] = useState<{ id: string; pw: string } | null>(null)
@@ -123,9 +124,12 @@ function AdminInner() {
     },
   })
 
+  /* don't flash "Admins only." at the admin while the players query resolves */
+  if (!ready) return <PageSkeleton />
+
   if (!isAdmin)
     return (
-      <div className="px-4">
+      <div className="page-in px-4">
         <PageTitle>ADMIN</PageTitle>
         <div className="rounded-[14px] bg-surface p-6 text-center text-sm text-muted">Admins only.</div>
       </div>
@@ -140,7 +144,7 @@ function AdminInner() {
   const playerName = (id: string | null) => players.find((p) => p.id === id)?.name ?? 'system'
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <PageTitle>ADMIN</PageTitle>
 
       <Section title="ACCOUNTS">

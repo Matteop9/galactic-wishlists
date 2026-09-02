@@ -10,6 +10,17 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.10.0',
+    date: '2026-09-02',
+    title: 'Pages that fill in, not flash',
+    items: [
+      'Every page now shows the shape of what’s coming while it loads, instead of a blank screen',
+      'No more pages briefly claiming there’s no gameweek, no picks, or that you’re not taking part when they’re just still loading',
+      'Standings dims and swaps when you change the period — it no longer empties the table first',
+      'Buttons, rows and tabs now respond when you tap them, and you always land at the top of a new page',
+    ],
+  },
+  {
     version: '0.9.1',
     date: '2026-08-28',
     title: 'No more stuck on Loading',
