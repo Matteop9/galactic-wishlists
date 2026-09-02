@@ -6,6 +6,8 @@ import Scorecard, { type ScorecardPlayer } from '../../components/scorecard/Scor
 import VerificationBadge from '../../components/VerificationBadge';
 import Wordmark from '../../components/Wordmark';
 import CelebrationHost from '../../components/Celebration';
+import ShareCard, { type ShareCardData } from '../../components/share/ShareCard';
+import { renderShareCard } from '../../lib/shareCard';
 import { gameCelebration, rollCelebration } from '../../lib/celebrate';
 import { celebrate } from '../../lib/celebrationStore';
 import {
@@ -150,8 +152,87 @@ export default function Gallery() {
         <CelebrationDemo />
       </Section>
 
+      <Section
+        n="10"
+        title="Share card · 1080×1350"
+        note="The real component at its true size (540×675, shown scaled) beside the actual PNG the rasteriser produces. Any drift between the two — a font that didn't embed, a colour that didn't survive — shows up here rather than in someone's group chat."
+      >
+        <ShareCardDemo />
+      </Section>
+
       {/* The gallery renders outside Shell, so it needs its own host. */}
       <CelebrationHost />
+    </div>
+  );
+}
+
+/** The card, and the PNG of the card, side by side. */
+function ShareCardDemo() {
+  const node = useRef<HTMLDivElement>(null);
+  const [png, setPng] = useState<string | null>(null);
+  const [state, setState] = useState<'idle' | 'rendering' | 'failed'>('idle');
+
+  // Dave's 213 — the hi-fi's own example, so the render can be compared to it.
+  const data: ShareCardData = {
+    frames: HIFI_GAME[1].frames,
+    players: [
+      { name: 'Dave K', score: 213, isYou: true },
+      { name: 'Matt', score: 169 },
+    ],
+    verification: 'verified',
+    highlights: ['PB', '200_CLUB'],
+    strikes: 7,
+    groupName: 'Thursday Pin Club',
+    venueName: 'Hollywood Bowl',
+    playedAt: '2026-07-03T20:00:00.000Z',
+  };
+
+  async function render() {
+    if (!node.current) return;
+    setState('rendering');
+    try {
+      const blob = await renderShareCard(node.current);
+      setPng(URL.createObjectURL(blob));
+      setState('idle');
+    } catch {
+      setState('failed');
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* The rasterised copy must be at its true 540px — `zoom` on an ancestor
+          would shrink what the rasteriser sees — so the review copy is zoomed
+          and the measured copy sits off-screen at full size. */}
+      <div className="pointer-events-none fixed left-[-10000px] top-0" aria-hidden>
+        <div ref={node}>
+          <ShareCard data={data} />
+        </div>
+      </div>
+
+      <span className="label-caps">Component</span>
+      <div className="overflow-hidden rounded-lg border border-line">
+        <div style={{ zoom: 0.62 }}>
+          <ShareCard data={data} />
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={render}
+        disabled={state === 'rendering'}
+        className="press rounded-xl border border-line bg-well px-4 py-2.5 text-[13.5px] text-text disabled:text-faint"
+      >
+        {state === 'rendering' ? 'Rendering…' : 'Render the PNG'}
+      </button>
+      {state === 'failed' && <p className="text-[12px] text-signal">The render failed.</p>}
+
+      {png && (
+        <>
+          <span className="label-caps">Rasterised · 1080×1350</span>
+          <img src={png} alt="The rendered share card" className="rounded-lg border border-line" />
+        </>
+      )}
     </div>
   );
 }

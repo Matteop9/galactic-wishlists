@@ -8,6 +8,8 @@ import { deleteGame, fetchGame } from '../../lib/games';
 import { addComment, deleteComment, fetchComments, fetchGameFeedEvent } from '../../lib/feed';
 import { highlightLabel } from '../../lib/highlights';
 import { signedPhotoUrl } from '../../lib/capture';
+import ShareSheet from '../../components/share/ShareSheet';
+import type { ShareCardData } from '../../components/share/ShareCard';
 import { framesFromRows } from '../../lib/frames';
 import { ScorecardSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
@@ -25,11 +27,19 @@ export default function GameDetail({ profile }: { profile: Profile }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const game = useQuery({
     queryKey: ['game', id],
     enabled: !!id,
     queryFn: () => fetchGame(id!),
+  });
+  // Same key as SocialSection below, so react-query serves both from one
+  // request — the share card wants the highlights this game earned.
+  const feedEvent = useQuery({
+    queryKey: ['game-feed-event', id],
+    enabled: !!id,
+    queryFn: () => fetchGameFeedEvent(id!),
   });
   const showSkeleton = useSkeleton(game.isPending);
 
@@ -72,6 +82,30 @@ export default function GameDetail({ profile }: { profile: Profile }) {
   const isOwner = data.created_by === profile.id;
   const playedAt = new Date(data.played_at);
   const venueName = data.sessions?.venues?.name;
+
+  // The card needs a grid, so it's offered on frame-scored games only — a
+  // totals-only quick add has nothing to draw.
+  const cardWinner = [...players]
+    .filter((p) => p.frames.length > 0 && p.final_score !== null)
+    .sort((a, b) => (b.final_score ?? 0) - (a.final_score ?? 0))[0];
+  const shareData: ShareCardData | null =
+    data.status === 'complete' && cardWinner
+      ? {
+          frames: framesFromRows(cardWinner.frames),
+          players: players.map((p) => ({
+            name: p.profiles?.display_name ?? p.guest_name ?? 'Player',
+            score: p.final_score,
+            isYou: p.profile_id === profile.id,
+          })),
+          verification: data.verification_status as 'verified' | 'live' | 'unverified',
+          highlights: Array.isArray(feedEvent.data?.highlights)
+            ? (feedEvent.data.highlights as string[])
+            : [],
+          strikes: cardWinner.strikes ?? undefined,
+          venueName: venueName ?? null,
+          playedAt: data.played_at,
+        }
+      : null;
 
   return (
     <div className="flex flex-col gap-5 px-4 py-6">
@@ -122,6 +156,17 @@ export default function GameDetail({ profile }: { profile: Profile }) {
             ))}
         </div>
       )}
+
+      {shareData && (
+        <button
+          type="button"
+          onClick={() => setSharing(true)}
+          className="press self-start rounded-[10px] border border-line bg-panel px-4 py-2.5 text-[13.5px] font-bold text-text"
+        >
+          Share card
+        </button>
+      )}
+      {sharing && shareData && <ShareSheet data={shareData} onClose={() => setSharing(false)} />}
 
       {isOwner && data.photo_path && <ScanPhoto path={data.photo_path} />}
 

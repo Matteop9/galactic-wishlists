@@ -8,9 +8,13 @@
     <title>10 Pins</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- crossorigin is load-bearing: without it the stylesheet is opaque to
+         same-origin script, so the share card's rasteriser can't read its
+         @font-face rules and silently renders in fallback faces. -->
     <link
       href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=Martian+Mono:wght@400;600;700&display=swap"
       rel="stylesheet"
+      crossorigin
     />
   </head>
   <body>

@@ -34,6 +34,8 @@ import { LaneSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import { gameCelebration, rollCelebration } from '../../lib/celebrate';
 import { celebrate, dismissCelebration } from '../../lib/celebrationStore';
+import ShareSheet from '../../components/share/ShareSheet';
+import type { ShareCardData } from '../../components/share/ShareCard';
 import type { Profile } from '../../lib/auth';
 
 const firstName = (name: string) => name.trim().split(/\s+/)[0].toUpperCase();
@@ -173,6 +175,8 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
   const complete = gameComplete(players);
   const turn = nextUp(players);
   const active = turn?.player ?? players[0] ?? null;
+
+  const [sharing, setSharing] = useState(false);
 
   const finish = useMutation({
     mutationFn: () =>
@@ -343,6 +347,27 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
 
   const saved = pendingCount === 0 && !netError;
 
+  // Everything the card needs is already on this phone.
+  const cardWinner = [...players].sort(
+    (a, b) => (runningTotal(b.frames) ?? 0) - (runningTotal(a.frames) ?? 0),
+  )[0];
+  const liveShareData: ShareCardData | null = cardWinner
+    ? {
+        frames: cardWinner.frames,
+        players: players.map((p) => ({
+          name: p.displayName,
+          score: score(p.frames).total,
+          isYou: p.profileId === profile.id,
+        })),
+        verification: 'live',
+        highlights: [],
+        strikes: score(cardWinner.frames).frames.filter((f) => f.isStrike).length,
+        groupName: state.groupName ?? null,
+        venueName: state.venueName ?? null,
+        playedAt: new Date().toISOString(),
+      }
+    : null;
+
   return (
     <div className="flex flex-col gap-4 px-4 py-6">
       <header className="flex items-center justify-between gap-2">
@@ -451,6 +476,16 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
             Frame-by-frame scores count as live-scored. Photo verification lands with the scan flow.
           </p>
 
+          {!finish.isPending && !finish.isError && (
+            <button
+              type="button"
+              onClick={() => setSharing(true)}
+              className="press rounded-[10px] border border-line bg-well py-2.5 text-[13.5px] font-bold text-text"
+            >
+              Share the card
+            </button>
+          )}
+
           {finish.isError && (
             <button
               type="button"
@@ -503,6 +538,10 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
             : 'Abandon game and end session'}
       </button>
       {error && <p className="text-center text-[13.5px] text-signal">{error}</p>}
+
+      {sharing && liveShareData && (
+        <ShareSheet data={liveShareData} onClose={() => setSharing(false)} />
+      )}
     </div>
   );
 }
