@@ -189,3 +189,20 @@ export function PageTitle({ children, right }: { children: ReactNode; right?: Re
     </div>
   )
 }
+
+/** Shared load-failure card. A gated empty state must not shimmer forever when
+    the query actually failed. */
+export function LoadFailed({ what = 'this' }: { what?: string }) {
+  return (
+    <div className="rounded-[14px] bg-surface px-4 py-6 text-center text-[13px] text-muted">
+      Couldn't load {what}.{' '}
+      <button
+        onClick={() => window.location.reload()}
+        className="pressable font-semibold underline"
+        style={{ color: 'var(--color-accent)' }}
+      >
+        Reload
+      </button>
+    </div>
+  )
+}

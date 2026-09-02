@@ -10,6 +10,16 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.6.0',
+    date: '2026-09-02',
+    title: 'Pages that fill in, not flash',
+    items: [
+      'Every page now shows the shape of what’s coming while it loads, instead of a blank screen — and the tab bar stays put the whole time',
+      'Standings dims and swaps when you change tab or dates, rather than emptying the table first',
+      'Buttons, rows and tabs now respond when you tap them, and you always land at the top of a new page',
+    ],
+  },
+  {
     version: '0.5.1',
     date: '2026-08-28',
     title: 'No more stuck on Loading',

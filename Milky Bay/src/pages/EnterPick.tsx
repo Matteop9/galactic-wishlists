@@ -5,6 +5,7 @@ import type { TeamUsage } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
 import { gwDate, parseOdds } from '../lib/format'
 import { Avatar, GwStatusChip, Overline, PageTitle } from '../components/ui'
+import { Skeleton } from '../components/Skeleton'
 import TeamCombobox from '../components/TeamCombobox'
 import { KNOWN_TEAMS } from '../lib/teams'
 import type { AccaKind } from '../lib/types'
@@ -165,7 +166,8 @@ export default function EnterPick() {
   const [saved, setSaved] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const { data: gw } = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
+  const gwQ = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
+  const gw = gwQ.data
   const { data: picks } = useQuery({
     queryKey: ['pickScores', gw?.id],
     queryFn: () => fetchPickScores(gw!.id),
@@ -241,7 +243,7 @@ export default function EnterPick() {
   })
 
   return (
-    <div className="px-4">
+    <div className="page-in px-4">
       <PageTitle right={gw && <GwStatusChip status={gw.status} />}>Enter Picks</PageTitle>
 
       <div className="mb-4 rounded-[12px] bg-surface px-3.5 py-2.5 text-[12px] text-muted">
@@ -251,6 +253,8 @@ export default function EnterPick() {
             the group chat by <span className="font-semibold text-text">Thursday 8pm</span>;
             transcribe them here by Saturday 23:59.
           </>
+        ) : gwQ.isPending ? (
+          <Skeleton w="70%" h={11} />
         ) : (
           'No gameweek is set up yet.'
         )}
@@ -269,7 +273,7 @@ export default function EnterPick() {
                   <button
                     key={p.id}
                     onClick={() => setForPlayer(p.id)}
-                    className="flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-3"
+                    className="pressable flex items-center gap-1.5 rounded-full border py-1 pl-1 pr-3"
                     style={
                       active
                         ? { borderColor: 'var(--color-accent)', background: 'rgba(116,192,232,0.1)' }
@@ -302,7 +306,7 @@ export default function EnterPick() {
       <button
         onClick={() => save.mutate()}
         disabled={save.isPending || !windowOpen || !target}
-        className="mt-4 w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
+        className="cta mt-4 w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
         style={{
           background: 'var(--color-accent)',
           color: 'var(--color-on-accent)',

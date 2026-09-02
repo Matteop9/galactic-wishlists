@@ -31,6 +31,7 @@ import {
 import { usePlayer } from '../hooks/usePlayer'
 import { gwDate, odds2, ukTime } from '../lib/format'
 import { GwStatusChip, Overline, PageTitle, playerColor, KindBadge } from '../components/ui'
+import { PageSkeleton } from '../components/Skeleton'
 import AdminTeamLogos from '../components/AdminTeamLogos'
 import type { RulesSection } from '../lib/types'
 
@@ -163,7 +164,8 @@ export default function Admin() {
     onError: (e) => setMsg((e as Error).message),
   })
 
-  if (loading) return null
+  /* don't flash "Admins only." at the admin while the players query resolves */
+  if (loading) return <PageSkeleton />
   if (!isAdmin)
     return (
       <div className="flex min-h-[60dvh] items-center justify-center px-8 text-center">

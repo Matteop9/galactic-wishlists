@@ -1,18 +1,22 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { usePlayer } from '../hooks/usePlayer'
+import { PageSkeleton } from './Skeleton'
 
-/* Session + claimed-player guard. RLS is the real enforcement; this is UX. */
+/* Session + claimed-player guard. RLS is the real enforcement; this is UX.
+   `skeleton` lets a page pass its own silhouette so the gate looks like the
+   page that's coming, not like a blank screen. */
 
-export default function RequireAuth({ children }: { children: ReactNode }) {
+export default function RequireAuth({
+  children,
+  skeleton,
+}: {
+  children: ReactNode
+  skeleton?: ReactNode
+}) {
   const { session, me, loading, error, loaded } = usePlayer()
 
-  if (loading)
-    return (
-      <div className="flex min-h-[60dvh] items-center justify-center">
-        <span className="overline">Loading…</span>
-      </div>
-    )
+  if (loading) return <>{skeleton ?? <PageSkeleton />}</>
 
   if (!session) return <Navigate to="/login" replace />
 

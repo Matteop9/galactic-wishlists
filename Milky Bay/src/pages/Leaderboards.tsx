@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import {
   ALL_TIME,
   fetchLeaderboard,
@@ -10,7 +10,8 @@ import {
   fetchSeasons,
 } from '../lib/queries'
 import { odds2, score2 } from '../lib/format'
-import { Overline, PageTitle, playerColor } from '../components/ui'
+import { LoadFailed, Overline, PageTitle, playerColor } from '../components/ui'
+import { SkeletonPanel } from '../components/Skeleton'
 import { Honours, ShamedName } from '../components/Honours'
 import { usePlayer } from '../hooks/usePlayer'
 
@@ -23,7 +24,11 @@ export default function Leaderboards() {
   const [customEnd, setCustomEnd] = useState('')
   const { players } = usePlayer()
   const nameOf = (id: string) => players.find((p) => p.id === id)?.name ?? '…'
-  const { data: seasons } = useQuery({ queryKey: ['seasons'], queryFn: fetchSeasons })
+  const { data: seasons } = useQuery({
+    queryKey: ['seasons'],
+    queryFn: fetchSeasons,
+    staleTime: 5 * 60_000,
+  })
   const { data: minis } = useQuery({ queryKey: ['miniLeagues'], queryFn: fetchMiniLeagues })
 
   const today = new Date().toISOString().slice(0, 10)
@@ -42,18 +47,25 @@ export default function Leaderboards() {
           ? [season.start_date, season.end_date]
           : null
 
-  const { data: rows } = useQuery({
+  /* These re-key when the user touches a tab or a date on this very screen, so
+     they hold the old rows and dim rather than emptying the table. Never do this
+     globally — a route-param query would then show the wrong player's data. */
+  const rowsQ = useQuery({
     queryKey: ['leaderboard', range],
     queryFn: () => fetchLeaderboard(range![0], range![1]),
     enabled: !!range && (tab === 'season' || tab === 'alltime' || tab === 'custom'),
+    placeholderData: keepPreviousData,
   })
+  const rows = rowsQ.data
 
   const activeMini = miniId ?? (minis ?? [])[(minis ?? []).length - 1]?.id ?? null
-  const { data: miniRows } = useQuery({
+  const miniQ = useQuery({
     queryKey: ['miniLeaderboard', activeMini],
     queryFn: () => fetchMiniLeaderboard(activeMini!),
     enabled: tab === 'mini' && !!activeMini,
+    placeholderData: keepPreviousData,
   })
+  const miniRows = miniQ.data
 
   const { data: history } = useQuery({
     queryKey: ['seasonHistory'],
@@ -85,8 +97,15 @@ export default function Leaderboards() {
 
   const rowGrid = 'grid grid-cols-[24px_1fr_52px_44px_44px_40px] items-center gap-1'
 
+  /* A disabled query stays isPending forever, so only wait on the one that is
+     actually running for this tab — and a custom range with no dates yet is a
+     real answer, not a loading state. */
+  const boardLoading = !!range && rowsQ.isPending
+  const boardStale = rowsQ.isPlaceholderData
+  const miniLoading = !!activeMini && miniQ.isPending
+
   return (
-    <div className="px-4">
+    <div className="page-in px-4">
       <PageTitle>Standings</PageTitle>
 
       <div className="mb-4 flex flex-wrap gap-1.5">
@@ -94,7 +113,7 @@ export default function Leaderboards() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className="rounded-[10px] border px-2.5 py-2 text-[12px] font-semibold"
+            className="pressable rounded-[10px] border px-2.5 py-2 text-[12px] font-semibold"
             style={
               tab === t.key
                 ? { background: 'rgba(116,192,232,0.1)', border: '1.5px solid var(--color-accent)', color: 'var(--color-accent-bright)' }
@@ -126,9 +145,18 @@ export default function Leaderboards() {
         </div>
       )}
 
-      {(tab === 'season' || tab === 'alltime' || tab === 'custom') && (
+      {(tab === 'season' || tab === 'alltime' || tab === 'custom') && boardLoading && (
+        <SkeletonPanel rows={5} rowHeight={44} header avatar={false} lines={1} />
+      )}
+      {(tab === 'season' || tab === 'alltime' || tab === 'custom') && !boardLoading && rowsQ.isError && (
+        <LoadFailed what="the standings" />
+      )}
+      {(tab === 'season' || tab === 'alltime' || tab === 'custom') && !boardLoading && !rowsQ.isError && (
         <>
-          <div className="overflow-hidden rounded-[14px] bg-surface">
+          <div
+            className="overflow-hidden rounded-[14px] bg-surface transition-opacity duration-150"
+            style={{ opacity: boardStale ? 0.5 : 1 }}
+          >
             <div className={`${rowGrid} border-b px-3.5 py-2`} style={{ borderColor: 'var(--color-line)' }}>
               <Overline>#</Overline>
               <Overline>PLAYER</Overline>
@@ -143,7 +171,7 @@ export default function Leaderboards() {
                 <Link
                   key={r.player_id}
                   to={`/players/${r.player_id}`}
-                  className={`${rowGrid} border-t px-3.5 py-3`}
+                  className={`pressable ${rowGrid} border-t px-3.5 py-3`}
                   style={{
                     borderColor: 'var(--color-line)',
                     background: i === 0 ? 'rgba(242,201,76,0.05)' : last ? 'rgba(240,101,95,0.04)' : undefined,
@@ -196,7 +224,8 @@ export default function Leaderboards() {
         </>
       )}
 
-      {tab === 'mini' && (
+      {tab === 'mini' && miniLoading && <SkeletonPanel rows={5} rowHeight={44} avatar={false} />}
+      {tab === 'mini' && !miniLoading && (
         <>
           {(minis ?? []).length > 1 && (
             <select
@@ -220,7 +249,7 @@ export default function Leaderboards() {
                 <Link
                   key={r.player_id}
                   to={`/players/${r.player_id}`}
-                  className="flex items-center gap-2.5 border-t px-3.5 py-3 first:border-t-0"
+                  className="pressable flex items-center gap-2.5 border-t px-3.5 py-3 first:border-t-0"
                   style={{
                     borderColor: 'var(--color-line)',
                     background: i === 0 ? 'rgba(242,201,76,0.05)' : last ? 'rgba(240,101,95,0.04)' : undefined,

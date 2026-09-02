@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { usePlayer } from '../hooks/usePlayer'
 import { fetchUnclaimedPlayers, linkPlayer } from '../lib/queries'
 import { Avatar } from '../components/ui'
+import { PageSkeleton } from '../components/Skeleton'
 
 /* Shown when someone is signed in (e.g. with their Acca account) but not yet
    linked to a Milky Bay player: pick your name + group code, one time only. */
@@ -23,12 +24,7 @@ export default function Link() {
     enabled: !!session && !me,
   })
 
-  if (loading)
-    return (
-      <div className="flex min-h-[60dvh] items-center justify-center">
-        <span className="overline">Loading…</span>
-      </div>
-    )
+  if (loading) return <PageSkeleton />
   if (!session) return <Navigate to="/login" replace />
   if (me) return <Navigate to="/" replace />
 

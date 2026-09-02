@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { fetchGameweeks, fetchPlayerWeeks } from '../lib/queries'
 import { gwDate, score2 } from '../lib/format'
-import { GwStatusChip, PageTitle } from '../components/ui'
+import { GwStatusChip, LoadFailed, PageTitle } from '../components/ui'
+import { SkeletonPanel } from '../components/Skeleton'
 
 export default function Gameweeks() {
-  const { data: gws } = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks })
+  const gwsQ = useQuery({ queryKey: ['gameweeks'], queryFn: fetchGameweeks, staleTime: 5 * 60_000 })
+  const gws = gwsQ.data
   const { data: weeks } = useQuery({ queryKey: ['playerWeeks'], queryFn: () => fetchPlayerWeeks() })
 
   const summary = (gwId: string) => {
@@ -26,7 +28,7 @@ export default function Gameweeks() {
       <Link
         key={g.id}
         to={`/gameweeks/${g.id}`}
-        className="flex items-center justify-between border-t px-3.5 py-3 first:border-t-0"
+        className="pressable flex items-center justify-between border-t px-3.5 py-3 first:border-t-0"
         style={{ borderColor: 'var(--color-line)' }}
       >
         <div>
@@ -40,8 +42,12 @@ export default function Gameweeks() {
     ))
 
   return (
-    <div className="px-4 pb-4">
+    <div className="page-in px-4 pb-4">
       <PageTitle>Gameweeks</PageTitle>
+      {gwsQ.isPending && <SkeletonPanel rows={6} rowHeight={48} avatar={false} />}
+      {!gwsQ.isPending && gwsQ.isError && <LoadFailed what="the gameweeks" />}
+      {!gwsQ.isPending && !gwsQ.isError && (
+        <>
       {played.length > 0 && (
         <>
           <div className="overline px-1 pb-1.5">THIS SEASON SO FAR</div>
@@ -55,6 +61,8 @@ export default function Gameweeks() {
           <div className="px-4 py-8 text-center text-[13px] text-muted">No upcoming gameweeks.</div>
         )}
       </div>
+        </>
+      )}
     </div>
   )
 }

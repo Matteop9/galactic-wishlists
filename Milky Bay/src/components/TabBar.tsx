@@ -10,6 +10,7 @@ function Icon({ d, active }: { d: string; active: boolean }) {
       viewBox="0 0 24 24"
       fill="none"
       stroke={active ? 'var(--color-accent)' : 'var(--color-muted)'}
+      style={{ transition: 'stroke 140ms ease' }}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -38,7 +39,7 @@ export default function TabBar() {
               <NavLink
                 key={tab.to}
                 to={tab.to}
-                className="flex min-h-14 flex-col items-center justify-center gap-1 py-2"
+                className="pressable flex min-h-14 flex-col items-center justify-center gap-1 py-2"
               >
                 {({ isActive }) => {
                   const active = tab.to === '/' ? pathname === '/' : isActive
@@ -47,7 +48,10 @@ export default function TabBar() {
                       <Icon d={tab.d} active={active} />
                       <span
                         className="text-[9.5px] font-medium"
-                        style={{ color: active ? 'var(--color-accent)' : 'var(--color-muted)' }}
+                        style={{
+                          color: active ? 'var(--color-accent)' : 'var(--color-muted)',
+                          transition: 'color 140ms ease',
+                        }}
                       >
                         {tab.label}
                       </span>
@@ -59,7 +63,7 @@ export default function TabBar() {
               <div key="pick" className="relative flex justify-center">
                 <NavLink
                   to="/pick"
-                  className="absolute -top-[38px] flex h-11 w-11 items-center justify-center rounded-full bg-accent shadow-[0_4px_18px_rgba(116,192,232,0.35)]"
+                  className="cta absolute -top-[38px] flex h-11 w-11 items-center justify-center rounded-full bg-accent shadow-[0_4px_18px_rgba(116,192,232,0.35)] active:scale-95"
                   aria-label="Enter pick"
                 >
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-on-accent)" strokeWidth="2.5" strokeLinecap="round">

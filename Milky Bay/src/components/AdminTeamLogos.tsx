@@ -4,6 +4,7 @@ import { deleteTeamBadge, fetchTeamBadges, fetchTeamDictionary, saveTeamBadge } 
 import { searchClubBadges, smallBadge, type BadgeCandidate } from '../lib/sportsdb'
 import { crestUrl } from '../lib/teams'
 import { TeamBadge } from './ui'
+import { SkeletonPanel } from './Skeleton'
 
 /* Admin -> Team logos (ported from The Acca v0.9.0). Every W-acca selection
    anyone has picked is checked against the build-time crest maps
@@ -115,7 +116,7 @@ export default function AdminTeamLogos() {
   // in team_badges yet.
   const missing = (dict ?? []).filter((t) => !crestUrl(t.name) && !decided.has(t.name))
 
-  if (dictLoading) return <p className="text-[12px] text-muted">Reading every pick…</p>
+  if (dictLoading) return <SkeletonPanel rows={4} rowHeight={40} />
 
   return (
     <div>

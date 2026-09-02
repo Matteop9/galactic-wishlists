@@ -1,5 +1,35 @@
 # Changelog — Milky Bay
 
+## 0.6.0 — 2026-09-02
+
+Loading states and motion — ported from The Acca v0.10.0. This release also finally **ships
+v0.5.1**, which was written on 28 Aug but never deployed (prod was still on 0.5.0, so the auth
+hang was still reachable here).
+
+- **New primitives, copied verbatim from The Acca**: `.skel` shimmer, `.page-in` fade and
+  `.pressable`/`.cta` press affordances in `src/index.css` (all off under
+  `prefers-reduced-motion`), `src/components/Skeleton.tsx`, and a shared `LoadFailed` card in
+  `ui.tsx`. No new dependency.
+- **`Shell` restructured**: `RequireAuth` wrapped the whole shell here, so the tab bar vanished
+  during every load — the gate now sits inside, around `<Outlet/>` only, with `TabBar` outside it.
+  `RequireAuth` takes an optional `skeleton` and defaults to `PageSkeleton` instead of a 9px
+  "Loading…" centred in `min-h-[60dvh]`. `usePlayer` gains `ready`, and `['players']` a 5-minute
+  `staleTime`.
+- **The `isPending` trap**: a react-query v5 query with `enabled: false` is pending forever, so
+  every page composes `parentQ.isPending || (!!parentQ.data && childQ.isPending)` — Standings in
+  particular guards on `!!range` (a custom range with no dates yet is a real answer) and on the
+  active tab. `isError` falls through to `LoadFailed`.
+- **Skeletons** on This Week (two acca cards + week points), Standings (main + mini tables),
+  Gameweeks, Gameweek detail, Rules, Player profile history, Admin, Login and Link; the
+  `…`/`· · ·` title placeholders became real bars.
+- **`placeholderData: keepPreviousData`** on `['leaderboard']` and `['miniLeaderboard']` only,
+  with `isPlaceholderData` dimming. Not global — a route-param query would show the wrong
+  player's data. `['seasons']`/`['gameweeks']` get 5-minute `staleTime` instead.
+- **Motion**: `pressable` on rows/tabs/toggles, `cta` on accent buttons, 140ms TabBar colour
+  transition, `-webkit-tap-highlight-color: transparent`, and a `ScrollToTop` in `Shell`.
+- **Bundle**: vendor `manualChunks` (284 KB app + 312 KB vendor), so a release only invalidates
+  the app half. Route-level lazy loading deliberately rejected.
+
 ## 0.5.1 — 2026-08-28
 
 Fixes the app hanging indefinitely on `Loading…` — ported from The Acca v0.9.1 (`useAuth` was identical in both apps).

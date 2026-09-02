@@ -38,6 +38,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   font-variant-numeric: tabular-nums;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .overline {
@@ -54,4 +55,72 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* ── Loading + motion (v0.6.0, ported from The Acca v0.10.0) ───────────
+   One shimmer, one page fade, one press affordance. */
+
+@keyframes skel-sweep {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+
+/* A placeholder bar. Sized by the caller to match the real row it stands in for. */
+.skel {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.05);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.055) 45%,
+    rgba(255, 255, 255, 0.055) 55%,
+    transparent 100%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  animation: skel-sweep 1.6s linear infinite;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.page-in {
+  animation: page-in 180ms ease-out both;
+}
+
+/* Tap feedback — the app had none before v0.6.0. */
+.pressable {
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.pressable:active {
+  opacity: 0.55;
+}
+.cta {
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+.cta:active {
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel,
+  .page-in {
+    animation: none;
+  }
+  .pressable:active,
+  .cta:active {
+    transition: none;
+    transform: none;
+  }
 }

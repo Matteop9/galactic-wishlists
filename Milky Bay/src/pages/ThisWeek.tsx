@@ -3,22 +3,31 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchCurrentGameweek, fetchPickScores, fetchPlayerWeeks } from '../lib/queries'
 import { gwDate, score2 } from '../lib/format'
 import { useCountdown } from '../hooks/useCountdown'
-import { GwStatusChip, Overline, playerColor } from '../components/ui'
+import { GwStatusChip, LoadFailed, Overline, playerColor } from '../components/ui'
+import { Skeleton, SkeletonAccaCard, SkeletonPanel } from '../components/Skeleton'
 import { Honours, ShamedName } from '../components/Honours'
 import AccaCard from '../components/AccaCard'
 
 export default function ThisWeek() {
-  const { data: gw } = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
-  const { data: picks } = useQuery({
+  const gwQ = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
+  const gw = gwQ.data
+  const picksQ = useQuery({
     queryKey: ['pickScores', gw?.id],
     queryFn: () => fetchPickScores(gw!.id),
     enabled: !!gw,
   })
-  const { data: weeks } = useQuery({
+  const picks = picksQ.data
+  const weeksQ = useQuery({
     queryKey: ['playerWeeks', gw?.id],
     queryFn: () => fetchPlayerWeeks(gw!.id),
     enabled: !!gw,
   })
+  const weeks = weeksQ.data
+
+  /* A disabled query reports isPending forever, so only count the picks query
+     once there is a gameweek to fetch picks for. */
+  const loading = gwQ.isPending || (!!gw && picksQ.isPending)
+  const boardLoading = gwQ.isPending || (!!gw && weeksQ.isPending)
   const now = Date.now()
   const windowOpen =
     gw?.status === 'open' ||
@@ -32,12 +41,12 @@ export default function ThisWeek() {
     .sort((a, b) => Number(b.week_points) - Number(a.week_points))
 
   return (
-    <div className="px-4">
+    <div className="page-in px-4">
       <div className="flex items-center justify-between pb-1 pt-6">
         <div>
           <div className="display text-3xl leading-none">MILKY BAY</div>
           <div className="mt-1 font-mono text-[11px] font-bold" style={{ color: 'var(--color-accent)' }}>
-            {gw ? gwDate(gw.gw_date) : '· · ·'}
+            {gw ? gwDate(gw.gw_date) : gwQ.isPending ? <Skeleton w={96} h={12} /> : '· · ·'}
           </div>
         </div>
         {gw && <GwStatusChip status={gw.status} />}
@@ -56,9 +65,16 @@ export default function ThisWeek() {
       )}
 
       <div className="mt-4 flex flex-col gap-4">
-        {wPicks.length > 0 && <AccaCard kind="W" picks={wPicks} />}
-        {rPicks.length > 0 && <AccaCard kind="random" picks={rPicks} />}
-        {picks && picks.length === 0 && (
+        {loading && (
+          <>
+            <SkeletonAccaCard rows={5} />
+            <SkeletonAccaCard rows={5} />
+          </>
+        )}
+        {!loading && (gwQ.isError || picksQ.isError) && <LoadFailed what="this week" />}
+        {!loading && wPicks.length > 0 && <AccaCard kind="W" picks={wPicks} />}
+        {!loading && rPicks.length > 0 && <AccaCard kind="random" picks={rPicks} />}
+        {!loading && picks && picks.length === 0 && (
           <div className="rounded-[14px] bg-surface px-4 py-8 text-center text-[13px] text-muted">
             No picks in yet this week.{' '}
             <Link to="/pick" className="font-semibold" style={{ color: 'var(--color-accent)' }}>
@@ -68,7 +84,14 @@ export default function ThisWeek() {
         )}
       </div>
 
-      {board.length > 0 && (
+      {boardLoading && !loading && (
+        <div className="mt-5">
+          <Overline className="px-1 pb-1.5">WEEK POINTS</Overline>
+          <SkeletonPanel rows={5} rowHeight={44} avatar={false} lines={1} />
+        </div>
+      )}
+
+      {!boardLoading && board.length > 0 && (
         <div className="mt-5">
           <Overline className="px-1 pb-1.5">WEEK POINTS</Overline>
           <div className="overflow-hidden rounded-[14px] bg-surface">
@@ -76,7 +99,7 @@ export default function ThisWeek() {
               <Link
                 key={w.player_id}
                 to={`/players/${w.player_id}`}
-                className="flex items-center gap-2.5 border-t px-3.5 py-2.5 first:border-t-0"
+                className="pressable flex items-center gap-2.5 border-t px-3.5 py-2.5 first:border-t-0"
                 style={{ borderColor: 'var(--color-line)' }}
               >
                 <span className="w-4 font-mono text-[11px] text-muted">{i + 1}</span>

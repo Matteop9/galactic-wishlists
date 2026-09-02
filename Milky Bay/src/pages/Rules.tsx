@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchHonoursList, fetchRules, fetchSeasonHistory } from '../lib/queries'
 import { usePlayer } from '../hooks/usePlayer'
 import { score2 } from '../lib/format'
-import { PageTitle, playerColor } from '../components/ui'
+import { LoadFailed, PageTitle, playerColor } from '../components/ui'
+import { Skeleton } from '../components/Skeleton'
 
 /* The syndicate agreement. Sections live in the rules_sections table so
    admins can amend them in-app — every change lands in the audit trail.
@@ -10,7 +11,8 @@ import { PageTitle, playerColor } from '../components/ui'
 
 export default function Rules() {
   const { players } = usePlayer()
-  const { data: sections } = useQuery({ queryKey: ['rules'], queryFn: fetchRules })
+  const sectionsQ = useQuery({ queryKey: ['rules'], queryFn: fetchRules })
+  const sections = sectionsQ.data
   const { data: honours } = useQuery({ queryKey: ['honoursList'], queryFn: fetchHonoursList })
   const { data: history } = useQuery({ queryKey: ['seasonHistory'], queryFn: fetchSeasonHistory })
 
@@ -35,12 +37,21 @@ export default function Rules() {
   })
 
   return (
-    <div className="px-4 pb-6">
+    <div className="page-in px-4 pb-6">
       <PageTitle>The Agreement</PageTitle>
       <p className="mb-4 px-1 text-[12px] text-muted">
         Milky Bay Betting Syndicate · Season 26/27 · Harry, Luke, Tim, Sandy & Liam. In effect
         from the first bet of Gameweek 1. Admins can amend the rules — every change is audited.
       </p>
+      {sectionsQ.isPending && (
+        <div className="flex flex-col gap-2.5 rounded-[14px] bg-surface px-4 py-6">
+          {[18, 96, 88, 92, 60, 18, 94, 86, 90, 72, 40].map((w, i) => (
+            <Skeleton key={i} w={`${w}%`} h={w === 18 ? 16 : 11} />
+          ))}
+        </div>
+      )}
+      {!sectionsQ.isPending && sectionsQ.isError && <LoadFailed what="the rules" />}
+
       <div className="flex flex-col gap-3">
         {(sections ?? []).map((s) => (
           <div key={s.id} className="rounded-[14px] bg-surface p-4">

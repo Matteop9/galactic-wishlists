@@ -6,6 +6,7 @@ import { usePlayer } from '../hooks/usePlayer'
 import { fetchFeedback, fetchHonoursList, fetchPlayerPickScores, submitFeedback } from '../lib/queries'
 import { gwDate, score2 } from '../lib/format'
 import { Avatar, KindBadge, NoPickChip, playerColor, SoleLoserChip, StateIcon, VoidChip } from '../components/ui'
+import { PageSkeleton, SkeletonPanel } from '../components/Skeleton'
 import { odds2 } from '../lib/format'
 
 const AWARD_LABEL: Record<string, string> = {
@@ -24,7 +25,7 @@ const STATUS_COLOR: Record<string, string> = {
 
 export default function PlayerProfile() {
   const { id } = useParams<{ id: string }>()
-  const { me, players, isAdmin } = usePlayer()
+  const { me, players, isAdmin, ready } = usePlayer()
   const qc = useQueryClient()
   const [shown, setShown] = useState(10)
   const [fbText, setFbText] = useState('')
@@ -42,11 +43,15 @@ export default function PlayerProfile() {
   const player = players.find((p) => p.id === playerId)
   const isMe = playerId === me?.id
 
-  const { data: picks } = useQuery({
+  const picksQ = useQuery({
     queryKey: ['playerPicks', playerId],
     queryFn: () => fetchPlayerPickScores(playerId!),
     enabled: !!playerId,
   })
+  const picks = picksQ.data
+  /* enabled:false keeps a query pending forever — only wait on the history once
+     we know whose profile this is. */
+  const historyLoading = !!playerId && picksQ.isPending
   const { data: honoursList } = useQuery({ queryKey: ['honoursList'], queryFn: fetchHonoursList })
   const { data: feedback } = useQuery({
     queryKey: ['feedback'],
@@ -73,15 +78,10 @@ export default function PlayerProfile() {
   }
   const weeks = [...byWeek.entries()].slice(0, shown)
 
-  if (!player)
-    return (
-      <div className="flex min-h-[60dvh] items-center justify-center">
-        <span className="overline">Loading…</span>
-      </div>
-    )
+  if (!ready || !player) return <PageSkeleton />
 
   return (
-    <div className="px-4">
+    <div className="page-in px-4">
       <div className="flex items-center gap-3 pb-4 pt-6">
         <Avatar name={player.name} size={52} />
         <div className="min-w-0 flex-1">
@@ -111,6 +111,9 @@ export default function PlayerProfile() {
         </div>
       </div>
 
+      {historyLoading && <SkeletonPanel rows={8} rowHeight={44} avatar={false} />}
+
+      {!historyLoading && (
       <div className="overflow-hidden rounded-[14px] bg-surface">
         {weeks.map(([date, weekPicks]) => {
           const pts = (weekPicks ?? []).reduce(
@@ -195,6 +198,7 @@ export default function PlayerProfile() {
           <div className="px-4 py-8 text-center text-[13px] text-muted">No picks yet.</div>
         )}
       </div>
+      )}
 
       {byWeek.size > shown && (
         <button
