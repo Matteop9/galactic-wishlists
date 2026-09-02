@@ -2,7 +2,7 @@
 
 > **Release routine (from v0.3.0 on):** every release gets a version bump, an entry in `src/lib/changelog.ts` (what changed, for players) and an entry here headed `## v<version> — <date> — <what shipped>` (how it was built). `npm run check:release` runs as `prebuild`, so a build fails if the three disagree. See `CLAUDE.md` § Releasing.
 
-## v0.3.0 — 2026-09-02 — What's new, in the app
+## v0.3.0 — 2026-09-02 — What's new, in the app — LIVE
 
 The app shipped eleven releases without ever telling anyone. This adds the player-facing half of the changelog, and a gate so the next one can't skip it.
 
@@ -18,7 +18,9 @@ The app shipped eleven releases without ever telling anyone. This adds the playe
 
 Versions below 0.3.0 in the in-app list were labelled retroactively; their dates are the real ship dates from the entries below. The five entries there cover milestone 8 through the 2 Sept feedback-queue triage — earlier milestones stay repo-only, as there were no users to tell.
 
-Verified: `npm run check:release` passes, `tsc --noEmit` clean, tests green, prod build clean.
+Verified: `npm run check:release` passes, `tsc --noEmit` clean, 280 tests green, prod build clean; both surfaces screenshotted at 375px.
+
+Deployed to https://10pins.vercel.app via `npm run deploy` (dpl_6oXaQXhZma3RKjFViUYUiGWAmG1P) — the live bundle carries the release list, the `tenpins.changelog.seen` key and 0.3.0.
 
 
 ## 2026-09-02 — Feedback queue triage: sign-in fix, the "vibe coded" pass, groups as a group of friends — LIVE
