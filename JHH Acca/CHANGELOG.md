@@ -1,5 +1,14 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.9.1 — 2026-08-28
+
+Fixes the app hanging indefinitely on `Loading…` (reported twice in two days, hit more than one player, on both apps).
+
+- **`useAuth`**: `setLoading(false)` lived only in the `getSession()` success path — no `.catch()`, no fallback. supabase-js 2.112.2 serialises auth-token access behind a `navigator.locks` Web Lock, and a tab suspended while holding it (backgrounded mobile PWA, second tab) leaves `getSession()` permanently unsettled — so `RequireAuth` rendered `Loading…` with no way out. A hard refresh drops the lock, which is why refreshing always "fixed" it.
+- The gate now has **three independent exits**: `onAuthStateChange` is subscribed *first* so its `INITIAL_SESSION` event clears `loading` on its own; `.catch()` handles a rejection; an 8s timeout falls through to the login redirect rather than hanging. Previously all three depended on one promise resolving.
+- Backend was healthy through both incidents — Postgres (19/60 connections, no long transactions, no statement timeouts), PostgREST and GoTrue all clean, with successful logins from other players throughout. No server-side change was needed.
+- Same fix shipped to Milky Bay (v0.5.1) — the file was identical in both apps.
+
 ## v0.9.0 — 2026-08-27
 
 Team logos are editable at runtime — a new club no longer needs a code change.

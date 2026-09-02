@@ -1,5 +1,15 @@
 # Changelog — Milky Bay
 
+## 0.5.1 — 2026-08-28
+
+Fixes the app hanging indefinitely on `Loading…` — ported from The Acca v0.9.1 (`useAuth` was identical in both apps).
+
+- **`useAuth`**: `setLoading(false)` lived only in the `getSession()` success path, so a stalled
+  auth Web Lock (`navigator.locks`, supabase-js 2.112.2) left the app rendering `Loading…`
+  forever. Now has three independent exits: `onAuthStateChange` subscribed first so
+  `INITIAL_SESSION` clears the gate, `.catch()` on rejection, and an 8s timeout.
+- No schema change, no migration.
+
 ## 0.5.0 — 2026-08-27
 
 Team logos are editable at runtime — ported from The Acca v0.9.0 (its

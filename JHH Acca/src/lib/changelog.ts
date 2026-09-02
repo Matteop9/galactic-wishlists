@@ -10,6 +10,14 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.9.1',
+    date: '2026-08-28',
+    title: 'No more stuck on Loading',
+    items: [
+      'Fixed the app sometimes getting stuck on “Loading…” forever when you came back to a tab left open — it now sorts itself out instead of needing a refresh',
+    ],
+  },
+  {
     version: '0.9.0',
     date: '2026-08-27',
     title: 'Every club gets its badge',

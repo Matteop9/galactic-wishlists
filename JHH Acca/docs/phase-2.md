@@ -3,6 +3,15 @@
 Running list of everything requested after v0.1/v0.2 shipped. New requests land
 here first (or in the in-app feedback queue), then get ticked off per release.
 
+## Shipped in v0.9.1 (2026-08-28)
+
+Reported in chat — hit more than one player, on both apps.
+
+- [x] App occasionally stuck on `Loading…` until a manual refresh — `useAuth` gated the whole
+      app on `getSession()`, whose promise never settles if a suspended tab still holds the
+      supabase-js auth Web Lock. Now has three independent exits (`INITIAL_SESSION`,
+      `.catch()`, 8s timeout).
+
 ## Shipped in v0.3.0 (2026-08-10)
 
 - [x] Changelog on the front page (What's New panel, latest release expanded)
