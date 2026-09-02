@@ -1,5 +1,21 @@
 # Changelog — 10 Pins
 
+## 2026-09-02 — Fix: anonymous-visitor hygiene + the last review leftovers — LIVE
+
+The rest of the from-scratch review, closed out. Most of it is about what an anonymous demo visitor is allowed to be.
+
+**`tp_0017_anon_hygiene.sql`** (applied to the Acca project's `tenpins` schema):
+- **Anonymous visitors see only the people they bowl with.** `profiles_select` was `using (true)`, so a demo visitor — no Google account, no friction — could list every real user's name, handle and avatar. It now reads `not is_anonymous() or id = auth.uid() or can_tag(id)`: real accounts are unchanged (the Friends search needs the open read, and that is a product call in the review doc), anonymous ones see themselves and their group mates. Probed as a demo-group member with an `is_anonymous: true` claim: 3 of 4 profiles visible, the real account hidden; same member with a normal claim: all 4.
+- **Anonymous visitors can't reach outside the demo.** No friend requests (each one was a notification to a real person with no rate limit), no groups, no match days, no feedback. All four INSERT policies gain `and not tenpins.is_anonymous()`, where the helper reads the `is_anonymous` JWT claim. Probed: friend request and group create as anonymous → `42501`; the same friend request with a real claim → allowed. Games, live sessions, comments and reactions in the demo group still work, because that is the demo.
+- **Anonymous visitors expire.** `purge_anonymous_users(interval default '7 days')` runs nightly at 04:20 via pg_cron (`tp-purge-anon`). It is not a bare `delete from auth.users`: most FKs to `profiles` are deliberately NO ACTION, so that would fail the moment a visitor had entered a game. The function walks each visitor's footprint in dependency order — their comments, reactions, friendships, mappings and match-day seats go; **a seat in someone else's game becomes a guest seat** so the other players' card survives; then their games, sessions, group memberships and any groups they own; then the auth user, which cascades the profile and everything that cascades from it. Each visitor is its own sub-transaction, so one that won't delete is logged and skipped rather than blocking the rest. Execute is revoked from every client role. Dry run on the live database: 0 purged (there are no anonymous users yet — the setting is still off).
+- `freeze_friendship_endpoints` now pins `search_path`, clearing the advisor warning tp_0015 introduced.
+
+**Repo:** `!.env.example` added to `.gitignore` (the `.env.*` rule had swallowed the template, so the repo had none); the obsolete `interest-cohort` token dropped from the Permissions-Policy header; the live scorer no longer celebrates a turkey twice (the roll ladder already did, so the end-of-game moment filters it — scanned games keep it, they have no ladder); a stray scratchpad file with a mangled Windows path deleted from the project root.
+
+Verified: `tsc --noEmit` clean, 217 tests green, prod build clean; policies, cron job and function grants confirmed by SQL on the live project as above.
+
+Deployed to https://10pins.vercel.app via `npm run deploy` (dpl_26EbSUAkJXsopadyv1SYFLeBmCGm).
+
 ## 2026-09-02 — Fix: review follow-ups (demo button, share card, sign-out caches) — LIVE
 
 A from-scratch review of milestone 8 against the live database and the deployed origin found five things worth fixing before anyone else did.

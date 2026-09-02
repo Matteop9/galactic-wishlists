@@ -42,7 +42,7 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 - **Verify:** as user A, attempt to insert a game_players row with user B's id → should be rejected by RLS.
 
 ### [x] 2. Remove the demo password from the public bundle — **HIGH (do with P0)**
-- **Status:** **DONE 2026-09-02** (`tp_0016`) — anonymous sign-in + `join_demo()`; the demo email went from 1 occurrence in `dist/` to 0. ⚠️ Needs "Anonymous sign-ins" enabled on the Supabase project; until then the button hides itself.
+- **Status:** **DONE 2026-09-02** (`tp_0016`) — anonymous sign-in + `join_demo()`; the demo email went from 1 occurrence in `dist/` to 0. ⚠️ Needs "Anonymous sign-ins" enabled on the Supabase project; until then the button hides itself. **Follow-up `tp_0017` (2 Sept, evening):** the anonymous-claim check suggested below is in — anonymous JWTs cannot insert friendships/groups/match_days/feedback, see only self + group mates in `profiles`, and are purged nightly by `purge_anonymous_users()` (pg_cron `tp-purge-anon`). The demo button also now probes `/auth/v1/settings` and stays hidden until the setting is on.
 - **Where:** `src/features/auth/SignIn.tsx:9`, `.env.local` (`VITE_DEMO_EMAIL` / `VITE_DEMO_PASSWORD`)
 - **Why:** `VITE_`-prefixed vars are inlined into the deployed JS at 10pins.vercel.app. Anyone can read the creds, call `supabase.auth.updateUser` to hijack/brick the shared demo account, enumerate every profile, or spam shared tables.
 - **How to fix (pick one):**

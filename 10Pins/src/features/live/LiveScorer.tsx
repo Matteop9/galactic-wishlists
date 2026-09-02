@@ -196,7 +196,9 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       // happened on the lane, because this is the only screen that saw it.
       const mine = result.byProfile[profile.id];
       const loudest = mine ?? result.highlights;
-      celebrate(gameCelebration(loudest, state?.gameId));
+      // The roll ladder already celebrated the turkey when the third strike
+      // landed; the end-of-game moment is for things only the total can tell you.
+      celebrate(gameCelebration(loudest.filter((code) => code !== 'TURKEY'), state?.gameId));
     },
     onError: () => {
       finishedRef.current = null;
