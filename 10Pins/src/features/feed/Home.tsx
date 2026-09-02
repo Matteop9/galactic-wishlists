@@ -18,6 +18,8 @@ import EmptyState from '../../components/EmptyState';
 import { useScanQueue } from '../../lib/useScanQueue';
 import type { Profile } from '../../lib/auth';
 import { FEED_FILTER_KEY, normaliseFeedFilter, writeFeedFilter, type FeedFilter } from '../../lib/feedFilter';
+import WhatsNewCard from '../../components/WhatsNewCard';
+import { APP_VERSION, markSeen, readSeen, releasesSince } from '../../lib/changelog';
 
 /** localStorage can throw in private mode / blocked storage — never let that crash the feed. */
 function localStorageOrNull(): Storage | null {
@@ -98,6 +100,8 @@ export default function Home({ profile }: { profile: Profile }) {
 
       <LiveNow profile={profile} />
 
+      <WhatsNewBanner />
+
       {groupIds.length > 0 && (
         <ChipRow
           label="Show games from"
@@ -148,6 +152,34 @@ export default function Home({ profile }: { profile: Profile }) {
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The release note, on the feed, once per release (D1, 3 Sept). Sits below the
+ * two banners that are actual jobs — a queued scan and a live game are things
+ * to do; this is something to read — and above the filter, so it never pushes
+ * the games themselves off the first screen for more than a card.
+ *
+ * State is local rather than a store: nothing else in the app cares whether
+ * you have read the notes, and reading localStorage once on mount is cheaper
+ * than a subscription.
+ */
+function WhatsNewBanner() {
+  const [seen, setSeen] = useState<string | null>(() => readSeen(localStorageOrNull()));
+  const unseen = releasesSince(seen);
+  const latest = unseen[0];
+  if (!latest) return null;
+
+  return (
+    <WhatsNewCard
+      release={latest}
+      older={unseen.length - 1}
+      onDismiss={() => {
+        markSeen(localStorageOrNull());
+        setSeen(APP_VERSION);
+      }}
+    />
   );
 }
 

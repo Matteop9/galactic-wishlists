@@ -12,9 +12,11 @@ import EmptyState from '../../components/EmptyState';
 import JoinQr from '../../components/JoinQr';
 import ChipRow, { type ChipOption } from '../../components/ChipRow';
 import Avatar from '../../components/Avatar';
+import WhatsNewCard from '../../components/WhatsNewCard';
 import { HeadToHeadPanel } from '../players/PlayerPage';
 import type { HeadToHead } from '../../lib/players';
 import { renderShareCard } from '../../lib/shareCard';
+import { RELEASES } from '../../lib/changelog';
 import { gameCelebration, rollCelebration } from '../../lib/celebrate';
 import { celebrate } from '../../lib/celebrationStore';
 import {
@@ -304,6 +306,14 @@ export default function Gallery() {
           myUrl={null}
           theirUrl={null}
         />
+      </Section>
+
+      <Section
+        n="18"
+        title="What’s new card"
+        note="The release note on the feed — shown once per release, dismissible, no glow (a changelog is information, not a celebration). Rendered here from the live release list."
+      >
+        <WhatsNewCard release={RELEASES[0]!} older={RELEASES.length - 1} onDismiss={() => {}} />
       </Section>
 
       {/* The gallery renders outside Shell, so it needs its own host. */}

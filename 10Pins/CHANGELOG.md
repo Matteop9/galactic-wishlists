@@ -1,5 +1,26 @@
 # Changelog — 10 Pins
 
+> **Release routine (from v0.3.0 on):** every release gets a version bump, an entry in `src/lib/changelog.ts` (what changed, for players) and an entry here headed `## v<version> — <date> — <what shipped>` (how it was built). `npm run check:release` runs as `prebuild`, so a build fails if the three disagree. See `CLAUDE.md` § Releasing.
+
+## v0.3.0 — 2026-09-02 — What's new, in the app
+
+The app shipped eleven releases without ever telling anyone. This adds the player-facing half of the changelog, and a gate so the next one can't skip it.
+
+**In the app.** `src/lib/changelog.ts` is the single list of releases — version, date, one-line title, two to five plain items — with `APP_VERSION` derived from its newest entry, so the version and the notes can't drift apart. Pure module in the shape of `feedFilter.ts`: no React, storage helpers take a `Storage | null` and swallow blocked-storage exceptions.
+
+- **On the feed.** A dismissible card under the live/scan banners (both of those are jobs to do; a release note is something to read) and above the group filter, so it costs one card, once. It shows the newest unseen release, up to three items, and a count of anything older that's still unread.
+- **The full history.** `/whats-new`: every release, newest first, dated, with the running version in the header. Opening it counts as reading the notes and marks the version seen, exactly as dismissing the card does.
+- **Always reachable.** A "What's new" row on Profile carrying `v<version>` — the card is dismissible by design, so there has to be a way back, and this is the only place the running version is stated.
+- **Seen-marking.** `tenpins.changelog.seen` holds the last version acknowledged. A brand-new account is marked seen the moment `FirstRun` creates the profile, so it never opens to a changelog for a release that predates it; a *missing* key therefore means "had the app before this page existed", and gets exactly the newest release rather than the whole back catalogue.
+- No glow anywhere on either surface — a changelog is information, not a celebration, so it stays outside the amber budget apart from the one text link. Gallery section 18 renders the card from the live release list, so it reviews unauthenticated.
+
+**The gate.** `scripts/check-release.mjs`, wired as `prebuild`, so it runs on `npm run build`, on `npm run deploy` (which builds) and on any Vercel build. It fails the build unless `package.json`'s version, the newest entry in `src/lib/changelog.ts` and the top `## ` heading of this file all name the same version, and it enforces the list's shape: `x.y.z` versions that descend strictly, ISO dates that never go forwards as you read down, a title and at least one item each, and no emoji or exclamation marks (the de-vibe rules from 2 Sept). `SKIP_RELEASE_CHECK=1` exists for a rebuild that genuinely isn't a release. The same invariants are asserted in `changelog.test.ts`, so a bad entry also fails the test run.
+
+Versions below 0.3.0 in the in-app list were labelled retroactively; their dates are the real ship dates from the entries below. The five entries there cover milestone 8 through the 2 Sept feedback-queue triage — earlier milestones stay repo-only, as there were no users to tell.
+
+Verified: `npm run check:release` passes, `tsc --noEmit` clean, tests green, prod build clean.
+
+
 ## 2026-09-02 — Feedback queue triage: sign-in fix, the "vibe coded" pass, groups as a group of friends — LIVE
 
 Three items landed in the in-app feedback queue on 2 Sept (all from the owner). This release closes all three.

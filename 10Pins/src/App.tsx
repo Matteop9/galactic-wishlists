@@ -29,6 +29,7 @@ import { useScanQueueDrain } from './lib/useScanQueue';
 import QuickAdd from './features/quickadd/QuickAdd';
 import ProfilePage from './features/settings/ProfilePage';
 import PlayerPage from './features/players/PlayerPage';
+import WhatsNew from './features/whatsnew/WhatsNew';
 import Stats from './features/stats/Stats';
 import { useAuth, useProfile, type Profile } from './lib/auth';
 
@@ -81,6 +82,7 @@ function Shell({ profile }: { profile: Profile }) {
         <Route path="/live/:id/watch" element={<LiveSpectator profile={profile} />} />
         <Route path="/notifications" element={<Notifications profile={profile} />} />
         <Route path="/profile" element={<ProfilePage profile={profile} />} />
+        <Route path="/whats-new" element={<WhatsNew />} />
         <Route path="/players/:id" element={<PlayerPage profile={profile} />} />
         <Route path="/add/scan" element={<ScanCapture profile={profile} />} />
         <Route path="/add/quick" element={<QuickAdd profile={profile} />} />

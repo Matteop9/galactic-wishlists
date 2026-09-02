@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
+import { markSeen } from '../../lib/changelog';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
@@ -70,6 +71,15 @@ export default function FirstRun() {
       );
       setSaving(false);
       return;
+    }
+    // A brand-new account has no release to catch up on: mark the current
+    // version read so their first feed is games, not a changelog. A missing
+    // key therefore means "had the app before this page existed", which is
+    // what `releasesSince(null)` is written for.
+    try {
+      markSeen(typeof localStorage === 'undefined' ? null : localStorage);
+    } catch {
+      /* blocked storage: worst case they see one card they didn't need */
     }
     await queryClient.invalidateQueries({ queryKey: ['profile'] });
   }

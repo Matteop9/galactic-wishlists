@@ -1,10 +1,12 @@
 {
   "name": "10pins",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "check:release": "node scripts/check-release.mjs",
+    "prebuild": "node scripts/check-release.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "deploy": "node -e \"require('fs').rmSync('.vercel/.env.production.local',{force:true})\" && vercel build --prod --yes && vercel deploy --prebuilt --prod --yes",
