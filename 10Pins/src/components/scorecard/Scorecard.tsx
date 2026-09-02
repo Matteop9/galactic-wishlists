@@ -28,9 +28,14 @@ interface Sizing {
   total: string;
 }
 
-// 10px on the totals, not 11: a 3-digit total is 23px of mono at 11px and the
-// frame cell is 22px at 375px wide, so every score over 99 was being shaved.
+// Totals are 10px, not 11: three digits of Martian Mono at 11px measure ~23px
+// and a frame cell is 22.3px at 375px wide, so every score over 99 was being
+// shaved a pixel (spec §12: totals must not clip).
 const BASE: Sizing = { name: 'w-11 text-[9px]', strip: 'h-[18px]', roll: 'text-[10px]', total: 'h-5 text-[10px]' };
+// The live variant spends 32px of the row on the running-total column, which
+// leaves 19px cells — 2px short of three digits at 10px. It gets 9px and
+// slightly tighter tracking rather than a clipped score.
+const LIVE: Sizing = { ...BASE, total: 'h-5 text-[9px] tracking-[-0.02em]' };
 const SHARE: Sizing = { name: 'w-14 text-[11px]', strip: 'h-6', roll: 'text-[13px]', total: 'h-7 text-[14px]' };
 
 export default function Scorecard({
@@ -45,7 +50,7 @@ export default function Scorecard({
 }) {
   if (variant === 'compact') return <CompactCard players={players} />;
 
-  const size = variant === 'share' ? SHARE : BASE;
+  const size = variant === 'share' ? SHARE : variant === 'live' ? LIVE : BASE;
   const current = variant === 'live' ? players.find((p) => p.current) : undefined;
 
   return (
@@ -59,8 +64,10 @@ export default function Scorecard({
         </div>
       )}
       {players.map((player, playerIndex) => (
+        // Keyed by seat, not name: a monitor photo can legitimately return two
+        // players called MATT, and React would collapse them into one row.
         <PlayerRow
-          key={player.name}
+          key={playerIndex}
           player={player}
           variant={variant}
           size={size}
@@ -182,10 +189,10 @@ function FrameCell({
 function CompactCard({ players }: { players: ScorecardPlayer[] }) {
   return (
     <div className="flex flex-col gap-2">
-      {players.map((player) => {
+      {players.map((player, playerIndex) => {
         const game = score(player.frames);
         return (
-          <div key={player.name} className="flex h-6 items-center gap-2">
+          <div key={playerIndex} className="flex h-6 items-center gap-2">
             <span className="w-[74px] shrink-0 truncate font-mono text-[10px] font-semibold uppercase tracking-[.08em] text-dim">
               {player.name}
             </span>

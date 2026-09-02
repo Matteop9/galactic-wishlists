@@ -298,7 +298,7 @@ export async function saveScannedGame(opts: {
   playedAt: string;
   venueName?: string | null;
   target?: GameTarget;
-}): Promise<string> {
+}): Promise<{ gameId: string; highlights: string[] }> {
   const venueId = await ensureVenueId(opts.venueName);
   const { data: session, error: sessionErr } = await supabase
     .from('sessions')
@@ -383,7 +383,9 @@ export async function saveScannedGame(opts: {
     });
     if (feedErr) throw feedErr;
 
-    return game.id;
+    // Handed back so the success screen can celebrate what it just wrote —
+    // these are already scoped to the signed-in player's row.
+    return { gameId: game.id, highlights };
   } catch (err) {
     await supabase.from('games').delete().eq('id', game.id);
     await supabase.from('sessions').delete().eq('id', session.id);

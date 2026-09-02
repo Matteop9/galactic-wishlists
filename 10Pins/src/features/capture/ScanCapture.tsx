@@ -13,6 +13,8 @@ import {
   type ScanResult,
 } from '../../lib/capture';
 import { enqueueScan, getQueuedScan, removeQueuedScan } from '../../lib/scanQueue';
+import { gameCelebration } from '../../lib/celebrate';
+import { celebrate } from '../../lib/celebrationStore';
 import { score } from '../../engine';
 import type { Profile } from '../../lib/auth';
 
@@ -80,6 +82,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   const [savedGameId, setSavedGameId] = useState<string | null>(null);
   const [savedVerified, setSavedVerified] = useState(false);
   const [savedTop, setSavedTop] = useState<{ name: string; score: number } | null>(null);
+  const [savedHighlights, setSavedHighlights] = useState<string[]>([]);
   const [queuedGroupId, setQueuedGroupId] = useState<string | null>(null);
   /** the upload behind the current attempt, so an abandoned scan doesn't leave a photo behind */
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
@@ -109,6 +112,17 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   useEffect(() => () => {
     if (preview) URL.revokeObjectURL(preview);
   }, [preview]);
+
+  // The stamp lands first (320ms), then the celebration — design §5.3d asks
+  // for the badge and then "a brief celebration if PB/milestone", in that order.
+  useEffect(() => {
+    if (phase !== 'done' || savedHighlights.length === 0) return;
+    const timer = window.setTimeout(
+      () => celebrate(gameCelebration(savedHighlights, savedGameId ?? undefined)),
+      360,
+    );
+    return () => window.clearTimeout(timer);
+  }, [phase, savedHighlights, savedGameId]);
 
   async function handleFile(file: File | undefined) {
     if (!file) return;
@@ -209,13 +223,14 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
             discardUpload();
             navigate('/');
           }}
-          onConfirmed={(gameId, rows, verification) => {
+          onConfirmed={(gameId, rows, verification, highlights) => {
             if (queuedId) removeQueuedScan(queuedId);
             setUploadedPath(null); // the game owns the photo now
 
             setSavedGameId(gameId);
             setSavedVerified(verification === 'verified');
             setSavedTop(topScore(rows));
+            setSavedHighlights(highlights);
             setPhase('done');
           }}
         />

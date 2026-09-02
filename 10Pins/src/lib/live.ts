@@ -238,7 +238,7 @@ export async function finishLiveGame(opts: {
   groupId: string | null;
   gameId: string;
   players: LivePlayer[];
-}): Promise<void> {
+}): Promise<{ highlights: string[]; byProfile: Record<string, string[]> }> {
   const scored = opts.players.map((player) => ({ player, game: score(player.frames) }));
   const bests = await previousBests(
     opts.players.map((p) => p.profileId).filter((id): id is string => !!id),
@@ -276,16 +276,20 @@ export async function finishLiveGame(opts: {
     .eq('id', opts.gameId);
   if (gameErr) throw gameErr;
 
+  // The feed event carries the union across everyone who bowled (unchanged),
+  // but keep the per-player split too: the celebration on the scorer's phone
+  // should be attributable, not "someone here got a PB".
   const highlights = new Set<string>();
+  const byProfile: Record<string, string[]> = {};
   for (const { player, game } of scored) {
     if (!player.profileId || !game.complete || game.total === null) continue;
-    for (const h of computeHighlights({
+    const mine = computeHighlights({
       score: game.total,
       previousBest: bests[player.profileId] ?? null,
       game,
-    })) {
-      highlights.add(h);
-    }
+    });
+    byProfile[player.profileId] = mine;
+    for (const h of mine) highlights.add(h);
   }
 
   const { error: feedErr } = await supabase.from('feed_events').insert({
@@ -296,6 +300,8 @@ export async function finishLiveGame(opts: {
     highlights: [...highlights],
   });
   if (feedErr) throw feedErr;
+
+  return { highlights: [...highlights], byProfile };
 }
 
 /** "Next game — same players": clone the line-up at game_number + 1. */

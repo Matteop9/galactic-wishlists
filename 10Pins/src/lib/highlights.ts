@@ -51,3 +51,24 @@ function hasTurkey(game: ScoredGame): boolean {
   }
   return false;
 }
+
+const HIGHLIGHT_LABELS: Record<string, string> = {
+  FIRST_GAME: 'First game',
+  PB: 'New PB',
+  TURKEY: 'Turkey',
+  '100_CLUB': '100 club',
+  '150_CLUB': '150 club',
+  '200_CLUB': '200 club',
+  '250_CLUB': '250 club',
+  '300_CLUB': 'PERFECT GAME',
+};
+
+/**
+ * Display label for a highlight code. Lives here rather than in `feed.ts`
+ * because `feed.ts` imports the Supabase client — anything pure that wants
+ * these labels (the celebration ladder, the share card) would drag a network
+ * client into a node test.
+ */
+export function highlightLabel(code: string): string {
+  return HIGHLIGHT_LABELS[code] ?? code;
+}

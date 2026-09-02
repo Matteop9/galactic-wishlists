@@ -5,6 +5,9 @@ import FrameEditor from '../../components/FrameEditor';
 import Scorecard, { type ScorecardPlayer } from '../../components/scorecard/Scorecard';
 import VerificationBadge from '../../components/VerificationBadge';
 import Wordmark from '../../components/Wordmark';
+import CelebrationHost from '../../components/Celebration';
+import { gameCelebration, rollCelebration } from '../../lib/celebrate';
+import { celebrate } from '../../lib/celebrationStore';
 import {
   FeedSkeleton,
   LaneSkeleton,
@@ -138,6 +141,47 @@ export default function Gallery() {
           </SkeletonCase>
         </div>
       </Section>
+
+      <Section
+        n="09"
+        title="Celebrations"
+        note="The ladder, live — fire one and watch it. ≤1200ms, always skippable, and tiers 1–2 are pointer-events-none at the TOP of the screen so they can never sit on the keypad. Tier 3 only ever fires at the end of a game, where the keypad is already gone."
+      >
+        <CelebrationDemo />
+      </Section>
+
+      {/* The gallery renders outside Shell, so it needs its own host. */}
+      <CelebrationHost />
+    </div>
+  );
+}
+
+/** Each button fires a real celebration through the real store. */
+function CelebrationDemo() {
+  const cases: { label: string; fire: () => void }[] = [
+    { label: 'Strike (tier 1)', fire: () => celebrate(rollCelebration(g(), g(['X']))) },
+    { label: 'Turkey (tier 2)', fire: () => celebrate(rollCelebration(g(['X'], ['X']), g(['X'], ['X'], ['X']), 'Dave')) },
+    { label: 'First game (tier 2)', fire: () => celebrate(gameCelebration(['FIRST_GAME'])) },
+    { label: 'New PB (tier 3)', fire: () => celebrate(gameCelebration(['PB'], 'demo-game')) },
+    { label: 'PB + 200 club + turkey (tier 3)', fire: () => celebrate(gameCelebration(['PB', '200_CLUB', 'TURKEY'], 'demo-game')) },
+    { label: 'Perfect game (tier 3)', fire: () => celebrate(gameCelebration(['300_CLUB', 'PB', 'TURKEY'], 'demo-game')) },
+  ];
+
+  return (
+    <div className="flex flex-col gap-2">
+      {cases.map((c) => (
+        <button
+          key={c.label}
+          type="button"
+          onClick={c.fire}
+          className="press rounded-xl border border-line bg-well px-4 py-2.5 text-left text-[13.5px] text-text"
+        >
+          {c.label}
+        </button>
+      ))}
+      <p className="text-[12px] text-faint">
+        A quieter celebration can't interrupt a louder one — tap Perfect game then Strike and nothing happens.
+      </p>
     </div>
   );
 }

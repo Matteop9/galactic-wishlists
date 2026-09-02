@@ -1011,6 +1011,7 @@ export type Database = {
       is_group_admin: { Args: { gid: string }; Returns: boolean }
       is_group_member: { Args: { gid: string }; Returns: boolean }
       is_session_viewer: { Args: { sid: string }; Returns: boolean }
+      join_demo: { Args: never; Returns: string }
       join_group: { Args: { code: string }; Returns: string }
       join_live_session: { Args: { code: string }; Returns: string }
       live_session_preview: { Args: { code: string }; Returns: Json }

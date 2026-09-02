@@ -6,6 +6,7 @@ import VerificationBadge from '../../components/VerificationBadge';
 import ReactionBar from '../../components/ReactionBar';
 import { deleteGame, fetchGame } from '../../lib/games';
 import { addComment, deleteComment, fetchComments, fetchGameFeedEvent } from '../../lib/feed';
+import { highlightLabel } from '../../lib/highlights';
 import { signedPhotoUrl } from '../../lib/capture';
 import { framesFromRows } from '../../lib/frames';
 import { ScorecardSkeleton } from '../../components/Skeleton';
@@ -232,11 +233,26 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
     },
   });
 
+  const highlights = Array.isArray(event.data?.highlights) ? (event.data.highlights as string[]) : [];
+
   // Old games without a feed event (or one the viewer can't see) just skip the section
   if (!feedEventId) return null;
 
   return (
     <div className="flex flex-col gap-3">
+      {highlights.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {highlights.map((code) => (
+            <span
+              key={code}
+              className="rounded-full border border-phosphor/40 bg-phosphor/10 px-2 py-0.5 font-display text-[11px] font-bold text-phosphor"
+            >
+              {highlightLabel(code)}
+            </span>
+          ))}
+        </div>
+      )}
+
       <ReactionBar
         feedEventId={feedEventId}
         profileId={profile.id}

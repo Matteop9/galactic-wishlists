@@ -72,24 +72,14 @@ export async function deleteComment(id: string) {
 export async function fetchGameFeedEvent(gameId: string) {
   const { data, error } = await supabase
     .from('feed_events')
-    .select('id, reactions ( profile_id, emoji )')
+    .select('id, highlights, reactions ( profile_id, emoji )')
     .eq('game_id', gameId)
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-const HIGHLIGHT_LABELS: Record<string, string> = {
-  FIRST_GAME: 'First game',
-  PB: 'New PB',
-  TURKEY: 'Turkey',
-  '100_CLUB': '100 club',
-  '150_CLUB': '150 club',
-  '200_CLUB': '200 club',
-  '250_CLUB': '250 club',
-  '300_CLUB': 'PERFECT GAME',
-};
-
-export function highlightLabel(code: string): string {
-  return HIGHLIGHT_LABELS[code] ?? code;
-}
+// Moved to ./highlights (pure) so celebrations and the share card can use the
+// labels without importing this module's Supabase client. Re-exported so the
+// existing `from '../../lib/feed'` imports keep working.
+export { highlightLabel } from './highlights';

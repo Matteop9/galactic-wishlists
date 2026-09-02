@@ -32,6 +32,8 @@ import {
 import { useLiveChannel } from './useLiveChannel';
 import { LaneSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
+import { gameCelebration, rollCelebration } from '../../lib/celebrate';
+import { celebrate, dismissCelebration } from '../../lib/celebrationStore';
 import type { Profile } from '../../lib/auth';
 
 const firstName = (name: string) => name.trim().split(/\s+/)[0].toUpperCase();
@@ -181,9 +183,15 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
         gameId: state!.gameId,
         players,
       }),
-    onSuccess: () => {
+    onSuccess: (result) => {
       clearSnapshot(sessionId!);
       queryClient.invalidateQueries();
+      // Your own highlights first. If you weren't bowling — someone else's
+      // phone, or you're just keeping score — celebrate the loudest thing that
+      // happened on the lane, because this is the only screen that saw it.
+      const mine = result.byProfile[profile.id];
+      const loudest = mine ?? result.highlights;
+      celebrate(gameCelebration(loudest, state?.gameId));
     },
     onError: () => {
       finishedRef.current = null;
@@ -236,6 +244,19 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
   /** Every state change goes through here: queue, persist, broadcast, drain. */
   function commit(next: LivePlayer[]) {
     if (!state) return;
+
+    // Celebrate whoever just bowled — the scorer's phone is keeping score for
+    // the whole lane, and the point is the table reacting, not the phone's
+    // owner. Fired before any network work, so it lands at keypad speed. A
+    // roll that isn't worth celebrating clears the last one: that is what
+    // makes the ladder feel skippable rather than sticky.
+    const bowler = active?.gamePlayerId;
+    const before = players.find((p) => p.gamePlayerId === bowler)?.frames ?? [];
+    const after = next.find((p) => p.gamePlayerId === bowler)?.frames ?? [];
+    const moment = rollCelebration(before, after, active?.displayName);
+    if (moment) celebrate(moment);
+    else dismissCelebration();
+
     const writes = diffPending(players, next);
     let queue = pendingRef.current;
     for (const write of writes) queue = queueFrame(queue, write);
@@ -255,6 +276,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
 
   function undo() {
     if (history.length < 2 || !state) return;
+    dismissCelebration(); // whatever it was celebrating just stopped being true
     const previous = history[history.length - 2];
     const writes = diffPending(players, previous);
     let queue = pendingRef.current;

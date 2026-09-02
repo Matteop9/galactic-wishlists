@@ -69,7 +69,12 @@ export default function ReviewScan({
   initialVenue: string | null;
   playedAt: string;
   onRetake: () => void;
-  onConfirmed: (gameId: string, rows: Row[], verification: 'verified' | 'unverified') => void;
+  onConfirmed: (
+    gameId: string,
+    rows: Row[],
+    verification: 'verified' | 'unverified',
+    highlights: string[],
+  ) => void;
   onDiscard: () => void;
 }) {
   const queryClient = useQueryClient();
@@ -164,7 +169,7 @@ export default function ReviewScan({
 
   const confirm = useMutation({
     mutationFn: async () => {
-      const gameId = await saveScannedGame({
+      const saved = await saveScannedGame({
         profileId: profile.id,
         photoPath,
         extraction: { ...result, reviewed_at: new Date().toISOString() },
@@ -184,11 +189,11 @@ export default function ReviewScan({
           }
         }
       }
-      return gameId;
+      return saved;
     },
-    onSuccess: (gameId) => {
+    onSuccess: (saved) => {
       queryClient.invalidateQueries();
-      onConfirmed(gameId, rows, verification);
+      onConfirmed(saved.gameId, rows, verification, saved.highlights);
     },
     onError: () => setError("That didn't save — your scan is still here, try again."),
   });

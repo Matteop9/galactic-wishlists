@@ -50,7 +50,7 @@ export default function MobileTabBar() {
           aria-hidden
         >
           <div
-            className="sheet-up absolute inset-x-0 bottom-0 mx-auto w-full max-w-[390px] rounded-t-3xl border border-b-0 border-line bg-panel p-4 pb-8 shadow-modal"
+            className="sheet-up absolute inset-x-0 bottom-0 mx-auto w-full max-w-[390px] rounded-t-3xl border border-b-0 border-line bg-panel p-4 pb-[calc(env(safe-area-inset-bottom)+2rem)] shadow-modal"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-label="Add a game"
@@ -97,7 +97,9 @@ export default function MobileTabBar() {
         </div>
       )}
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-panel/95 backdrop-blur">
+      {/* index.html sets viewport-fit=cover, so without the inset the bar sits
+          under the iPhone home indicator (COUNCIL_REVIEW_TODO item 24). */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-panel/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
         <div className="mx-auto flex h-[78px] w-full max-w-[390px] items-stretch px-2">
           <Tab to="/" label="Home" icon="home" />
           <Tab to="/groups" label="Groups" icon="groups" />

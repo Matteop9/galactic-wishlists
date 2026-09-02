@@ -22,6 +22,8 @@ import MatchDaySetup from './features/matchday/MatchDaySetup';
 import Notifications from './features/notifications/Notifications';
 import ManualEntry from './features/manual/ManualEntry';
 import ScanCapture from './features/capture/ScanCapture';
+import CelebrationHost from './components/Celebration';
+import ErrorBoundary from './components/ErrorBoundary';
 import { useScanQueueDrain } from './lib/useScanQueue';
 import QuickAdd from './features/quickadd/QuickAdd';
 import ProfilePage from './features/settings/ProfilePage';
@@ -30,11 +32,13 @@ import { useAuth, useProfile, type Profile } from './lib/auth';
 
 export default function App() {
   return (
-    <Routes>
-      {/* Dev component gallery — engine-fixture-driven, no auth needed (milestone 3) */}
-      <Route path="/gallery" element={<Gallery />} />
-      <Route path="*" element={<AuthGate />} />
-    </Routes>
+    <ErrorBoundary>
+      <Routes>
+        {/* Dev component gallery — engine-fixture-driven, no auth needed (milestone 3) */}
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="*" element={<AuthGate />} />
+      </Routes>
+    </ErrorBoundary>
   );
 }
 
@@ -82,6 +86,9 @@ function Shell({ profile }: { profile: Profile }) {
         </Routes>
       </div>
       <MobileTabBar />
+      {/* Outside the keyed fade wrapper on purpose: inside it, every route
+          change would remount the host and kill a celebration mid-flight. */}
+      <CelebrationHost />
     </div>
   );
 }

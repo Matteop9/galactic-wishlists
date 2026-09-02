@@ -2,16 +2,19 @@ import { useState } from 'react';
 import Wordmark from '../../components/Wordmark';
 import { supabase } from '../../lib/supabase';
 
-// Demo sign-in for the hosted preview: enabled only when the deployment sets
-// VITE_DEMO_LOGIN=1, with throwaway demo-account credentials from env.
-const DEMO_ENABLED = import.meta.env.VITE_DEMO_LOGIN === '1';
-const DEMO_EMAIL = import.meta.env.VITE_DEMO_EMAIL as string | undefined;
-const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD as string | undefined;
+// Demo sign-in is anonymous: every visitor gets their own throwaway user and
+// `join_demo` drops them into the demo group so there's something to look at.
+// It used to sign in to a shared account with VITE_DEMO_EMAIL/PASSWORD — but
+// VITE_ vars are inlined into the deployed bundle, so those credentials were
+// readable by anyone (COUNCIL_REVIEW_TODO item 2). No credential now exists
+// to leak. Requires "Anonymous sign-ins" enabled on the Supabase project; the
+// button hides itself if the call comes back rejected.
 
 /** Google is the only sign-in method (product decision, 2026-07-06). */
 export default function SignIn() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [demoAvailable, setDemoAvailable] = useState(true);
 
   async function signInWithGoogle() {
     setBusy(true);
@@ -29,17 +32,20 @@ export default function SignIn() {
   }
 
   async function signInAsDemo() {
-    if (!DEMO_EMAIL || !DEMO_PASSWORD) return;
     setBusy(true);
     setError('');
-    const { error: err } = await supabase.auth.signInWithPassword({
-      email: DEMO_EMAIL,
-      password: DEMO_PASSWORD,
-    });
+    const { error: err } = await supabase.auth.signInAnonymously();
     if (err) {
-      setError("The demo account isn't available right now.");
+      setDemoAvailable(false);
+      setError("The demo isn't available right now — sign in with Google instead.");
       setBusy(false);
+      return;
     }
+    // A profile and a seat in the demo group, so the app isn't empty. If this
+    // fails the app still works — you land on first-run like any new player.
+    const { error: joinErr } = await supabase.rpc('join_demo');
+    if (joinErr) setError("The demo group didn't load — everything else works.");
+    setBusy(false);
   }
 
   return (
@@ -61,7 +67,7 @@ export default function SignIn() {
         <p className="text-center text-[12px] text-faint">
           No password needed — your Google account signs you in.
         </p>
-        {DEMO_ENABLED && (
+        {demoAvailable && (
           <button
             type="button"
             onClick={signInAsDemo}
