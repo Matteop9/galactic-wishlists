@@ -40,7 +40,7 @@ export default function InviteLanding() {
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
         <p className="font-display text-[20px] font-bold">Invite not found</p>
         <p className="max-w-[260px] text-[13.5px] text-dim">
-          That invite link doesn't work — ask for a fresh one from the group.
+          That invite link doesn’t work — ask for a fresh one from the group.
         </p>
       </div>
     );
@@ -51,7 +51,7 @@ export default function InviteLanding() {
   return (
     <div className="flex flex-col gap-6 px-4 py-10">
       <div className="flex flex-col items-center gap-2 text-center">
-        <span className="label-caps">You're invited to</span>
+        <span className="label-caps">You’re invited to</span>
         <h1 className="font-display text-[24px] font-bold">{p.name}</h1>
         <p className="text-[13.5px] text-dim">
           {p.member_count} {p.member_count === 1 ? 'member' : 'members'}
@@ -85,7 +85,7 @@ export default function InviteLanding() {
       </button>
       {join.isError && (
         <p className="text-center text-[13px] text-signal" role="alert">
-          Couldn't join — try again.
+          Couldn’t join — try again.
         </p>
       )}
     </div>

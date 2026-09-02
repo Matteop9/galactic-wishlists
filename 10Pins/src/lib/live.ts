@@ -5,7 +5,7 @@ import type { LivePlayer, PendingFrame } from './liveState';
 import { supabase } from './supabase';
 
 /**
- * Live session data layer (spec §8). One writer — the scorer's device — owns
+ * Live session data layer (spec §8). One writer — the scorer’s device — owns
  * every write; spectators only ever read. Roll events go out over a Realtime
  * broadcast channel for latency; `frames` is the durable record everyone
  * refetches from on join or reconnect.
@@ -253,7 +253,7 @@ export async function finishLiveGame(opts: {
     if (error) throw error;
   }
 
-  // Rewrite every frame's cumulative in one go: bonus balls settle earlier
+  // Rewrite every frame’s cumulative in one go: bonus balls settle earlier
   // frames, and the roll-by-roll upserts only ever knew the total so far.
   const frameRows = scored.flatMap(({ player, game }) =>
     game.frames.map((frame, i) => ({
@@ -277,7 +277,7 @@ export async function finishLiveGame(opts: {
   if (gameErr) throw gameErr;
 
   // The feed event carries the union across everyone who bowled (unchanged),
-  // but keep the per-player split too: the celebration on the scorer's phone
+  // but keep the per-player split too: the celebration on the scorer’s phone
   // should be attributable, not "someone here got a PB".
   const highlights = new Set<string>();
   const byProfile: Record<string, string[]> = {};

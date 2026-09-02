@@ -34,6 +34,7 @@ import { LaneSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import { gameCelebration, rollCelebration } from '../../lib/celebrate';
 import { celebrate, dismissCelebration } from '../../lib/celebrationStore';
+import JoinQr from '../../components/JoinQr';
 import ShareSheet from '../../components/share/ShareSheet';
 import type { ShareCardData } from '../../components/share/ShareCard';
 import type { Profile } from '../../lib/auth';
@@ -190,8 +191,8 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
     onSuccess: (result) => {
       clearSnapshot(sessionId!);
       queryClient.invalidateQueries();
-      // Your own highlights first. If you weren't bowling — someone else's
-      // phone, or you're just keeping score — celebrate the loudest thing that
+      // Your own highlights first. If you weren’t bowling — someone else’s
+      // phone, or you’re just keeping score — celebrate the loudest thing that
       // happened on the lane, because this is the only screen that saw it.
       const mine = result.byProfile[profile.id];
       const loudest = mine ?? result.highlights;
@@ -199,7 +200,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
     },
     onError: () => {
       finishedRef.current = null;
-      setError("Couldn't save the game — tap Save game to try again.");
+      setError("Couldn’t save the game — tap Save game to try again.");
     },
   });
 
@@ -227,7 +228,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       broadcast(GAME_EVENT, { gameId: newGameId, gameNumber: (state?.gameNumber ?? 1) + 1 });
       await queryClient.invalidateQueries();
     },
-    onError: () => setError("Couldn't start the next game — try again."),
+    onError: () => setError("Couldn’t start the next game — try again."),
   });
 
   const endSession = useMutation({
@@ -242,17 +243,17 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       await queryClient.invalidateQueries();
       navigate('/', { replace: true });
     },
-    onError: () => setError("Couldn't end the session — try again."),
+    onError: () => setError("Couldn’t end the session — try again."),
   });
 
   /** Every state change goes through here: queue, persist, broadcast, drain. */
   function commit(next: LivePlayer[]) {
     if (!state) return;
 
-    // Celebrate whoever just bowled — the scorer's phone is keeping score for
-    // the whole lane, and the point is the table reacting, not the phone's
+    // Celebrate whoever just bowled — the scorer’s phone is keeping score for
+    // the whole lane, and the point is the table reacting, not the phone’s
     // owner. Fired before any network work, so it lands at keypad speed. A
-    // roll that isn't worth celebrating clears the last one: that is what
+    // roll that isn’t worth celebrating clears the last one: that is what
     // makes the ladder feel skippable rather than sticky.
     const bowler = active?.gamePlayerId;
     const before = players.find((p) => p.gamePlayerId === bowler)?.frames ?? [];
@@ -406,6 +407,9 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       {showShare && (
         <div className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
           <p className="text-[13px] text-dim">Send this to anyone who wants to watch along.</p>
+          {state.joinCode && (
+            <JoinQr url={`${window.location.origin}/live/join/${state.joinCode}`} label="Scan to watch" />
+          )}
           <p className="score-text text-center text-[26px] font-bold tracking-[.18em] text-phosphor">
             {state.joinCode ?? '——'}
           </p>

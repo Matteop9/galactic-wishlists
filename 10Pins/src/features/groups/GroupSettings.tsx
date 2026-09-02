@@ -139,7 +139,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
         <section className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
           <span className="label-caps">Handicaps</span>
           <p className="text-[12px] text-dim">
-            Default handicap on a match day = {pct}% of ({basis} − player's average), never below 0.
+            Default handicap on a match day = {pct}% of ({basis} − player’s average), never below 0.
             Organisers can override per player on the day.
           </p>
           <div className="flex gap-3">
@@ -177,7 +177,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
         </button>
         {save.isError && (
           <p className="text-center text-[13px] text-signal" role="alert">
-            Couldn't save — try again.
+            Couldn’t save — try again.
           </p>
         )}
       </form>

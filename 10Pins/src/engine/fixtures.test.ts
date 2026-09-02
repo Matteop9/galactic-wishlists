@@ -15,7 +15,7 @@ describe('design-bundle four-player game (verified correct per spec §3)', () =>
 });
 
 describe('live-session fixture is illegal and must not reconcile (spec §3)', () => {
-  it("normalises MATT's frame 4 `7,3` to a spare `7,/`", () => {
+  it("normalises MATT’s frame 4 `7,3` to a spare `7,/`", () => {
     const game = score(LIVE_MATT_ILLEGAL.frames);
     expect(game.frames[3].rolls).toEqual([7, '/']);
     expect(game.frames[3].isSpare).toBe(true);

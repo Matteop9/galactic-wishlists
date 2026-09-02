@@ -5,7 +5,7 @@ import Wordmark from './Wordmark';
  * The last line of defence (COUNCIL_REVIEW_TODO item 12). Without this, one
  * render throw anywhere gives a white screen with no way back — and this
  * release adds canvas rendering and celebration overlays, which are exactly
- * the kind of code that throws on a device you haven't tested.
+ * the kind of code that throws on a device you haven’t tested.
  *
  * Deliberately not clever: no error reporting service, no retry-in-place. It
  * tells you what happened and gives you the one action that reliably works.
@@ -36,7 +36,7 @@ export default class ErrorBoundary extends Component<
         <div className="flex flex-col items-center gap-2 text-center">
           <p className="font-display text-[20px] font-bold">That screen broke</p>
           <p className="text-[13.5px] leading-relaxed text-dim">
-            Nothing you did — and nothing you've scored is lost. Reloading usually sorts it.
+            Nothing you did — and nothing you’ve scored is lost. Reloading usually sorts it.
           </p>
         </div>
         <button

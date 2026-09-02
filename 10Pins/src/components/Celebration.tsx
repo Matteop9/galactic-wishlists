@@ -26,7 +26,7 @@ export default function CelebrationHost() {
   const navigate = useNavigate();
   const reduced = useReducedMotion();
 
-  // Auto-dismiss. Keyed on the celebration's id so a replacement restarts the clock.
+  // Auto-dismiss. Keyed on the celebration’s id so a replacement restarts the clock.
   useEffect(() => {
     if (!current) return;
     const timer = window.setTimeout(dismiss, remainingMs({ current, shownAt }, Date.now()));

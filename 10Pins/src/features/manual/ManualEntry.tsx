@@ -51,7 +51,7 @@ export default function ManualEntry({ profile }: { profile: Profile }) {
       queryClient.invalidateQueries();
       navigate(`/games/${gameId}`, { replace: true });
     },
-    onError: () => setError("That didn't save — your frames are still here, try again."),
+    onError: () => setError("That didn’t save — your frames are still here, try again."),
   });
 
   return (

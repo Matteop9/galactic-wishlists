@@ -124,7 +124,7 @@ export default function ReviewScan({
     return all.filter((c, i) => all.findIndex((x) => x.profileId === c.profileId) === i);
   }, [profile.id, profile.display_name, group.data, friends.data]);
 
-  // Re-suggest identities whenever the candidate pool or the group's
+  // Re-suggest identities whenever the candidate pool or the group’s
   // remembered corrections change — but never overwrite a manual choice.
   useEffect(() => {
     setRows((current) => {
@@ -195,7 +195,7 @@ export default function ReviewScan({
       queryClient.invalidateQueries();
       onConfirmed(saved.gameId, rows, verification, saved.highlights);
     },
-    onError: () => setError("That didn't save — your scan is still here, try again."),
+    onError: () => setError("That didn’t save — your scan is still here, try again."),
   });
 
   const editingRow = editing ? rows[editing.player] : null;

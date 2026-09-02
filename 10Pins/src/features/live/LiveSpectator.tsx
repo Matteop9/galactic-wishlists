@@ -14,7 +14,7 @@ const firstName = (name: string) => name.trim().split(/\s+/)[0].toUpperCase();
 /**
  * Live session · spectator (README §Live session). Read-only and deliberately
  * large: this screen gets held up around the lane. Broadcast keeps it at the
- * scorer's pace; every reconnect refetches `frames` so it can never drift.
+ * scorer’s pace; every reconnect refetches `frames` so it can never drift.
  */
 export default function LiveSpectator({ profile }: { profile: Profile }) {
   const { id: sessionId } = useParams<{ id: string }>();

@@ -39,7 +39,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-/** The signed-in user's profile row, or null while it doesn't exist yet (first run). */
+/** The signed-in user’s profile row, or null while it doesn’t exist yet (first run). */
 export function useProfile() {
   const { session } = useAuth();
   return useQuery({

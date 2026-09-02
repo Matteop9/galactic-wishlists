@@ -7,6 +7,8 @@ import VerificationBadge from '../../components/VerificationBadge';
 import Wordmark from '../../components/Wordmark';
 import CelebrationHost from '../../components/Celebration';
 import ShareCard, { type ShareCardData } from '../../components/share/ShareCard';
+import EmptyState from '../../components/EmptyState';
+import JoinQr from '../../components/JoinQr';
 import { renderShareCard } from '../../lib/shareCard';
 import { gameCelebration, rollCelebration } from '../../lib/celebrate';
 import { celebrate } from '../../lib/celebrationStore';
@@ -24,7 +26,7 @@ import {
 const g = (...frames: Roll[][]): FrameInput[] => frames.map((rolls) => ({ rolls }));
 
 /**
- * Mid-game state adapted from the hi-fi live-session mock. The mock's
+ * Mid-game state adapted from the hi-fi live-session mock. The mock’s
  * MATT frame 4 (`7,3` open) is illegal, so it becomes a legal 7,2 here —
  * the engine recomputes all cumulatives from rolls anyway.
  */
@@ -155,9 +157,39 @@ export default function Gallery() {
       <Section
         n="10"
         title="Share card · 1080×1350"
-        note="The real component at its true size (540×675, shown scaled) beside the actual PNG the rasteriser produces. Any drift between the two — a font that didn't embed, a colour that didn't survive — shows up here rather than in someone's group chat."
+        note="The real component at its true size (540×675, shown scaled) beside the actual PNG the rasteriser produces. Any drift between the two — a font that didn’t embed, a colour that didn’t survive — shows up here rather than in someone’s group chat."
       >
         <ShareCardDemo />
+      </Section>
+
+      <Section
+        n="11"
+        title="Empty states + join QR"
+        note="Three tones, so a quiet corner stays quiet: a whole screen with nothing on it, a section inside a busy screen, and a one-line aside. Every state that has an obvious next move offers the control rather than describing it."
+      >
+        <div className="flex flex-col gap-6">
+          <SkeletonCase label="Page — the solo empty (first screen a new player sees)">
+            <EmptyState
+              title="Nothing here yet"
+              body="Scan the scoreboard from your last game and it lands here — or start with the totals, which takes ten seconds."
+              action={{ label: 'Scan your first game', to: '/add/scan' }}
+              secondary={{ label: 'Quick add the totals', to: '/add/quick' }}
+            />
+          </SkeletonCase>
+          <SkeletonCase label="Inline — a section inside a screen that has content">
+            <EmptyState
+              tone="inline"
+              body="No frame-scored games yet — strike and spare rates need the frames, not just the total."
+              action={{ label: 'Scan a scoreboard', to: '/add/scan' }}
+            />
+          </SkeletonCase>
+          <SkeletonCase label="Quiet — an aside, not an announcement">
+            <EmptyState tone="quiet" body="No comments yet — say something nice (or not)." />
+          </SkeletonCase>
+          <SkeletonCase label="Join QR — dark-on-light on purpose, so it actually scans">
+            <JoinQr url="https://10pins.vercel.app/join/abc123" label="Scan to join" />
+          </SkeletonCase>
+        </div>
       </Section>
 
       {/* The gallery renders outside Shell, so it needs its own host. */}
@@ -172,7 +204,7 @@ function ShareCardDemo() {
   const [png, setPng] = useState<string | null>(null);
   const [state, setState] = useState<'idle' | 'rendering' | 'failed'>('idle');
 
-  // Dave's 213 — the hi-fi's own example, so the render can be compared to it.
+  // Dave’s 213 — the hi-fi’s own example, so the render can be compared to it.
   const data: ShareCardData = {
     frames: HIFI_GAME[1].frames,
     players: [
@@ -261,7 +293,7 @@ function CelebrationDemo() {
         </button>
       ))}
       <p className="text-[12px] text-faint">
-        A quieter celebration can't interrupt a louder one — tap Perfect game then Strike and nothing happens.
+        A quieter celebration can’t interrupt a louder one — tap Perfect game then Strike and nothing happens.
       </p>
     </div>
   );

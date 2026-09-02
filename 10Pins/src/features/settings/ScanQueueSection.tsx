@@ -8,7 +8,7 @@ import type { Profile } from '../../lib/auth';
 const STATUS_LABEL: Record<QueuedScan['status'], string> = {
   queued: 'Waiting for signal',
   ready: 'Ready to review',
-  failed: "Couldn't read it",
+  failed: "Couldn’t read it",
 };
 
 /**

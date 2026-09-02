@@ -7,7 +7,7 @@ import { celebrationStep, type Celebration, type CelebrationState } from './cele
  * scope — so they need a plain function they can call, and because the host
  * has to render above the tab bar from a single mount point.
  *
- * Every decision (does this replace what's showing? how long for?) belongs to
+ * Every decision (does this replace what’s showing? how long for?) belongs to
  * `celebrate.ts`; this file only holds the result.
  */
 

@@ -62,7 +62,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
   if (game.isError || !game.data) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-10">
-        <p className="text-[13.5px] text-dim">That game isn't available.</p>
+        <p className="text-[13.5px] text-dim">That game isn’t available.</p>
         <Link to="/" className="text-[13.5px] text-phosphor underline underline-offset-2">
           Back to home
         </Link>
@@ -83,7 +83,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
   const playedAt = new Date(data.played_at);
   const venueName = data.sessions?.venues?.name;
 
-  // The card needs a grid, so it's offered on frame-scored games only — a
+  // The card needs a grid, so it’s offered on frame-scored games only — a
   // totals-only quick add has nothing to draw.
   const cardWinner = [...players]
     .filter((p) => p.frames.length > 0 && p.final_score !== null)
@@ -110,7 +110,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
   return (
     <div className="flex flex-col gap-5 px-4 py-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-[20px] font-bold">Game detail</h1>
+        <h1 className="font-display text-[20px] font-bold">The game</h1>
         <VerificationBadge status={data.verification_status as 'verified' | 'live' | 'unverified'} />
       </div>
 
@@ -206,7 +206,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
           )}
           {remove.isError && (
             <p className="text-[12px] text-signal" role="alert">
-              That didn't delete — check your signal and try again.
+              That didn’t delete — check your signal and try again.
             </p>
           )}
         </div>
@@ -217,8 +217,8 @@ export default function GameDetail({ profile }: { profile: Profile }) {
 
 /**
  * The monitor photo behind a scanned game. Only the person who took it can
- * read it back — the storage policy is scoped to the owner's own folder — so
- * it renders for them and quietly doesn't exist for everyone else.
+ * read it back — the storage policy is scoped to the owner’s own folder — so
+ * it renders for them and quietly doesn’t exist for everyone else.
  */
 function ScanPhoto({ path }: { path: string }) {
   const photo = useQuery({
@@ -244,7 +244,7 @@ function ScanPhoto({ path }: { path: string }) {
   );
 }
 
-/** Reactions + the comment thread, hosted on the game's feed event. */
+/** Reactions + the comment thread, hosted on the game’s feed event. */
 function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }) {
   const queryClient = useQueryClient();
   const [body, setBody] = useState('');
@@ -280,7 +280,7 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
 
   const highlights = Array.isArray(event.data?.highlights) ? (event.data.highlights as string[]) : [];
 
-  // Old games without a feed event (or one the viewer can't see) just skip the section
+  // Old games without a feed event (or one the viewer can’t see) just skip the section
   if (!feedEventId) return null;
 
   return (
@@ -317,7 +317,7 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
                   onClick={() => removeComment.mutate(c.id)}
                   className="ml-2 text-signal underline underline-offset-2"
                 >
-                  delete
+                  Delete
                 </button>
               )}
             </span>
@@ -330,7 +330,7 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
       )}
       {removeComment.isError && (
         <p className="text-[12px] text-signal" role="alert">
-          Couldn't delete that comment — try again.
+          Couldn’t delete that comment — try again.
         </p>
       )}
 
@@ -354,12 +354,12 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
           disabled={!body.trim() || post.isPending}
           className="rounded-[10px] bg-phosphor px-4 font-display text-[13px] font-bold text-ink disabled:opacity-50"
         >
-          Post
+          Post comment
         </button>
       </form>
       {post.isError && (
         <p className="text-[12px] text-signal" role="alert">
-          Couldn't post that — try again.
+          Couldn’t post that — try again.
         </p>
       )}
     </div>

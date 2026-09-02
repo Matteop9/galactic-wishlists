@@ -72,7 +72,7 @@ describe('editRoll', () => {
 
   it('rejects an edit that is illegal in context', () => {
     expect(() => editRoll(g([7, 2]), 0, 1, 9)).toThrow(EngineError); // 7 + 9 > 10
-    expect(() => editRoll(g([7, 2]), 0, 0, '/')).toThrow(EngineError); // spare can't lead a frame
+    expect(() => editRoll(g([7, 2]), 0, 0, '/')).toThrow(EngineError); // spare can’t lead a frame
   });
 
   it('rejects edits to frames or rolls that do not exist', () => {

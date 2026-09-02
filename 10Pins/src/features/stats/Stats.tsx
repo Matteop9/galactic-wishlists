@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { StatsSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
+import EmptyState from '../../components/EmptyState';
 import { fetchRecentScores, fetchStats, fetchVenueStats } from '../../lib/games';
 import type { Profile } from '../../lib/auth';
 
@@ -32,11 +33,13 @@ export default function Stats({ profile }: { profile: Profile }) {
   const s = stats.data;
   if (!s || !s.games) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
+      <div className="px-4 py-6">
         <h1 className="font-display text-[20px] font-bold">Stats</h1>
-        <p className="max-w-[260px] text-[13.5px] text-dim">
-          No games yet — add your first game and your averages start here.
-        </p>
+        <EmptyState
+          title="No games yet"
+          body="Add your first game and your averages start here."
+          action={{ label: 'Add a game', to: '/add/quick' }}
+        />
       </div>
     );
   }
@@ -80,14 +83,17 @@ export default function Stats({ profile }: { profile: Profile }) {
             </div>
             <p className="mt-3 text-[11px] text-faint">
               Based on {framedGames} frame-scored {framedGames === 1 ? 'game' : 'games'} — quick adds
-              don't count here.
+              don’t count here.
             </p>
           </>
         ) : (
-          <p className="mt-3 text-[12px] text-faint">
-            No frame-scored games yet — scan a scoreboard or enter frames to unlock strike and spare
-            rates.
-          </p>
+          <div className="mt-3">
+            <EmptyState
+              tone="inline"
+              body="No frame-scored games yet — strike and spare rates need the frames, not just the total."
+              action={{ label: 'Scan a scoreboard', to: '/add/scan' }}
+            />
+          </div>
         )}
       </div>
 
@@ -145,7 +151,7 @@ function formArrow(scores: number[]): { symbol: string; tone: 'up' | 'down' | nu
   return { symbol: '—', tone: null };
 }
 
-/** SVG polyline of recent scores — phosphor, per the design's form graph. */
+/** SVG polyline of recent scores — phosphor, per the design’s form graph. */
 function FormGraph({ scores }: { scores: number[] }) {
   const width = 320;
   const height = 96;

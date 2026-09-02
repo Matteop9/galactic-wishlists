@@ -16,7 +16,7 @@ import { shareCopy, type ShareCopyInput } from '../../lib/shareCopy';
  * that is *frozen*, which is precisely why it survives being rasterised.
  */
 export interface ShareCardData extends ShareCopyInput {
-  /** the winner's frames, for the grid */
+  /** the winner’s frames, for the grid */
   frames: FrameInput[];
 }
 

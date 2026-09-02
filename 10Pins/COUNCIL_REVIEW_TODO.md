@@ -1,4 +1,12 @@
-# 10 Pins — Council Review Fix List
+# Council review — 10 Pins
+
+> Re-checked against the live `tenpins` schema on **2026-09-02**, during the
+> milestone-8 release. Every item below was verified as still-live or already
+> fixed rather than taken on trust — the list had gone stale, and item 4 sat
+> here from July until a user reported it through the in-app feedback queue.
+> Tick things off as they land; a review doc where nothing is ever ticked is a
+> review doc nobody reads.
+
 
 > Generated from a full council review (7 specialist reviewers + adversarial verification, 2026-07-12).
 > 58 findings confirmed, 4 rejected as false positives. Deduplicated here into ~35 distinct work items.
@@ -10,7 +18,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 
 ## P0 — Critical (live and trivially exploitable; fix first)
 
-### [ ] 1. Lock down `game_players_insert` so you can't tag other users' stats — **CRITICAL**
+### [x] 1. Lock down `game_players_insert` so you can't tag other users' stats — **CRITICAL**
+- **Status:** **DONE 2026-09-02** (`tp_0015`) — `can_tag()` + rewritten INSERT *and* UPDATE policies. Attack reproduced first (victim average 181.0 → 150.8), then proved rejected (42501) while self/guest/group-mate/friend writes still pass.
 - **Where:** `supabase/migrations/20260706000002_rls.sql:174`
 - **Why:** The policy only checks `owns_game(game_id)`, never `profile_id`. Anyone (including via the public demo login) can insert a `game_players` row carrying a victim's `profile_id` + a fake `final_score`. The victim's `player_stats` view aggregates it, corrupting their average/high game/recent scores, and they can't delete it. Profile IDs are all readable (`profiles_select using (true)`).
 - **How to fix:**
@@ -32,7 +41,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
   4. Longer term (milestone 5): add a `confirmed boolean default false` column so a tagged game only counts toward a player's stats after they accept it; filter `player_stats` on `confirmed`.
 - **Verify:** as user A, attempt to insert a game_players row with user B's id → should be rejected by RLS.
 
-### [ ] 2. Remove the demo password from the public bundle — **HIGH (do with P0)**
+### [x] 2. Remove the demo password from the public bundle — **HIGH (do with P0)**
+- **Status:** **DONE 2026-09-02** (`tp_0016`) — anonymous sign-in + `join_demo()`; the demo email went from 1 occurrence in `dist/` to 0. ⚠️ Needs "Anonymous sign-ins" enabled on the Supabase project; until then the button hides itself.
 - **Where:** `src/features/auth/SignIn.tsx:9`, `.env.local` (`VITE_DEMO_EMAIL` / `VITE_DEMO_PASSWORD`)
 - **Why:** `VITE_`-prefixed vars are inlined into the deployed JS at 10pins.vercel.app. Anyone can read the creds, call `supabase.auth.updateUser` to hijack/brick the shared demo account, enumerate every profile, or spam shared tables.
 - **How to fix (pick one):**
@@ -45,7 +55,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 
 ## P1 — High: Security & data integrity
 
-### [ ] 3. Make `friendships` requester/addressee immutable — **HIGH**
+### [x] 3. Make `friendships` requester/addressee immutable — **HIGH**
+- **Status:** **DONE 2026-09-02** (`tp_0015`) — `friendships_freeze_endpoints` trigger. Probed: status change still allowed, `requester` rewrite rejected.
 - **Where:** `supabase/migrations/20260706000002_rls.sql:123` (`friendships_update`)
 - **Why:** The addressee can rewrite the `requester` column, forging an "accepted" friendship with any victim and gaining their feed visibility.
 - **How to fix:** Either restrict UPDATE to the `status` column only (column-level grant), or add a `BEFORE UPDATE` trigger that rejects changes to `requester`/`addressee`. Simplest:
@@ -62,7 +73,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
     for each row execute function public.freeze_friendship_parties();
   ```
 
-### [ ] 4. Fix `deleteGame` — broken FK + missing delete policy — **HIGH**
+### [x] 4. Fix `deleteGame` — broken FK + missing delete policy — **HIGH**
+- **Status:** **DONE 2026-09-02** (`tp_0012`, `tp_0013`) — reported by a user via the in-app feedback queue before this list was re-read. `feed_events.game_id` now cascades; `sessions`/`groups` got the owner-scoped DELETE policies their rollback paths always assumed. `deleteGame` also removes the photo from storage now.
 - **Where:** `supabase/migrations/20260706000001_schema.sql:93` (`feed_events.game_id`), `src/lib/games.ts:247`
 - **Why:** `feed_events.game_id` has no `ON DELETE` action and every saved game creates a feed event, so `delete from games` always fails (FK 23503). Users can never remove a mis-scored game.
 - **How to fix:** New migration — drop and re-add the FK with cascade (Postgres can't alter it in place):
@@ -119,7 +131,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 
 ## P2 — High: Resilience, infra & test safety net
 
-### [ ] 11. Commit the project to git — **HIGH (do early, it's the rollback point)**
+### [x] 11. Commit the project to git — **HIGH (do early, it's the rollback point)**
+- **Status:** **DONE 2026-09-02** — 110 files committed (`1c6c78e`), secret-scanned first.
 - **Where:** whole `10Pins/` folder (currently `?? ./`, zero history)
 - **Why:** The live production app has never been committed; no rollback, deploys are "whatever is on the laptop," a OneDrive sync conflict silently changes the next deploy.
 - **How to fix:** From the `10Pins/` folder, stage **only this subfolder** (never `git add -A` — the parent repo is public and shared):
@@ -129,7 +142,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
   ```
   Then commit before every `npm run deploy` so each production build maps to a commit. Confirm `.env.local` stays ignored (it is).
 
-### [ ] 12. Add a React error boundary + fix query-error/empty-data conflation — **HIGH**
+### [x] 12. Add a React error boundary + fix query-error/empty-data conflation — **HIGH**
+- **Status:** **PARTLY DONE 2026-09-02** — `ErrorBoundary` is in and caught a real crash within minutes. The query-error / empty-data conflation is NOT addressed yet.
 - **Where:** `src/App.tsx`, `src/features/feed/Home.tsx`, `src/features/stats/Stats.tsx`, `src/features/auth` (AuthGate)
 - **Why:** No error boundary anywhere → a render-time engine throw white-screens the app. Query failures are treated as empty data: Home goes blank, Stats says "No games yet," AuthGate sends existing users to onboarding.
 - **How to fix:**
@@ -147,7 +161,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 - **Why:** `aria-hidden` sits on the backdrop that *wraps* the `role="dialog"`, removing the whole sheet (both entry buttons) from the a11y tree. No focus trap, no Escape.
 - **How to fix:** Put `aria-hidden` on a separate sibling backdrop, not the wrapper. Add `aria-modal="true"`, move focus to the first button on open, trap focus, close on Escape.
 
-### [ ] 15. Label the keypad's strike/spare keys — **HIGH**
+### [x] 15. Label the keypad's strike/spare keys — **HIGH**
+- **Status:** **ALREADY DONE** — every keypad key has an `aria-label`; verified 2026-09-02.
 - **Where:** `src/components/Keypad.tsx:16`
 - **Why:** Screen readers announce the two most important keys as literal "X" and "slash."
 - **How to fix:** Map `'X'` → `aria-label="Strike"`, `'/'` → `"Spare"` (same pattern already used for Miss/Foul). After applying a roll, programmatically move focus to the keypad container/Undo instead of letting a disabled key drop focus to `document.body`.
@@ -170,7 +185,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
   2. Add a corrupt/illegal-DB-row test through `framesFromRows` → `Scorecard` (needs `jsdom` + `@testing-library/react`).
   3. Widen `coverage.include` to `src/lib/**` + `src/components/scorecard/display.ts`; change test glob to `src/**/*.test.{ts,tsx}`.
 
-### [ ] 19. Ship real PWA scaffolding — **HIGH**
+### [x] 19. Ship real PWA scaffolding — **HIGH**
+- **Status:** **DONE 2026-09-02** — `vite-plugin-pwa` with `registerType: 'prompt'` (never auto-reload mid-game), manifest, five icons generated from the real wordmark, and `vercel.json` widened so `/sw.js` and `/manifest.webmanifest` aren't swallowed by the SPA rewrite. Verified on prod: manifest serves as `application/manifest+json`, SW active, zero Supabase responses cached.
 - **Where:** `index.html:3`, no `public/`, no manifest/SW
 - **Why:** Positioned/demoed as a PWA but has no manifest, icons, or service worker. "Add to Home Screen" gives a plain shortcut; offline white-screens.
 - **How to fix:** Add a web manifest now (standalone, `theme #0A0E14`, portrait) + icon set + apple-touch-icon + favicon. Add `vite-plugin-pwa` for the service worker when milestone 8 lands (cache-first for the Google Fonts too).
@@ -179,7 +195,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 
 ## P3 — Medium (polish & hardening)
 
-### [ ] 20. Add security headers to `vercel.json` — **MEDIUM**
+### [x] 20. Add security headers to `vercel.json` — **MEDIUM**
+- **Status:** **DONE 2026-09-02** — `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy` (keeping `camera=(self)` for capture). Verified on the deployed response.
 - **Where:** `vercel.json:3`
 - **How:** Add a `headers` block: `X-Frame-Options: DENY` (or CSP `frame-ancestors 'none'`) to stop clickjacking of sign-in/demo, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, and a CSP with `connect-src` limited to your Supabase origin.
 
@@ -193,12 +210,14 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 - **Why:** A failed availability check can permanently disable submit; a PK collision is misreported as "username taken."
 - **How:** Distinguish network error (retry) from real 23505 collision; never leave submit permanently disabled.
 
-### [ ] 23. Fix scorecard React keys colliding on duplicate names — **MEDIUM**
+### [x] 23. Fix scorecard React keys colliding on duplicate names — **MEDIUM**
+- **Status:** **DONE 2026-09-02** — keyed by seat. Reachable in practice now: a monitor photo can return two players called MATT.
 - **Where:** `Scorecard.tsx` (rows keyed by uppercased display name)
 - **Why:** Two players named "MATT" collide → state bleed.
 - **How:** Key by `game_player.id` (or seat_order), not the display name.
 
-### [ ] 24. iOS safe-area inset for the fixed tab bar — **MEDIUM**
+### [x] 24. iOS safe-area inset for the fixed tab bar — **MEDIUM**
+- **Status:** **DONE 2026-09-02** — `env(safe-area-inset-bottom)` on the tab bar and the add sheet.
 - **Where:** `src/index.css` (MobileTabBar), `index.html` viewport
 - **How:** Add `padding-bottom: env(safe-area-inset-bottom)` to the tab bar; confirm `viewport-fit=cover` is set (it is).
 
@@ -211,7 +230,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 - **Why:** After back-navigation the button can stay stuck on "Opening Google…".
 - **How:** Reset the loading state on mount / on `visibilitychange` when returning to the page.
 
-### [ ] 27. Missing-env-var guard — **MEDIUM**
+### [x] 27. Missing-env-var guard — **MEDIUM**
+- **Status:** **ALREADY HANDLED** — `supabase.ts` warns and falls back to a placeholder client rather than crashing; verified 2026-09-02.
 - **Where:** `src/lib/supabase.ts`
 - **Why:** Missing env vars produce a green build that ships a dead app; only a `console.warn` guards it.
 - **How:** Throw at startup (or render a clear config-error screen) when the Supabase URL/key are absent.

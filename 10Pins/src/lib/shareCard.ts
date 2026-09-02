@@ -37,7 +37,7 @@ let fontEmbedCache: Promise<string> | null = null;
 
 /**
  * html-to-image waits on `requestAnimationFrame` and `img.decode()`, and
- * neither fires while a page isn't painting — so if you tap Share and switch
+ * neither fires while a page isn’t painting — so if you tap Share and switch
  * apps, the render hangs forever with no error. Fail loudly instead: the sheet
  * can then offer a retry, which works the moment you come back.
  */
@@ -55,9 +55,9 @@ function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
 /**
  * Render a card node to a 1080×1350 PNG.
  *
- * Rendered twice on purpose: WebKit's first `foreignObject` rasterisation of a
+ * Rendered twice on purpose: WebKit’s first `foreignObject` rasterisation of a
  * node comes back blank or half-painted, a long-standing Safari bug. The
- * second pass is the one that's correct, and at ~1.5M pixels it costs little.
+ * second pass is the one that’s correct, and at ~1.5M pixels it costs little.
  */
 export async function renderShareCard(node: HTMLElement): Promise<Blob> {
   const { toBlob, getFontEmbedCSS } = await import('html-to-image');
@@ -77,7 +77,7 @@ export async function renderShareCard(node: HTMLElement): Promise<Blob> {
 
   await withTimeout(toBlob(node, options), RENDER_TIMEOUT_MS); // discarded: see the Safari note
   const blob = await withTimeout(toBlob(node, options), RENDER_TIMEOUT_MS);
-  if (!blob) throw new Error("Couldn't render the card");
+  if (!blob) throw new Error("Couldn’t render the card");
   return blob;
 }
 
@@ -96,7 +96,7 @@ export type ShareOutcome = 'shared' | 'downloaded' | 'cancelled';
 export async function shareImage(blob: Blob, filename: string, text: string): Promise<ShareOutcome> {
   const file = new File([blob], filename, { type: 'image/png' });
 
-  // Feature-test canShare, not share: `share` existing doesn't imply files.
+  // Feature-test canShare, not share: `share` existing doesn’t imply files.
   if (navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({ files: [file], text });

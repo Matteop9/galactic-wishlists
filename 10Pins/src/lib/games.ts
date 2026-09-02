@@ -35,7 +35,7 @@ async function previousBest(profileId: string): Promise<number | null> {
 }
 
 export interface GameTarget {
-  /** Attach the game's session to a group so it counts on that group's leaderboard/feed. */
+  /** Attach the game’s session to a group so it counts on that group’s leaderboard/feed. */
   groupId?: string | null;
   /** Write into an existing session (match-day leg) instead of creating one. */
   sessionId?: string;
@@ -87,7 +87,7 @@ async function createSessionAndGame(opts: {
   return { gameId: game.id, sessionId, createdSession };
 }
 
-/** Best-effort rollback so a failed save doesn't leave an orphan game behind. */
+/** Best-effort rollback so a failed save doesn’t leave an orphan game behind. */
 async function rollback(gameId: string, sessionId: string, createdSession: boolean) {
   await supabase.from('games').delete().eq('id', gameId);
   if (createdSession) await supabase.from('sessions').delete().eq('id', sessionId);
@@ -277,6 +277,17 @@ export async function fetchVenueNames(): Promise<string[]> {
 }
 
 export async function deleteGame(id: string) {
+  // The FK cascade takes the feed event, players and frames — but nothing in
+  // Postgres knows about the bucket, so a scanned game would leave its photo
+  // behind forever. Read the path before the row goes.
+  const { data: game } = await supabase.from('games').select('photo_path').eq('id', id).maybeSingle();
+
   const { error } = await supabase.from('games').delete().eq('id', id);
   if (error) throw error;
+
+  // Best effort, and after the delete: a photo that outlives its game is
+  // untidy, but a game that survives because its photo wouldn't delete is worse.
+  if (game?.photo_path) {
+    await supabase.storage.from('scorecards').remove([game.photo_path]);
+  }
 }

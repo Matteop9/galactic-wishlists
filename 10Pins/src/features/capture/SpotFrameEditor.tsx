@@ -5,7 +5,7 @@ import { frameGlyphs, glyphColor } from '../../components/scorecard/display';
 
 const CANDIDATES: Roll[] = ['X', '/', 'F', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-/** Rewrite one frame's rolls, keeping every other frame as it is. */
+/** Rewrite one frame’s rolls, keeping every other frame as it is. */
 function withFrameRolls(frames: FrameInput[], frameIndex: number, rolls: Roll[]): FrameInput[] {
   return normalizeFrames(frames.map((frame, i) => (i === frameIndex ? { rolls } : { rolls: [...frame.rolls] })));
 }
@@ -96,7 +96,7 @@ export default function SpotFrameEditor({
           onClick={onDone}
           className="press rounded-lg border border-line bg-well px-3 py-2 text-[13px] text-text"
         >
-          Done
+          Save frame
         </button>
       </div>
 

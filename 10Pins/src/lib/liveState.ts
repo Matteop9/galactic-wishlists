@@ -5,7 +5,7 @@ import { deserializeRolls, serializeRolls } from './frames';
  * Live-session state: pure functions only (no React, no Supabase) so turn
  * order, offline survival and broadcast merging are all unit-testable.
  *
- * The scorer's device is the single writer (spec §8). It keeps the whole game
+ * The scorer’s device is the single writer (spec §8). It keeps the whole game
  * in memory, mirrors it to localStorage on every roll, and drains a queue of
  * frame upserts whenever it can reach the network.
  */
@@ -48,7 +48,7 @@ export function nextUp(players: LivePlayer[]): TurnPosition | null {
   return { player, frame: pos.frame, roll: pos.roll };
 }
 
-/** Every player's game is complete — time for the end-of-game screen. */
+/** Every player’s game is complete — time for the end-of-game screen. */
 export function gameComplete(players: LivePlayer[]): boolean {
   return players.length > 0 && players.every((player) => score(player.frames).complete);
 }
@@ -72,7 +72,7 @@ export function liveStandings(players: LivePlayer[]): { player: LivePlayer; tota
 
 // --- Broadcast ---------------------------------------------------------------
 
-/** The only message the scorer broadcasts: one frame's rolls, after every tap. */
+/** The only message the scorer broadcasts: one frame’s rolls, after every tap. */
 export interface RollEvent {
   gamePlayerId: string;
   /** 1-based, matching frames.frame_no */
@@ -132,7 +132,7 @@ export function queueFrame(pending: PendingFrame[], entry: PendingFrame): Pendin
 /**
  * Which frame rows a scorer edit actually changed. Covers a roll (one frame
  * grows) and an undo alike (a frame shrinks, or empties back to unbowled) —
- * an undone frame is written empty rather than deleted, so a spectator's next
+ * an undone frame is written empty rather than deleted, so a spectator’s next
  * refetch sees the same thing the scorer does.
  */
 export function diffPending(previous: LivePlayer[], next: LivePlayer[]): PendingFrame[] {
@@ -191,7 +191,7 @@ export function loadSnapshot(
     if (!parsed?.gameId || !Array.isArray(parsed.players)) return null;
     return { ...parsed, pending: Array.isArray(parsed.pending) ? parsed.pending : [] };
   } catch {
-    return null; // corrupt snapshot: fall back to the server's copy
+    return null; // corrupt snapshot: fall back to the server’s copy
   }
 }
 

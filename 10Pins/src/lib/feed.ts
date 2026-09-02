@@ -80,6 +80,6 @@ export async function fetchGameFeedEvent(gameId: string) {
 }
 
 // Moved to ./highlights (pure) so celebrations and the share card can use the
-// labels without importing this module's Supabase client. Re-exported so the
+// labels without importing this module’s Supabase client. Re-exported so the
 // existing `from '../../lib/feed'` imports keep working.
 export { highlightLabel } from './highlights';

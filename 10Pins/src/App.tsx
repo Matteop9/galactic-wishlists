@@ -23,6 +23,7 @@ import Notifications from './features/notifications/Notifications';
 import ManualEntry from './features/manual/ManualEntry';
 import ScanCapture from './features/capture/ScanCapture';
 import CelebrationHost from './components/Celebration';
+import UpdatePrompt from './components/UpdatePrompt';
 import ErrorBoundary from './components/ErrorBoundary';
 import { useScanQueueDrain } from './lib/useScanQueue';
 import QuickAdd from './features/quickadd/QuickAdd';
@@ -89,6 +90,7 @@ function Shell({ profile }: { profile: Profile }) {
       {/* Outside the keyed fade wrapper on purpose: inside it, every route
           change would remount the host and kill a celebration mid-flight. */}
       <CelebrationHost />
+      <UpdatePrompt />
     </div>
   );
 }

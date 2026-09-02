@@ -75,7 +75,7 @@ export default function GuestClaim() {
       </button>
       {claim.isError && (
         <p className="text-center text-[13px] text-signal" role="alert">
-          That claim link doesn't work — it may already have been used.
+          That claim link doesn’t work — it may already have been used.
         </p>
       )}
     </div>

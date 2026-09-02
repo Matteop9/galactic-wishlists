@@ -8,7 +8,7 @@ const CLUBS = [300, 250, 200, 150, 100] as const;
  */
 export function computeHighlights(opts: {
   score: number;
-  /** the player's best before this game; null = no previous games */
+  /** the player’s best before this game; null = no previous games */
   previousBest: number | null;
   /** only for frame-scored games — enables turkey detection */
   game?: ScoredGame;

@@ -28,11 +28,11 @@ interface Loaded {
 
 const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
   unreadable: {
-    title: "Couldn't read that one",
+    title: "Couldn’t read that one",
     body: 'Fill the frame with the score grid and keep glare off it — or enter the frames yourself.',
   },
   daily_cap: {
-    title: "That's today's scans used up",
+    title: "That’s today’s scans used up",
     body: 'Scanning resets 24 hours after your first one. You can still score live or enter frames yourself.',
   },
   model_failed: {
@@ -40,7 +40,7 @@ const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
     body: 'Nothing wrong with your photo. Try again in a minute, or enter the frames yourself.',
   },
   model_unreachable: {
-    title: "Couldn't reach the reader",
+    title: "Couldn’t reach the reader",
     body: 'Your photo is safe. Try again when you have signal.',
   },
   photo_missing: {
@@ -57,7 +57,7 @@ const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
   },
   offline: {
     title: 'No signal',
-    body: "We'll scan this when you're back online.",
+    body: "We’ll scan this when you’re back online.",
   },
   unknown: {
     title: 'That scan did not finish',
@@ -84,7 +84,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   const [savedTop, setSavedTop] = useState<{ name: string; score: number } | null>(null);
   const [savedHighlights, setSavedHighlights] = useState<string[]>([]);
   const [queuedGroupId, setQueuedGroupId] = useState<string | null>(null);
-  /** the upload behind the current attempt, so an abandoned scan doesn't leave a photo behind */
+  /** the upload behind the current attempt, so an abandoned scan doesn’t leave a photo behind */
   const [uploadedPath, setUploadedPath] = useState<string | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
@@ -130,7 +130,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
     try {
       blob = await compressPhoto(file);
     } catch {
-      /* a browser that can't decode it still gets to try the upload */
+      /* a browser that can’t decode it still gets to try the upload */
     }
     setPreview(URL.createObjectURL(blob));
 
@@ -437,7 +437,7 @@ function Corner({ className }: { className: string }) {
   return <span className={`absolute size-9 border-phosphor ${className}`} aria-hidden />;
 }
 
-/** The processing screen's staged status line — the reader's actual order of work. */
+/** The processing screen’s staged status line — the reader’s actual order of work. */
 function ProcessingTicker() {
   const [stage, setStage] = useState(0);
   useEffect(() => {
@@ -461,7 +461,7 @@ function topScore(rows: { displayedName: string; frames: { rolls: unknown[] }[] 
         best = { name: row.displayedName, score: scored.total };
       }
     } catch {
-      /* an unscoreable row just doesn't win */
+      /* an unscoreable row just doesn’t win */
     }
   }
   return best;

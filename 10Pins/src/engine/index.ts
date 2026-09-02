@@ -19,7 +19,7 @@ export interface ScoredFrame {
   isStrike: boolean;
   isSpare: boolean;
   isOpen: boolean;
-  isSplit?: boolean; // splits need pin positions, which rolls alone can't tell — set from photo extraction
+  isSplit?: boolean; // splits need pin positions, which rolls alone can’t tell — set from photo extraction
 }
 
 export interface ScoredGame {

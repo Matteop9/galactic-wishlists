@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import EmptyState from '../../components/EmptyState';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   fetchNotifications,
@@ -37,12 +38,10 @@ export default function Notifications({ profile }: { profile: Profile }) {
       {showSkeleton && <ListSkeleton rows={5} label="Loading your notifications" trailing={false} />}
 
       {!showSkeleton && list.data && list.data.length === 0 && (
-        <div className="flex flex-col items-center gap-3 py-20 text-center">
-          <p className="font-display text-[20px] font-bold">All quiet</p>
-          <p className="max-w-[260px] text-[13.5px] text-dim">
-            Reactions, comments, friend requests and match-day news land here.
-          </p>
-        </div>
+        <EmptyState
+          title="All quiet"
+          body="Reactions, comments, friend requests and match-day news land here."
+        />
       )}
 
       <div className="flex flex-col gap-2">

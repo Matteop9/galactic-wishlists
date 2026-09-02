@@ -98,7 +98,7 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
       queryClient.invalidateQueries();
       navigate(`/live/${sessionId}`, { replace: true });
     },
-    onError: () => setError("Couldn't start the session — check your signal and try again."),
+    onError: () => setError("Couldn’t start the session — check your signal and try again."),
   });
 
   return (

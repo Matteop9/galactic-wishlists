@@ -29,8 +29,8 @@ describe('summariseQueue', () => {
   });
 
   it('mentions unreadable scans only when nothing else is pending', () => {
-    expect(summariseQueue([item('failed')]).line).toBe("1 scan we couldn't read");
-    expect(summariseQueue([item('failed'), item('failed')]).line).toBe("2 scans we couldn't read");
+    expect(summariseQueue([item('failed')]).line).toBe("1 scan we couldn’t read");
+    expect(summariseQueue([item('failed'), item('failed')]).line).toBe("2 scans we couldn’t read");
   });
 
   it('counts one scan in the singular', () => {

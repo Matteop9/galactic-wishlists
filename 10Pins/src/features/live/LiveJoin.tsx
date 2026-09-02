@@ -24,7 +24,7 @@ export default function LiveJoin() {
   const join = useMutation({
     mutationFn: () => joinLiveSession(code!),
     onSuccess: (sessionId) => navigate(`/live/${sessionId}/watch`, { replace: true }),
-    onError: () => setError("Couldn't join — check the link and try again."),
+    onError: () => setError("Couldn’t join — check the link and try again."),
   });
 
   if (showSkeleton) {

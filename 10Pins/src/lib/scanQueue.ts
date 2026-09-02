@@ -50,7 +50,7 @@ export function summariseQueue(items: QueuedScan[]): QueueSummary {
   let line: string | null = null;
   if (ready > 0) line = ready === 1 ? '1 scan ready to review' : `${ready} scans ready to review`;
   else if (waiting > 0) line = waiting === 1 ? '1 scan waiting for signal' : `${waiting} scans waiting for signal`;
-  else if (failed > 0) line = failed === 1 ? "1 scan we couldn't read" : `${failed} scans we couldn't read`;
+  else if (failed > 0) line = failed === 1 ? "1 scan we couldn’t read" : `${failed} scans we couldn’t read`;
 
   return { waiting, ready, failed, line };
 }
@@ -85,7 +85,7 @@ export async function listQueuedScans(): Promise<QueuedScan[]> {
     const items = await tx<QueuedScan[]>('readonly', (store) => store.getAll() as IDBRequest<QueuedScan[]>);
     return items.sort((a, b) => a.queuedAt.localeCompare(b.queuedAt));
   } catch {
-    return []; // private mode, storage blocked: the app still works, it just can't queue
+    return []; // private mode, storage blocked: the app still works, it just can’t queue
   }
 }
 

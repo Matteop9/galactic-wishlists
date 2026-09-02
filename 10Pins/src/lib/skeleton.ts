@@ -12,7 +12,7 @@ export const SKELETON_MIN_MS = 300;
 export interface SkeletonState {
   /** Is the skeleton currently on screen? */
   shown: boolean;
-  /** When it went up (ms epoch), or null if it isn't up. */
+  /** When it went up (ms epoch), or null if it isn’t up. */
   shownAt: number | null;
 }
 
@@ -25,7 +25,7 @@ export type SkeletonStep =
   | { kind: 'hide'; delayMs: number };
 
 /**
- * What should happen next, given the query's pending flag and what's on screen.
+ * What should happen next, given the query’s pending flag and what’s on screen.
  *
  * - pending, nothing shown → show after the delay (a fast query never gets one)
  * - pending, already shown → settle

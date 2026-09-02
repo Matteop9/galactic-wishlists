@@ -1,5 +1,55 @@
 # Changelog — 10 Pins
 
+## 2026-09-02 — Milestone 8: celebrations, share card, PWA — and the security debt — LIVE
+
+The last milestone in the build spec (§11: "Polish: celebrations, share card, skeletons/empty states, PWA manifest/SW, copy pass"), with the still-live items from the project's own review doc folded in. **10 Pins is now feature-complete against the spec.**
+
+### The security debt, because it was real
+
+Today's delete-game bug turned out to be **item 4 of `COUNCIL_REVIEW_TODO.md`, written in July** — it sat there until a user reported it. So the rest of that list was re-checked against the *current* schema rather than trusted. Three items were still live, and they are fixed here:
+
+- **`tp_0015` — anyone could poison anyone's stats (CRITICAL).** `game_players_insert` checked only `owns_game()`, never `profile_id`, and `profiles_select` is `using (true)` — so any signed-in user, the public demo account included, could list every profile, create a game and insert rows carrying someone else's id. **Measured before the fix: one insert by an unrelated account moved the victim's average from 181.0 to 150.8.** Now both INSERT *and* UPDATE (hardening one alone leaves the other open) require the target to be you, a guest, an accepted friend, or a group mate — `tenpins.can_tag()`. The check is on the relationship rather than the game's group, because a live session or match day can legitimately have no group at all. Probed after: stranger insert and stranger update both rejected `42501`, while self, guest, group mate and a real four-player live line-up all still write.
+- **`tp_0016` — the demo shipped working credentials.** "Try the demo" signed in with `VITE_DEMO_EMAIL`/`PASSWORD`, and `VITE_` vars are inlined into the deployed bundle. It now uses anonymous sign-in plus a `join_demo()` RPC that gives each visitor a profile and a seat in the demo group, so the app isn't empty. **The demo email went from 1 occurrence in `dist/` to 0.** ⚠️ **Needs "Anonymous sign-ins" enabled on the Supabase project** — until then the button hides itself rather than failing.
+- **`tp_0015` — a friendship could be re-pointed.** `friendships_update` restricted the row but not the columns, so the addressee could rewrite `requester` and forge an accepted friendship (and the feed visibility that comes with it). Frozen by trigger.
+
+Also: **the project is now in git** (110 files, secret-scanned first) — it had never been committed, so there was no rollback point for the whole codebase, which is not where you want to be while shipping a service worker. Plus a React `ErrorBoundary` (which caught a real crash within minutes of being added), scorecard rows keyed by seat rather than name (a monitor photo can return two players called MATT), and `env(safe-area-inset-bottom)` on the tab bar — `viewport-fit=cover` has been set all along, so it sat under the iPhone home indicator.
+
+### Celebrations
+
+An escalating ladder — strike → double → turkey → four-bagger → PB / club / perfect game — capped at 1200ms and always skippable. The decisions are pure (`src/lib/celebrate.ts`, 24 tests): the loudest tier wins, so a 300 game is **one** moment rather than five stacked toasts, and a quieter celebration can never interrupt a louder one.
+
+"Never blocks scoring" is structural rather than a promise: **a per-roll celebration never rises above tier 2**, and tier 2 is a `pointer-events-none` strip at the *top* of the screen — the keypad is at the bottom. Tier 3 is a full-screen moment and can only fire at the end of a game, where the keypad is already unmounted. Under reduced motion it downgrades to a static pill, because killing the animation on a full-screen overlay leaves a scrim that blinks in and out — worse than no celebration.
+
+Spares deliberately don't celebrate: they are a third of all frames, and celebrating them would turn the ladder into wallpaper and spend the amber that §12 reserves for earned states. There is no sweep on the banner either — the signature motif is allowed in exactly five places and this is not one of them.
+
+Fired from three places: per roll in the live scorer (before any network work, so it lands at keypad speed; an undo clears it), at end of game from `finishLiveGame`'s new per-profile highlight map, and on the scan success screen 360ms after the verified stamp lands. **Game detail now shows the highlights a game earned at all** — it never read them before.
+
+### Share card
+
+A branded 1080×1350 render: wordmark, group, winner and score in phosphor, highlight pills, the full scorecard, the frozen sweep line and the verification stamp.
+
+Rendered from the app's **own components** (`html-to-image`, dynamically imported so its ~40KB never touches the initial bundle) rather than hand-drawn on a canvas — the card *is* the scorecard at a larger size, and a hand-drawn grid would fork the one component every other screen uses and then drift from it. `src/lib/shareCopy.ts` is pure and tested (12 cases): winner selection, ties preferring you, margin phrasing, and the rule that **an unverified score never brags**.
+
+Three things the build turned up: `index.html` loaded the Google Fonts stylesheet **without `crossorigin`**, so script could not read its `@font-face` rules and the card would have silently rasterised in fallback faces (proved fixed by an A/B — 92,389 lit pixels with fonts embedded vs 80,652 without); the rasteriser **hangs forever if the page stops painting**, so tapping Share and switching apps never returned — now it times out and the sheet offers a retry; and the sheet renders the PNG *before* the share tap and previews the actual raster, because Safari drops the user activation across an `await` and because you should see what you are about to send.
+
+### Empty states, QR codes, PWA, copy
+
+- **`EmptyState`** with three tones — page, inline, quiet — because flattening them would make quiet corners shout. Nine screens converted, and the ones with an obvious next move now offer the **control** rather than describing it (Home told you to "tap ＋" without giving you anything to press). Plus the state the design asks for and never had: a **just-created group** shows the invite instead of an empty leaderboard.
+- **QR codes** on the group invite and the live share panel — dark-on-light inside a white plate, because a QR in phosphor on ink looks on-brand and scans badly.
+- **PWA:** manifest, five icons **generated from the real wordmark** (the boxed amber `10`, drawn with the actual Oxanium glyphs), and a service worker with `registerType: 'prompt'` — **never `autoUpdate`**, because an automatic reload mid-game would take the live scorer's in-memory undo history with it.
+  - Caching is an **allowlist by pathname**, deliberately: fonts cache hard, `/rest/v1/` is network-first, and everything else on Supabase is structurally uncacheable — a replayed `/auth/v1/` token refresh means a broken session, a cached `/functions/v1/` scan result would be a disaster, and a cached signed storage URL is a dead link. Verified on prod: **zero Supabase responses in any cache.**
+  - ⚠️ `vercel.json`'s SPA rewrite would have swallowed `/sw.js` and `/manifest.webmanifest`, serving HTML with a 200 and failing registration with a confusing MIME error. It now excludes anything with a file extension — safe because no route parameter can contain a dot (codes are hex, ids are UUIDs). Security headers added in the same file.
+- **Copy pass:** `Post` → `Post comment`, `Done` → `Save frame`, the route name "Game detail" replaced with "The game", the lowercase `delete` link sentence-cased, and typographic apostrophes normalised across 55 files (safe because letter-apostrophe-letter cannot occur in code — it would be a syntax error inside single quotes).
+- **`deleteGame` now removes the photo from storage too** — found while checking the bucket after the prod regression test. The FK cascade takes the DB rows, but nothing in Postgres knows about the bucket, so every deleted scan was leaving its photo behind forever.
+
+### Verified
+
+217 unit tests green (36 new), `tsc --noEmit` and the production build clean. On prod after deploying: `/manifest.webmanifest` serves as `application/manifest+json` (not the HTML shell), the service worker is **active** with the precache populated, all four security headers present, deep links still resolve to the app, and no Supabase response is cached. A full scan end-to-end from the deployed origin — which is the path `tp_0015` was most likely to break, since it writes `game_players` rows for other people — read both players frame-perfect, resolved them with zero taps from the remembered name mapping, and saved `verified` with 20 frame rows.
+
+Deployed to https://10pins.vercel.app via `npm run deploy` (dpl_AiYq1RBWUnrWpKJuZU7emWJ4s8ra).
+
+**Still open:** the query-error / empty-data conflation (review item 12's other half), and 16 lower-priority items on that list. The verified-drop warning is implemented where an edit can actually cost a badge today — the scan review screen; the saved-game version arrives with post-hoc frame editing, which does not exist yet.
+
 ## 2026-09-02 — Milestone 7: the capture pipeline — LIVE
 
 **Photograph the lane monitor and the game scores itself.** The hero flow the whole app was designed around (spec §6, design §5.3) is in: camera → processing → review → confirmed, plus the offline path, the error states and verification.

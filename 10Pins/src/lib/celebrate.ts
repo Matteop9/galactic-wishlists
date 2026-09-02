@@ -6,7 +6,7 @@ import { highlightLabel } from './highlights';
  * PB/200/250/300 club — ≤1.2s, always skippable, never block scoring").
  *
  * Pure: no React, no DOM, no Supabase — same shape as `skeleton.ts`, so the
- * decisions are unit-testable and the UI only has to render what it's told.
+ * decisions are unit-testable and the UI only has to render what it’s told.
  *
  * The governing rule that makes "never blocks scoring" structural rather than
  * a promise: **a per-roll celebration never rises above tier 2**, and tier 2
@@ -14,7 +14,7 @@ import { highlightLabel } from './highlights';
  * keypad. Tier 3 is a centred overlay, and it can only fire at the end of a
  * game — the point at which `LiveScorer` has already unmounted the keypad.
  *
- * Spares deliberately don't celebrate. They're roughly a third of all frames;
+ * Spares deliberately don’t celebrate. They’re roughly a third of all frames;
  * celebrating them turns the ladder into wallpaper and spends the amber that
  * spec §12 reserves for earned states.
  */
@@ -72,7 +72,7 @@ function runLabel(run: number): { label: string; tier: CelebrationTier } {
 /**
  * What to celebrate for the roll that turned `previous` into `next`.
  *
- * Works off the two frame arrays rather than the roll itself, so the caller's
+ * Works off the two frame arrays rather than the roll itself, so the caller’s
  * existing `onChange(next)` contract is unchanged — and an undo (which makes
  * `next` shorter) correctly celebrates nothing.
  */
@@ -88,7 +88,7 @@ export function rollCelebration(
 
   const run = trailingStrikes(after);
   const { label, tier } = runLabel(run);
-  // A strike is too frequent to keep naming the bowler; a turkey isn't.
+  // A strike is too frequent to keep naming the bowler; a turkey isn’t.
   const named = tier > 1 && who ? `${who} · ${label.toLowerCase()}` : label;
 
   return {
@@ -99,7 +99,7 @@ export function rollCelebration(
   };
 }
 
-/** Loudest first. Anything not listed doesn't celebrate. */
+/** Loudest first. Anything not listed doesn’t celebrate. */
 const HIGHLIGHT_RANK: { code: string; tier: CelebrationTier; label?: string; detail?: string }[] = [
   { code: '300_CLUB', tier: 3, label: 'Perfect game', detail: 'Twelve strikes. Three hundred.' },
   { code: '250_CLUB', tier: 3 },
@@ -135,7 +135,7 @@ export function gameCelebration(highlights: string[], gameId?: string): Celebrat
 }
 
 /**
- * Whether an incoming celebration replaces what's on screen. Louder always
+ * Whether an incoming celebration replaces what’s on screen. Louder always
  * interrupts quieter; equal-or-quieter is dropped rather than queued, because
  * a queue is how a 1.2s cap turns into four seconds of confetti.
  */

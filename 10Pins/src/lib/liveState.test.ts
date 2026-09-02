@@ -93,7 +93,7 @@ describe('gameComplete', () => {
 
 describe('runningTotal', () => {
   it('is the last settled cumulative, not the pending one', () => {
-    // 9/ then X: frame 1 is still waiting on the strike's second bonus ball
+    // 9/ then X: frame 1 is still waiting on the strike’s second bonus ball
     expect(runningTotal(rolls(9, '/', 'X'))).toBe(20);
   });
 

@@ -3,11 +3,11 @@ import { highlightLabel } from './highlights';
 /**
  * The words on the share card, and the message that goes with it.
  *
- * Pure, so the fiddly branches — who won, by how much, what you're allowed to
+ * Pure, so the fiddly branches — who won, by how much, what you’re allowed to
  * boast about — are unit-tested rather than eyeballed. The card itself
  * (`components/share/ShareCard.tsx`) only renders what this returns.
  *
- * One rule worth naming: **an unverified score never brags.** The design's
+ * One rule worth naming: **an unverified score never brags.** The design’s
  * stinger for a verified card is "pics attached, so it counts"; a game nobody
  * photographed says something quieter, because the whole point of the badge is
  * that it means something.
@@ -23,7 +23,7 @@ export interface ShareCopyInput {
   players: SharePlayer[];
   verification: 'verified' | 'live' | 'unverified';
   highlights: string[];
-  /** strikes in the winner's game, for the glass stat pill */
+  /** strikes in the winner’s game, for the glass stat pill */
   strikes?: number;
   groupName?: string | null;
   venueName?: string | null;

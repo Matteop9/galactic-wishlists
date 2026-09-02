@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchMyGroups } from '../lib/groups';
 
 /**
- * Optional group selector on game entry: a group game lands on that group's
+ * Optional group selector on game entry: a group game lands on that group’s
  * feed and leaderboard; "Just for me" stays personal (friends still see it).
  */
 export default function GroupPicker({

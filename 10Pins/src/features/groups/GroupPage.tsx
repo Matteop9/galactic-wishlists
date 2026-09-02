@@ -5,6 +5,8 @@ import { fetchGroup, fetchLeaderboard, type LeaderboardRow } from '../../lib/gro
 import { createGuestClaim, fetchGroupClaims, fetchGroupGuests } from '../../lib/friends';
 import { fetchGroupMatchDays } from '../../lib/matchday';
 import { Bar, LeaderboardSkeleton, Panel, SkeletonScreen } from '../../components/Skeleton';
+import EmptyState from '../../components/EmptyState';
+import JoinQr from '../../components/JoinQr';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -55,6 +57,9 @@ export default function GroupPage({ profile }: { profile: Profile }) {
   );
   const myRole = members.find((m) => m.profile_id === profile.id)?.role;
 
+  const justCreated =
+    members.length <= 1 && !showBoard && (leaderboard.data?.length ?? 0) === 0;
+
   return (
     <div className="flex flex-col gap-5 px-4 py-6">
       <header className="flex items-start justify-between gap-3">
@@ -75,13 +80,24 @@ export default function GroupPage({ profile }: { profile: Profile }) {
         )}
       </header>
 
+      {/* A group of one with no games isn’t a leaderboard, it’s an invitation
+          (design §5.6: "Empty (just created) — QR + Share invite link"). Show
+          that instead of an empty table. */}
+      {justCreated ? (
+        <EmptyState
+          title="Now get your crew in"
+          body="Anyone who joins gets on the leaderboard from their first game."
+        >
+          <div className="w-full pt-1">
+            <InviteCard code={g.invite_code} />
+          </div>
+        </EmptyState>
+      ) : (
       <section className="flex flex-col gap-2">
         <span className="label-caps">Leaderboard</span>
         {showBoard && <LeaderboardSkeleton />}
         {!showBoard && leaderboard.data && leaderboard.data.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-line bg-well/50 p-4 text-[13.5px] text-dim">
-            No games this season yet — the table starts with the first game.
-          </p>
+          <EmptyState tone="inline" body="No games this season yet — the table starts with the first game." />
         )}
         {(leaderboard.data ?? []).map((row, i) => (
           <div
@@ -93,10 +109,11 @@ export default function GroupPage({ profile }: { profile: Profile }) {
           </div>
         ))}
       </section>
+      )}
 
       <MatchDaysSection groupId={g.id} />
 
-      <InviteCard code={g.invite_code} />
+      {!justCreated && <InviteCard code={g.invite_code} />}
 
       <GuestsSection groupId={g.id} />
 
@@ -308,17 +325,37 @@ function InviteCard({ code }: { code: string | null }) {
     }
   }
 
+  async function share() {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: '10 Pins', text: 'Join our bowling group', url: link });
+        return;
+      } catch {
+        // cancelled, or unsupported — fall back to the clipboard
+      }
+    }
+    await copy(link, 'link');
+  }
+
   return (
     <section className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
       <span className="label-caps">Invite your crew</span>
-      <p className="font-mono text-[15px] tracking-wider text-text">{code}</p>
+      <JoinQr url={link} label="Scan to join" />
+      <p className="text-center font-mono text-[15px] tracking-wider text-text">{code}</p>
+      <button
+        type="button"
+        onClick={share}
+        className="press rounded-[10px] bg-phosphor py-2.5 font-display text-[13px] font-bold text-ink"
+      >
+        Share invite link
+      </button>
       <div className="flex gap-2">
         <button
           type="button"
           onClick={() => copy(link, 'link')}
-          className="flex-1 rounded-[10px] bg-phosphor py-2.5 font-display text-[13px] font-bold text-ink"
+          className="flex-1 rounded-[10px] border border-line bg-well py-2.5 text-[13px] font-bold text-text"
         >
-          {copied === 'link' ? 'Link copied ✓' : 'Copy invite link'}
+          {copied === 'link' ? 'Link copied ✓' : 'Copy link'}
         </button>
         <button
           type="button"

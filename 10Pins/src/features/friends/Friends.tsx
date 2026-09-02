@@ -10,6 +10,7 @@ import {
   type ProfileLite,
 } from '../../lib/friends';
 import { ListSkeleton } from '../../components/Skeleton';
+import EmptyState from '../../components/EmptyState';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -53,7 +54,7 @@ export default function Friends({ profile }: { profile: Profile }) {
     <div className="flex flex-col gap-5 px-4 py-6">
       <h1 className="font-display text-[20px] font-bold">Friends</h1>
       <p className="text-[12px] text-faint">
-        Friends see each other's games on the feed, even outside shared groups.
+        Friends see each other’s games on the feed, even outside shared groups.
       </p>
 
       <div className="flex flex-col gap-2">
@@ -123,9 +124,10 @@ export default function Friends({ profile }: { profile: Profile }) {
         <span className="label-caps">Your friends · {accepted.length}</span>
         {showSkeleton && <ListSkeleton rows={3} label="Loading your friends" />}
         {!showSkeleton && accepted.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-line bg-well/50 p-4 text-[13.5px] text-dim">
-            No friends yet — search above, or share a group invite instead.
-          </p>
+          <EmptyState
+            tone="inline"
+            body="No friends yet — search above, or share a group invite instead."
+          />
         )}
         {accepted.map((f) => {
           const p = otherProfile(f, profile.id);

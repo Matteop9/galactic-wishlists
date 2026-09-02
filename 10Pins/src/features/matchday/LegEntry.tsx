@@ -66,7 +66,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
       queryClient.invalidateQueries();
       navigate(`/matchday/${id}`, { replace: true });
     },
-    onError: () => setError("That didn't save — your scores are still here, try again."),
+    onError: () => setError("That didn’t save — your scores are still here, try again."),
   });
 
   if (showSkeleton) {

@@ -65,8 +65,8 @@ export default function FirstRun() {
     if (err) {
       setError(
         err.code === '23505'
-          ? "That username's just been taken — pick another."
-          : "That didn't save — try again.",
+          ? "That username’s just been taken — pick another."
+          : "That didn’t save — try again.",
       );
       setSaving(false);
       return;

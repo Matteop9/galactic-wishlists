@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import EmptyState from '../../components/EmptyState';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   fetchMatchDay,
@@ -146,7 +147,7 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
             </div>
           </div>
         ))}
-        {series.drawn && <p className="text-[12px] text-dim">Series drawn — nobody's bragging tonight.</p>}
+        {series.drawn && <p className="text-[12px] text-dim">Series drawn — nobody’s bragging tonight.</p>}
         {data.status === 'finished' && !series.drawn && winner && (
           <p className="text-[12px] text-dim">{winner.name} take the day.</p>
         )}
@@ -163,9 +164,11 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
       )}
 
       {legs.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-line bg-well/50 p-4 text-[13.5px] text-dim">
-          No legs bowled yet{isOrganiser ? ' — score leg 1 to get going.' : '.'}
-        </p>
+        <EmptyState
+          tone="inline"
+          body={`No legs bowled yet${isOrganiser ? ' — score leg 1 to get going.' : '.'}`}
+          action={isOrganiser ? { label: 'Score leg 1', to: `/matchday/${md.data.id}/leg/1` } : undefined}
+        />
       )}
 
       {[...legs].reverse().map((leg) => (

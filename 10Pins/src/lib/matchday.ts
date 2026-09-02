@@ -4,7 +4,7 @@ import { computeHighlights } from './highlights';
 import { supabase } from './supabase';
 
 // --- Pure scoring ------------------------------------------------------------
-// Everything about who's winning is derived from the raw games; nothing cached.
+// Everything about who’s winning is derived from the raw games; nothing cached.
 
 export type ScoringMode = 'total_pins' | 'points';
 
@@ -24,7 +24,7 @@ export interface MdPlayer {
   display_name: string;
 }
 
-/** One recorded leg: the game's number plus each participant's final score. */
+/** One recorded leg: the game’s number plus each participant’s final score. */
 export interface LegGame {
   gameNumber: number;
   gameId: string;
@@ -63,7 +63,7 @@ export interface LegResult {
   teams: TeamLegScore[];
   /** every match-day player has a score */
   complete: boolean;
-  /** sole winner's team id; null for an incomplete or drawn leg */
+  /** sole winner’s team id; null for an incomplete or drawn leg */
   winnerTeamId: string | null;
   /** points mode: the pair-match breakdown for the UI */
   pairings: PairingResult[];
@@ -109,7 +109,7 @@ export function legScores(
 
   if (mode === 'points') {
     // Round-robin: every unordered team pair is a mini-match — one point per
-    // pairing (by pairing order) plus one for the pair's team-total comparison.
+    // pairing (by pairing order) plus one for the pair’s team-total comparison.
     for (let i = 0; i < teamScores.length; i++) {
       for (let j = i + 1; j < teamScores.length; j++) {
         const A = teamScores[i];
@@ -372,7 +372,7 @@ interface LegEntryPlayer {
 }
 
 /**
- * Save one leg: a single game holding every match-day player's line — frames
+ * Save one leg: a single game holding every match-day player’s line — frames
  * when frame-scored, totals otherwise. Seat order encodes team + pairing.
  */
 export async function saveLeg(opts: {

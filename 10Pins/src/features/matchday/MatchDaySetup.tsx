@@ -246,7 +246,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="label-caps">Who's playing?</span>
+        <span className="label-caps">Who’s playing?</span>
         {unassigned.map((m) => (
           <div key={m.profile_id} className="flex items-center gap-2 rounded-xl border border-line bg-panel px-3 py-2.5">
             <span className="min-w-0 flex-1 truncate text-[14px] text-text">{m.profiles?.display_name}</span>
@@ -313,7 +313,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
       </button>
       {create.isError && (
         <p className="text-center text-[13px] text-signal" role="alert">
-          Couldn't create the match day — try again.
+          Couldn’t create the match day — try again.
         </p>
       )}
     </div>

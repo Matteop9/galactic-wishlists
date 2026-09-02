@@ -45,7 +45,7 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
       queryClient.invalidateQueries();
       navigate(`/games/${gameId}`, { replace: true });
     },
-    onError: () => setError("That didn't save — check your connection and try again."),
+    onError: () => setError("That didn’t save — check your connection and try again."),
   });
 
   function submit(event: FormEvent) {

@@ -43,7 +43,7 @@ export const HIFI_GAME: PlayerFixture[] = [
 ];
 
 /**
- * MATT's live-session game from the hi-fi file. Frame 4 is displayed as `7,3` open
+ * MATT’s live-session game from the hi-fi file. Frame 4 is displayed as `7,3` open
  * with cumulative 58 — illegal input (7 + 3 = 10 must be a spare). The build spec
  * says these must NOT be used as scoring fixtures; instead we assert the engine
  * normalises the frame to `7, /` and that reconciles flags it.

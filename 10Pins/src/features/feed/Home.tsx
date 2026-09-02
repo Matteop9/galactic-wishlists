@@ -8,6 +8,7 @@ import { fetchFeed, highlightLabel, type FeedEvent } from '../../lib/feed';
 import { fetchLiveNow } from '../../lib/live';
 import { fetchUnreadCount } from '../../lib/notifications';
 import { useSkeleton } from '../../lib/useSkeleton';
+import EmptyState from '../../components/EmptyState';
 import { useScanQueue } from '../../lib/useScanQueue';
 import type { Profile } from '../../lib/auth';
 
@@ -62,13 +63,12 @@ export default function Home({ profile }: { profile: Profile }) {
       {showSkeleton && <FeedSkeleton />}
 
       {!showSkeleton && feed.data && feed.data.length === 0 && (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 py-24 text-center">
-          <p className="font-display text-[20px] font-bold">Nothing here yet</p>
-          <p className="max-w-[260px] text-[13.5px] text-dim">
-            Tap <span className="text-phosphor">＋</span> to add your first game — quick add takes ten
-            seconds.
-          </p>
-        </div>
+        <EmptyState
+          title="Nothing here yet"
+          body="Scan the scoreboard from your last game and it lands here — or start with the totals, which takes ten seconds."
+          action={{ label: 'Scan your first game', to: '/add/scan' }}
+          secondary={{ label: 'Quick add the totals', to: '/add/quick' }}
+        />
       )}
 
       <div className="flex flex-col gap-3">
@@ -134,7 +134,7 @@ function LiveNow({ profile }: { profile: Profile }) {
 }
 
 /**
- * Scans taken without signal, surfaced where you'll see them (design §Offline:
+ * Scans taken without signal, surfaced where you’ll see them (design §Offline:
  * "banner + queue list in Profile"). A ready scan is a job waiting for you;
  * one still queued is just weather.
  */

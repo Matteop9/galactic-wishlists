@@ -29,7 +29,7 @@ export const MAX_FEEDBACK_LENGTH = 2000;
 
 type FeedbackRow = Tables<'feedback'>;
 
-/** RLS returns your own items; an app admin gets everyone's. */
+/** RLS returns your own items; an app admin gets everyone’s. */
 export async function fetchMyFeedback(profileId: string): Promise<FeedbackRow[]> {
   const { data, error } = await supabase
     .from('feedback')

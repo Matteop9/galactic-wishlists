@@ -66,7 +66,7 @@ export interface ReviewPlayer {
   claimed: (number | null)[];
   /** the printed final score, if the monitor showed one */
   finalScore: number | null;
-  /** 0-based frames whose rolls don't recompute to the printed total */
+  /** 0-based frames whose rolls don’t recompute to the printed total */
   badFrames: number[];
 }
 
@@ -102,7 +102,7 @@ export function sanitiseFrames(frames: FrameInput[]): FrameInput[] {
 }
 
 /**
- * Extraction → review rows. Frames the model didn't mention become empty
+ * Extraction → review rows. Frames the model didn’t mention become empty
  * frames rather than disappearing, so frame 7 stays frame 7 on the card even
  * when frame 6 was unreadable.
  */
@@ -128,7 +128,7 @@ export function toReviewPlayers(result: { players: ScanPlayerRow[] }): ReviewPla
   });
 }
 
-/** The amber set: frames whose rolls don't produce the printed running total. */
+/** The amber set: frames whose rolls don’t produce the printed running total. */
 export function badFramesFor(frames: FrameInput[], claimed: (number | null)[]): number[] {
   return reconciles(frames, claimed).badFrames;
 }
@@ -151,7 +151,7 @@ export function verificationFor(players: ReviewPlayer[]): 'verified' | 'unverifi
   return isCleanScan(players) ? 'verified' : 'unverified';
 }
 
-/** True when every player's game is a full ten frames the engine can total. */
+/** True when every player’s game is a full ten frames the engine can total. */
 export function isCompleteScan(players: ReviewPlayer[]): boolean {
   return players.every((p) => {
     try {
@@ -186,7 +186,7 @@ function initials(name: string): string {
 
 /**
  * Guess who "MATT" is (spec §6.5). A remembered mapping for this group always
- * wins; after that it's exact name, first name, then initials. No fuzzy
+ * wins; after that it’s exact name, first name, then initials. No fuzzy
  * distance — a wrong confident guess costs more than an unmatched chip, and
  * correcting one is a single tap that gets remembered.
  */
@@ -234,7 +234,7 @@ export async function compressPhoto(file: Blob, maxEdge = 1600): Promise<Blob> {
   return blob ?? file;
 }
 
-/** Upload into the caller's own folder — the storage policy requires it. */
+/** Upload into the caller’s own folder — the storage policy requires it. */
 export async function uploadScan(profileId: string, blob: Blob): Promise<string> {
   const path = `${profileId}/${crypto.randomUUID()}.jpg`;
   const { error } = await supabase.storage
@@ -284,9 +284,9 @@ export interface ConfirmedPlayer {
 /**
  * Write a scanned game. Mirrors `saveManualGame` but stamps the photo path,
  * the raw extraction (so verification can be re-derived later) and the
- * verification status derived above. A game where somebody's card is still
+ * verification status derived above. A game where somebody’s card is still
  * mid-game is kept `in_progress`, which is what keeps a half-read scan out of
- * everyone's averages.
+ * everyone’s averages.
  */
 export async function saveScannedGame(opts: {
   profileId: string;
@@ -384,7 +384,7 @@ export async function saveScannedGame(opts: {
     if (feedErr) throw feedErr;
 
     // Handed back so the success screen can celebrate what it just wrote —
-    // these are already scoped to the signed-in player's row.
+    // these are already scoped to the signed-in player’s row.
     return { gameId: game.id, highlights };
   } catch (err) {
     await supabase.from('games').delete().eq('id', game.id);

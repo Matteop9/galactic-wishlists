@@ -24,7 +24,7 @@ export function frameGlyphs(frame: ScoredFrame | undefined, isTenth: boolean): s
   return out;
 }
 
-/** One glyph per frame for the compact mini strip: X, /, or the frame's pin count. */
+/** One glyph per frame for the compact mini strip: X, /, or the frame’s pin count. */
 export function miniGlyph(frame: ScoredFrame | undefined): string {
   if (!frame || frame.rolls.length === 0) return '';
   if (frame.isStrike) return 'X';

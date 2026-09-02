@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createGroup, fetchMyGroups, joinGroup } from '../../lib/groups';
 import { ListSkeleton } from '../../components/Skeleton';
+import EmptyState from '../../components/EmptyState';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -82,7 +83,7 @@ export default function GroupsList({ profile }: { profile: Profile }) {
           </button>
           {create.isError && (
             <p className="text-[13px] text-signal" role="alert">
-              Couldn't create the group — try again.
+              Couldn’t create the group — try again.
             </p>
           )}
         </form>
@@ -115,7 +116,7 @@ export default function GroupsList({ profile }: { profile: Profile }) {
           </button>
           {join.isError && (
             <p className="text-[13px] text-signal" role="alert">
-              That code didn't work — check it and try again.
+              That code didn’t work — check it and try again.
             </p>
           )}
         </form>
@@ -124,12 +125,12 @@ export default function GroupsList({ profile }: { profile: Profile }) {
       {showSkeleton && <ListSkeleton rows={3} label="Loading your groups" />}
 
       {!showSkeleton && groups.data && groups.data.length === 0 && mode === 'none' && (
-        <div className="flex flex-col items-center gap-3 py-20 text-center">
-          <p className="font-display text-[20px] font-bold">No groups yet</p>
-          <p className="max-w-[260px] text-[13.5px] text-dim">
-            Create a group for your bowling crew, or join one with an invite code.
-          </p>
-        </div>
+        <EmptyState
+          title="No groups yet"
+          body="A group is where the leaderboard and the banter live. Create one for your crew, or join one with an invite code."
+          action={{ label: 'Create a group', onPress: () => setMode('create') }}
+          secondary={{ label: 'I have an invite code', onPress: () => setMode('join') }}
+        />
       )}
 
       <div className="flex flex-col gap-3">

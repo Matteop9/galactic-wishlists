@@ -9,7 +9,7 @@ import { shareCopy } from '../../lib/shareCopy';
  *
  *  1. Safari loses the user activation across an await, so the PNG has to
  *     exist before the tap that calls `navigator.share`.
- *  2. You should see what you're about to send. If a font failed to load, the
+ *  2. You should see what you’re about to send. If a font failed to load, the
  *     preview shows it — sharing blind would send the broken one.
  */
 export default function ShareSheet({ data, onClose }: { data: ShareCardData; onClose: () => void }) {
@@ -20,7 +20,7 @@ export default function ShareSheet({ data, onClose }: { data: ShareCardData; onC
   const copy = shareCopy(data);
 
   // Render as soon as the card is mounted, and again if the first attempt
-  // failed (a render that ran while the app was in the background can't
+  // failed (a render that ran while the app was in the background can’t
   // finish — coming back and tapping retry does).
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function ShareSheet({ data, onClose }: { data: ShareCardData; onC
         if (cancelled) return;
         setPng({ blob, url: URL.createObjectURL(blob) });
       })
-      .catch(() => !cancelled && setError("That didn't finish — tap to try again."));
+      .catch(() => !cancelled && setError("That didn’t finish — tap to try again."));
     return () => {
       cancelled = true;
     };
