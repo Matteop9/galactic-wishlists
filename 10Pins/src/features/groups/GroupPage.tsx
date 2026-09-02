@@ -1,22 +1,54 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchGroup, fetchLeaderboard, type LeaderboardRow } from '../../lib/groups';
+import {
+  availablePeriods,
+  defaultPeriod,
+  periodLabel,
+  sortRows,
+  type LeaderboardMetric,
+  type LeaderboardPeriod,
+} from '../../lib/leaderboard';
 import { createGuestClaim, fetchGroupClaims, fetchGroupGuests } from '../../lib/friends';
 import { fetchGroupMatchDays } from '../../lib/matchday';
 import { Bar, LeaderboardSkeleton, Panel, SkeletonScreen } from '../../components/Skeleton';
 import EmptyState from '../../components/EmptyState';
 import JoinQr from '../../components/JoinQr';
+import ChipRow from '../../components/ChipRow';
+import Avatar from '../../components/Avatar';
+import PlayerLink from '../../components/PlayerLink';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
+
+const METRIC_OPTIONS = [
+  { value: 'average', label: 'Average' },
+  { value: 'high', label: 'High game' },
+];
+
+/** Period-aware empty copy — '30d' gets its own line, 'season' and 'all' share the original. */
+function leaderboardEmptyBody(period: LeaderboardPeriod): string {
+  if (period === '30d') return 'No games in the last 30 days — the table starts with the first one.';
+  if (period === 'all') return 'No games yet — the table starts with the first one.';
+  return 'No games this season yet — the table starts with the first game.';
+}
 
 export default function GroupPage({ profile }: { profile: Profile }) {
   const { id } = useParams<{ id: string }>();
   const group = useQuery({ queryKey: ['group', id], queryFn: () => fetchGroup(id!), enabled: !!id });
+
+  // Lazily initialised from the group's own dates once it loads — the group
+  // query can resolve after first render, so this can't just be useState(defaultPeriod(g)).
+  // (Reads group.data directly, not the narrowed `g` below, so it works before the query settles.)
+  const [periodChoice, setPeriodChoice] = useState<LeaderboardPeriod | null>(null);
+  const [metric, setMetric] = useState<LeaderboardMetric>('average');
+  const period = periodChoice ?? (group.data ? defaultPeriod(group.data) : 'season');
+
   const leaderboard = useQuery({
-    queryKey: ['leaderboard', id],
-    queryFn: () => fetchLeaderboard(id!),
+    queryKey: ['leaderboard', id, period],
+    queryFn: () => fetchLeaderboard(id!, period),
     enabled: !!id,
+    placeholderData: keepPreviousData,
   });
   const showPage = useSkeleton(group.isPending);
   const showBoard = useSkeleton(leaderboard.isPending);
@@ -33,7 +65,7 @@ export default function GroupPage({ profile }: { profile: Profile }) {
           <LeaderboardSkeleton bare />
           <Panel className="flex flex-col gap-2">
             <Bar w={92} h={10} />
-            <Bar h={40} className="rounded-[10px]" />
+            <Bar h={40} className="rounded-control" />
           </Panel>
         </SkeletonScreen>
       </div>
@@ -43,7 +75,7 @@ export default function GroupPage({ profile }: { profile: Profile }) {
   if (group.isError || !group.data) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Group not found</p>
+        <h1 className="font-display text-[20px] font-bold">Group not found</h1>
         <Link to="/groups" className="text-[13.5px] text-phosphor">
           Back to groups
         </Link>
@@ -66,14 +98,14 @@ export default function GroupPage({ profile }: { profile: Profile }) {
         <div className="min-w-0">
           <h1 className="truncate font-display text-[20px] font-bold">{g.name}</h1>
           <p className="text-[12px] text-faint">
-            {g.season_name ?? 'All time'}
+            {periodLabel(period, g)}
             {g.verified_only_leaderboard ? ' · verified games only' : ''}
           </p>
         </div>
         {myRole === 'admin' && (
           <Link
             to={`/groups/${g.id}/settings`}
-            className="shrink-0 rounded-[10px] border border-line bg-panel px-3 py-2 text-[13px] font-bold text-text"
+            className="shrink-0 rounded-control border border-line bg-panel px-3 py-2 text-[13px] font-bold text-text"
           >
             Settings
           </Link>
@@ -85,7 +117,7 @@ export default function GroupPage({ profile }: { profile: Profile }) {
           that instead of an empty table. */}
       {justCreated ? (
         <EmptyState
-          title="Now get your crew in"
+          title="Just you so far"
           body="Anyone who joins gets on the leaderboard from their first game."
         >
           <div className="w-full pt-1">
@@ -94,18 +126,34 @@ export default function GroupPage({ profile }: { profile: Profile }) {
         </EmptyState>
       ) : (
       <section className="flex flex-col gap-2">
-        <span className="label-caps">Leaderboard</span>
+        <span className="label-caps">
+          Leaderboard · {metric === 'average' ? 'average' : 'high game'}
+        </span>
+        <ChipRow
+          fill
+          label="Period"
+          options={availablePeriods(g)}
+          value={period}
+          onChange={(v) => setPeriodChoice(v as LeaderboardPeriod)}
+        />
+        <ChipRow
+          fill
+          label="Rank by"
+          options={METRIC_OPTIONS}
+          value={metric}
+          onChange={(v) => setMetric(v as LeaderboardMetric)}
+        />
         {showBoard && <LeaderboardSkeleton />}
         {!showBoard && leaderboard.data && leaderboard.data.length === 0 && (
-          <EmptyState tone="inline" body="No games this season yet — the table starts with the first game." />
+          <EmptyState tone="inline" body={leaderboardEmptyBody(period)} />
         )}
-        {(leaderboard.data ?? []).map((row, i) => (
+        {sortRows(leaderboard.data ?? [], metric).map((row, i) => (
           <div
             key={row.profile_id}
             className="rise-in"
             style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}
           >
-            <LeaderboardLine row={row} you={row.profile_id === profile.id} />
+            <LeaderboardLine row={row} you={row.profile_id === profile.id} metric={metric} myId={profile.id} />
           </div>
         ))}
       </section>
@@ -120,12 +168,14 @@ export default function GroupPage({ profile }: { profile: Profile }) {
       <section className="flex flex-col gap-2">
         <span className="label-caps">Members · {members.length}</span>
         {members.map((m) => (
-          <div
+          <PlayerLink
             key={m.profile_id}
-            className="flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3"
+            profileId={m.profile_id}
+            myId={profile.id}
+            className="press flex items-center justify-between gap-3 rounded-card border border-line bg-panel px-4 py-3"
           >
             <div className="flex items-center gap-3">
-              <Avatar name={m.profiles?.display_name ?? '?'} url={m.profiles?.avatar_url} />
+              <Avatar name={m.profiles?.display_name ?? '?'} url={m.profiles?.avatar_url} size={32} />
               <div>
                 <p className="text-[14px] text-text">
                   {m.profiles?.display_name}
@@ -135,31 +185,46 @@ export default function GroupPage({ profile }: { profile: Profile }) {
               </div>
             </div>
             {m.role === 'admin' && <span className="label-caps text-phosphor">Admin</span>}
-          </div>
+          </PlayerLink>
         ))}
       </section>
     </div>
   );
 }
 
-function LeaderboardLine({ row, you }: { row: LeaderboardRow; you: boolean }) {
+function LeaderboardLine({
+  row,
+  you,
+  metric,
+  myId,
+}: {
+  row: LeaderboardRow;
+  you: boolean;
+  metric: LeaderboardMetric;
+  myId: string;
+}) {
+  const big = metric === 'average' ? row.average.toFixed(1) : row.high_game;
+  const subLabel =
+    metric === 'average' ? `high ${row.high_game}` : `avg ${row.average.toFixed(1)}`;
   return (
-    <div
-      className={`flex items-center gap-3 rounded-xl border px-4 py-3 ${
+    <PlayerLink
+      profileId={row.profile_id}
+      myId={myId}
+      className={`press flex items-center gap-3 rounded-card border px-4 py-3 ${
         you ? 'border-phosphor/40 bg-phosphor/5' : 'border-line bg-panel'
       }`}
     >
       <span className="score-text w-6 text-[15px] font-bold text-dim">{row.rank}</span>
-      <Avatar name={row.display_name} url={row.avatar_url} />
+      <Avatar name={row.display_name} url={row.avatar_url} size={32} />
       <div className="min-w-0 flex-1">
         <p className="truncate text-[14px] text-text">{row.display_name}</p>
         <p className="text-[11px] text-faint">
-          {row.games} {row.games === 1 ? 'game' : 'games'} · high {row.high_game}
+          {row.games} {row.games === 1 ? 'game' : 'games'} · {subLabel}
         </p>
       </div>
       <Movement rank={row.rank} prev={row.prev_rank} />
-      <span className="score-text text-[17px] font-bold text-text">{row.average}</span>
-    </div>
+      <span className="score-text text-[17px] font-bold text-text">{big}</span>
+    </PlayerLink>
   );
 }
 
@@ -169,23 +234,6 @@ function Movement({ rank, prev }: { rank: number; prev: number | null }) {
   if (prev > rank) return <span className="w-4 text-center text-[12px] text-success">▲</span>;
   if (prev < rank) return <span className="w-4 text-center text-[12px] text-signal">▼</span>;
   return <span className="w-4 text-center text-[12px] text-faint">—</span>;
-}
-
-function Avatar({ name, url }: { name: string; url?: string | null }) {
-  if (url) {
-    return <img src={url} alt="" className="size-8 shrink-0 rounded-full object-cover" />;
-  }
-  const initials = name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
-  return (
-    <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-line bg-well font-display text-[12px] font-bold text-glass">
-      {initials}
-    </span>
-  );
 }
 
 function MatchDaysSection({ groupId }: { groupId: string }) {
@@ -200,13 +248,13 @@ function MatchDaysSection({ groupId }: { groupId: string }) {
         <span className="label-caps">Match days</span>
         <Link
           to={`/groups/${groupId}/matchday/new`}
-          className="rounded-[10px] bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
+          className="rounded-control bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
         >
           New match day
         </Link>
       </div>
       {(matchDays.data ?? []).length === 0 && (
-        <p className="rounded-2xl border border-dashed border-line bg-well/50 p-4 text-[13.5px] text-dim">
+        <p className="rounded-card border border-dashed border-line bg-well/50 p-4 text-[13.5px] text-dim">
           Split into teams, set handicaps, bowl a series — start your first match day.
         </p>
       )}
@@ -214,7 +262,7 @@ function MatchDaysSection({ groupId }: { groupId: string }) {
         <Link
           key={mdRow.id}
           to={`/matchday/${mdRow.id}`}
-          className="flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3"
+          className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
         >
           <div className="min-w-0">
             <p className="truncate text-[14px] text-text">
@@ -277,7 +325,7 @@ function GuestsSection({ groupId }: { groupId: string }) {
         return (
           <div
             key={guest.name.toLowerCase()}
-            className="flex items-center justify-between gap-3 rounded-xl border border-line bg-panel px-4 py-3"
+            className="flex items-center justify-between gap-3 rounded-card border border-line bg-panel px-4 py-3"
           >
             <div className="min-w-0">
               <p className="truncate text-[14px] text-text">{guest.name}</p>
@@ -289,16 +337,16 @@ function GuestsSection({ groupId }: { groupId: string }) {
               <button
                 type="button"
                 onClick={() => copyClaimLink(open.claim_code!)}
-                className="rounded-[10px] border border-line bg-well px-3 py-1.5 text-[12px] font-bold text-text"
+                className="rounded-control border border-line bg-well px-3 py-1.5 text-[12px] font-bold text-text"
               >
-                {copiedCode === open.claim_code ? 'Link copied ✓' : 'Copy claim link'}
+                {copiedCode === open.claim_code ? 'Link copied' : 'Copy claim link'}
               </button>
             ) : (
               <button
                 type="button"
                 onClick={() => create.mutate(guest.name)}
                 disabled={create.isPending}
-                className="rounded-[10px] bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
+                className="rounded-control bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
               >
                 Create claim link
               </button>
@@ -338,31 +386,19 @@ function InviteCard({ code }: { code: string | null }) {
   }
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+    <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
       <span className="label-caps">Invite your crew</span>
       <JoinQr url={link} label="Scan to join" />
       <p className="text-center font-mono text-[15px] tracking-wider text-text">{code}</p>
-      <button
-        type="button"
-        onClick={share}
-        className="press rounded-[10px] bg-phosphor py-2.5 font-display text-[13px] font-bold text-ink"
-      >
+      <button type="button" onClick={share} className="btn-primary">
         Share invite link
       </button>
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => copy(link, 'link')}
-          className="flex-1 rounded-[10px] border border-line bg-well py-2.5 text-[13px] font-bold text-text"
-        >
-          {copied === 'link' ? 'Link copied ✓' : 'Copy link'}
+        <button type="button" onClick={() => copy(link, 'link')} className="flex-1 btn-secondary">
+          {copied === 'link' ? 'Link copied' : 'Copy link'}
         </button>
-        <button
-          type="button"
-          onClick={() => copy(code, 'code')}
-          className="flex-1 rounded-[10px] border border-line bg-well py-2.5 text-[13px] font-bold text-text"
-        >
-          {copied === 'code' ? 'Code copied ✓' : 'Copy code'}
+        <button type="button" onClick={() => copy(code, 'code')} className="flex-1 btn-secondary">
+          {copied === 'code' ? 'Code copied' : 'Copy code'}
         </button>
       </div>
     </section>

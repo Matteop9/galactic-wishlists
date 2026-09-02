@@ -80,7 +80,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
   if (md.isError || !md.data) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Match day not found</p>
+        <h1 className="font-display text-[20px] font-bold">Match day not found</h1>
         <Link to="/groups" className="text-[13.5px] text-phosphor">
           Back to groups
         </Link>
@@ -90,7 +90,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
   if (md.data.created_by !== profile.id) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Organiser only</p>
+        <h1 className="font-display text-[20px] font-bold">Organiser only</h1>
         <p className="max-w-[260px] text-[13.5px] text-dim">
           Only the match-day organiser can enter leg scores.
         </p>
@@ -132,7 +132,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={() => setEntryMode('frames')}
-          className={`flex-1 rounded-[10px] border py-2 text-[12.5px] font-bold ${
+          className={`flex-1 rounded-control border py-2 text-[12.5px] font-bold ${
             entryMode === 'frames' ? 'border-phosphor/50 bg-phosphor/10 text-phosphor' : 'border-line bg-panel text-dim'
           }`}
         >
@@ -141,7 +141,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={() => setEntryMode('totals')}
-          className={`flex-1 rounded-[10px] border py-2 text-[12.5px] font-bold ${
+          className={`flex-1 rounded-control border py-2 text-[12.5px] font-bold ${
             entryMode === 'totals' ? 'border-phosphor/50 bg-phosphor/10 text-phosphor' : 'border-line bg-panel text-dim'
           }`}
         >
@@ -170,13 +170,13 @@ export default function LegEntry({ profile }: { profile: Profile }) {
                   }`}
                 >
                   {p.display_name.split(/\s+/)[0]}
-                  {scored.complete ? ` ✓ ${scored.total}` : scored.total !== null ? ` ${scored.total}` : ''}
+                  {scored.total !== null ? ` ${scored.total}` : ''}
                 </button>
               );
             })}
           </div>
 
-          <div className="rounded-2xl border border-line bg-panel p-3">
+          <div className="rounded-card border border-line bg-panel p-3">
             <Scorecard
               players={[
                 {
@@ -219,7 +219,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
       {entryMode === 'totals' && (
         <div className="flex flex-col gap-2">
           {players.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 rounded-xl border border-line bg-panel px-4 py-3">
+            <div key={p.id} className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[14px] text-text">{p.display_name}</p>
                 <p className="text-[11px] text-faint">
@@ -236,7 +236,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
                 aria-label={`${p.display_name} score`}
                 value={totals[p.id] ?? ''}
                 onChange={(e) => setTotals((t) => ({ ...t, [p.id]: e.target.value }))}
-                className="score-text w-24 rounded-[10px] border border-line bg-well px-3 py-2.5 text-right text-[16px] font-bold text-text placeholder:text-[12px] placeholder:font-normal placeholder:text-faint"
+                className="score-text w-24 rounded-control border border-line bg-well px-3 py-2.5 text-right text-[16px] font-bold text-text placeholder:text-[12px] placeholder:font-normal placeholder:text-faint"
               />
             </div>
           ))}
@@ -250,7 +250,7 @@ export default function LegEntry({ profile }: { profile: Profile }) {
           save.mutate();
         }}
         disabled={!ready || save.isPending}
-        className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-50 disabled:shadow-none"
+        className="btn-primary"
       >
         {save.isPending ? 'Saving…' : `Save leg ${legNumber}`}
       </button>

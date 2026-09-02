@@ -14,7 +14,7 @@ import { QRCodeSVG } from 'qrcode.react';
 export default function JoinQr({ url, label, size = 132 }: { url: string; label?: string; size?: number }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <div className="rounded-lg bg-white p-2.5">
+      <div className="rounded-chip bg-white p-2.5">
         <QRCodeSVG
           value={url}
           size={size}

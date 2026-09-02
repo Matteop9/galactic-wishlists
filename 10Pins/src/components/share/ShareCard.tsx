@@ -44,7 +44,7 @@ export default function ShareCard({ data }: { data: ShareCardData }) {
 
       <div className="relative flex items-center gap-2">
         <span
-          className="score-text rounded-[5px] border-2 border-phosphor px-1.5 font-display text-[17px] font-extrabold leading-[1.35] text-phosphor"
+          className="score-text rounded-cell border-2 border-phosphor px-1.5 font-display text-[17px] font-extrabold leading-[1.35] text-phosphor"
           style={{ textShadow: '0 0 10px rgb(255 174 43 / .5)' }}
         >
           10
@@ -80,13 +80,13 @@ export default function ShareCard({ data }: { data: ShareCardData }) {
               {copy.pills.map((pill) => (
                 <span
                   key={pill}
-                  className="rounded-[5px] border-[1.5px] border-phosphor/50 px-2.5 py-1 font-display text-[12px] font-bold tracking-[.1em] text-phosphor"
+                  className="rounded-cell border-[1.5px] border-phosphor/50 px-2.5 py-1 font-display text-[12px] font-bold tracking-[.1em] text-phosphor"
                 >
                   {pill}
                 </span>
               ))}
               {copy.statPill && (
-                <span className="rounded-[5px] border-[1.5px] border-mark/40 px-2.5 py-1 font-display text-[12px] font-bold tracking-[.1em] text-mark">
+                <span className="rounded-cell border-[1.5px] border-mark/40 px-2.5 py-1 font-display text-[12px] font-bold tracking-[.1em] text-mark">
                   {copy.statPill}
                 </span>
               )}
@@ -100,7 +100,7 @@ export default function ShareCard({ data }: { data: ShareCardData }) {
       <div className="relative flex items-center">
         <span className="text-[14px] text-dim">{copy.stinger}</span>
         <span
-          className={`ml-auto -rotate-3 rounded-md px-4 py-2 font-display text-[13px] font-extrabold tracking-[.14em] ${
+          className={`ml-auto -rotate-3 rounded-cell px-4 py-2 font-display text-[13px] font-extrabold tracking-[.14em] ${
             verified ? 'bg-phosphor text-ink' : 'border border-line text-dim'
           }`}
           style={verified ? { boxShadow: '0 0 24px rgb(255 174 43 / .5)' } : undefined}

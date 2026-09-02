@@ -1,22 +1,9 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import Icon, { type IconName } from './Icon';
+import { useAuth } from '../lib/auth';
 
-const ICONS = {
-  home: 'M3 11.5 12 4l9 7.5M5.5 9.5V20h13V9.5',
-  groups: 'M7 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm10 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2.5 19c.5-3 2.5-4.5 4.5-4.5S11 16 11.5 19m1-.5c.4-2.4 2-4 4.5-4s4 1.5 4.5 4',
-  stats: 'M4 20V10m5.5 10V4m5.5 16v-7m5.5 7V7',
-  profile: 'M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm-7 9c.8-3.5 3.5-5.5 7-5.5s6.2 2 7 5.5',
-} as const;
-
-function TabIcon({ d }: { d: string }) {
-  return (
-    <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d={d} />
-    </svg>
-  );
-}
-
-function Tab({ to, label, icon }: { to: string; label: string; icon: keyof typeof ICONS }) {
+function Tab({ to, label, icon }: { to: string; label: string; icon: IconName }) {
   return (
     <NavLink
       to={to}
@@ -26,7 +13,7 @@ function Tab({ to, label, icon }: { to: string; label: string; icon: keyof typeo
         }`
       }
     >
-      <TabIcon d={ICONS[icon]} />
+      <Icon name={icon} />
       {label}
     </NavLink>
   );
@@ -36,6 +23,8 @@ function Tab({ to, label, icon }: { to: string; label: string; icon: keyof typeo
 export default function MobileTabBar() {
   const [sheetOpen, setSheetOpen] = useState(false);
   const navigate = useNavigate();
+  const { session } = useAuth();
+  const isAnonymous = session?.user.is_anonymous === true;
   const go = (to: string) => {
     setSheetOpen(false);
     navigate(to);
@@ -50,7 +39,7 @@ export default function MobileTabBar() {
           aria-hidden
         >
           <div
-            className="sheet-up absolute inset-x-0 bottom-0 mx-auto w-full max-w-[390px] rounded-t-3xl border border-b-0 border-line bg-panel p-4 pb-[calc(env(safe-area-inset-bottom)+2rem)] shadow-modal"
+            className="sheet-up absolute inset-x-0 bottom-0 mx-auto w-full max-w-[390px] rounded-t-sheet border border-b-0 border-line bg-panel p-4 pb-[calc(env(safe-area-inset-bottom)+2rem)] shadow-modal"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-label="Add a game"
@@ -60,18 +49,17 @@ export default function MobileTabBar() {
               <button
                 type="button"
                 onClick={() => go('/add/scan')}
-                className="press flex items-center justify-between rounded-xl border border-phosphor/40 bg-well px-4 py-4 text-left shadow-glow-amber"
+                className="press flex items-center justify-between rounded-card border border-line bg-well px-4 py-4 text-left"
               >
                 <div>
                   <p className="font-display text-[15px] font-bold text-text">Scan scoreboard</p>
                   <p className="text-[12px] text-dim">Photograph the lane monitor</p>
                 </div>
-                <span className="label-caps text-phosphor">Fastest</span>
               </button>
               <button
                 type="button"
                 onClick={() => go('/live/new')}
-                className="rounded-xl border border-line bg-well px-4 py-4 text-left"
+                className="rounded-card border border-line bg-well px-4 py-4 text-left"
               >
                 <p className="font-display text-[15px] font-bold text-text">Score live</p>
                 <p className="text-[12px] text-dim">Frame by frame at the lane</p>
@@ -79,7 +67,7 @@ export default function MobileTabBar() {
               <button
                 type="button"
                 onClick={() => go('/add/quick')}
-                className="rounded-xl border border-line bg-well px-4 py-4 text-left"
+                className="rounded-card border border-line bg-well px-4 py-4 text-left"
               >
                 <p className="font-display text-[15px] font-bold text-text">Quick add</p>
                 <p className="text-[12px] text-dim">Just the totals — ten seconds</p>
@@ -87,11 +75,21 @@ export default function MobileTabBar() {
               <button
                 type="button"
                 onClick={() => go('/add/manual')}
-                className="rounded-xl border border-line bg-well px-4 py-4 text-left"
+                className="rounded-card border border-line bg-well px-4 py-4 text-left"
               >
                 <p className="font-display text-[15px] font-bold text-text">Enter frames manually</p>
                 <p className="text-[12px] text-dim">Full scorecard, roll by roll</p>
               </button>
+              {!isAnonymous && (
+                <button
+                  type="button"
+                  onClick={() => go('/matchday/new')}
+                  className="rounded-card border border-line bg-well px-4 py-4 text-left"
+                >
+                  <p className="font-display text-[15px] font-bold text-text">Match day</p>
+                  <p className="text-[12px] text-dim">Teams, handicaps, best-of series</p>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -108,7 +106,7 @@ export default function MobileTabBar() {
               type="button"
               onClick={() => setSheetOpen(true)}
               aria-label="Add a game"
-              className="-mt-6 flex size-14 items-center justify-center rounded-2xl bg-phosphor font-display text-[28px] font-bold text-ink shadow-glow-amber"
+              className="-mt-6 flex size-14 items-center justify-center rounded-card bg-phosphor font-display text-[28px] font-bold text-ink shadow-glow-amber"
             >
               +
             </button>

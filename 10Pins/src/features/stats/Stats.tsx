@@ -4,6 +4,7 @@ import { useSkeleton } from '../../lib/useSkeleton';
 import EmptyState from '../../components/EmptyState';
 import { fetchRecentScores, fetchStats, fetchVenueStats } from '../../lib/games';
 import type { Profile } from '../../lib/auth';
+import { FormGraph, formArrow, Tile } from './StatBits';
 
 export default function Stats({ profile }: { profile: Profile }) {
   const stats = useQuery({ queryKey: ['stats', profile.id], queryFn: () => fetchStats(profile.id) });
@@ -66,13 +67,13 @@ export default function Stats({ profile }: { profile: Profile }) {
       </div>
 
       {scores.length >= 2 && (
-        <div className="rounded-2xl border border-line bg-panel p-4">
+        <div className="rounded-card border border-line bg-panel p-4">
           <span className="label-caps">Last {scores.length} games</span>
           <FormGraph scores={scores.map((r) => r.score)} />
         </div>
       )}
 
-      <div className="rounded-2xl border border-dashed border-line bg-well/50 p-4">
+      <div className="rounded-card border border-dashed border-line bg-well/50 p-4">
         <span className="label-caps">Frame-level</span>
         {framedGames > 0 ? (
           <>
@@ -103,7 +104,7 @@ export default function Stats({ profile }: { profile: Profile }) {
           {(venues.data ?? []).map((v) => (
             <div
               key={v.venue_id}
-              className="flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3"
+              className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
             >
               <div className="min-w-0">
                 <p className="truncate text-[14px] text-text">{v.venue_name}</p>
@@ -117,66 +118,5 @@ export default function Stats({ profile }: { profile: Profile }) {
         </div>
       )}
     </div>
-  );
-}
-
-function Tile({
-  label,
-  value,
-  tone,
-  bare,
-}: {
-  label: string;
-  value: string;
-  tone?: 'up' | 'down' | null;
-  bare?: boolean;
-}) {
-  const colour = tone === 'up' ? 'text-success' : tone === 'down' ? 'text-signal' : 'text-text';
-  return (
-    <div className={bare ? 'flex flex-col items-center gap-1' : 'rounded-2xl border border-line bg-panel p-4'}>
-      <span className="label-caps">{label}</span>
-      <p className={`score-text mt-1 text-[26px] font-bold ${colour}`}>{value}</p>
-    </div>
-  );
-}
-
-function formArrow(scores: number[]): { symbol: string; tone: 'up' | 'down' | null } {
-  if (scores.length < 4) return { symbol: '—', tone: null };
-  const half = Math.floor(scores.length / 2);
-  const avg = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
-  const earlier = avg(scores.slice(0, half));
-  const later = avg(scores.slice(half));
-  if (later > earlier + 1) return { symbol: '▲', tone: 'up' };
-  if (later < earlier - 1) return { symbol: '▼', tone: 'down' };
-  return { symbol: '—', tone: null };
-}
-
-/** SVG polyline of recent scores — phosphor, per the design’s form graph. */
-function FormGraph({ scores }: { scores: number[] }) {
-  const width = 320;
-  const height = 96;
-  const pad = 8;
-  const min = Math.min(...scores);
-  const max = Math.max(...scores);
-  const span = Math.max(max - min, 10);
-  const points = scores
-    .map((score, i) => {
-      const x = pad + (i * (width - pad * 2)) / Math.max(scores.length - 1, 1);
-      const y = height - pad - ((score - min) / span) * (height - pad * 2);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(' ');
-
-  return (
-    <svg viewBox={`0 0 ${width} ${height}`} className="mt-2 w-full" role="img" aria-label="Score trend">
-      <polyline
-        points={points}
-        fill="none"
-        stroke="var(--color-phosphor)"
-        strokeWidth="2"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
-    </svg>
   );
 }

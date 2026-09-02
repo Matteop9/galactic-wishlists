@@ -29,7 +29,7 @@ export default function GroupPicker({
         id={id}
         value={value ?? ''}
         onChange={(event) => onChange(event.target.value || null)}
-        className="rounded-[10px] border border-line bg-well px-3 py-3 text-[14px] text-text [color-scheme:dark]"
+        className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text [color-scheme:dark]"
       >
         <option value="">Just for me</option>
         {list.map((m) =>

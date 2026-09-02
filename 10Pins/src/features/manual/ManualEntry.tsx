@@ -69,7 +69,7 @@ export default function ManualEntry({ profile }: { profile: Profile }) {
             value={date}
             max={today()}
             onChange={(event) => setDate(event.target.value)}
-            className="rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text [color-scheme:dark]"
+            className="rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text [color-scheme:dark]"
           />
         </div>
         <div className="flex flex-1 flex-col gap-2">
@@ -83,7 +83,7 @@ export default function ManualEntry({ profile }: { profile: Profile }) {
             placeholder="Hollywood Bowl…"
             value={venue}
             onChange={(event) => setVenue(event.target.value)}
-            className="rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+            className="rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
           />
           <datalist id="venue-names-manual">
             {(venues.data ?? []).map((name) => (
@@ -95,7 +95,7 @@ export default function ManualEntry({ profile }: { profile: Profile }) {
 
       <GroupPicker profileId={profile.id} value={groupId} onChange={setGroupId} id="manual-group" />
 
-      <div className="rounded-2xl border border-line bg-panel p-3">
+      <div className="rounded-card border border-line bg-panel p-3">
         <Scorecard
           players={[
             {
@@ -126,7 +126,7 @@ export default function ManualEntry({ profile }: { profile: Profile }) {
             save.mutate();
           }}
           disabled={save.isPending}
-          className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60"
+          className="btn-primary"
         >
           {save.isPending ? 'Saving…' : `Save game — ${scored.total}`}
         </button>

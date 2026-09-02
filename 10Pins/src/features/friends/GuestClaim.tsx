@@ -31,7 +31,7 @@ export default function GuestClaim() {
         </div>
 
         {r.games.length > 0 && (
-          <div className="flex flex-col gap-2 rounded-2xl border border-line bg-panel p-4">
+          <div className="flex flex-col gap-2 rounded-card border border-line bg-panel p-4">
             {r.games.map((g) => (
               <Link key={g.game_id} to={`/games/${g.game_id}`} className="flex items-baseline justify-between">
                 <span className="text-[13px] text-dim">
@@ -46,7 +46,7 @@ export default function GuestClaim() {
 
         <Link
           to="/stats"
-          className="rounded-[10px] bg-phosphor py-3.5 text-center font-display text-[15px] font-bold text-ink"
+          className="btn-primary"
         >
           See your stats
         </Link>
@@ -58,10 +58,10 @@ export default function GuestClaim() {
     <div className="flex flex-col gap-6 px-4 py-10">
       <div className="flex flex-col items-center gap-2 text-center">
         <span className="label-caps">Claim your games</span>
-        <h1 className="font-display text-[24px] font-bold">Were you the guest?</h1>
+        <h1 className="font-display text-[24px] font-bold">Claim your guest games</h1>
         <p className="max-w-[280px] text-[13.5px] text-dim">
-          This link transfers every game recorded under a guest name in the group to your account,
-          and adds you to the group. It can only be used once.
+          This one-use link transfers every game recorded under a guest name in the group to your
+          account, and adds you to the group.
         </p>
       </div>
 
@@ -69,9 +69,9 @@ export default function GuestClaim() {
         type="button"
         onClick={() => claim.mutate()}
         disabled={claim.isPending}
-        className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60"
+        className="btn-primary"
       >
-        {claim.isPending ? 'Claiming…' : 'Yes — claim my games'}
+        {claim.isPending ? 'Claiming…' : 'Claim my games'}
       </button>
       {claim.isError && (
         <p className="text-center text-[13px] text-signal" role="alert">

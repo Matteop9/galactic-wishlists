@@ -58,7 +58,7 @@ export default function Scorecard({
       {current && (
         <div className="mb-1 flex items-center justify-between">
           <span className="label-caps">{current.name}</span>
-          <span className="rounded-full border border-phosphor px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[.12em] text-phosphor shadow-glow-amber">
+          <span className="rounded-full border border-phosphor px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[.12em] text-phosphor">
             Now bowling
           </span>
         </div>
@@ -157,11 +157,11 @@ function FrameCell({
 
   return (
     <>
-      {isTenth && <span className="w-[2px] shrink-0 self-stretch rounded-full bg-[#2E4258]" />}
+      {isTenth && <span className="w-[2px] shrink-0 self-stretch rounded-full bg-rule" />}
       <Cell
         {...(onTap ? { type: 'button' as const, onClick: onTap, 'aria-label': `Frame ${index + 1}` } : {})}
-        className={`relative min-w-0 overflow-hidden rounded ${onTap ? 'press' : ''} ${border} ${
-          mismatch ? 'bg-[rgba(255,174,43,.14)]' : 'bg-well'
+        className={`relative min-w-0 overflow-hidden rounded-cell ${onTap ? 'press' : ''} ${border} ${
+          mismatch ? 'bg-phosphor/15' : 'bg-well'
         } ${pendingDim ? 'opacity-45' : ''} ${isTenth ? 'flex-[1.7]' : 'flex-1'}`}
       >
         <div className={`flex divide-x divide-hairline ${size.strip}`}>
@@ -202,7 +202,7 @@ function CompactCard({ players }: { players: ScorecardPlayer[] }) {
                 return (
                   <span
                     key={i}
-                    className={`grid h-5 flex-1 place-items-center rounded-[3px] border border-hairline bg-well font-display text-[9px] font-semibold ${glyphColor(g)}`}
+                    className={`grid h-5 flex-1 place-items-center rounded-cell border border-hairline bg-well font-display text-[9px] font-semibold ${glyphColor(g)}`}
                   >
                     {g}
                   </span>

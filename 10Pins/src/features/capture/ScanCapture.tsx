@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ReviewScan from './ReviewScan';
+import Icon from '../../components/Icon';
 import {
   compressPhoto,
   deleteScanPhoto,
@@ -36,8 +37,8 @@ const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
     body: 'Scanning resets 24 hours after your first one. You can still score live or enter frames yourself.',
   },
   model_failed: {
-    title: 'The reader had a moment',
-    body: 'Nothing wrong with your photo. Try again in a minute, or enter the frames yourself.',
+    title: "Couldn’t read the scores this time",
+    body: "Your photo’s fine. Try again in a minute, or enter the frames yourself.",
   },
   model_unreachable: {
     title: "Couldn’t reach the reader",
@@ -60,7 +61,7 @@ const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
     body: "We’ll scan this when you’re back online.",
   },
   unknown: {
-    title: 'That scan did not finish',
+    title: "That scan didn’t finish",
     body: 'Try again, or enter the frames yourself.',
   },
 };
@@ -241,16 +242,15 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   if (phase === 'processing') {
     return (
       <div className="flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6">
-        <div className="relative h-[360px] overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-[#0F1B29] to-[#060A10]">
+        <div className="relative h-[360px] overflow-hidden rounded-card border border-line bg-well">
           {preview && <img src={preview} alt="" className="size-full object-contain opacity-80" />}
           <span
             className="scan-line pointer-events-none absolute inset-x-0 h-[2.5px] bg-phosphor"
-            style={{ boxShadow: '0 0 22px 6px rgb(255 174 43 / .5)' }}
             aria-hidden
           />
         </div>
         <div className="flex flex-col items-center gap-2 text-center" role="status">
-          <p className="font-display text-[20px] font-bold">Reading the grid</p>
+          <h1 className="font-display text-[20px] font-bold">Reading the grid</h1>
           <ProcessingTicker />
         </div>
         <p className="text-center text-[12px] text-faint">Keep hold — a few seconds</p>
@@ -261,7 +261,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   if (phase === 'queued') {
     return (
       <div className="flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6">
-        <div className="relative h-[280px] overflow-hidden rounded-2xl border border-line bg-well opacity-80">
+        <div className="relative h-[280px] overflow-hidden rounded-card border border-line bg-well opacity-80">
           {preview && <img src={preview} alt="" className="size-full object-contain" />}
           <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-line bg-panel px-3 py-1">
             <span className="size-1.5 rounded-full bg-dim" />
@@ -269,7 +269,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
           </span>
         </div>
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="font-display text-[20px] font-bold">No signal — saved to your queue</p>
+          <h1 className="font-display text-[20px] font-bold">No signal — saved to your queue</h1>
           <p className="text-[13.5px] leading-relaxed text-dim">
             We’ll scan this when you’re back online and let you know. Nothing to redo.
           </p>
@@ -277,7 +277,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
         <div className="flex flex-col gap-2">
           <Link
             to="/profile"
-            className="press grid h-[52px] place-items-center rounded-xl border border-line font-display text-[14px] font-bold text-text"
+            className="press grid h-[52px] place-items-center rounded-control border border-line font-display text-[14px] font-bold text-text"
           >
             See the queue
           </Link>
@@ -294,11 +294,11 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
     return (
       <div className="flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6">
         {hiddenInputs}
-        <div className="relative h-[240px] overflow-hidden rounded-2xl border border-line bg-well">
+        <div className="relative h-[240px] overflow-hidden rounded-card border border-line bg-well">
           {preview && <img src={preview} alt="" className="size-full object-contain opacity-50" />}
         </div>
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="font-display text-[20px] font-bold">{copy.title}</p>
+          <h1 className="font-display text-[20px] font-bold">{copy.title}</h1>
           <p className="text-[13.5px] leading-relaxed text-dim">{copy.body}</p>
         </div>
         <div className="flex flex-col gap-2">
@@ -306,14 +306,14 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
             <button
               type="button"
               onClick={retake}
-              className="press grid h-[52px] place-items-center rounded-xl bg-phosphor font-display text-[15px] font-bold text-ink shadow-glow-amber"
+              className="btn-primary grid h-[52px] place-items-center"
             >
               Take it again
             </button>
           )}
           <Link
             to="/add/manual"
-            className="press grid h-[52px] place-items-center rounded-xl border border-line font-display text-[14px] font-bold text-text"
+            className="press grid h-[52px] place-items-center rounded-control border border-line font-display text-[14px] font-bold text-text"
           >
             Enter the frames
           </Link>
@@ -331,10 +331,10 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
 
   if (phase === 'done') {
     return (
-      <div className="relative flex min-h-[70vh] flex-col justify-center gap-6 px-8 py-6 text-center">
+      <div className="relative flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6 text-center">
         <div className="flex flex-col items-center gap-5">
           <span
-            className={`stamp-in rounded-lg px-5 py-2.5 font-display text-[15px] font-extrabold tracking-[.14em] ${
+            className={`stamp-in rounded-chip px-5 py-2.5 font-display text-[15px] font-extrabold tracking-[.14em] ${
               savedVerified ? 'bg-phosphor text-ink shadow-glow-amber' : 'border border-line text-dim'
             }`}
           >
@@ -349,7 +349,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
             </p>
           </div>
           {savedTop && (
-            <div className="flex items-center gap-3 rounded-xl border border-phosphor/40 bg-panel px-4 py-3 shadow-glow-amber">
+            <div className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3">
               <span className="score-text text-[26px] font-bold text-phosphor">{savedTop.score}</span>
               <span className="text-[13px] font-bold text-text">{savedTop.name}</span>
             </div>
@@ -359,7 +359,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
           <button
             type="button"
             onClick={() => navigate(savedGameId ? `/games/${savedGameId}` : '/')}
-            className="press grid h-[52px] place-items-center rounded-xl bg-phosphor font-display text-[15px] font-bold text-ink shadow-glow-amber"
+            className="btn-primary grid h-[52px] place-items-center"
           >
             See it in the feed
           </button>
@@ -390,12 +390,12 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
         <span className="w-12" />
       </header>
 
-      <div className="relative mx-1 my-3 flex-1 rounded-xl">
-        <Corner className="left-0 top-0 rounded-tl-lg border-l-[3px] border-t-[3px]" />
-        <Corner className="right-0 top-0 rounded-tr-lg border-r-[3px] border-t-[3px]" />
-        <Corner className="bottom-0 left-0 rounded-bl-lg border-b-[3px] border-l-[3px]" />
-        <Corner className="bottom-0 right-0 rounded-br-lg border-b-[3px] border-r-[3px]" />
-        <div className="absolute left-1/2 top-[38%] w-[230px] -translate-x-1/2 -translate-y-1/2 rounded-md border border-mark/25 bg-well/50 py-10 text-center">
+      <div className="relative mx-1 my-3 flex-1 rounded-card">
+        <Corner className="left-0 top-0 rounded-tl-chip border-l-[3px] border-t-[3px]" />
+        <Corner className="right-0 top-0 rounded-tr-chip border-r-[3px] border-t-[3px]" />
+        <Corner className="bottom-0 left-0 rounded-bl-chip border-b-[3px] border-l-[3px]" />
+        <Corner className="bottom-0 right-0 rounded-br-chip border-b-[3px] border-r-[3px]" />
+        <div className="absolute left-1/2 top-[38%] w-[230px] -translate-x-1/2 -translate-y-1/2 rounded-cell border border-mark/25 bg-well/50 py-10 text-center">
           <span className="label-caps">Lane monitor</span>
         </div>
         <div className="absolute inset-x-0 bottom-16 flex flex-col items-center gap-2 px-4 text-center">
@@ -411,13 +411,9 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
           type="button"
           onClick={() => galleryInput.current?.click()}
           aria-label="Choose a photo"
-          className="press grid size-12 place-items-center rounded-[10px] border border-line bg-well text-dim"
+          className="press grid size-12 place-items-center rounded-control border border-line bg-well text-dim"
         >
-          <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round">
-            <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
-            <path d="M3.5 15 L9 10 L14 15 L17 12.5 L20.5 15.5" />
-            <circle cx="15.5" cy="8" r="1.6" />
-          </svg>
+          <Icon name="image" />
         </button>
         <button
           type="button"

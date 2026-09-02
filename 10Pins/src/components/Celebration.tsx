@@ -54,12 +54,12 @@ export default function CelebrationHost() {
   if (current.tier === 3 && !reduced) {
     return (
       <div
-        className="fixed inset-0 z-50 grid place-items-center bg-ink/70 px-8"
+        className="fixed inset-0 z-50 grid place-items-center bg-ink/70 px-6"
         onClick={dismiss}
         role="status"
         aria-live="polite"
       >
-        <div className="celebrate-glow flex flex-col items-center gap-2 rounded-2xl border border-phosphor/50 bg-panel px-8 py-6 text-center">
+        <div className="celebrate-glow flex flex-col items-center gap-2 rounded-sheet border border-phosphor/50 bg-panel px-6 py-6 text-center">
           <p className="font-display text-[26px] font-extrabold tracking-[.02em] text-phosphor">
             {current.label}
           </p>
@@ -72,12 +72,12 @@ export default function CelebrationHost() {
                 dismiss();
                 navigate(`/games/${current.gameId}`);
               }}
-              className="press mt-2 rounded-[10px] bg-phosphor px-4 py-2 font-display text-[13px] font-bold text-ink"
+              className="press mt-2 rounded-control bg-phosphor px-4 py-2 font-display text-[13px] font-bold text-ink"
             >
               See it
             </button>
           )}
-          <p className="label-caps pt-1">Tap to carry on</p>
+          <p className="text-[12px] text-dim pt-1">Tap to carry on</p>
         </div>
       </div>
     );
@@ -91,7 +91,7 @@ export default function CelebrationHost() {
       aria-live="polite"
     >
       <div
-        className={`${spark ? 'celebrate-spark' : 'celebrate-toast'} rounded-full border border-phosphor/45 bg-panel/95 px-4 py-1.5 backdrop-blur`}
+        className={`${spark ? 'celebrate-spark' : 'celebrate-toast'} rounded-full border border-phosphor/45 bg-panel/95 px-4 py-1.5`}
       >
         <span className="font-display text-[14px] font-bold text-phosphor">{current.label}</span>
         {current.detail && <span className="ml-2 text-[12px] text-dim">{current.detail}</span>}

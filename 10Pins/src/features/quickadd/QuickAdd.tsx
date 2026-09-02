@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import GroupPicker from '../../components/GroupPicker';
+import Icon from '../../components/Icon';
 import VerificationBadge from '../../components/VerificationBadge';
 import { fetchVenueNames, saveQuickGame, type GuestScore } from '../../lib/games';
 import type { Profile } from '../../lib/auth';
@@ -75,7 +76,7 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
           placeholder="0–300"
           value={scoreText}
           onChange={(event) => setScoreText(event.target.value)}
-          className="score-text w-40 rounded-xl border border-line bg-well py-4 text-center text-[34px] font-bold text-text placeholder:text-[17px] placeholder:text-faint"
+          className="score-text w-40 rounded-card border border-line bg-well py-4 text-center text-[34px] font-bold text-text placeholder:text-[17px] placeholder:text-faint"
         />
       </div>
 
@@ -90,7 +91,7 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
             value={date}
             max={today()}
             onChange={(event) => setDate(event.target.value)}
-            className="rounded-[10px] border border-line bg-well px-3 py-3 text-[14px] text-text [color-scheme:dark]"
+            className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text [color-scheme:dark]"
           />
         </div>
         <div className="flex flex-1 flex-col gap-2">
@@ -104,7 +105,7 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
             placeholder="Hollywood Bowl…"
             value={venue}
             onChange={(event) => setVenue(event.target.value)}
-            className="rounded-[10px] border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
+            className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
           />
           <datalist id="venue-names">
             {(venues.data ?? []).map((name) => (
@@ -128,7 +129,7 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
               onChange={(event) =>
                 setGuests((gs) => gs.map((g, j) => (j === i ? { ...g, name: event.target.value } : g)))
               }
-              className="min-w-0 flex-1 rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+              className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
             />
             <input
               type="number"
@@ -141,22 +142,22 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
               onChange={(event) =>
                 setGuests((gs) => gs.map((g, j) => (j === i ? { ...g, score: Number(event.target.value) } : g)))
               }
-              className="score-text w-20 rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+              className="score-text w-20 rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
             />
             <button
               type="button"
               aria-label={`Remove player ${i + 2}`}
               onClick={() => setGuests((gs) => gs.filter((_, j) => j !== i))}
-              className="text-[18px] text-faint"
+              className="text-faint"
             >
-              ×
+              <Icon name="x" className="size-4" />
             </button>
           </div>
         ))}
         <button
           type="button"
           onClick={() => setGuests((gs) => [...gs, { name: '', score: NaN }])}
-          className="self-start rounded-lg border border-line bg-well px-3 py-2 text-[13.5px] text-dim"
+          className="self-start rounded-chip border border-line bg-well px-3 py-2 text-[13.5px] text-dim"
         >
           Add another player
         </button>
@@ -166,7 +167,7 @@ export default function QuickAdd({ profile }: { profile: Profile }) {
         <button
           type="submit"
           disabled={!scoreValid || !guestsValid || save.isPending}
-          className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-50 disabled:shadow-none"
+          className="btn-primary"
         >
           {save.isPending ? 'Adding…' : 'Add game'}
         </button>

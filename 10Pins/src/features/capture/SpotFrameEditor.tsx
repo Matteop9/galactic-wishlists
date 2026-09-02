@@ -72,7 +72,7 @@ export default function SpotFrameEditor({
   }
 
   return (
-    <div className="sheet-up flex flex-col gap-4 rounded-2xl border border-phosphor/40 bg-panel p-4 shadow-sheet">
+    <div className="sheet-up flex flex-col gap-4 rounded-card border border-phosphor/40 bg-panel p-4 shadow-sheet">
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <p className="font-display text-[15px] font-bold">
@@ -87,14 +87,14 @@ export default function SpotFrameEditor({
         <button
           type="button"
           onClick={clearFrame}
-          className="press rounded-lg border border-line bg-well px-3 py-2 text-[13px] text-dim"
+          className="press rounded-chip border border-line bg-well px-3 py-2 text-[13px] text-dim"
         >
           Clear
         </button>
         <button
           type="button"
           onClick={onDone}
-          className="press rounded-lg border border-line bg-well px-3 py-2 text-[13px] text-text"
+          className="press rounded-chip border border-line bg-well px-3 py-2 text-[13px] text-text"
         >
           Save frame
         </button>
@@ -103,7 +103,7 @@ export default function SpotFrameEditor({
       <div
         className={`mx-auto ${
           isTenth ? 'w-36' : 'w-28'
-        } overflow-hidden rounded border-[1.5px] border-phosphor bg-well shadow-glow-amber`}
+        } overflow-hidden rounded-cell border-[1.5px] border-phosphor bg-well shadow-glow-amber`}
       >
         <div className="flex h-9 divide-x divide-hairline">
           {glyphs.map((g, i) => (

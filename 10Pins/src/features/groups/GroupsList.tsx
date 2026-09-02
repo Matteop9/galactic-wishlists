@@ -41,14 +41,14 @@ export default function GroupsList({ profile }: { profile: Profile }) {
           <button
             type="button"
             onClick={() => setMode(mode === 'join' ? 'none' : 'join')}
-            className="rounded-[10px] border border-line bg-panel px-3 py-2 text-[13px] font-bold text-text"
+            className="rounded-control border border-line bg-panel px-3 py-2 text-[13px] font-bold text-text"
           >
             Join
           </button>
           <button
             type="button"
             onClick={() => setMode(mode === 'create' ? 'none' : 'create')}
-            className="rounded-[10px] bg-phosphor px-3 py-2 font-display text-[13px] font-bold text-ink"
+            className="rounded-control bg-phosphor px-3 py-2 font-display text-[13px] font-bold text-ink"
           >
             New group
           </button>
@@ -57,7 +57,7 @@ export default function GroupsList({ profile }: { profile: Profile }) {
 
       {mode === 'create' && (
         <form
-          className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4"
+          className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4"
           onSubmit={(e) => {
             e.preventDefault();
             if (name.trim().length >= 2) create.mutate();
@@ -72,12 +72,12 @@ export default function GroupsList({ profile }: { profile: Profile }) {
             onChange={(e) => setName(e.target.value)}
             placeholder="Friday Night Strikes"
             maxLength={40}
-            className="rounded-[10px] border border-line bg-well px-3 py-3 text-[15px] text-text placeholder:text-faint"
+            className="rounded-control border border-line bg-well px-3 py-3 text-[15px] text-text placeholder:text-faint"
           />
           <button
             type="submit"
             disabled={name.trim().length < 2 || create.isPending}
-            className="rounded-[10px] bg-phosphor py-3 font-display text-[15px] font-bold text-ink disabled:opacity-60"
+            className="btn-primary"
           >
             {create.isPending ? 'Creating…' : 'Create group'}
           </button>
@@ -91,7 +91,7 @@ export default function GroupsList({ profile }: { profile: Profile }) {
 
       {mode === 'join' && (
         <form
-          className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4"
+          className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4"
           onSubmit={(e) => {
             e.preventDefault();
             if (code.trim()) join.mutate();
@@ -105,12 +105,12 @@ export default function GroupsList({ profile }: { profile: Profile }) {
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="e.g. 4f9a1c22b8d0"
-            className="rounded-[10px] border border-line bg-well px-3 py-3 font-mono text-[15px] text-text placeholder:text-faint"
+            className="rounded-control border border-line bg-well px-3 py-3 font-mono text-[15px] text-text placeholder:text-faint"
           />
           <button
             type="submit"
             disabled={!code.trim() || join.isPending}
-            className="rounded-[10px] bg-phosphor py-3 font-display text-[15px] font-bold text-ink disabled:opacity-60"
+            className="btn-primary"
           >
             {join.isPending ? 'Joining…' : 'Join group'}
           </button>
@@ -142,7 +142,7 @@ export default function GroupsList({ profile }: { profile: Profile }) {
               key={g.id}
               to={`/groups/${g.id}`}
               style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}
-              className="rise-in press flex items-center justify-between rounded-2xl border border-line bg-panel p-4"
+              className="rise-in press flex items-center justify-between rounded-card border border-line bg-panel p-4"
             >
               <div className="min-w-0">
                 <p className="truncate font-display text-[17px] font-bold text-text">{g.name}</p>

@@ -21,6 +21,16 @@
   --color-line: #223146;
   --color-hairline: #1b2a3b;
   --color-success: #5ad08a;
+  /* Tenth-frame heavy rule on the scorecard (README §Scorecard) */
+  --color-rule: #2e4258;
+
+  /* Radius scale (README): cell 4 · chip/key 8 · input/CTA 10 · card 12 · sheet 16.
+     Use these names, never rounded-xl/2xl/lg/md or arbitrary px, so the scale can't drift. */
+  --radius-cell: 4px;
+  --radius-chip: 8px;
+  --radius-control: 10px;
+  --radius-card: 12px;
+  --radius-sheet: 16px;
 
   --font-display: 'Oxanium', sans-serif;
   --font-body: 'Atkinson Hyperlegible', sans-serif;
@@ -28,6 +38,7 @@
 
   /* Elevation is glow, not shadow, in dark */
   --shadow-glow-amber: 0 0 16px rgb(255 174 43 / 0.3);
+  --shadow-glow-amber-sm: 0 0 12px rgb(255 174 43 / 0.4);
   --shadow-sheet: 0 8px 24px rgb(0 0 0 / 0.45);
   --shadow-modal: 0 20px 60px rgb(0 0 0 / 0.6);
 
@@ -49,7 +60,10 @@
   }
 }
 
-/* Label style: 10px/600 tracked caps, mono, faint (README typography scale) */
+/* Label style: 10px/600 tracked caps, mono, faint (README typography scale).
+   Scope (B7, feedback queue triage 2 Sept): eyebrows and form labels only —
+   a status count ("14 watching"), a kind tag, or a "tap to carry on" aside
+   is not a label and should read as plain small text, not shout in caps. */
 @utility label-caps {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -57,6 +71,37 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-faint);
+}
+
+/* Amber budget (B2, 2 Sept): per screen the glow set is {one primary CTA} ∪
+   {verified stamp} ∪ {current frame} ∪ {celebration} ∪ {wordmark}. Nothing
+   else glows — a glowing banner, pip or dot is decorative and off-spec. */
+
+/* The primary and secondary CTA — one definition so padding, radius, and the
+   disabled treatment (token colours, never opacity) can't drift per screen. */
+@utility btn-primary {
+  @apply press rounded-control bg-phosphor py-3.5 text-center font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:bg-disabled disabled:text-faint disabled:shadow-none;
+}
+
+@utility btn-secondary {
+  @apply press rounded-control border border-line bg-panel py-3.5 text-center text-[15px] font-bold text-text disabled:border-hairline disabled:text-disabled;
+}
+
+/* Amber text glow — the wordmark / gallery heading treatment (README line 43) */
+@utility glow-amber-text {
+  text-shadow: 0 0 12px rgb(255 174 43 / 0.4);
+}
+
+/* Live indicator dot: a soft breathe on our own curve instead of Tailwind's
+   stock animate-pulse, and covered by the reduced-motion block below. */
+@keyframes live-dot {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@utility live-dot {
+  animation: live-dot 1200ms ease-in-out infinite;
 }
 
 /* Every score and stat is tabular — mandatory (spec §1) */
@@ -204,6 +249,7 @@
 
 @utility scan-line {
   animation: scan-sweep 1600ms var(--ease-base) infinite alternate;
+  box-shadow: 0 0 22px 6px rgb(255 174 43 / 0.5);
 }
 
 /* The verified stamp landing on a confirmed scan (design §5.3c) */
@@ -293,6 +339,7 @@
   .fade-in-base,
   .sheet-up,
   .scan-line,
+  .live-dot,
   .stamp-in,
   .celebrate-spark,
   .celebrate-toast,

@@ -17,14 +17,14 @@ export default function UpdatePrompt() {
   if (!needRefresh) return null;
 
   return (
-    <div className="sheet-up fixed inset-x-0 bottom-[94px] z-40 mx-auto flex w-full max-w-[390px] items-center gap-3 rounded-xl border border-line bg-panel px-4 py-3 shadow-sheet">
+    <div className="sheet-up fixed inset-x-0 bottom-[94px] z-40 mx-auto flex w-full max-w-[390px] items-center gap-3 rounded-card border border-line bg-panel px-4 py-3 shadow-sheet">
       <p className="min-w-0 flex-1 text-[13px] text-text">
         There’s a newer 10 Pins ready.
       </p>
       <button
         type="button"
         onClick={() => updateServiceWorker(true)}
-        className="press shrink-0 rounded-lg bg-phosphor px-3 py-1.5 font-display text-[12.5px] font-bold text-ink"
+        className="press shrink-0 rounded-chip bg-phosphor px-3 py-1.5 font-display text-[12.5px] font-bold text-ink"
       >
         Update
       </button>

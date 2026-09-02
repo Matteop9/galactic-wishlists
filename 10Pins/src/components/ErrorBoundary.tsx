@@ -34,7 +34,7 @@ export default class ErrorBoundary extends Component<
           <Wordmark />
         </div>
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="font-display text-[20px] font-bold">That screen broke</p>
+          <h1 className="font-display text-[20px] font-bold">That screen broke</h1>
           <p className="text-[13.5px] leading-relaxed text-dim">
             Nothing you did — and nothing you’ve scored is lost. Reloading usually sorts it.
           </p>
@@ -42,7 +42,7 @@ export default class ErrorBoundary extends Component<
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="press rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber"
+          className="btn-primary"
         >
           Reload 10 Pins
         </button>

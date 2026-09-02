@@ -13,10 +13,13 @@ if (!url || !anonKey) {
 // Same Supabase project as The Acca and Milky Bay; everything 10 Pins owns
 // lives in the `tenpins` schema. Auth (GoTrue) is project-scoped, so accounts
 // are shared across the three apps.
+// PKCE (not the implicit flow default) so a misdirected OAuth redirect fails
+// loudly instead of handing tokens to another origin — the code exchange only
+// succeeds on the device that started the sign-in (COUNCIL_REVIEW_TODO item 31).
 export const supabase = createClient<Database, 'tenpins'>(
   url || 'https://placeholder.supabase.co',
   anonKey || 'placeholder-anon-key',
-  { db: { schema: 'tenpins' } },
+  { db: { schema: 'tenpins' }, auth: { flowType: 'pkce' } },
 );
 
 // Dev-only console access for testing (never in production builds).

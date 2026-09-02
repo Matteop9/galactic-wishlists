@@ -225,7 +225,8 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 - **Where:** remove-guest button (~18px), 10px `label-caps` text (~3.7:1 contrast)
 - **How:** Bump interactive targets to ≥44px; raise small-label contrast to ≥4.5:1 (AA) or increase size/weight.
 
-### [ ] 26. Fix the "Opening Google…" stuck sign-in button — **MEDIUM**
+### [x] 26. Fix the "Opening Google…" stuck sign-in button — **MEDIUM**
+- **Status:** **DONE 2026-09-02** — `busy` now resets on `pageshow` (bfcache/back-navigation restores) and on `visibilitychange` when the tab becomes visible again, alongside the `redirectTo` fix (item 31's sibling — see item 1 in the 2 Sept feedback triage plan).
 - **Where:** `src/features/auth/SignIn.tsx`
 - **Why:** After back-navigation the button can stay stuck on "Opening Google…".
 - **How:** Reset the loading state on mount / on `visibilitychange` when returning to the page.
@@ -246,7 +247,7 @@ Legend: `[ ]` todo · severity in **bold** · file references are clickable in C
 
 - [ ] 29. `reconciles()` blind-casts non-engine errors to `EngineError` → `badFrames: [undefined]`. Narrow the catch. (`src/engine`)
 - [ ] 30. `groups_update` has no `WITH CHECK` — an admin can reassign `created_by`/overwrite `invite_code`. Add one. (`rls.sql`)
-- [ ] 31. OAuth uses the implicit flow (tokens in URL fragment). Switch to PKCE (`flowType: 'pkce'` in the Supabase client). (`src/lib/supabase.ts`)
+- [x] 31. OAuth uses the implicit flow (tokens in URL fragment). Switch to PKCE (`flowType: 'pkce'` in the Supabase client). (`src/lib/supabase.ts`) — **Status: DONE 2026-09-02.**
 - [ ] 32. Add indexes: `game_players(profile_id)`, `games(created_by)`, and FK columns checked on delete. (migration)
 - [ ] 33. Hashed assets served with `max-age=0` — add an immutable cache-control header for `/assets/*` in `vercel.json`.
 - [ ] 34. `/favicon.ico` rewritten to `index.html` (200 text/html) — add a real favicon + exclude it from the SPA rewrite.

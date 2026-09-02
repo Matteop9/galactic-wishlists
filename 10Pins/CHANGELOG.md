@@ -1,5 +1,33 @@
 # Changelog — 10 Pins
 
+## 2026-09-02 — Feedback queue triage: sign-in fix, the "vibe coded" pass, groups as a group of friends — LIVE
+
+Three items landed in the in-app feedback queue on 2 Sept (all from the owner). This release closes all three.
+
+### 1. "Currently taking me to localhost after sign in" — bug, done
+
+Not app code: GoTrue only honours `redirectTo` when it matches the project's redirect allowlist and otherwise falls back to the **Site URL**, which was still the dev default (`vite.config.ts` pins the dev port to it for exactly that reason). Fixed in the Supabase dashboard by the owner (Site URL → `https://10pins.vercel.app`, wildcard redirect entries). The Acca and Milky Bay share the project but use no redirect flows, so nothing else moved. Code hardening shipped alongside: `SignIn` now redirects to origin + path + search (no stale hash), resets its "Opening Google…" state on `pageshow`/`visibilitychange` (review item 26), and the client uses the **PKCE flow** (review item 31) so a misdirected redirect fails loudly instead of handing tokens to another origin. Dead `VITE_DEMO_*` lines removed from `.env.local`.
+
+### 2. "It all looks too vibe coded — the emojis, the colours, the text" — idea, done
+
+Audited `src/` against the design handoff and the commonly cited tells. Verdict: palette (zero Tailwind palette classes, five on-token accents), typography and copy (zero exclamation marks, zero slop phrases, sentence case throughout) were already on-spec. What did hold, and what changed:
+- **Emoji and glyphs as icons.** New `src/components/Icon.tsx` extends the four hand-drawn tab icons (same 24-viewBox / 1.8 stroke) with bell, comment, chevrons, arrows, x, plus, image. The 🔔 bell, 💬 comment count, 🏆 winner, and every ‹ › ↑ ↓ × ⌃ ⌄ glyph button are gone; match-day winners are stated in words. The four reaction emoji and the `✓ VERIFIED` motif are untouched by design. No icon library added — a second icon family next to the accepted tab icons would have been worse than eleven one-line paths.
+- **Amber budget.** Rule now written into `index.css`: per screen, glow = one primary CTA ∪ verified stamp ∪ current frame ∪ celebration ∪ wordmark. De-glowed the live and offline-scan banners, leg pips, review dot, the scan sheet row (and deleted its "Fastest" pill), the done-screen card, the NOW BOWLING pill; the celebration toast lost its blur.
+- **Tokens.** `--color-rule`, `--shadow-glow-amber-sm`, and a real radius scale (`--radius-cell/chip/control/card/sheet`) in `@theme`; `btn-primary`/`btn-secondary` utilities so 18 drifting CTAs share one definition; `live-dot` replaces stock `animate-pulse` and is covered by the reduced-motion block; `glow-amber-text`. Every off-token hex and the one invented gradient are gone (left deliberately: JoinQr's QR colours and the share card's inline colours the rasteriser needs).
+- **Radii: 11 values → 5.** Cards are 12px everywhere; sheets 16; controls 10; chips 8; cells 4. `disabled:opacity-*` (19 sites) → token colours.
+- **Copy trim** (11 lines): "Nice scan…", "say something nice (or not)", "nobody's bragging tonight", "The reader had a moment", "Were you the guest?" and friends replaced with plain statements; "{who} did something" → "New activity from {who}". 18 page titles are now real `<h1>`s. `label-caps` pulled off four non-label uses (kind tags, "N watching", "tap to carry on").
+
+### 3. "Groups should be more like a group of friends…" — idea, done
+
+- **Match day from the "+" sheet.** Fifth option, route `/matchday/new`: pick a group (preselected when you have one; hidden for anonymous visitors), then the existing setup. `match_days.group_id` stays NOT NULL — teams, handicaps and four RLS policies hang off the group.
+- **Feed filter.** Chip row on Home — All plus one chip per group — filtering `feed_events.group_id` (already indexed). Choice persists in `localStorage` (`tenpins.feed.group`); a stale group id falls back to All once the group list has loaded, and the first fetch already uses the stored filter. No "Friends" chip: RLS doesn't say *why* an event is visible.
+- **Leaderboard period + metric.** `tp_0018`: `group_leaderboard(gid, p_period default 'season')` — 'season' / '30d' / 'all', ranked by average with a parallel high-game ranking, movement still "vs a week ago" inside the chosen window. The old single-arg signature is dropped (return shape changed; two overloads would make PostgREST ambiguous). Group page gets Period and Rank-by segmented controls; season is now one period among three. Verified live as a member (all three periods, `BAD_PERIOD`, `NOT_A_MEMBER`, exactly one function in `pg_proc`).
+- **Player page + head-to-head.** `tp_0019`: partial index on `game_players(profile_id)` and `head_to_head(other)` — a definer RPC that only ever sees games where the caller also holds a seat (so it exposes nothing `can_see_game` didn't already), returning W–L–T, both averages and the last ten meetings. New `/players/:id`: avatar, friend/group-mate context, Add friend / Accept, the record ("7–3 · 1 tie", "You've won 3 of the last 4"), meetings with scores and verification, and their stats over the games you can see. Probed live as the demo account vs @pinpal: RPC 4 games 2–1–1, identical to a hand count. **Player names are now tappable** on feed cards, leaderboard rows, members, game detail and Friends (guests stay plain; your own name goes to Profile); the feed card stops propagation on click and Enter so a name tap never also opens the game.
+- Shared primitives: `ChipRow`, `Avatar` (three local copies removed), `PlayerLink`, `StatBits` (Tile/FormGraph out of Stats), `PlayerSkeleton`. Pure libs `feedFilter.ts`, `leaderboard.ts`, `players.ts` — 43 new tests. Gallery sections 12–17 (icons, banners, ChipRow, Avatar, player skeleton, head-to-head) so all of it reviews unauthenticated.
+
+Verified: `tsc --noEmit` clean, 260 tests green, prod build clean; grep gates zero for emoji-in-chrome, glyph icons, off-token hex, stock Tailwind tells and off-scale radii. Built by six scoped Sonnet agents on disjoint file sets, reviewed and integrated by the lead.
+
+
 ## 2026-09-02 — Fix: anonymous-visitor hygiene + the last review leftovers — LIVE
 
 The rest of the from-scratch review, closed out. Most of it is about what an anonymous demo visitor is allowed to be.

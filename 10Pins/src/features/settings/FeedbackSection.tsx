@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Icon from '../../components/Icon';
 import {
   deleteFeedback,
   feedbackDate,
@@ -80,7 +81,7 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+      <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
         <div className="flex gap-2">
           {FEEDBACK_KINDS.map((k) => (
             <button
@@ -90,8 +91,8 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
               aria-pressed={kind === k.value}
               className={
                 kind === k.value
-                  ? 'rounded-[10px] border border-phosphor bg-phosphor/10 px-3 py-1.5 font-display text-[12px] font-bold text-phosphor'
-                  : 'rounded-[10px] border border-line bg-well px-3 py-1.5 font-display text-[12px] font-bold text-dim'
+                  ? 'rounded-control border border-phosphor bg-phosphor/10 px-3 py-1.5 font-display text-[12px] font-bold text-phosphor'
+                  : 'rounded-control border border-line bg-well px-3 py-1.5 font-display text-[12px] font-bold text-dim'
               }
             >
               {k.label}
@@ -105,7 +106,7 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
           rows={3}
           placeholder="What happened, or what would you change?"
           aria-label="Your feedback"
-          className="resize-y rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+          className="resize-y rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
         />
 
         {remaining < 200 && (
@@ -116,7 +117,7 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
           type="button"
           onClick={() => trimmed && send.mutate()}
           disabled={send.isPending || !trimmed}
-          className="rounded-[10px] bg-phosphor py-3 font-display text-[14px] font-bold text-ink disabled:bg-disabled disabled:text-faint"
+          className="rounded-control bg-phosphor py-3 font-display text-[14px] font-bold text-ink disabled:bg-disabled disabled:text-faint"
         >
           {send.isPending ? 'Sending…' : 'Send feedback'}
         </button>
@@ -132,17 +133,17 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
       {showSkeleton ? (
         <ListSkeleton rows={2} label="Loading your feedback" avatar={false} trailing={false} />
       ) : items.length === 0 ? (
-        <p className="text-[12px] text-faint">Nothing sent yet.</p>
+        <p className="text-[12px] text-faint">Nothing sent yet</p>
       ) : (
         <div className="flex flex-col gap-2">
           {items.map((f) => (
             <div
               key={f.id}
-              className="flex flex-col gap-2 rounded-2xl border border-line bg-panel p-3.5"
+              className="flex flex-col gap-2 rounded-card border border-line bg-panel p-3.5"
             >
               <div className="flex items-center gap-2">
                 <StatusPill status={f.status as FeedbackStatus} />
-                <span className="label-caps">{f.kind}</span>
+                <span className="text-[11px] text-faint">{f.kind}</span>
                 <span className="score-text ml-auto text-[11px] text-faint">
                   {feedbackDate(f.created_at)}
                 </span>
@@ -171,17 +172,17 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
           <button
             type="button"
             onClick={() => setQueueOpen((open) => !open)}
-            className="press flex items-center justify-between rounded-2xl border border-line bg-panel px-4 py-3.5"
+            className="press flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3.5"
           >
             <span className="text-[15px] text-text">
               Queue · everyone
               {openCount > 0 && <span className="text-phosphor"> · {openCount} new</span>}
             </span>
-            <span className="text-[15px] text-faint">{queueOpen ? '⌃' : '⌄'}</span>
+            <Icon name={queueOpen ? 'chevron-up' : 'chevron-down'} className="size-4 text-faint" />
           </button>
           {queueOpen &&
             (rows.length === 0 ? (
-              <p className="text-[12px] text-faint">Queue is empty.</p>
+              <p className="text-[12px] text-faint">Queue is empty</p>
             ) : (
               rows.map((row, i) => (
                 <div
@@ -202,7 +203,7 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
 function StatusPill({ status }: { status: FeedbackStatus }) {
   const label = FEEDBACK_STATUSES.find((s) => s.value === status)?.label ?? status;
   return (
-    <span className={`label-caps rounded-[4px] border px-1.5 py-0.5 ${STATUS_STYLE[status]}`}>
+    <span className={`label-caps rounded-cell border px-1.5 py-0.5 ${STATUS_STYLE[status]}`}>
       {label}
     </span>
   );
@@ -225,10 +226,10 @@ function QueueRow({ row, onChanged }: { row: QueueItem; onChanged: () => void })
   const noteDirty = note.trim() !== (row.admin_note ?? '');
 
   return (
-    <div className="flex flex-col gap-2.5 rounded-2xl border border-line bg-panel p-3.5">
+    <div className="flex flex-col gap-2.5 rounded-card border border-line bg-panel p-3.5">
       <div className="flex items-center gap-2">
         <StatusPill status={row.status as FeedbackStatus} />
-        <span className="label-caps">{row.kind}</span>
+        <span className="text-[11px] text-faint">{row.kind}</span>
         <span className="score-text ml-auto text-[11px] text-faint">
           {feedbackDate(row.created_at)}
         </span>
@@ -249,8 +250,8 @@ function QueueRow({ row, onChanged }: { row: QueueItem; onChanged: () => void })
             aria-pressed={row.status === s.value}
             className={
               row.status === s.value
-                ? 'rounded-[8px] border border-phosphor bg-phosphor/10 px-2.5 py-1 font-display text-[11px] font-bold text-phosphor'
-                : 'rounded-[8px] border border-line bg-well px-2.5 py-1 font-display text-[11px] font-bold text-dim'
+                ? 'rounded-chip border border-phosphor bg-phosphor/10 px-2.5 py-1 font-display text-[11px] font-bold text-phosphor'
+                : 'rounded-chip border border-line bg-well px-2.5 py-1 font-display text-[11px] font-bold text-dim'
             }
           >
             {s.label}
@@ -264,13 +265,13 @@ function QueueRow({ row, onChanged }: { row: QueueItem; onChanged: () => void })
           onChange={(e) => setNote(e.target.value.slice(0, 500))}
           placeholder="Note back to them (optional)"
           aria-label={`Note on ${author}’s feedback`}
-          className="min-w-0 flex-1 rounded-[10px] border border-line bg-well px-3 py-2 text-[13px] text-text placeholder:text-faint"
+          className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2 text-[13px] text-text placeholder:text-faint"
         />
         <button
           type="button"
           onClick={() => saveNote.mutate()}
           disabled={!noteDirty || saveNote.isPending}
-          className="rounded-[10px] border border-line bg-well px-3 py-2 font-display text-[12px] font-bold text-dim disabled:text-disabled"
+          className="rounded-control border border-line bg-well px-3 py-2 font-display text-[12px] font-bold text-dim disabled:text-disabled"
         >
           Save
         </button>

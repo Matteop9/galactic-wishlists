@@ -50,7 +50,7 @@ export default function Notifications({ profile }: { profile: Profile }) {
             key={n.id}
             to={notificationLink(n)}
             style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}
-            className={`rise-in press flex items-start justify-between gap-3 rounded-xl border px-4 py-3 ${
+            className={`rise-in press flex items-start justify-between gap-3 rounded-card border px-4 py-3 ${
               n.read_at ? 'border-line bg-panel' : 'border-phosphor/40 bg-phosphor/5'
             }`}
           >

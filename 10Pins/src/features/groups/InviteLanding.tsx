@@ -38,7 +38,7 @@ export default function InviteLanding() {
   if (preview.isError || !preview.data) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Invite not found</p>
+        <h1 className="font-display text-[20px] font-bold">Invite not found</h1>
         <p className="max-w-[260px] text-[13.5px] text-dim">
           That invite link doesn’t work — ask for a fresh one from the group.
         </p>
@@ -60,7 +60,7 @@ export default function InviteLanding() {
       </div>
 
       {p.top3.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-2xl border border-line bg-panel p-4">
+        <div className="flex flex-col gap-2 rounded-card border border-line bg-panel p-4">
           <span className="label-caps">Top of the table</span>
           {p.top3.map((row, i) => (
             <div key={row.display_name} className="flex items-center gap-3">
@@ -79,7 +79,7 @@ export default function InviteLanding() {
         type="button"
         onClick={() => join.mutate()}
         disabled={join.isPending}
-        className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60"
+        className="btn-primary"
       >
         {join.isPending ? 'Joining…' : 'Join the group'}
       </button>

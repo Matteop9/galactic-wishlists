@@ -49,13 +49,33 @@ export default function SignIn() {
     };
   }, []);
 
+  // A bounced or cancelled OAuth redirect can land you back here with `busy`
+  // still true from before the browser navigated away — the button is then
+  // stuck on "Opening Google…" forever (COUNCIL_REVIEW_TODO item 26). Both
+  // `pageshow` (bfcache restores, including back-navigation) and a tab
+  // becoming visible again catch that.
+  useEffect(() => {
+    const reset = () => setBusy(false);
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') reset();
+    };
+    window.addEventListener('pageshow', reset);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('pageshow', reset);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
+
   async function signInWithGoogle() {
     setBusy(true);
     setError('');
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      // Return to the current URL so deep links (invite/claim landings) survive sign-in
-      options: { redirectTo: window.location.href },
+      // Return to the current path so deep links (invite/claim landings) survive
+      // sign-in — origin + pathname + search, not the full href, so a stale hash
+      // never rides along into the redirect (COUNCIL_REVIEW_TODO item 26).
+      options: { redirectTo: window.location.origin + window.location.pathname + window.location.search },
     });
     if (err) {
       setError("Google sign-in didn’t start — try again.");
@@ -93,7 +113,7 @@ export default function SignIn() {
           type="button"
           onClick={signInWithGoogle}
           disabled={busy}
-          className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60"
+          className="btn-primary"
         >
           {busy ? 'Opening Google…' : 'Continue with Google'}
         </button>
@@ -105,7 +125,7 @@ export default function SignIn() {
             type="button"
             onClick={signInAsDemo}
             disabled={busy}
-            className="mt-2 rounded-[10px] border border-line bg-panel py-3 text-[15px] font-bold text-text disabled:opacity-60"
+            className="btn-secondary mt-2"
           >
             Try the demo
           </button>

@@ -28,6 +28,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { useScanQueueDrain } from './lib/useScanQueue';
 import QuickAdd from './features/quickadd/QuickAdd';
 import ProfilePage from './features/settings/ProfilePage';
+import PlayerPage from './features/players/PlayerPage';
 import Stats from './features/stats/Stats';
 import { useAuth, useProfile, type Profile } from './lib/auth';
 
@@ -71,6 +72,7 @@ function Shell({ profile }: { profile: Profile }) {
         <Route path="/friends" element={<Friends profile={profile} />} />
         <Route path="/claim/:code" element={<GuestClaim />} />
         <Route path="/groups/:id/matchday/new" element={<MatchDaySetup profile={profile} />} />
+        <Route path="/matchday/new" element={<MatchDaySetup profile={profile} />} />
         <Route path="/matchday/:id" element={<MatchDayLive profile={profile} />} />
         <Route path="/matchday/:id/leg/:n" element={<LegEntry profile={profile} />} />
         <Route path="/live/new" element={<LiveSetup profile={profile} />} />
@@ -79,6 +81,7 @@ function Shell({ profile }: { profile: Profile }) {
         <Route path="/live/:id/watch" element={<LiveSpectator profile={profile} />} />
         <Route path="/notifications" element={<Notifications profile={profile} />} />
         <Route path="/profile" element={<ProfilePage profile={profile} />} />
+        <Route path="/players/:id" element={<PlayerPage profile={profile} />} />
         <Route path="/add/scan" element={<ScanCapture profile={profile} />} />
         <Route path="/add/quick" element={<QuickAdd profile={profile} />} />
         <Route path="/add/manual" element={<ManualEntry profile={profile} />} />

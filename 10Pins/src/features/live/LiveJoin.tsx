@@ -40,7 +40,7 @@ export default function LiveJoin() {
   if (preview.isError || !data?.session_id) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Link not found</p>
+        <h1 className="font-display text-[20px] font-bold">Link not found</h1>
         <p className="max-w-[260px] text-[13.5px] text-dim">
           That live session has finished or the code is wrong.
         </p>
@@ -57,7 +57,7 @@ export default function LiveJoin() {
     <div className="flex flex-col gap-5 px-4 py-10">
       <div className="flex flex-col items-center gap-2 text-center">
         <span className="flex items-center gap-2 label-caps text-signal">
-          <span className="size-2 animate-pulse rounded-full bg-signal" aria-hidden />
+          <span className="size-2 live-dot rounded-full bg-signal" aria-hidden />
           {finished ? 'Finished' : 'Bowling now'}
         </span>
         <h1 className="font-display text-[24px] font-bold">{data.host} is bowling</h1>
@@ -67,7 +67,7 @@ export default function LiveJoin() {
       </div>
 
       {data.players.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-2xl border border-line bg-panel p-4">
+        <div className="flex flex-col gap-2 rounded-card border border-line bg-panel p-4">
           <span className="label-caps">On the lane</span>
           <p className="text-[14px] text-text">{data.players.join(' · ')}</p>
         </div>
@@ -80,7 +80,7 @@ export default function LiveJoin() {
           join.mutate();
         }}
         disabled={join.isPending}
-        className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60"
+        className="btn-primary"
       >
         {join.isPending ? 'Joining…' : finished ? 'See how it went' : 'Watch live'}
       </button>

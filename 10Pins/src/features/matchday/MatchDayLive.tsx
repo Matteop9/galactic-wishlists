@@ -83,7 +83,7 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
   if (md.isError || !md.data) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Match day not found</p>
+        <h1 className="font-display text-[20px] font-bold">Match day not found</h1>
         <Link to="/groups" className="text-[13.5px] text-phosphor">
           Back to groups
         </Link>
@@ -121,7 +121,7 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
       </header>
 
       {/* Series header: legs won + best-of pips */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+      <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
         {teams.map((team) => (
           <div key={team.id} className="flex items-center justify-between gap-3">
             <span
@@ -130,14 +130,13 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
               }`}
             >
               {team.name}
-              {series.winnerTeamId === team.id ? ' 🏆' : ''}
             </span>
             <div className="flex items-center gap-1.5">
               {Array.from({ length: Math.ceil(data.best_of / 2) }, (_, i) => (
                 <span
                   key={i}
                   className={`size-2.5 rounded-full ${
-                    i < (series.legsWon[team.id] ?? 0) ? 'bg-phosphor shadow-glow-amber' : 'border border-line bg-well'
+                    i < (series.legsWon[team.id] ?? 0) ? 'bg-phosphor' : 'border border-line bg-well'
                   }`}
                 />
               ))}
@@ -147,8 +146,12 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
             </div>
           </div>
         ))}
-        {series.drawn && <p className="text-[12px] text-dim">Series drawn — nobody’s bragging tonight.</p>}
-        {data.status === 'finished' && !series.drawn && winner && (
+        {series.drawn && (
+          <p className="text-[12px] text-dim">
+            Series drawn — level after {legs.length} leg{legs.length === 1 ? '' : 's'}.
+          </p>
+        )}
+        {series.decided && !series.drawn && winner && (
           <p className="text-[12px] text-dim">{winner.name} take the day.</p>
         )}
       </div>
@@ -157,7 +160,7 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={() => navigate(`/matchday/${data.id}/leg/${nextLeg}`)}
-          className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber"
+          className="btn-primary"
         >
           Score leg {nextLeg}
         </button>
@@ -180,11 +183,11 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
           type="button"
           onClick={() => finish.mutate()}
           disabled={finish.isPending}
-          className={`rounded-[10px] py-3 font-display text-[14px] font-bold ${
+          className={`rounded-control py-3 font-display text-[14px] font-bold ${
             series.decided
-              ? 'bg-phosphor text-ink'
-              : 'border border-line bg-panel text-dim'
-          } disabled:opacity-60`}
+              ? 'bg-phosphor text-ink disabled:bg-disabled disabled:text-faint disabled:shadow-none'
+              : 'border border-line bg-panel text-dim disabled:border-hairline disabled:text-disabled'
+          }`}
         >
           {finish.isPending ? 'Finishing…' : 'Finish match day'}
         </button>
@@ -198,12 +201,15 @@ function LegCard({ leg, mode, teams }: { leg: LegResult; mode: ScoringMode; team
   return (
     <Link
       to={`/games/${leg.gameId}`}
-      className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4"
+      className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4"
     >
       <div className="flex items-center justify-between">
         <span className="label-caps">Leg {leg.gameNumber}</span>
         {!leg.complete && <span className="text-[11px] text-faint">In progress</span>}
         {leg.complete && leg.winnerTeamId === null && <span className="text-[11px] text-dim">Drawn</span>}
+        {leg.complete && leg.winnerTeamId !== null && (
+          <span className="text-[11px] text-phosphor">{teamName(leg.winnerTeamId)} won</span>
+        )}
       </div>
 
       {leg.teams.map((t) => (
@@ -215,7 +221,6 @@ function LegCard({ leg, mode, teams }: { leg: LegResult; mode: ScoringMode; team
               }`}
             >
               {t.team.name}
-              {leg.winnerTeamId === t.team.id ? ' ✓' : ''}
             </span>
             <span className="score-text text-[17px] font-bold text-text">
               {t.handicapTotal}

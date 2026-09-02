@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Scorecard, { type ScorecardPlayer } from '../../components/scorecard/Scorecard';
 import GroupPicker from '../../components/GroupPicker';
+import Icon from '../../components/Icon';
 import SpotFrameEditor from './SpotFrameEditor';
 import { score, type FrameInput } from '../../engine';
 import {
@@ -203,8 +204,8 @@ export default function ReviewScan({
   return (
     <div className="flex flex-col gap-3 px-4 py-5">
       <header className="flex items-center gap-3">
-        <button type="button" onClick={onDiscard} aria-label="Back" className="text-[22px] leading-none text-dim">
-          ‹
+        <button type="button" onClick={onDiscard} aria-label="Back" className="text-dim">
+          <Icon name="chevron-left" className="size-6" />
         </button>
         <h1 className="font-display text-[17px] font-bold">
           {clean ? 'Looks right?' : 'Check the scorecard'}
@@ -222,7 +223,7 @@ export default function ReviewScan({
         <button
           type="button"
           onClick={() => setPhotoOpen(false)}
-          className="press relative h-[110px] overflow-hidden rounded-xl border border-line bg-well"
+          className="press relative h-[110px] overflow-hidden rounded-card border border-line bg-well"
         >
           {photo.data ? (
             <img src={photo.data} alt="The scoreboard you photographed" className="size-full object-contain" />
@@ -234,8 +235,9 @@ export default function ReviewScan({
           </span>
         </button>
       ) : (
-        <button type="button" onClick={() => setPhotoOpen(true)} className="press self-start">
-          <span className="label-caps">Photo ⌄</span>
+        <button type="button" onClick={() => setPhotoOpen(true)} className="press flex items-center gap-1 self-start">
+          <span className="label-caps">Photo</span>
+          <Icon name="chevron-down" className="size-3.5 text-faint" />
         </button>
       )}
 
@@ -249,7 +251,7 @@ export default function ReviewScan({
               key={`${row.displayedName}-${i}`}
               type="button"
               onClick={() => setPickerFor(i)}
-              className={`press flex min-w-[104px] flex-1 items-center gap-2 rounded-[10px] border px-2 py-1.5 text-left ${
+              className={`press flex min-w-[104px] flex-1 items-center gap-2 rounded-control border px-2 py-1.5 text-left ${
                 row.identity.kind === 'profile' ? 'border-line bg-panel' : 'border-dashed border-line'
               }`}
             >
@@ -272,7 +274,7 @@ export default function ReviewScan({
       </div>
 
       {pickerFor !== null && (
-        <div className="sheet-up flex flex-col gap-2 rounded-2xl border border-line bg-panel p-3">
+        <div className="sheet-up flex flex-col gap-2 rounded-card border border-line bg-panel p-3">
           <div className="flex items-center">
             <span className="label-caps">Who is “{rows[pickerFor].displayedName}”?</span>
             <button
@@ -295,7 +297,7 @@ export default function ReviewScan({
                     displayName: candidate.displayName,
                   })
                 }
-                className="press rounded-xl border border-line bg-well px-3 py-2.5 text-left text-[13.5px] text-text"
+                className="press rounded-card border border-line bg-well px-3 py-2.5 text-left text-[13.5px] text-text"
               >
                 {candidate.displayName}
                 {candidate.profileId === profile.id && <span className="ml-2 text-[11px] text-dim">you</span>}
@@ -309,7 +311,7 @@ export default function ReviewScan({
                   guestName: rows[pickerFor].displayedName.trim() || 'Guest',
                 })
               }
-              className="press rounded-xl border border-dashed border-line px-3 py-2.5 text-left text-[13.5px] text-dim"
+              className="press rounded-card border border-dashed border-line px-3 py-2.5 text-left text-[13.5px] text-dim"
             >
               Guest · {rows[pickerFor].displayedName}
             </button>
@@ -321,7 +323,7 @@ export default function ReviewScan({
         {rows.length > 0 && (
           <div className="flex items-center justify-between">
             <span className="label-caps">
-              {clean ? `All ${rows.length * 10} frames recompute ✓` : `${amberCount} frame${amberCount === 1 ? '' : 's'} to check`}
+              {clean ? `All ${rows.length * 10} frames recompute` : `${amberCount} frame${amberCount === 1 ? '' : 's'} to check`}
             </span>
             {rows.some((r) => r.finalScore !== null) && (
               <span className="label-caps">Monitor · {rows.map((r) => r.finalScore ?? '–').join(' / ')}</span>
@@ -357,8 +359,8 @@ export default function ReviewScan({
       )}
 
       {!clean && !editing && (
-        <div className="flex items-center gap-2 rounded-[10px] border border-phosphor/35 bg-phosphor/10 px-3 py-2.5">
-          <span className="size-2 shrink-0 rounded-full bg-phosphor shadow-glow-amber" />
+        <div className="flex items-center gap-2 rounded-control border border-phosphor/35 bg-phosphor/10 px-3 py-2.5">
+          <span className="size-2 shrink-0 rounded-full bg-phosphor" />
           <p className="text-[12.5px] leading-snug text-text">
             {firstAmberSentence(rows)} Totals recalculate as you go.
           </p>
@@ -367,8 +369,8 @@ export default function ReviewScan({
 
       {clean && !editing && (
         <div className="flex flex-col items-center gap-1 pt-1">
-          <p className="font-display text-[18px] font-bold">Everything adds up</p>
-          <p className="text-[12.5px] text-dim">Nice scan. One tap and it’s on the board.</p>
+          <h2 className="font-display text-[18px] font-bold">Everything adds up</h2>
+          <p className="text-[12.5px] text-dim">Every total recomputes from the photo. Confirm to post it.</p>
         </div>
       )}
 
@@ -391,7 +393,7 @@ export default function ReviewScan({
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
-              className="rounded-[10px] border border-line bg-well px-3 py-2.5 text-[13.5px] text-text"
+              className="rounded-control border border-line bg-well px-3 py-2.5 text-[13.5px] text-text"
             />
           </div>
           <div className="flex flex-1 flex-col gap-1">
@@ -404,7 +406,7 @@ export default function ReviewScan({
               value={venue}
               onChange={(event) => setVenue(event.target.value)}
               placeholder="Hollywood Bowl…"
-              className="rounded-[10px] border border-line bg-well px-3 py-2.5 text-[13.5px] text-text placeholder:text-faint"
+              className="rounded-control border border-line bg-well px-3 py-2.5 text-[13.5px] text-text placeholder:text-faint"
             />
             <datalist id="scan-venues">
               {(venues.data ?? []).map((name) => (
@@ -419,7 +421,7 @@ export default function ReviewScan({
         type="button"
         onClick={() => confirm.mutate()}
         disabled={confirm.isPending || rows.length === 0}
-        className="press rounded-xl bg-phosphor py-3.5 font-display text-[15px] font-bold tracking-[.04em] text-ink shadow-glow-amber disabled:bg-disabled disabled:text-faint disabled:shadow-none"
+        className="btn-primary tracking-[.04em]"
       >
         {confirm.isPending ? 'Posting…' : 'Confirm scorecard'}
       </button>

@@ -46,7 +46,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <div className={`rounded-2xl border border-line bg-panel p-4 ${className}`}>{children}</div>
+    <div className={`rounded-card border border-line bg-panel p-4 ${className}`}>{children}</div>
   );
 }
 
@@ -87,7 +87,7 @@ export function FeedSkeleton({ cards = 3 }: { cards?: number }) {
         <Panel key={i} className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <Bar w={116} h={10} />
-            <Bar w={68} h={16} className="rounded-[4px]" />
+            <Bar w={68} h={16} className="rounded-cell" />
           </div>
           <div className="flex flex-col gap-1">
             {Array.from({ length: i === 0 ? 3 : 2 }).map((_, row) => (
@@ -99,7 +99,7 @@ export function FeedSkeleton({ cards = 3 }: { cards?: number }) {
           </div>
           <div className="flex gap-2 pt-1">
             {Array.from({ length: 4 }).map((_, chip) => (
-              <Bar key={chip} w={44} h={26} className="rounded-[10px]" />
+              <Bar key={chip} w={44} h={26} className="rounded-control" />
             ))}
           </div>
         </Panel>
@@ -123,10 +123,10 @@ export function StatsSkeleton() {
 
       <Panel className="flex flex-col gap-3">
         <Bar w={96} h={10} />
-        <Bar h={64} className="rounded-[10px]" />
+        <Bar h={64} className="rounded-control" />
       </Panel>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-dashed border-line bg-well/50 p-4">
+      <div className="flex flex-col gap-3 rounded-card border border-dashed border-line bg-well/50 p-4">
         <Bar w={84} h={10} />
         <div className="flex justify-between">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -144,7 +144,7 @@ export function StatsSkeleton() {
         {Array.from({ length: 2 }).map((_, i) => (
           <div
             key={i}
-            className="flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3"
+            className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
           >
             <Bar w={128} h={13} />
             <Bar w={40} h={15} />
@@ -162,7 +162,7 @@ function LeaderboardRows({ rows }: { rows: number }) {
       {Array.from({ length: rows }).map((_, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 rounded-xl border border-line bg-panel px-4 py-3"
+          className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3"
         >
           <Bar w={16} h={15} />
           <Circle size={32} />
@@ -220,14 +220,14 @@ export function ListSkeleton({
   const body = Array.from({ length: rows }).map((_, i) => (
     <div
       key={i}
-      className="flex items-center gap-3 rounded-2xl border border-line bg-panel px-4 py-3.5"
+      className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3.5"
     >
       {avatar && <Circle size={36} />}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <Bar w={`${70 - i * 6}%`} h={13} />
         <Bar w={`${42 - i * 4}%`} h={10} />
       </div>
-      {trailing && <Bar w={54} h={22} className="rounded-[10px]" />}
+      {trailing && <Bar w={54} h={22} className="rounded-control" />}
     </div>
   ));
 
@@ -251,7 +251,7 @@ function ScorecardPanels({ players }: { players: number }) {
           </div>
           <div className="flex gap-1">
             {Array.from({ length: 10 }).map((_, f) => (
-              <Bar key={f} h={38} className="flex-1 rounded-[4px]" />
+              <Bar key={f} h={38} className="flex-1 rounded-cell" />
             ))}
           </div>
         </Panel>
@@ -289,7 +289,7 @@ export function PreviewSkeleton({ label }: { label: string }) {
           ))}
         </div>
       </Panel>
-      <Bar h={48} className="rounded-[10px]" />
+      <Bar h={48} className="rounded-control" />
     </SkeletonScreen>
   );
 }
@@ -301,10 +301,51 @@ export function FormSkeleton({ fields = 3, label }: { fields?: number; label: st
       {Array.from({ length: fields }).map((_, i) => (
         <div key={i} className="flex flex-col gap-2">
           <Bar w={78} h={10} />
-          <Bar h={46} className="rounded-[10px]" />
+          <Bar h={46} className="rounded-control" />
         </div>
       ))}
-      <Bar h={48} className="rounded-[10px]" />
+      <Bar h={48} className="rounded-control" />
+    </SkeletonScreen>
+  );
+}
+
+/**
+ * Player page: avatar + name/username header, the head-to-head panel (two
+ * avatars either side of a wide record bar, three meeting rows), then the
+ * same 2×2 tile grid `StatsSkeleton` uses for "their stats".
+ */
+export function PlayerSkeleton() {
+  return (
+    <SkeletonScreen label="Loading their profile" className="flex flex-col gap-5">
+      <div className="flex items-center gap-3">
+        <Circle size={56} />
+        <div className="flex flex-col gap-2">
+          <Bar w={140} h={16} />
+          <Bar w={92} h={11} />
+        </div>
+      </div>
+
+      <Panel className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <Circle size={40} />
+          <Bar w={80} h={22} />
+          <Circle size={40} />
+        </div>
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Bar key={i} h={40} className="rounded-card" />
+          ))}
+        </div>
+      </Panel>
+
+      <div className="grid grid-cols-2 gap-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Panel key={i} className="flex flex-col gap-2">
+            <Bar w={62} h={10} />
+            <Bar w={72} h={26} />
+          </Panel>
+        ))}
+      </div>
     </SkeletonScreen>
   );
 }

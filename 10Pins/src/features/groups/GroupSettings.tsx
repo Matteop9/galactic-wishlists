@@ -70,7 +70,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
   if (!g || myRole !== 'admin') {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Admins only</p>
+        <h1 className="font-display text-[20px] font-bold">Admins only</h1>
         <Link to={`/groups/${id}`} className="text-[13.5px] text-phosphor">
           Back to the group
         </Link>
@@ -98,7 +98,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
           <input id="gs-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} className={inputCls} />
         </Field>
 
-        <section className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+        <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
           <span className="label-caps">Season</span>
           <Field label="Season name" htmlFor="gs-season">
             <input
@@ -121,7 +121,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
           <p className="text-[11px] text-faint">Leave dates empty for an open season — every game counts.</p>
         </section>
 
-        <section className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+        <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
           <label className="flex items-center justify-between gap-3">
             <div>
               <p className="text-[14px] text-text">Verified games only</p>
@@ -136,7 +136,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
           </label>
         </section>
 
-        <section className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+        <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
           <span className="label-caps">Handicaps</span>
           <p className="text-[12px] text-dim">
             Default handicap on a match day = {pct}% of ({basis} − player’s average), never below 0.
@@ -171,7 +171,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
         <button
           type="submit"
           disabled={save.isPending || name.trim().length < 2 || basis < 100 || basis > 300 || pct < 0 || pct > 100}
-          className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink disabled:opacity-60"
+          className="btn-primary"
         >
           {save.isPending ? 'Saving…' : 'Save settings'}
         </button>
@@ -187,7 +187,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
         {(g.group_members ?? []).map((m) => (
           <div
             key={m.profile_id}
-            className="flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3"
+            className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
           >
             <div>
               <p className="text-[14px] text-text">
@@ -207,7 +207,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
                     remove.mutate(m.profile_id);
                   }
                 }}
-                className="rounded-[10px] border border-line bg-well px-3 py-1.5 text-[12px] font-bold text-signal"
+                className="rounded-control border border-line bg-well px-3 py-1.5 text-[12px] font-bold text-signal"
               >
                 Remove
               </button>
@@ -220,7 +220,7 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
 }
 
 const inputCls =
-  'w-full rounded-[10px] border border-line bg-well px-3 py-3 text-[15px] text-text placeholder:text-faint';
+  'w-full rounded-control border border-line bg-well px-3 py-3 text-[15px] text-text placeholder:text-faint';
 
 function Field({
   label,

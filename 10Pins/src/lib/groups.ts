@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import type { Tables } from './database.types';
+import type { LeaderboardPeriod } from './leaderboard';
 
 export type Group = Tables<'groups'>;
 
@@ -28,6 +29,8 @@ export interface LeaderboardRow {
   high_game: number;
   rank: number;
   prev_rank: number | null;
+  rank_high: number;
+  prev_rank_high: number | null;
 }
 
 const MEMBER_SELECT = `
@@ -72,8 +75,11 @@ export async function fetchGroup(id: string) {
   return data;
 }
 
-export async function fetchLeaderboard(groupId: string): Promise<LeaderboardRow[]> {
-  const { data, error } = await supabase.rpc('group_leaderboard', { gid: groupId });
+export async function fetchLeaderboard(
+  groupId: string,
+  period: LeaderboardPeriod = 'season',
+): Promise<LeaderboardRow[]> {
+  const { data, error } = await supabase.rpc('group_leaderboard', { gid: groupId, p_period: period });
   if (error) throw error;
   return (data ?? []) as LeaderboardRow[];
 }

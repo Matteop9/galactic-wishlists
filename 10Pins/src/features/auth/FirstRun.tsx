@@ -80,7 +80,7 @@ export default function FirstRun() {
         <div className="flex size-20 items-center justify-center rounded-full border-2 border-line bg-panel font-display text-[26px] font-bold text-glass">
           {initials(displayName)}
         </div>
-        <p className="font-display text-[20px] font-bold">Set up your profile</p>
+        <h1 className="font-display text-[20px] font-bold">Set up your profile</h1>
       </div>
 
       <form onSubmit={createProfile} className="flex flex-col gap-5">
@@ -96,7 +96,7 @@ export default function FirstRun() {
             placeholder="Matt Brown"
             value={displayName}
             onChange={(event) => setDisplayName(event.target.value)}
-            className="w-full rounded-[10px] border border-line bg-well px-4 py-3 text-[15px] text-text placeholder:text-faint"
+            className="w-full rounded-control border border-line bg-well px-4 py-3 text-[15px] text-text placeholder:text-faint"
           />
         </div>
 
@@ -104,7 +104,7 @@ export default function FirstRun() {
           <label htmlFor="username" className="label-caps">
             Username
           </label>
-          <div className="flex items-center rounded-[10px] border border-line bg-well px-4">
+          <div className="flex items-center rounded-control border border-line bg-well px-4">
             <span className="text-[15px] text-faint">@</span>
             <input
               id="username"
@@ -134,7 +134,7 @@ export default function FirstRun() {
         <button
           type="submit"
           disabled={!canSubmit}
-          className="rounded-[10px] bg-phosphor py-3 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-50 disabled:shadow-none"
+          className="btn-primary"
         >
           {saving ? 'Saving…' : 'Start bowling'}
         </button>

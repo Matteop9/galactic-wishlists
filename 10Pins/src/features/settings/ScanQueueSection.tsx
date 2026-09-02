@@ -39,7 +39,7 @@ export default function ScanQueueSection({ profile }: { profile: Profile }) {
       {items.map((item) => (
         <div
           key={item.id}
-          className="rise-in flex items-center gap-3 rounded-xl border border-line bg-panel px-3 py-2.5"
+          className="rise-in flex items-center gap-3 rounded-card border border-line bg-panel px-3 py-2.5"
         >
           <div className="min-w-0 flex-1">
             <p className="text-[13px] font-bold text-text">
@@ -58,7 +58,7 @@ export default function ScanQueueSection({ profile }: { profile: Profile }) {
           {item.status === 'ready' && (
             <Link
               to={`/add/scan?queued=${item.id}`}
-              className="press rounded-lg bg-phosphor px-3 py-1.5 text-[12.5px] font-bold text-ink"
+              className="press rounded-chip bg-phosphor px-3 py-1.5 text-[12.5px] font-bold text-ink"
             >
               Review
             </Link>
@@ -68,7 +68,7 @@ export default function ScanQueueSection({ profile }: { profile: Profile }) {
               type="button"
               onClick={() => drain.mutate()}
               disabled={drain.isPending}
-              className="press rounded-lg border border-line bg-well px-3 py-1.5 text-[12.5px] text-dim"
+              className="press rounded-chip border border-line bg-well px-3 py-1.5 text-[12.5px] text-dim"
             >
               {drain.isPending ? 'Trying…' : 'Try now'}
             </button>

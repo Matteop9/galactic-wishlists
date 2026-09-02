@@ -41,14 +41,14 @@ export default function EmptyState({
   const wrapper =
     tone === 'page'
       ? 'flex flex-col items-center gap-3 px-4 py-20 text-center'
-      : 'flex flex-col items-center gap-2.5 rounded-2xl border border-dashed border-line bg-well/50 px-4 py-6 text-center';
+      : 'flex flex-col items-center gap-2.5 rounded-card border border-dashed border-line bg-well/50 px-4 py-6 text-center';
 
   return (
     <div className={wrapper}>
       {title && (
-        <p className={tone === 'page' ? 'font-display text-[20px] font-bold' : 'font-display text-[15px] font-bold'}>
+        <h2 className={tone === 'page' ? 'font-display text-[20px] font-bold' : 'font-display text-[15px] font-bold'}>
           {title}
-        </p>
+        </h2>
       )}
       <p className="max-w-[260px] text-[13.5px] leading-relaxed text-dim">{body}</p>
       {children}
@@ -60,8 +60,8 @@ export default function EmptyState({
 
 function ActionButton({ action, primary = false }: { action: EmptyAction; primary?: boolean }) {
   const className = primary
-    ? 'press mt-1 rounded-[10px] bg-phosphor px-5 py-2.5 font-display text-[14px] font-bold text-ink shadow-glow-amber'
-    : 'press rounded-[10px] px-5 py-2 text-[13px] font-bold text-dim';
+    ? 'press mt-1 rounded-control bg-phosphor px-5 py-2.5 font-display text-[14px] font-bold text-ink shadow-glow-amber'
+    : 'press rounded-control px-5 py-2 text-[13px] font-bold text-dim';
 
   return action.to ? (
     <Link to={action.to} className={className}>

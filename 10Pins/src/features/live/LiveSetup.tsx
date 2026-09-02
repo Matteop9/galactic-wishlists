@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import GroupPicker from '../../components/GroupPicker';
+import Icon from '../../components/Icon';
 import { fetchVenueNames } from '../../lib/games';
 import { fetchGroup } from '../../lib/groups';
 import { fetchFriendships, otherProfile } from '../../lib/friends';
@@ -124,7 +125,7 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
           placeholder="Hollywood Bowl…"
           value={venue}
           onChange={(event) => setVenue(event.target.value)}
-          className="rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+          className="rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
         />
         <datalist id="venue-names-live">
           {(venues.data ?? []).map((name) => (
@@ -141,7 +142,7 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
           {players.map((player, index) => (
             <li
               key={player.key}
-              className="flex items-center gap-2 rounded-xl border border-line bg-panel px-3 py-2.5"
+              className="flex items-center gap-2 rounded-card border border-line bg-panel px-3 py-2.5"
             >
               <span className="score-text w-5 text-[13px] text-faint">{index + 1}</span>
               <span className="min-w-0 flex-1 truncate text-[14px] text-text">
@@ -154,27 +155,27 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
                 onClick={() => move(index, -1)}
                 disabled={index === 0}
                 aria-label={`Move ${player.display_name} up`}
-                className="size-8 rounded-lg border border-line bg-well text-dim disabled:text-disabled"
+                className="grid size-8 place-items-center rounded-chip border border-line bg-well text-dim disabled:text-disabled"
               >
-                ↑
+                <Icon name="arrow-up" className="size-4" />
               </button>
               <button
                 type="button"
                 onClick={() => move(index, 1)}
                 disabled={index === players.length - 1}
                 aria-label={`Move ${player.display_name} down`}
-                className="size-8 rounded-lg border border-line bg-well text-dim disabled:text-disabled"
+                className="grid size-8 place-items-center rounded-chip border border-line bg-well text-dim disabled:text-disabled"
               >
-                ↓
+                <Icon name="arrow-down" className="size-4" />
               </button>
               {player.profile_id !== profile.id && (
                 <button
                   type="button"
                   onClick={() => setPlayers((list) => list.filter((p) => p.key !== player.key))}
                   aria-label={`Remove ${player.display_name}`}
-                  className="size-8 rounded-lg border border-line bg-well text-dim"
+                  className="grid size-8 place-items-center rounded-chip border border-line bg-well text-dim"
                 >
-                  ×
+                  <Icon name="x" className="size-4" />
                 </button>
               )}
             </li>
@@ -217,13 +218,13 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
                 addGuest();
               }
             }}
-            className="min-w-0 flex-1 rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+            className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
           />
           <button
             type="button"
             onClick={addGuest}
             disabled={!guestName.trim()}
-            className="rounded-[10px] border border-line bg-panel px-4 text-[13.5px] text-dim disabled:text-disabled"
+            className="rounded-control border border-line bg-panel px-4 text-[13.5px] text-dim disabled:text-disabled"
           >
             Add
           </button>
@@ -237,7 +238,7 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
           start.mutate();
         }}
         disabled={start.isPending || players.length === 0}
-        className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60"
+        className="btn-primary"
       >
         {start.isPending ? 'Starting…' : 'Start scoring'}
       </button>

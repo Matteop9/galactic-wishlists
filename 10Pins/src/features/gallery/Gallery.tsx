@@ -4,11 +4,16 @@ import { HIFI_GAME } from '../../engine/fixtures';
 import FrameEditor from '../../components/FrameEditor';
 import Scorecard, { type ScorecardPlayer } from '../../components/scorecard/Scorecard';
 import VerificationBadge from '../../components/VerificationBadge';
+import Icon, { type IconName } from '../../components/Icon';
 import Wordmark from '../../components/Wordmark';
 import CelebrationHost from '../../components/Celebration';
 import ShareCard, { type ShareCardData } from '../../components/share/ShareCard';
 import EmptyState from '../../components/EmptyState';
 import JoinQr from '../../components/JoinQr';
+import ChipRow, { type ChipOption } from '../../components/ChipRow';
+import Avatar from '../../components/Avatar';
+import { HeadToHeadPanel } from '../players/PlayerPage';
+import type { HeadToHead } from '../../lib/players';
 import { renderShareCard } from '../../lib/shareCard';
 import { gameCelebration, rollCelebration } from '../../lib/celebrate';
 import { celebrate } from '../../lib/celebrationStore';
@@ -17,6 +22,7 @@ import {
   LaneSkeleton,
   LeaderboardSkeleton,
   ListSkeleton,
+  PlayerSkeleton,
   PreviewSkeleton,
   RefetchLine,
   ScorecardSkeleton,
@@ -53,6 +59,48 @@ const LIVE_PLAYERS: ScorecardPlayer[] = [
 
 const FOUR_PLAYERS: ScorecardPlayer[] = HIFI_GAME.map((p) => ({ name: p.name, frames: p.frames }));
 
+/** A tiny inline "photo" so the Avatar cases don't depend on the network. */
+const DEMO_AVATAR_URL =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="64" height="64" fill="#d98b3f"/><circle cx="32" cy="26" r="14" fill="#fff4e6"/><rect x="12" y="44" width="40" height="20" rx="10" fill="#fff4e6"/></svg>',
+  );
+
+const DEMO_H2H: HeadToHead = {
+  games: 11,
+  wins: 7,
+  losses: 3,
+  ties: 1,
+  my_avg: 171.3,
+  their_avg: 165.0,
+  meetings: [
+    {
+      game_id: 'demo-1',
+      played_at: '2026-08-20T19:00:00.000Z',
+      verification_status: 'verified',
+      venue_name: 'Hollywood Bowl',
+      my_score: 178,
+      their_score: 171,
+    },
+    {
+      game_id: 'demo-2',
+      played_at: '2026-08-06T19:00:00.000Z',
+      verification_status: 'live',
+      venue_name: 'Lucky Strike',
+      my_score: 152,
+      their_score: 160,
+    },
+    {
+      game_id: 'demo-3',
+      played_at: '2026-07-23T19:00:00.000Z',
+      verification_status: 'unverified',
+      venue_name: null,
+      my_score: 165,
+      their_score: 165,
+    },
+  ],
+};
+
 export default function Gallery() {
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col gap-8 px-4 py-8">
@@ -85,13 +133,13 @@ export default function Gallery() {
       </Section>
 
       <Section n="05" title="Scorecard · share render" note="Larger cells for the 1080×1350 share card — shown scaled to fit.">
-        <div className="w-[520px] rounded-xl border border-line bg-ink p-4" style={{ zoom: 0.65 }}>
+        <div className="w-[520px] rounded-card border border-line bg-ink p-4" style={{ zoom: 0.65 }}>
           <div className="mb-3 flex items-center justify-between">
             <Wordmark size="sm" />
             <VerificationBadge status="verified" />
           </div>
           <Scorecard players={[{ name: 'DAVE', frames: HIFI_GAME[1].frames }]} variant="share" />
-          <p className="mt-3 text-right font-display text-[26px] font-extrabold text-phosphor [text-shadow:0_0_12px_rgba(255,174,43,.4)]">
+          <p className="mt-3 text-right font-display text-[26px] font-extrabold text-phosphor glow-amber-text">
             213
           </p>
         </div>
@@ -184,7 +232,7 @@ export default function Gallery() {
             />
           </SkeletonCase>
           <SkeletonCase label="Quiet — an aside, not an announcement">
-            <EmptyState tone="quiet" body="No comments yet — say something nice (or not)." />
+            <EmptyState tone="quiet" body="No comments yet" />
           </SkeletonCase>
           <SkeletonCase label="Join QR — dark-on-light on purpose, so it actually scans">
             <JoinQr url="https://10pins.vercel.app/join/abc123" label="Scan to join" />
@@ -192,8 +240,108 @@ export default function Gallery() {
         </div>
       </Section>
 
+      <Section
+        n="12"
+        title="Icons"
+        note="The whole set (B1): 24-viewBox, no fill, round caps/joins, 1.8 stroke — same weight as the tab bar's originals. No emoji or text-glyph icons anywhere else in the app."
+      >
+        <IconSheet />
+      </Section>
+
+      <Section
+        n="13"
+        title="Banners"
+        note="Amber budget (B2): a live-session row and an offline-scan row, de-glowed to border-line — the signal dot and copy carry the meaning, not a glow. Static markup, so this is reviewable without signing in."
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-3 rounded-card border border-line bg-panel px-4 py-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="size-2 shrink-0 live-dot rounded-full bg-signal" aria-hidden />
+              <div className="min-w-0">
+                <p className="truncate font-display text-[14px] font-bold text-text">Your game is still going</p>
+                <p className="truncate text-[11.5px] text-faint">Hollywood Bowl · Thursday Pin Club</p>
+              </div>
+            </div>
+            <span className="shrink-0 font-display text-[12.5px] font-bold text-phosphor">Resume</span>
+          </div>
+          <div className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3">
+            <div className="min-w-0">
+              <p className="truncate font-display text-[14px] font-bold text-text">1 scan ready to review</p>
+              <p className="truncate text-[11.5px] text-faint">Scanned while you were offline</p>
+            </div>
+            <span className="shrink-0 font-display text-[12.5px] font-bold text-phosphor">Review</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section
+        n="14"
+        title="ChipRow"
+        note="Radiogroup pills (feed filter, up to 4 options) and the fill segmented variant (leaderboard period + metric)."
+      >
+        <ChipRowDemo />
+      </Section>
+
+      <Section n="15" title="Avatar" note="Photo when a url is set, else initials on the well/border idiom — three sizes.">
+        <AvatarSheet />
+      </Section>
+
+      <Section n="16" title="Player skeleton" note="The player page's own loading shape: header, head-to-head panel, stat tiles.">
+        <SkeletonCase label="Player page">
+          <PlayerSkeleton />
+        </SkeletonCase>
+      </Section>
+
+      <Section
+        n="17"
+        title="Head-to-head"
+        note="The same panel PlayerPage renders, from a static fixture — record in mono text, never amber."
+      >
+        <HeadToHeadPanel
+          h2h={DEMO_H2H}
+          myName="Matt"
+          theirName="Dave K"
+          myUrl={null}
+          theirUrl={null}
+        />
+      </Section>
+
       {/* The gallery renders outside Shell, so it needs its own host. */}
       <CelebrationHost />
+    </div>
+  );
+}
+
+const ICON_NAMES: IconName[] = [
+  'home',
+  'groups',
+  'stats',
+  'profile',
+  'bell',
+  'comment',
+  'chevron-left',
+  'chevron-right',
+  'chevron-up',
+  'chevron-down',
+  'arrow-up',
+  'arrow-down',
+  'x',
+  'plus',
+  'image',
+];
+
+function IconSheet() {
+  return (
+    <div className="grid grid-cols-4 gap-4">
+      {ICON_NAMES.map((name) => (
+        <div key={name} className="flex flex-col items-center gap-1.5">
+          <div className="flex items-center gap-3 text-text">
+            <Icon name={name} className="size-5" />
+            <Icon name={name} className="size-4" />
+          </div>
+          <span className="text-[10px] text-faint">{name}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -243,7 +391,7 @@ function ShareCardDemo() {
       </div>
 
       <span className="label-caps">Component</span>
-      <div className="overflow-hidden rounded-lg border border-line">
+      <div className="overflow-hidden rounded-chip border border-line">
         <div style={{ zoom: 0.62 }}>
           <ShareCard data={data} />
         </div>
@@ -253,7 +401,7 @@ function ShareCardDemo() {
         type="button"
         onClick={render}
         disabled={state === 'rendering'}
-        className="press rounded-xl border border-line bg-well px-4 py-2.5 text-[13.5px] text-text disabled:text-faint"
+        className="press rounded-card border border-line bg-well px-4 py-2.5 text-[13.5px] text-text disabled:text-faint"
       >
         {state === 'rendering' ? 'Rendering…' : 'Render the PNG'}
       </button>
@@ -262,7 +410,7 @@ function ShareCardDemo() {
       {png && (
         <>
           <span className="label-caps">Rasterised · 1080×1350</span>
-          <img src={png} alt="The rendered share card" className="rounded-lg border border-line" />
+          <img src={png} alt="The rendered share card" className="rounded-chip border border-line" />
         </>
       )}
     </div>
@@ -287,7 +435,7 @@ function CelebrationDemo() {
           key={c.label}
           type="button"
           onClick={c.fire}
-          className="press rounded-xl border border-line bg-well px-4 py-2.5 text-left text-[13.5px] text-text"
+          className="press rounded-card border border-line bg-well px-4 py-2.5 text-left text-[13.5px] text-text"
         >
           {c.label}
         </button>
@@ -295,6 +443,67 @@ function CelebrationDemo() {
       <p className="text-[12px] text-faint">
         A quieter celebration can’t interrupt a louder one — tap Perfect game then Strike and nothing happens.
       </p>
+    </div>
+  );
+}
+
+const PILL_OPTIONS: ChipOption[] = [
+  { value: 'all', label: 'All' },
+  { value: 'thursday', label: 'Thursday Pin Club' },
+  { value: 'friday', label: 'Friday Strikes' },
+  { value: 'sunday', label: 'Sunday League' },
+];
+const FILL_2_OPTIONS: ChipOption[] = [
+  { value: 'average', label: 'Average' },
+  { value: 'high', label: 'High game' },
+];
+const FILL_3_OPTIONS: ChipOption[] = [
+  { value: 'season', label: 'Season' },
+  { value: '30d', label: '30 days' },
+  { value: 'all', label: 'All time' },
+];
+
+/** Both variants: the pill row (feed filter) and the fill segmented control (leaderboard period + metric). */
+function ChipRowDemo() {
+  const [pill, setPill] = useState('all');
+  const [fill2, setFill2] = useState('average');
+  const [fill3, setFill3] = useState('season');
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[10px] text-faint">Pill row · 4 options</span>
+        <ChipRow label="Feed filter" options={PILL_OPTIONS} value={pill} onChange={setPill} />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[10px] text-faint">Fill segmented · 2 options</span>
+        <ChipRow fill label="Rank by" options={FILL_2_OPTIONS} value={fill2} onChange={setFill2} />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[10px] text-faint">Fill segmented · 3 options</span>
+        <ChipRow fill label="Period" options={FILL_3_OPTIONS} value={fill3} onChange={setFill3} />
+      </div>
+    </div>
+  );
+}
+
+function AvatarSheet() {
+  return (
+    <div className="flex flex-wrap items-end gap-6">
+      <AvatarCase label="24 · initials" size={24} />
+      <AvatarCase label="32 · initials" size={32} />
+      <AvatarCase label="56 · initials" size={56} />
+      <AvatarCase label="24 · photo" size={24} url={DEMO_AVATAR_URL} />
+      <AvatarCase label="32 · photo" size={32} url={DEMO_AVATAR_URL} />
+      <AvatarCase label="56 · photo" size={56} url={DEMO_AVATAR_URL} />
+    </div>
+  );
+}
+
+function AvatarCase({ label, size, url }: { label: string; size: number; url?: string }) {
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <Avatar name="Dave K" url={url} size={size} />
+      <span className="text-[10px] text-faint">{label}</span>
     </div>
   );
 }
@@ -317,7 +526,7 @@ function Section({ n, title, note, children }: { n: string; title: string; note?
         </p>
         {note && <p className="mt-1 text-[12px] text-faint">{note}</p>}
       </div>
-      <div className="rounded-2xl border border-line bg-panel p-3">{children}</div>
+      <div className="rounded-card border border-line bg-panel p-3">{children}</div>
     </section>
   );
 }
@@ -360,14 +569,14 @@ function EditorDemo() {
         playerName="You"
       />
       {scored.complete && (
-        <div className="flex items-center justify-between rounded-xl border border-line bg-well px-4 py-3">
+        <div className="flex items-center justify-between rounded-card border border-line bg-well px-4 py-3">
           <span className="font-display text-[15px] font-bold">
             Final score <span className="score-text text-phosphor">{scored.total}</span>
           </span>
           <button
             type="button"
             onClick={() => setHistory([[]])}
-            className="rounded-lg border border-line px-3 py-1.5 text-[13.5px] text-dim"
+            className="rounded-chip border border-line px-3 py-1.5 text-[13.5px] text-dim"
           >
             Start again
           </button>

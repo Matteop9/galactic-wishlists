@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { fetchGroup } from '../../lib/groups';
+import { fetchGroup, fetchMyGroups } from '../../lib/groups';
 import { defaultHandicap } from '../../lib/handicap';
 import { createMatchDay, fetchAverages, type ScoringMode } from '../../lib/matchday';
 import { fetchVenueNames } from '../../lib/games';
-import { FormSkeleton } from '../../components/Skeleton';
+import Icon from '../../components/Icon';
+import EmptyState from '../../components/EmptyState';
+import { FormSkeleton, ListSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -24,12 +26,24 @@ interface DraftTeam {
 }
 
 export default function MatchDaySetup({ profile }: { profile: Profile }) {
-  const { id: groupId } = useParams<{ id: string }>();
+  const { id: paramGroupId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [pickedGroupId, setPickedGroupId] = useState<string | null>(null);
+
+  const myGroups = useQuery({
+    queryKey: ['my-groups', profile.id],
+    queryFn: () => fetchMyGroups(profile.id),
+    enabled: !paramGroupId,
+  });
+
+  const singleGroupId =
+    !paramGroupId && myGroups.data?.length === 1 ? (myGroups.data[0].groups?.id ?? null) : null;
+  const groupId = paramGroupId ?? pickedGroupId ?? singleGroupId ?? null;
 
   const group = useQuery({ queryKey: ['group', groupId], queryFn: () => fetchGroup(groupId!), enabled: !!groupId });
   const venues = useQuery({ queryKey: ['venues'], queryFn: fetchVenueNames });
-  const showSkeleton = useSkeleton(group.isPending);
+  const showSkeleton = useSkeleton(!!groupId && group.isPending);
+  const showGroupsSkeleton = useSkeleton(!paramGroupId && myGroups.isPending);
 
   const memberIds = useMemo(
     () => (group.data?.group_members ?? []).map((m) => m.profile_id),
@@ -113,6 +127,57 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
     onSuccess: (id) => navigate(`/matchday/${id}`, { replace: true }),
   });
 
+  if (!groupId) {
+    if (showGroupsSkeleton) {
+      return (
+        <div className="flex flex-col gap-5 px-4 py-6">
+          <ListSkeleton rows={3} label="Loading your groups" avatar={false} trailing={false} />
+        </div>
+      );
+    }
+    const groups = myGroups.data ?? [];
+    if (groups.length === 0) {
+      return (
+        <EmptyState
+          tone="page"
+          title="Match days live in a group"
+          body="Split your crew into teams, set handicaps and bowl a series — you need a group first."
+          action={{ label: 'Create a group', to: '/groups' }}
+        />
+      );
+    }
+    return (
+      <div className="flex flex-col gap-5 px-4 py-6">
+        <header className="flex items-center justify-between">
+          <h1 className="font-display text-[20px] font-bold">New match day</h1>
+          <Link to="/" className="text-[13.5px] text-dim">
+            Cancel
+          </Link>
+        </header>
+        <div className="flex flex-col gap-2">
+          <span className="label-caps">Which group?</span>
+          <div className="flex flex-col gap-2">
+            {groups.map((m) =>
+              m.groups ? (
+                <button
+                  key={m.groups.id}
+                  type="button"
+                  onClick={() => setPickedGroupId(m.groups!.id)}
+                  className="flex items-center justify-between rounded-card border border-line bg-well px-4 py-3.5 text-left"
+                >
+                  <span className="text-[14px] font-bold text-text">{m.groups.name}</span>
+                  {m.groups.season_name && (
+                    <span className="text-[12px] text-faint">{m.groups.season_name}</span>
+                  )}
+                </button>
+              ) : null,
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (showSkeleton) {
     return (
       <div className="flex flex-col gap-5 px-4 py-6">
@@ -125,8 +190,19 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
   return (
     <div className="flex flex-col gap-5 px-4 py-6">
       <header className="flex items-center justify-between">
-        <h1 className="font-display text-[20px] font-bold">New match day</h1>
-        <Link to={`/groups/${groupId}`} className="text-[13.5px] text-dim">
+        <div className="flex items-center gap-2">
+          <h1 className="font-display text-[20px] font-bold">New match day</h1>
+          {!paramGroupId && pickedGroupId && (
+            <button
+              type="button"
+              onClick={() => setPickedGroupId(null)}
+              className="text-[12px] text-dim underline"
+            >
+              Change group
+            </button>
+          )}
+        </div>
+        <Link to={paramGroupId ? `/groups/${paramGroupId}` : '/'} className="text-[13.5px] text-dim">
           Cancel
         </Link>
       </header>
@@ -141,7 +217,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
           value={venue}
           onChange={(e) => setVenue(e.target.value)}
           placeholder="Hollywood Bowl…"
-          className="rounded-[10px] border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
+          className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
         />
         <datalist id="md-venues">
           {(venues.data ?? []).map((name) => (
@@ -158,7 +234,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
               key={n}
               type="button"
               onClick={() => setBestOf(n)}
-              className={`flex-1 rounded-[10px] border py-2.5 text-[13px] font-bold ${
+              className={`flex-1 rounded-control border py-2.5 text-[13px] font-bold ${
                 bestOf === n ? 'border-phosphor/50 bg-phosphor/10 text-phosphor' : 'border-line bg-panel text-dim'
               }`}
             >
@@ -182,30 +258,30 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
           <button
             type="button"
             onClick={() => setTeams((ts) => [...ts, { name: `Team ${ts.length + 1}`, players: [] }])}
-            className="rounded-lg border border-line bg-well px-3 py-1.5 text-[12px] text-dim"
+            className="rounded-chip border border-line bg-well px-3 py-1.5 text-[12px] text-dim"
           >
             Add team
           </button>
         </div>
 
         {teams.map((team, ti) => (
-          <div key={ti} className="flex flex-col gap-2 rounded-2xl border border-line bg-panel p-3">
+          <div key={ti} className="flex flex-col gap-2 rounded-card border border-line bg-panel p-3">
             <div className="flex items-center gap-2">
               <input
                 value={team.name}
                 aria-label={`Team ${ti + 1} name`}
                 onChange={(e) => setTeams((ts) => ts.map((t, i) => (i === ti ? { ...t, name: e.target.value } : t)))}
                 maxLength={24}
-                className="min-w-0 flex-1 rounded-[10px] border border-line bg-well px-3 py-2 font-display text-[14px] font-bold text-text"
+                className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2 font-display text-[14px] font-bold text-text"
               />
               {teams.length > 2 && team.players.length === 0 && (
                 <button
                   type="button"
                   aria-label={`Remove team ${ti + 1}`}
                   onClick={() => setTeams((ts) => ts.filter((_, i) => i !== ti))}
-                  className="text-[16px] text-faint"
+                  className="text-faint"
                 >
-                  ×
+                  <Icon name="x" className="size-4" />
                 </button>
               )}
             </div>
@@ -225,7 +301,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
                     value={p.handicap}
                     aria-label={`${p.display_name} handicap`}
                     onChange={(e) => setHandicap(p.key, Math.max(0, Number(e.target.value)))}
-                    className={`score-text w-16 rounded-[8px] border border-line bg-well px-2 py-1.5 text-right text-[13px] ${
+                    className={`score-text w-16 rounded-chip border border-line bg-well px-2 py-1.5 text-right text-[13px] ${
                       p.handicapTouched ? 'text-phosphor' : 'text-text'
                     }`}
                   />
@@ -234,9 +310,9 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
                   type="button"
                   aria-label={`Remove ${p.display_name}`}
                   onClick={() => unassign(p.key)}
-                  className="text-[16px] text-faint"
+                  className="text-faint"
                 >
-                  ×
+                  <Icon name="x" className="size-4" />
                 </button>
               </div>
             ))}
@@ -248,7 +324,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
       <div className="flex flex-col gap-2">
         <span className="label-caps">Who’s playing?</span>
         {unassigned.map((m) => (
-          <div key={m.profile_id} className="flex items-center gap-2 rounded-xl border border-line bg-panel px-3 py-2.5">
+          <div key={m.profile_id} className="flex items-center gap-2 rounded-card border border-line bg-panel px-3 py-2.5">
             <span className="min-w-0 flex-1 truncate text-[14px] text-text">{m.profiles?.display_name}</span>
             {teams.map((t, ti) => (
               <button
@@ -262,20 +338,20 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
                     display_name: m.profiles?.display_name ?? '?',
                   })
                 }
-                className="rounded-lg border border-line bg-well px-2.5 py-1.5 text-[11px] font-bold text-dim"
+                className="rounded-chip border border-line bg-well px-2.5 py-1.5 text-[11px] font-bold text-dim"
               >
                 {t.name.trim() || `Team ${ti + 1}`}
               </button>
             ))}
           </div>
         ))}
-        <div className="flex items-center gap-2 rounded-xl border border-dashed border-line bg-well/50 px-3 py-2.5">
+        <div className="flex items-center gap-2 rounded-card border border-dashed border-line bg-well/50 px-3 py-2.5">
           <input
             value={guestName}
             onChange={(e) => setGuestName(e.target.value)}
             placeholder="Guest name…"
             aria-label="Guest name"
-            className="min-w-0 flex-1 rounded-[8px] border border-line bg-well px-2.5 py-1.5 text-[13px] text-text placeholder:text-faint"
+            className="min-w-0 flex-1 rounded-chip border border-line bg-well px-2.5 py-1.5 text-[13px] text-text placeholder:text-faint"
           />
           {teams.map((t, ti) => (
             <button
@@ -292,7 +368,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
                 });
                 setGuestName('');
               }}
-              className="rounded-lg border border-line bg-well px-2.5 py-1.5 text-[11px] font-bold text-dim disabled:opacity-40"
+              className="rounded-chip border border-line bg-well px-2.5 py-1.5 text-[11px] font-bold text-dim disabled:border-hairline disabled:text-disabled"
             >
               {t.name.trim() || `Team ${ti + 1}`}
             </button>
@@ -307,7 +383,7 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
         type="button"
         onClick={() => create.mutate()}
         disabled={!valid || create.isPending}
-        className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-50 disabled:shadow-none"
+        className="btn-primary"
       >
         {create.isPending ? 'Setting up…' : 'Start match day'}
       </button>
@@ -335,7 +411,7 @@ function ModeButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-1 flex-col items-start gap-0.5 rounded-[10px] border px-3 py-2.5 text-left ${
+      className={`flex flex-1 flex-col items-start gap-0.5 rounded-control border px-3 py-2.5 text-left ${
         active ? 'border-phosphor/50 bg-phosphor/10' : 'border-line bg-panel'
       }`}
     >

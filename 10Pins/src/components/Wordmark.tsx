@@ -4,7 +4,7 @@
  */
 export default function Wordmark({ size = 'lg' }: { size?: 'sm' | 'lg' }) {
   const numeral =
-    size === 'lg' ? 'rounded-md px-2.5 py-1 text-[26px]' : 'rounded px-1.5 py-0.5 text-[15px]';
+    size === 'lg' ? 'rounded-cell px-2.5 py-1 text-[26px]' : 'rounded-cell px-1.5 py-0.5 text-[15px]';
   const word = size === 'lg' ? 'text-[26px]' : 'text-[15px]';
 
   return (

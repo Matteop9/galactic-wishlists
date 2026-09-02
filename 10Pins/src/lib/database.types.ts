@@ -995,7 +995,7 @@ export type Database = {
       claim_guest_games: { Args: { code: string }; Returns: Json }
       group_invite_preview: { Args: { code: string }; Returns: Json }
       group_leaderboard: {
-        Args: { gid: string }
+        Args: { gid: string; p_period?: string }
         Returns: {
           profile_id: string
           display_name: string
@@ -1005,8 +1005,11 @@ export type Database = {
           high_game: number
           rank: number
           prev_rank: number | null
+          rank_high: number
+          prev_rank_high: number | null
         }[]
       }
+      head_to_head: { Args: { other: string }; Returns: Json }
       is_app_admin: { Args: never; Returns: boolean }
       is_group_admin: { Args: { gid: string }; Returns: boolean }
       is_group_member: { Args: { gid: string }; Returns: boolean }

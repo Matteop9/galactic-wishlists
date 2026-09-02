@@ -15,7 +15,7 @@ export default function Keypad({ legal, onRoll }: { legal: Set<Roll>; onRoll: (r
         disabled={!enabled}
         aria-label={label === '–' ? 'Miss' : label === 'F' ? 'Foul' : label}
         onClick={() => onRoll(roll)}
-        className={`rounded-lg font-display font-bold transition-transform duration-75 ${
+        className={`rounded-chip font-display font-bold transition-transform duration-75 ${
           opts?.big ? 'text-[24px]' : 'text-[18px]'
         } ${opts?.area ?? ''} ${
           enabled

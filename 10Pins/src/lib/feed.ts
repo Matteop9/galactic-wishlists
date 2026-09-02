@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import type { FeedFilter } from './feedFilter';
 
 export const REACTION_EMOJI = ['🔥', '👏', '💀', '🎳'] as const;
 export type ReactionEmoji = (typeof REACTION_EMOJI)[number];
@@ -16,13 +17,16 @@ const FEED_SELECT = `
   comments ( count )
 `;
 
-/** The feed: everything RLS lets this user see (own + group + friends' games). */
-export async function fetchFeed() {
-  const { data, error } = await supabase
-    .from('feed_events')
-    .select(FEED_SELECT)
-    .order('created_at', { ascending: false })
-    .limit(30);
+/**
+ * The feed: everything RLS lets this user see (own + group + friends' games).
+ * `filter` narrows to one group's events; `'all'` (the default) is unfiltered.
+ */
+export async function fetchFeed(filter: FeedFilter = 'all') {
+  let query = supabase.from('feed_events').select(FEED_SELECT);
+  if (filter !== 'all') {
+    query = query.eq('group_id', filter);
+  }
+  const { data, error } = await query.order('created_at', { ascending: false }).limit(30);
   if (error) throw error;
   return data;
 }

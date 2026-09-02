@@ -49,14 +49,14 @@ export default function FrameEditor({
           type="button"
           onClick={onUndo}
           disabled={!canUndo}
-          className="rounded-lg border border-line bg-well px-4 py-2 text-[13.5px] text-dim disabled:border-hairline disabled:text-disabled"
+          className="rounded-chip border border-line bg-well px-4 py-2 text-[13.5px] text-dim disabled:border-hairline disabled:text-disabled"
         >
           Undo
         </button>
       </div>
 
       <div
-        className={`mx-auto ${focusIndex === 9 ? 'w-36' : 'w-28'} overflow-hidden rounded border-[1.5px] ${
+        className={`mx-auto ${focusIndex === 9 ? 'w-36' : 'w-28'} overflow-hidden rounded-cell border-[1.5px] ${
           pos ? 'border-phosphor shadow-glow-amber' : 'border-line'
         } bg-well`}
       >

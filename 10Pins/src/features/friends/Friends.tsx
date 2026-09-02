@@ -11,6 +11,8 @@ import {
 } from '../../lib/friends';
 import { ListSkeleton } from '../../components/Skeleton';
 import EmptyState from '../../components/EmptyState';
+import Avatar from '../../components/Avatar';
+import PlayerLink from '../../components/PlayerLink';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -66,10 +68,10 @@ export default function Friends({ profile }: { profile: Profile }) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name or @username"
-          className="rounded-[10px] border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
+          className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
         />
         {(results.data ?? []).map((p) => (
-          <PersonRow key={p.id} person={p}>
+          <PersonRow key={p.id} person={p} myId={profile.id}>
             {linkedIds.has(p.id) ? (
               <span className="text-[12px] text-faint">Added</span>
             ) : (
@@ -77,7 +79,7 @@ export default function Friends({ profile }: { profile: Profile }) {
                 type="button"
                 onClick={() => send.mutate(p.id)}
                 disabled={send.isPending}
-                className="rounded-[10px] bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
+                className="rounded-control bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
               >
                 Add friend
               </button>
@@ -96,12 +98,12 @@ export default function Friends({ profile }: { profile: Profile }) {
             const p = otherProfile(f, profile.id);
             if (!p) return null;
             return (
-              <PersonRow key={p.id} person={p}>
+              <PersonRow key={p.id} person={p} myId={profile.id}>
                 <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => remove.mutate(p.id)}
-                    className="rounded-[10px] border border-line bg-well px-3 py-1.5 text-[12px] text-dim"
+                    className="rounded-control border border-line bg-well px-3 py-1.5 text-[12px] text-dim"
                   >
                     Ignore
                   </button>
@@ -109,7 +111,7 @@ export default function Friends({ profile }: { profile: Profile }) {
                     type="button"
                     onClick={() => accept.mutate(f.requester)}
                     disabled={accept.isPending}
-                    className="rounded-[10px] bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
+                    className="rounded-control bg-phosphor px-3 py-1.5 font-display text-[12px] font-bold text-ink"
                   >
                     Accept
                   </button>
@@ -133,7 +135,7 @@ export default function Friends({ profile }: { profile: Profile }) {
           const p = otherProfile(f, profile.id);
           if (!p) return null;
           return (
-            <PersonRow key={p.id} person={p}>
+            <PersonRow key={p.id} person={p} myId={profile.id}>
               <button
                 type="button"
                 onClick={() => {
@@ -155,7 +157,7 @@ export default function Friends({ profile }: { profile: Profile }) {
             const p = otherProfile(f, profile.id);
             if (!p) return null;
             return (
-              <PersonRow key={p.id} person={p}>
+              <PersonRow key={p.id} person={p} myId={profile.id}>
                 <span className="text-[12px] text-faint">Pending</span>
               </PersonRow>
             );
@@ -166,13 +168,26 @@ export default function Friends({ profile }: { profile: Profile }) {
   );
 }
 
-function PersonRow({ person, children }: { person: ProfileLite; children: React.ReactNode }) {
+function PersonRow({
+  person,
+  myId,
+  children,
+}: {
+  person: ProfileLite;
+  myId: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl border border-line bg-panel px-4 py-3">
-      <div className="min-w-0">
-        <p className="truncate text-[14px] text-text">{person.display_name}</p>
-        <p className="text-[11px] text-faint">@{person.username}</p>
-      </div>
+    <div className="flex items-center justify-between gap-3 rounded-card border border-line bg-panel px-4 py-3">
+      <PlayerLink profileId={person.id} myId={myId} className="flex min-w-0 items-center gap-3">
+        <Avatar name={person.display_name} url={person.avatar_url} size={32} />
+        <div className="min-w-0">
+          <p className="truncate text-[14px] text-text underline-offset-2 hover:underline">
+            {person.display_name}
+          </p>
+          <p className="text-[11px] text-faint">@{person.username}</p>
+        </div>
+      </PlayerLink>
       {children}
     </div>
   );

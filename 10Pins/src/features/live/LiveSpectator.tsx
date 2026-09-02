@@ -57,7 +57,7 @@ export default function LiveSpectator({ profile }: { profile: Profile }) {
   if (session.isError || !state) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Nothing to watch</p>
+        <h1 className="font-display text-[20px] font-bold">Nothing to watch</h1>
         <p className="max-w-[260px] text-[13.5px] text-dim">
           This session has finished or the link has expired.
         </p>
@@ -98,13 +98,13 @@ export default function LiveSpectator({ profile }: { profile: Profile }) {
       </header>
 
       {finished ? (
-        <p className="rounded-xl border border-line bg-panel px-4 py-3 text-center text-[13px] text-dim">
+        <p className="rounded-card border border-line bg-panel px-4 py-3 text-center text-[13px] text-dim">
           {state.sessionStatus === 'active'
             ? 'Game over — waiting for the next one to be racked up.'
             : 'That’s the session done.'}
         </p>
       ) : (
-        <div className="flex items-center justify-between rounded-2xl border-[1.5px] border-phosphor bg-panel px-4 py-4 shadow-glow-amber">
+        <div className="flex items-center justify-between rounded-card border-[1.5px] border-phosphor bg-panel px-4 py-4 shadow-glow-amber">
           <div className="min-w-0">
             <p className="label-caps text-phosphor">Now bowling</p>
             <p className="truncate font-display text-[24px] font-bold">
@@ -120,7 +120,7 @@ export default function LiveSpectator({ profile }: { profile: Profile }) {
         </div>
       )}
 
-      <div className="rounded-2xl border border-line bg-panel p-3">
+      <div className="rounded-card border border-line bg-panel p-3">
         <Scorecard
           // No `current` flag: the panel above already says who is bowling, so
           // the card only needs the amber frame, not a second NOW BOWLING pill.
@@ -137,7 +137,7 @@ export default function LiveSpectator({ profile }: { profile: Profile }) {
         {standings.map(({ player, total }, i) => (
           <li
             key={player.gamePlayerId}
-            className="flex items-baseline justify-between rounded-xl border border-line bg-panel px-4 py-3"
+            className="flex items-baseline justify-between rounded-card border border-line bg-panel px-4 py-3"
           >
             <span className={`text-[16px] ${i === 0 ? 'font-display font-bold text-text' : 'text-dim'}`}>
               {i + 1}. {player.displayName}

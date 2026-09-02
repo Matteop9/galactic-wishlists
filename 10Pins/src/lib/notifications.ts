@@ -57,7 +57,7 @@ export function notificationText(n: Notification): string {
     case 'live_started':
       return `${who} is bowling live — watch it`;
     default:
-      return `${who} did something`;
+      return `New activity from ${who}`;
   }
 }
 

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Scorecard, { type ScorecardPlayer } from '../../components/scorecard/Scorecard';
 import VerificationBadge from '../../components/VerificationBadge';
 import ReactionBar from '../../components/ReactionBar';
+import PlayerLink from '../../components/PlayerLink';
 import { deleteGame, fetchGame } from '../../lib/games';
 import { addComment, deleteComment, fetchComments, fetchGameFeedEvent } from '../../lib/feed';
 import { highlightLabel } from '../../lib/highlights';
@@ -124,19 +125,25 @@ export default function GameDetail({ profile }: { profile: Profile }) {
       </p>
 
       {framePlayers.length > 0 && (
-        <div className="rounded-2xl border border-line bg-panel p-3">
+        <div className="rounded-card border border-line bg-panel p-3">
           <Scorecard players={framePlayers} variant="full" />
         </div>
       )}
 
       {totalsOnly.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-2xl border border-line bg-panel p-3">
+        <div className="flex flex-col gap-2 rounded-card border border-line bg-panel p-3">
           {totalsOnly.map((p) => (
             <div key={p.id} className="flex items-center justify-between">
-              <span className="font-mono text-[11px] font-semibold uppercase tracking-[.08em] text-dim">
+              <PlayerLink
+                profileId={p.profile_id}
+                myId={profile.id}
+                className={`font-mono text-[11px] font-semibold uppercase tracking-[.08em] text-dim ${
+                  p.profile_id ? 'underline-offset-2 hover:text-text hover:underline' : ''
+                }`}
+              >
                 {p.profiles?.display_name ?? p.guest_name}
                 {p.guest_name ? ' (guest)' : ''}
-              </span>
+              </PlayerLink>
               <span className="score-text text-[17px] font-bold text-text">{p.final_score}</span>
             </div>
           ))}
@@ -149,10 +156,16 @@ export default function GameDetail({ profile }: { profile: Profile }) {
           {players
             .filter((p) => p.strikes !== null)
             .map((p) => (
-              <div key={p.id} className="flex items-center gap-4 rounded-xl border border-line bg-panel px-4 py-3">
-                <span className="flex-1 truncate font-mono text-[11px] font-semibold uppercase tracking-[.08em] text-dim">
+              <div key={p.id} className="flex items-center gap-4 rounded-card border border-line bg-panel px-4 py-3">
+                <PlayerLink
+                  profileId={p.profile_id}
+                  myId={profile.id}
+                  className={`flex-1 truncate font-mono text-[11px] font-semibold uppercase tracking-[.08em] text-dim ${
+                    p.profile_id ? 'underline-offset-2 hover:text-text hover:underline' : ''
+                  }`}
+                >
                   {p.profiles?.display_name ?? p.guest_name}
-                </span>
+                </PlayerLink>
                 <MiniStat label="Strikes" value={p.strikes ?? 0} />
                 <MiniStat label="Spares" value={p.spares ?? 0} />
                 <MiniStat label="Opens" value={p.opens ?? 0} />
@@ -165,7 +178,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
         <button
           type="button"
           onClick={() => setSharing(true)}
-          className="press self-start rounded-[10px] border border-line bg-panel px-4 py-2.5 text-[13.5px] font-bold text-text"
+          className="press self-start rounded-control border border-line bg-panel px-4 py-2.5 text-[13.5px] font-bold text-text"
         >
           Share card
         </button>
@@ -179,13 +192,13 @@ export default function GameDetail({ profile }: { profile: Profile }) {
       {isOwner && (
         <div className="mt-2 flex flex-col gap-2">
           {confirmingDelete ? (
-            <div className="flex items-center justify-between rounded-xl border border-signal/40 bg-panel px-4 py-3">
+            <div className="flex items-center justify-between rounded-card border border-signal/40 bg-panel px-4 py-3">
               <span className="text-[13.5px] text-dim">Delete this game and its frames?</span>
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setConfirmingDelete(false)}
-                  className="rounded-lg border border-line px-3 py-1.5 text-[13.5px] text-dim"
+                  className="rounded-chip border border-line px-3 py-1.5 text-[13.5px] text-dim"
                 >
                   Keep it
                 </button>
@@ -193,7 +206,7 @@ export default function GameDetail({ profile }: { profile: Profile }) {
                   type="button"
                   onClick={() => remove.mutate()}
                   disabled={remove.isPending}
-                  className="rounded-lg bg-signal px-3 py-1.5 text-[13.5px] font-bold text-ink"
+                  className="rounded-chip bg-signal px-3 py-1.5 text-[13.5px] font-bold text-ink"
                 >
                   {remove.isPending ? 'Deleting…' : 'Delete'}
                 </button>
@@ -236,7 +249,7 @@ function ScanPhoto({ path }: { path: string }) {
     <button
       type="button"
       onClick={() => setOpen((v) => !v)}
-      className={`press overflow-hidden rounded-xl border border-line bg-well ${open ? '' : 'h-[110px]'}`}
+      className={`press overflow-hidden rounded-card border border-line bg-well ${open ? '' : 'h-[110px]'}`}
     >
       <img
         src={photo.data}
@@ -310,9 +323,15 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
 
       <span className="label-caps">Comments</span>
       {(comments.data ?? []).map((c) => (
-        <div key={c.id} className="rounded-xl border border-line bg-panel px-4 py-3">
+        <div key={c.id} className="rounded-card border border-line bg-panel px-4 py-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-[12px] font-bold text-text">{c.profiles?.display_name}</span>
+            <PlayerLink
+              profileId={c.profile_id}
+              myId={profile.id}
+              className="text-[12px] font-bold text-text underline-offset-2 hover:underline"
+            >
+              {c.profiles?.display_name}
+            </PlayerLink>
             <span className="text-[10px] text-faint">
               {new Date(c.created_at ?? '').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
               {c.profile_id === profile.id && (
@@ -330,7 +349,7 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
         </div>
       ))}
       {comments.data && comments.data.length === 0 && (
-        <p className="text-[12px] text-faint">No comments yet — say something nice (or not).</p>
+        <p className="text-[12px] text-faint">No comments yet</p>
       )}
       {removeComment.isError && (
         <p className="text-[12px] text-signal" role="alert">
@@ -351,12 +370,12 @@ function SocialSection({ gameId, profile }: { gameId: string; profile: Profile }
           maxLength={500}
           placeholder="Add a comment…"
           aria-label="Add a comment"
-          className="min-w-0 flex-1 rounded-[10px] border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+          className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
         />
         <button
           type="submit"
           disabled={!body.trim() || post.isPending}
-          className="rounded-[10px] bg-phosphor px-4 font-display text-[13px] font-bold text-ink disabled:opacity-50"
+          className="rounded-control bg-phosphor px-4 font-display text-[13px] font-bold text-ink disabled:bg-disabled disabled:text-faint disabled:shadow-none"
         >
           Post comment
         </button>

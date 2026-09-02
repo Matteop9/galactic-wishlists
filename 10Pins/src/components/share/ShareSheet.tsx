@@ -62,14 +62,14 @@ export default function ShareSheet({ data, onClose }: { data: ShareCardData; onC
       </div>
 
       <div
-        className="sheet-up mx-auto flex w-full max-w-[390px] flex-col gap-3 rounded-t-3xl border border-b-0 border-line bg-panel p-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-modal"
+        className="sheet-up mx-auto flex w-full max-w-[390px] flex-col gap-3 rounded-t-sheet border border-b-0 border-line bg-panel p-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-modal"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-label="Share this game"
       >
         <div className="mx-auto mb-1 h-1 w-10 rounded-full bg-line" />
 
-        <div className="overflow-hidden rounded-xl border border-line bg-ink">
+        <div className="overflow-hidden rounded-card border border-line bg-ink">
           {png ? (
             <img src={png.url} alt="The card that will be shared" className="w-full" />
           ) : (
@@ -81,7 +81,7 @@ export default function ShareSheet({ data, onClose }: { data: ShareCardData; onC
           type="button"
           onClick={error ? () => setAttempt((n) => n + 1) : send}
           disabled={!png && !error}
-          className="press rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:bg-disabled disabled:text-faint disabled:shadow-none"
+          className="press rounded-control bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:bg-disabled disabled:text-faint disabled:shadow-none"
         >
           {error ? 'Try again' : busy ? 'Sharing…' : png ? 'Share the card' : 'Building your card…'}
         </button>

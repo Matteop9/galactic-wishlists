@@ -327,7 +327,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
   if (session.isError || !state) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">Session not found</p>
+        <h1 className="font-display text-[20px] font-bold">Session not found</h1>
         <Link to="/" className="text-[13.5px] text-phosphor">
           Back home
         </Link>
@@ -337,7 +337,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
   if (state.hostId !== profile.id) {
     return (
       <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <p className="font-display text-[20px] font-bold">{state.hostName} is scoring</p>
+        <h1 className="font-display text-[20px] font-bold">{state.hostName} is scoring</h1>
         <p className="max-w-[260px] text-[13.5px] text-dim">
           One phone keeps the score. You can watch this one live.
         </p>
@@ -375,15 +375,15 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
     <div className="flex flex-col gap-4 px-4 py-6">
       <header className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="size-2 shrink-0 animate-pulse rounded-full bg-signal" aria-hidden />
+          <span className="size-2 shrink-0 live-dot rounded-full bg-signal" aria-hidden />
           <h1 className="truncate font-display text-[18px] font-bold">Game {state.gameNumber}</h1>
         </div>
         <div className="flex items-center gap-2">
-          <span className="label-caps text-faint">{watching} watching</span>
+          <span className="text-[12px] text-faint">{watching} watching</span>
           <button
             type="button"
             onClick={() => setShowShare((open) => !open)}
-            className="rounded-lg border border-line bg-panel px-3 py-1.5 text-[12.5px] text-dim"
+            className="rounded-chip border border-line bg-panel px-3 py-1.5 text-[12.5px] text-dim"
           >
             Share
           </button>
@@ -407,7 +407,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       </div>
 
       {showShare && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+        <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
           <p className="text-[13px] text-dim">Send this to anyone who wants to watch along.</p>
           {state.joinCode && (
             <JoinQr url={`${window.location.origin}/live/join/${state.joinCode}`} label="Scan to watch" />
@@ -418,7 +418,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
           <button
             type="button"
             onClick={share}
-            className="rounded-[10px] border border-line bg-well py-2.5 text-[13.5px] text-text"
+            className="rounded-control border border-line bg-well py-2.5 text-[13.5px] text-text"
           >
             {shared ? 'Link copied' : 'Share the link'}
           </button>
@@ -430,7 +430,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
         </div>
       )}
 
-      <div className="rounded-2xl border border-line bg-panel p-3">
+      <div className="rounded-card border border-line bg-panel p-3">
         <Scorecard
           players={players.map((player) => ({
             name: firstName(player.displayName),
@@ -455,7 +455,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       )}
 
       {complete && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4">
+        <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
           <div className="flex items-center justify-between">
             <p className="font-display text-[17px] font-bold">
               {finish.isPending ? 'Saving the game…' : `Game ${state.gameNumber} done`}
@@ -486,7 +486,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
             <button
               type="button"
               onClick={() => setSharing(true)}
-              className="press rounded-[10px] border border-line bg-well py-2.5 text-[13.5px] font-bold text-text"
+              className="press rounded-control border border-line bg-well py-2.5 text-[13.5px] font-bold text-text"
             >
               Share the card
             </button>
@@ -499,7 +499,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
                 setError('');
                 finish.mutate();
               }}
-              className="rounded-[10px] border border-line bg-well py-2.5 text-[13.5px] text-text"
+              className="rounded-control border border-line bg-well py-2.5 text-[13.5px] text-text"
             >
               Save game
             </button>
@@ -515,7 +515,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
               finish.isPending ||
               (state.gameStatus === 'in_progress' && !finish.isSuccess)
             }
-            className="rounded-[10px] bg-phosphor py-3.5 font-display text-[15px] font-bold text-ink shadow-glow-amber disabled:opacity-60 disabled:shadow-none"
+            className="btn-primary"
           >
             {nextGame.isPending ? 'Racking up…' : 'Next game — same players'}
           </button>
@@ -535,7 +535,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
           endSession.mutate();
         }}
         disabled={endSession.isPending}
-        className="rounded-[10px] border border-line bg-panel py-3 text-[13.5px] text-dim"
+        className="rounded-control border border-line bg-panel py-3 text-[13.5px] text-dim"
       >
         {endSession.isPending
           ? 'Ending…'
