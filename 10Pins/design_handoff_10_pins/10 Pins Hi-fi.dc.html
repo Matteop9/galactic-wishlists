@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600;700;800&amp;family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;family=Martian+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#ECEAE4;font-family:system-ui,sans-serif}
+.sec{padding:44px 48px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.shd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.snum{font:600 10px ui-monospace,Menlo,monospace;padding:3px 8px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.stitle{font:700 15px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.sdesc{font:12px/1.55 system-ui,sans-serif;color:rgba(0,0,0,.55);margin:0 0 22px;max-width:760px}
+.row{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start}
+.itm{display:flex;flex-direction:column;gap:6px;flex:none}
+.lab{font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.45)}
+</style>
+</helmet>
+
+<!-- ================= 01 FOUNDATIONS ================= -->
+<section class="sec" id="s01">
+<div class="shd"><a class="snum" href="#s01">01</a><span class="stitle">Foundations — 10 Pins design tokens (dark primary)</span></div>
+<p class="sdesc">Direction: Monitor glow. The visual world is the overhead lane monitor — phosphor amber and CRT glass on ink. Light theme follows after dark sign-off.</p>
+<div class="row">
+
+  <div class="itm">
+    <span class="lab">PALETTE · CORE 6</span>
+    <div style="display:flex;gap:8px">
+      <div style="display:flex;flex-direction:column;gap:5px;width:96px"><div style="height:64px;border-radius:8px;background:#0A0E14;border:1px solid rgba(0,0,0,.1)"></div><span style="font:600 9.5px ui-monospace,monospace;color:#1a1a1a">ink</span><span style="font:9.5px ui-monospace,monospace;color:rgba(0,0,0,.5)">#0A0E14 · app bg</span></div>
+      <div style="display:flex;flex-direction:column;gap:5px;width:96px"><div style="height:64px;border-radius:8px;background:#111A26"></div><span style="font:600 9.5px ui-monospace,monospace;color:#1a1a1a">panel</span><span style="font:9.5px ui-monospace,monospace;color:rgba(0,0,0,.5)">#111A26 · cards</span></div>
+      <div style="display:flex;flex-direction:column;gap:5px;width:96px"><div style="height:64px;border-radius:8px;background:#0D1520"></div><span style="font:600 9.5px ui-monospace,monospace;color:#1a1a1a">well</span><span style="font:9.5px ui-monospace,monospace;color:rgba(0,0,0,.5)">#0D1520 · cells, inputs</span></div>
+      <div style="display:flex;flex-direction:column;gap:5px;width:96px"><div style="height:64px;border-radius:8px;background:#D7F4FF"></div><span style="font:600 9.5px ui-monospace,monospace;color:#1a1a1a">glass</span><span style="font:9.5px ui-monospace,monospace;color:rgba(0,0,0,.5)">#D7F4FF · CRT white</span></div>
+      <div style="display:flex;flex-direction:column;gap:5px;width:96px"><div style="height:64px;border-radius:8px;background:#FFAE2B"></div><span style="font:600 9.5px ui-monospace,monospace;color:#1a1a1a">phosphor</span><span style="font:9.5px ui-monospace,monospace;color:rgba(0,0,0,.5)">#FFAE2B · accent</span></div>
+      <div style="display:flex;flex-direction:column;gap:5px;width:96px"><div style="height:64px;border-radius:8px;background:#FF5D45"></div><span style="font:600 9.5px ui-monospace,monospace;color:#1a1a1a">signal</span><span style="font:9.5px ui-monospace,monospace;color:rgba(0,0,0,.5)">#FF5D45 · foul, destructive</span></div>
+    </div>
+    <span class="lab" style="margin-top:10px">DERIVED TONES</span>
+    <div style="background:#0A0E14;border-radius:10px;padding:14px 16px;display:flex;gap:18px;align-items:center;width:fit-content">
+      <span style="font:600 12px 'Martian Mono',monospace;color:#E9F1F6">text #E9F1F6</span>
+      <span style="font:600 12px 'Martian Mono',monospace;color:#8FA5B4">dim #8FA5B4</span>
+      <span style="font:600 12px 'Martian Mono',monospace;color:#5E7485">faint #5E7485</span>
+      <span style="font:600 12px 'Martian Mono',monospace;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.45)">mark #BFE9FF</span>
+      <span style="font:600 12px 'Martian Mono',monospace;color:#E9F1F6;padding:2px 8px;border:1px solid #223146;border-radius:4px">line #223146</span>
+      <span style="font:600 12px 'Martian Mono',monospace;color:#E9F1F6;padding:2px 8px;border:1px solid #1B2A3B;border-radius:4px">hairline #1B2A3B</span>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">TYPE · OXANIUM DISPLAY / ATKINSON HYPERLEGIBLE BODY / MARTIAN MONO TABULAR</span>
+    <div style="background:#0A0E14;border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:10px;width:420px;box-sizing:border-box">
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:800 34px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.02em">Display XL 34</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">scores, splash</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:800 26px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.02em">Display L 26</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">card heroes</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Title 20</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">page titles</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Heading 17</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">nav, section</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:400 15px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Body 15 — Atkinson Hyperlegible, dark-alley legible</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:400 13.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Body S 13.5 — secondary copy, captions at 12</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:600 14px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">213 169 141 · Mono 14 tabular — all scores</span></div>
+      <div style="display:flex;align-items:baseline;gap:12px"><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">LABEL 10 · TRACKED CAPS</span></div>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">SPACING · RADIUS · ELEVATION</span>
+    <div style="background:#0A0E14;border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:14px;width:340px;box-sizing:border-box">
+      <div style="display:flex;align-items:flex-end;gap:8px">
+        <div style="width:4px;height:4px;background:#FFAE2B"></div><div style="width:8px;height:8px;background:#FFAE2B"></div><div style="width:12px;height:12px;background:#FFAE2B"></div><div style="width:16px;height:16px;background:#FFAE2B"></div><div style="width:24px;height:24px;background:#FFAE2B"></div><div style="width:32px;height:32px;background:#FFAE2B"></div><div style="width:48px;height:48px;background:#FFAE2B"></div>
+        <span style="font:9px 'Martian Mono',monospace;color:#5E7485;margin-left:6px">4 8 12 16 24 32 48</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="width:44px;height:32px;border:1px solid #223146;border-radius:4px;display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">r4</span></div>
+        <div style="width:44px;height:32px;border:1px solid #223146;border-radius:8px;display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">r8</span></div>
+        <div style="width:44px;height:32px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">r12</span></div>
+        <div style="width:44px;height:32px;border:1px solid #223146;border-radius:16px;display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">r16</span></div>
+        <div style="width:56px;height:32px;border:1px solid #223146;border-radius:999px;display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">pill</span></div>
+        <span style="font:9px 'Martian Mono',monospace;color:#5E7485">cells·chips·cards·feed</span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div style="width:72px;height:44px;background:#111A26;border:1px solid #223146;border-radius:8px;display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">e0 line</span></div>
+        <div style="width:72px;height:44px;background:#111A26;border:1px solid #223146;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#5E7485">e1 sheet</span></div>
+        <div style="width:72px;height:44px;background:#111A26;border:1px solid rgba(255,174,43,.5);border-radius:8px;box-shadow:0 0 16px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#FFAE2B">glow-a</span></div>
+        <div style="width:72px;height:44px;background:#111A26;border:1px solid rgba(150,220,255,.4);border-radius:8px;box-shadow:0 0 12px rgba(150,220,255,.25);display:flex;align-items:center;justify-content:center"><span style="font:8.5px 'Martian Mono',monospace;color:#BFE9FF">glow-g</span></div>
+      </div>
+      <span style="font:10.5px/1.6 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Dark theme elevates with lines and glow, not shadow. Amber glow is earned: verification, celebration, the current frame. Never decorative.</span>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">MOTION VALUES</span>
+    <div style="background:#0A0E14;border-radius:10px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;width:340px;box-sizing:border-box">
+      <span style="font:600 11px 'Martian Mono',monospace;color:#E9F1F6">press&nbsp;&nbsp;&nbsp;80ms · linear</span>
+      <span style="font:600 11px 'Martian Mono',monospace;color:#E9F1F6">fast&nbsp;&nbsp;&nbsp;&nbsp;120ms · ease-out</span>
+      <span style="font:600 11px 'Martian Mono',monospace;color:#E9F1F6">base&nbsp;&nbsp;&nbsp;&nbsp;240ms · cubic-bezier(.2,.8,.2,1)</span>
+      <span style="font:600 11px 'Martian Mono',monospace;color:#E9F1F6">sweep&nbsp;&nbsp;&nbsp;1600ms · loop, scan line</span>
+      <span style="font:600 11px 'Martian Mono',monospace;color:#E9F1F6">settle&nbsp;&nbsp;120ms amber flash + 240ms fade</span>
+      <span style="font:600 11px 'Martian Mono',monospace;color:#E9F1F6">celebrate ≤1200ms · always skippable</span>
+      <span style="font:10.5px/1.6 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;margin-top:4px">"Settle" is the recompute animation: any corrected roll flashes every changed downstream total amber for 120ms, then fades back. It makes the maths visible.</span>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ================= 02 SIGNATURE ================= -->
+<section class="sec" id="s02">
+<div class="shd"><a class="snum" href="#s02">02</a><span class="stitle">Signature element — the sweep</span></div>
+<p class="sdesc">One device, carried everywhere: the amber phosphor scan line travelling over a glowing monitor grid. The product's moment of truth is reading the lane monitor — so the brand is the monitor's glow. The sweep appears in exactly five places; nowhere else.</p>
+<div class="row">
+  <div class="itm">
+    <div style="background:#0A0E14;border-radius:12px;padding:26px;display:flex;gap:26px;align-items:center;width:860px;box-sizing:border-box">
+      <div style="width:300px;flex:none;position:relative;border:1px solid #223146;border-radius:8px;background:#0D1520;overflow:hidden;padding:14px">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.04) 0px,rgba(150,220,255,.04) 1px,transparent 1px,transparent 4px)"></div>
+        <div style="display:flex;gap:3px;position:relative">
+          <div style="flex:1;height:40px;border:1px solid #223146;border-radius:4px;display:flex;align-items:center;justify-content:center"><span style="font:800 16px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.55)">X</span></div>
+          <div style="flex:1;height:40px;border:1px solid #223146;border-radius:4px;display:flex;align-items:center;justify-content:center"><span style="font:800 16px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.55)">X</span></div>
+          <div style="flex:1;height:40px;border:1px solid #223146;border-radius:4px;display:flex;align-items:center;justify-content:center"><span style="font:800 16px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.55)">X</span></div>
+        </div>
+        <div style="position:absolute;left:0;right:0;top:52%;height:2px;background:#FFAE2B;box-shadow:0 0 18px 4px rgba(255,174,43,.5)"></div>
+        <span style="position:relative;display:block;margin-top:10px;font:600 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.14em">SCANNING · 1600MS LOOP</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px">
+        <span style="font:700 15px 'Oxanium',sans-serif;color:#E9F1F6">Where it lives</span>
+        <span style="font:400 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;line-height:1.6">1 · <span style="color:#E9F1F6">Processing</span> — the sweep reads the photo, top to bottom.<br>2 · <span style="color:#E9F1F6">Verification stamp</span> — a single sweep pass "prints" the badge onto the card.<br>3 · <span style="color:#E9F1F6">Live scoring</span> — the current frame carries the amber underline glow.<br>4 · <span style="color:#E9F1F6">Share card</span> — a frozen sweep line sits over the scorecard render.<br>5 · <span style="color:#E9F1F6">Splash</span> — one pass over the wordmark on cold start.</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;font-style:italic">Restraint rule: the sweep never idles. It runs only while something is genuinely happening, then stops.</span>
+      </div>
+    </div>
+  </div>
+  <div class="itm">
+    <span class="lab">WORDMARK · SWAPPABLE PURE TYPE</span>
+    <div style="background:#0A0E14;border-radius:12px;padding:30px 28px;display:flex;align-items:center;gap:12px">
+      <span style="font:800 34px 'Oxanium',sans-serif;color:#FFAE2B;border:2px solid #FFAE2B;border-radius:6px;padding:0 10px;line-height:1.35;text-shadow:0 0 14px rgba(255,174,43,.55);box-shadow:0 0 18px rgba(255,174,43,.25), inset 0 0 12px rgba(255,174,43,.12)">10</span>
+      <span style="font:800 34px 'Oxanium',sans-serif;color:#D7F4FF;letter-spacing:.14em;text-shadow:0 0 12px rgba(150,220,255,.35)">PINS</span>
+    </div>
+    <span style="font:11px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5);max-width:300px">The boxed numeral is the lane-number sign; the name after it is set in plain glass caps. If the name changes, only the letters change.</span>
+  </div>
+</div>
+</section>
+
+
+<!-- ================= 03 COMPONENTS ================= -->
+<section class="sec" id="s03">
+<div class="shd"><a class="snum" href="#s03">03</a><span class="stitle">Flagship components — scorecard grid, frame editor, badges, supporting set</span></div>
+<p class="sdesc">The scorecard is the canonical brand object: glowing marks (#BFE9FF) above tabular totals, phosphor reserved for state. The 10th frame is deliberately wider (three rolls) with a heavier left rule. 4 players is the hero case; up to 8 rows stack, beyond 8 the block scrolls with the leader pinned.</p>
+<div class="row">
+
+  <div class="itm">
+    <span class="lab">SCORECARD · FULL (game detail, review)</span>
+    <div style="background:#0A0E14;border:1px solid #1E2C3D;border-radius:12px;padding:18px;width:420px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ playersClean }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+            <span style="margin-left:auto;font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:18px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.b }}</span>
+                </div>
+                <div style="height:20px;display:flex;align-items:center;justify-content:center;font:600 10.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+              </div>
+            </sc-for>
+            <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:4px;overflow:hidden">
+              <div style="display:flex;height:18px;border-bottom:1px solid #1B2A3B">
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ p.tenth.a }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ p.tenth.b }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ p.tenth.c }}</span>
+              </div>
+              <div style="height:20px;display:flex;align-items:center;justify-content:center;font:600 10.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">SCORECARD · COMPACT (feed)</span>
+    <div style="background:#111A26;border:1px solid #223146;border-radius:12px;padding:14px 16px;width:358px;box-sizing:border-box;display:flex;flex-direction:column;gap:7px">
+      <sc-for list="{{ playersClean }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font:700 10.5px 'Oxanium',sans-serif;color:#8FA5B4;letter-spacing:.04em;width:74px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+          <div style="display:flex;gap:1.5px;flex:1">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <span style="flex:1;height:15px;background:#0D1520;border:1px solid #1B2A3B;border-radius:2px;display:flex;align-items:center;justify-content:center;font:600 7px 'Martian Mono',monospace;color:#BFE9FF">{{ f.m }}</span>
+            </sc-for>
+            <span style="flex:1.5;height:15px;background:#0D1520;border:1px solid #1B2A3B;border-radius:2px;display:flex;align-items:center;justify-content:center;font:600 7px 'Martian Mono',monospace;color:#BFE9FF">{{ p.tenth.m }}</span>
+          </div>
+          <span style="font:600 13px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums;width:34px;text-align:right;flex:none">{{ p.total }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <span class="lab" style="margin-top:14px">SCORECARD · LIVE (current frame glows, pending dim)</span>
+    <div style="background:#0A0E14;border:1px solid #1E2C3D;border-radius:12px;padding:18px;width:420px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ livePlayers }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+            <sc-if value="{{ p.current }}" hint-placeholder-val="{{ false }}"><span style="font:700 8.5px 'Oxanium',sans-serif;letter-spacing:.12em;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:1.5px 6px;box-shadow:0 0 10px rgba(255,174,43,.4)">NOW BOWLING</span></sc-if>
+            <span style="margin-left:auto;font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <div style="flex:1;position:relative;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:18px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.b }}</span>
+                </div>
+                <div style="height:20px;display:flex;align-items:center;justify-content:center;font:600 10.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+                <sc-if value="{{ f.cur }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;border:1.5px solid #FFAE2B;border-radius:4px;box-shadow:0 0 12px rgba(255,174,43,.45), inset 0 -2px 0 #FFAE2B"></div>
+                </sc-if>
+              </div>
+            </sc-for>
+            <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:4px;overflow:hidden">
+              <div style="display:flex;height:18px;border-bottom:1px solid #1B2A3B">
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.a }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.b }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9.5px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.c }}</span>
+              </div>
+              <div style="height:20px;display:flex;align-items:center;justify-content:center;font:600 10.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">FRAME EDITOR + KEYPAD · state: second roll, 2 pins standing</span>
+    <div style="background:#0A0E14;border:1px solid #1E2C3D;border-radius:12px;padding:18px;width:394px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:38px;height:38px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 13px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 15px 'Oxanium',sans-serif;color:#E9F1F6">Dave</span><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Frame 7 · second roll · 2 pins standing</span></div>
+        <span style="margin-left:auto;font:600 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;border:1px solid #223146;border-radius:999px;padding:6px 12px">↺ Undo</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:stretch">
+        <div style="flex:none;width:96px;background:#0D1520;border:1.5px solid #FFAE2B;border-radius:8px;box-shadow:0 0 14px rgba(255,174,43,.35);overflow:hidden">
+          <div style="display:flex;height:34px;border-bottom:1px solid #1B2A3B">
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;font:800 17px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.5)">8</span>
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:800 17px 'Oxanium',sans-serif;color:#33455A">?</span>
+          </div>
+          <div style="height:24px;display:flex;align-items:center;justify-content:center;font:600 11px 'Martian Mono',monospace;color:#5E7485">114+</div>
+        </div>
+        <span style="font:400 11.5px/1.5 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;align-self:center">Illegal keys are disabled before the tap, never an error after it. Any edit ripples through downstream totals with the amber settle flash.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr) 1.2fr;grid-auto-rows:52px;gap:8px">
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">7</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">8</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">9</span></div>
+        <div style="grid-row:1 / 3;background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:800 26px 'Oxanium',sans-serif;color:#33455A">X</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">4</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">5</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">6</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">1</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">2</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#33455A">3</span></div>
+        <div style="grid-row:2 / 4;background:#0D1520;border:1px solid rgba(150,220,255,.35);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(150,220,255,.18)"><span style="font:800 26px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.5)">/</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 17px 'Oxanium',sans-serif;color:#FF5D45">F</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">0</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">–</span></div>
+      </div>
+      <span style="font:600 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">MODES: LIVE (AUTO-ADVANCE) · SPOT-EDIT (ONE FRAME) · FULL MANUAL · X AND / ARE THE BIGGEST TARGETS</span>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">VERIFICATION BADGES</span>
+    <div style="background:#0A0E14;border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;width:300px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:700 10px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:4px;padding:4px 9px;box-shadow:0 0 12px rgba(255,174,43,.4)">✓ VERIFIED</span><span style="font:11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">photo + maths reconcile</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:700 10px 'Oxanium',sans-serif;letter-spacing:.1em;color:#8FA5B4;border:1px solid #2A3B4E;border-radius:4px;padding:3px 9px">LIVE-SCORED</span><span style="font:11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">frame-by-frame entry</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:700 10px 'Oxanium',sans-serif;letter-spacing:.1em;color:#5E7485;border:1px dashed #2A3B4E;border-radius:4px;padding:3px 9px">UNVERIFIED</span><span style="font:11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">totals only — banter polices it</span></div>
+    </div>
+    <span class="lab" style="margin-top:14px">PLAYER CHIPS · PROFILE VS GUEST</span>
+    <div style="background:#0A0E14;border-radius:12px;padding:16px 18px;display:flex;gap:10px;width:300px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 10px"><div style="width:26px;height:26px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">DK</div><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave K</span></div>
+      <div style="display:flex;align-items:center;gap:7px;border:1px dashed #2A3B4E;border-radius:10px;padding:7px 10px"><div style="width:26px;height:26px;border-radius:50%;border:1px dashed #3A4E63;color:#5E7485;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">J</div><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">JEN · guest</span></div>
+    </div>
+    <span class="lab" style="margin-top:14px">CELEBRATION TOASTS · ESCALATING, ≤1.2S, SKIPPABLE</span>
+    <div style="background:#0A0E14;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;width:300px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:10px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:8px 12px"><span style="font:800 18px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.5)">X</span><span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.06em">Strike</span></div>
+      <div style="display:flex;align-items:center;gap:10px;background:#111A26;border:1px solid rgba(150,220,255,.35);border-radius:10px;padding:8px 12px;box-shadow:0 0 12px rgba(150,220,255,.15)"><span style="font:800 18px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.6)">XXX</span><span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.06em">That&rsquo;s a turkey</span></div>
+      <div style="display:flex;align-items:center;gap:10px;background:#111A26;border:1px solid rgba(255,174,43,.55);border-radius:10px;padding:8px 12px;box-shadow:0 0 16px rgba(255,174,43,.3)"><span style="font:800 15px 'Oxanium',sans-serif;color:#FFAE2B;text-shadow:0 0 10px rgba(255,174,43,.6)">213</span><span style="font:700 12px 'Oxanium',sans-serif;color:#FFAE2B;letter-spacing:.06em">New PB · 200 club</span></div>
+    </div>
+  </div>
+
+  <div class="itm">
+    <span class="lab">LEADERBOARD ROW · STAT TILE · VENUE ROW</span>
+    <div style="background:#0A0E14;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;width:358px;box-sizing:border-box">
+      <div style="display:flex;align-items:center;gap:10px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 12px">
+        <span style="font:800 15px 'Oxanium',sans-serif;color:#FFAE2B;width:20px">1</span>
+        <div style="width:30px;height:30px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">DK</div>
+        <span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave K</span>
+        <span style="font:700 10.5px 'Oxanium',sans-serif;color:#5AD08A">▲ 1</span>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end"><span style="font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">171</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">AVG · 12 GAMES</span></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="flex:1;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:600 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">AVERAGE</span><div style="display:flex;align-items:baseline;gap:6px"><span style="font:800 24px 'Oxanium',sans-serif;color:#E9F1F6">158</span><span style="font:700 11px 'Oxanium',sans-serif;color:#5AD08A">▲</span></div></div>
+        <div style="flex:1;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font:600 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">HIGH GAME</span><div style="display:flex;align-items:baseline;gap:6px"><span style="font:800 24px 'Oxanium',sans-serif;color:#E9F1F6">192</span><span style="font:700 9px 'Oxanium',sans-serif;letter-spacing:.08em;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:1px 5px">✓</span></div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #1B2A3B;padding-bottom:10px">
+        <span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Hollywood Bowl, Watford</span>
+        <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end"><span style="font:600 13px 'Martian Mono',monospace;color:#E9F1F6">161</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">19 GAMES</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:4px 9px">🔥 4</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:4px 9px">👏 2</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:4px 9px">💀 1</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;background:transparent;border:1px dashed #2A3B4E;border-radius:12px;padding:4px 9px">＋</span>
+        <span style="margin-left:auto;font:9px 'Martian Mono',monospace;color:#5E7485">REACTION BAR · FIXED SET</span>
+      </div>
+    </div>
+    <span class="lab" style="margin-top:14px">OFFLINE QUEUE BANNER · NORMAL, NOT FAILURE</span>
+    <div style="width:358px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box">
+      <div style="width:8px;height:8px;border-radius:50%;background:#8FA5B4;flex:none"></div>
+      <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">No signal — 1 scan queued</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">We&rsquo;ll scan it when you&rsquo;re back online</span></div>
+      <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">View queue</span>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ================= 04 ONBOARDING ================= -->
+<section class="sec" id="s04">
+<div class="shd"><a class="snum" href="#s04">04</a><span class="stitle">Onboarding &amp; auth — splash, sign in, first run, invite landing, solo empty</span></div>
+<p class="sdesc">First touch is usually an invite or claim link, so the invite path lands you inside a group with history already visible. Solo signup gets one clear next action.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">SPLASH</span>
+  <div data-screen-label="Splash" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;box-sizing:border-box;flex:none;position:relative">
+    <div style="position:absolute;left:0;right:0;top:47%;height:2px;background:#FFAE2B;box-shadow:0 0 20px 5px rgba(255,174,43,.45);opacity:.9"></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font:800 40px 'Oxanium',sans-serif;color:#FFAE2B;border:2.5px solid #FFAE2B;border-radius:8px;padding:0 12px;line-height:1.35;text-shadow:0 0 16px rgba(255,174,43,.55);box-shadow:0 0 22px rgba(255,174,43,.25), inset 0 0 14px rgba(255,174,43,.12)">10</span>
+      <span style="font:800 40px 'Oxanium',sans-serif;color:#D7F4FF;letter-spacing:.14em;text-shadow:0 0 14px rgba(150,220,255,.35)">PINS</span>
+    </div>
+    <span style="position:absolute;bottom:64px;font:400 13.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">The app for your bowling crew</span>
+  </div></div>
+
+  <div class="itm"><span class="lab">SIGN IN</span>
+  <div data-screen-label="Sign in" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;gap:24px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font:800 22px 'Oxanium',sans-serif;color:#FFAE2B;border:2px solid #FFAE2B;border-radius:5px;padding:0 7px;line-height:1.35;text-shadow:0 0 10px rgba(255,174,43,.5)">10</span>
+        <span style="font:800 22px 'Oxanium',sans-serif;color:#D7F4FF;letter-spacing:.14em">PINS</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:700 26px 'Oxanium',sans-serif;color:#E9F1F6;line-height:1.2">Get the crew<br>on the board</span>
+        <span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;line-height:1.5">One phone scores, everyone&rsquo;s stats count. Sign in to start.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 16px"><span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">you@email.com</span></div>
+        <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14;letter-spacing:.04em">Email me a sign-in link</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px"><div style="flex:1;height:1px;background:#1B2A3B"></div><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em">OR</span><div style="flex:1;height:1px;background:#1B2A3B"></div></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="height:52px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6"> Continue with Apple</span></div>
+        <div style="height:52px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">G&nbsp; Continue with Google</span></div>
+      </div>
+    </div>
+    <span style="text-align:center;font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;padding:0 40px 40px">No password. The link signs you straight in.</span>
+  </div></div>
+
+  <div class="itm"><span class="lab">FIRST RUN · PROFILE</span>
+  <div data-screen-label="First run profile" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:20px;flex:1">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:700 24px 'Oxanium',sans-serif;color:#E9F1F6">Who&rsquo;s bowling?</span>
+        <span style="font:400 13.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">This is the name your mates see on the scorecard.</span>
+      </div>
+      <div style="display:flex;justify-content:center;padding:8px 0">
+        <div style="width:96px;height:96px;border-radius:50%;background:#1E3A52;display:flex;align-items:center;justify-content:center;position:relative"><span style="font:800 32px 'Oxanium',sans-serif;color:#BFE9FF">MB</span><div style="position:absolute;bottom:0;right:0;width:30px;height:30px;border-radius:50%;background:#FFAE2B;border:3px solid #0A0E14;display:flex;align-items:center;justify-content:center"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14">＋</span></div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">DISPLAY NAME</span>
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 16px"><span style="font:400 15px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Matt B</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">USERNAME</span>
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 16px;gap:2px"><span style="font:400 15px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">@</span><span style="font:400 15px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">mattb</span><span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#5AD08A">Available</span></div>
+      </div>
+    </div>
+    <div style="padding:0 24px 40px"><div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Start bowling</span></div></div>
+  </div></div>
+
+  <div class="itm"><span class="lab">INVITE LANDING · HISTORY ALREADY VISIBLE</span>
+  <div data-screen-label="Invite landing" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding-top:8px">
+        <div style="display:flex">
+          <div style="width:44px;height:44px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 15px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14">DK</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 15px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14;margin-left:-10px">MB</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#20343E;color:#A8E4D8;font:700 15px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14;margin-left:-10px">ST</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#111A26;color:#8FA5B4;font:700 13px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14;margin-left:-10px">+2</div>
+        </div>
+        <span style="font:700 22px 'Oxanium',sans-serif;color:#E9F1F6;margin-top:6px">Dave invited you to<br>Thursday Pin Club</span>
+        <span style="font:400 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">5 members · 52 games · Hollywood Bowl, Watford</span>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">SEASON SO FAR</span>
+        <sc-for list="{{ leaderboard }}" as="m" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:800 13px 'Oxanium',sans-serif;color:#8FA5B4;width:16px">{{ m.r }}</span>
+            <div style="width:26px;height:26px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 9.5px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">{{ m.i }}</div>
+            <span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ m.n }}</span>
+            <span style="margin-left:auto;font:600 13px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ m.avg }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px">
+        <span style="font:800 20px 'Oxanium',sans-serif;color:#FFAE2B;text-shadow:0 0 10px rgba(255,174,43,.4)">213</span>
+        <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave&rsquo;s new PB, Friday</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">You&rsquo;ll see games like this in your feed</span></div>
+        <span style="margin-left:auto;font:700 9px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:2px 6px">✓</span>
+      </div>
+    </div>
+    <div style="padding:0 24px 40px;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Join Thursday Pin Club</span></div>
+      <span style="text-align:center;font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Sign in first if you&rsquo;re new — takes a minute</span>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">SOLO SIGNUP · EMPTY STATE</span>
+  <div data-screen-label="Solo empty" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:52px;display:flex;align-items:center;padding:0 20px;flex:none"><span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Home</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 32px;text-align:center">
+      <div style="width:120px;position:relative;border:1px solid #223146;border-radius:8px;background:#0D1520;padding:10px;overflow:hidden">
+        <div style="display:flex;gap:2px"><div style="flex:1;height:22px;border:1px solid #1B2A3B;border-radius:3px"></div><div style="flex:1;height:22px;border:1px solid #1B2A3B;border-radius:3px"></div><div style="flex:1;height:22px;border:1px solid #1B2A3B;border-radius:3px"></div></div>
+        <div style="position:absolute;left:0;right:0;top:55%;height:2px;background:#FFAE2B;box-shadow:0 0 12px 3px rgba(255,174,43,.4)"></div>
+      </div>
+      <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">No games yet</span>
+      <span style="font:400 13.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;line-height:1.55">Get the crew together — or scan the monitor from your last game and start your record tonight.</span>
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+        <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Scan your first game</span></div>
+        <div style="height:52px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Create a group</span></div>
+        <div style="height:48px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Add friends</span></div>
+      </div>
+    </div>
+    <div style="height:78px;border-top:1px solid #1B2A3B;display:flex;align-items:center;padding:0 12px 12px;flex:none">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFAE2B" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11 L12 4 L21 11 V20 H14 V15 H10 V20 H3 Z"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#FFAE2B;letter-spacing:.06em">Home</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="8.5" cy="9" r="3"></circle><circle cx="16.5" cy="10.5" r="2.4"></circle><path d="M3.5 19c0-3 2.5-4.5 5-4.5s5 1.5 5 4.5"></path><path d="M15.5 15.5c2.5 0 5 1.2 5 3.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Groups</span></div>
+      <div style="flex:1;display:flex;justify-content:center"><div style="width:54px;height:54px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.45);display:flex;align-items:center;justify-content:center;margin-top:-26px;border:4px solid #0A0E14"><span style="font:400 26px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;line-height:1">＋</span></div></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="#5E7485"><rect x="4" y="13" width="3.5" height="7" rx="1"></rect><rect x="10.2" y="8" width="3.5" height="12" rx="1"></rect><rect x="16.4" y="4" width="3.5" height="16" rx="1"></rect></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Stats</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Profile</span></div>
+    </div>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 05 HOME FEED ================= -->
+<section class="sec" id="s05">
+<div class="shd"><a class="snum" href="#s05">05</a><span class="stitle">Home feed — default, new-content, add sheet</span></div>
+<p class="sdesc">One card per game; a night of 3 games collapses into a session card. The monitor photo is good content — it gets a real slot. Empty state is the solo-signup screen in §04. Unverified entries are quiet, not punished.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">FEED · DEFAULT + NEW CONTENT</span>
+  <div data-screen-label="Home feed" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;padding:0 20px;flex:none;gap:10px">
+      <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Home</span>
+      <div style="margin:0 auto;display:flex;align-items:center;gap:6px;background:#111A26;border:1px solid rgba(255,174,43,.5);border-radius:999px;padding:4px 12px;box-shadow:0 0 12px rgba(255,174,43,.2)"><div style="width:6px;height:6px;border-radius:50%;background:#FFAE2B"></div><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">3 new games</span></div>
+      <div style="width:32px;height:32px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">MB</div>
+    </div>
+    <div style="flex:1;overflow:hidden;padding:8px 16px 0;display:flex;flex-direction:column;gap:12px">
+      <div style="background:#111A26;border:1px solid #223146;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div style="display:flex;flex-direction:column"><span style="font:700 14px 'Oxanium',sans-serif;color:#E9F1F6">Thursday Pin Club</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Hollywood Bowl, Watford · Fri · 3 games</span></div>
+          <span style="margin-left:auto;font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Session</span>
+        </div>
+        <span style="font:700 15px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave took the night, 2 games to 1</span>
+        <sc-for list="{{ sessionGames }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #1B2A3B;padding-top:8px">
+            <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.08em;width:52px">{{ g.g }}</span>
+            <span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ g.top }}</span>
+            <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">{{ g.you }}</span>
+            <sc-if value="{{ g.v }}" hint-placeholder-val="{{ true }}"><span style="margin-left:auto;font:700 8.5px 'Oxanium',sans-serif;letter-spacing:.08em;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:1.5px 5px">✓</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <div style="display:flex;flex-direction:column"><span style="font:700 14px 'Oxanium',sans-serif;color:#E9F1F6">Thursday Pin Club</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Hollywood Bowl, Watford · Fri</span></div>
+          <span style="margin-left:auto;font:700 9.5px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:4px;padding:3px 7px;box-shadow:0 0 10px rgba(255,174,43,.35)">✓ VERIFIED</span>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <span style="font:800 22px 'Oxanium',sans-serif;color:#FFAE2B;text-shadow:0 0 12px rgba(255,174,43,.4)">Dave K · <span style="font-family:'Martian Mono',monospace;font-weight:700;font-size:20px">213</span></span>
+          <span style="font:700 9px 'Oxanium',sans-serif;letter-spacing:.1em;color:#FFAE2B;border:1px solid rgba(255,174,43,.5);border-radius:4px;padding:2px 6px">NEW PB</span>
+          <span style="font:700 9px 'Oxanium',sans-serif;letter-spacing:.1em;color:#FFAE2B;border:1px solid rgba(255,174,43,.5);border-radius:4px;padding:2px 6px">200 CLUB</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ playersClean }}" as="p" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font:700 10px 'Oxanium',sans-serif;color:#8FA5B4;letter-spacing:.04em;width:70px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+              <div style="display:flex;gap:1.5px;flex:1">
+                <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+                  <span style="flex:1;height:14px;background:#0D1520;border:1px solid #1B2A3B;border-radius:2px;display:flex;align-items:center;justify-content:center;font:600 6.5px 'Martian Mono',monospace;color:#BFE9FF">{{ f.m }}</span>
+                </sc-for>
+                <span style="flex:1.5;height:14px;background:#0D1520;border:1px solid #1B2A3B;border-radius:2px;display:flex;align-items:center;justify-content:center;font:600 6.5px 'Martian Mono',monospace;color:#BFE9FF">{{ p.tenth.m }}</span>
+              </div>
+              <span style="font:600 12px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums;width:30px;text-align:right;flex:none">{{ p.total }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="height:64px;border-radius:10px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29 0%,#060A10 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.05) 0px,rgba(150,220,255,.05) 1px,transparent 1px,transparent 4px)"></div>
+          <span style="font:500 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">MONITOR PHOTO · TAP TO VIEW</span>
+        </div>
+        <div style="display:flex;gap:7px;align-items:center">
+          <span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:3px 8px">🔥 4</span>
+          <span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:3px 8px">💀 2</span>
+          <span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;border:1px dashed #2A3B4E;border-radius:12px;padding:3px 8px">＋</span>
+          <span style="margin-left:auto;font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">3 comments</span>
+        </div>
+      </div>
+      <div style="background:#111A26;border:1px solid #1B2A3B;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:10px;opacity:.85">
+        <div style="width:30px;height:30px;border-radius:50%;background:#2A2333;color:#CBB6E8;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">RP</div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Ravi P · <span style="font-family:'Martian Mono',monospace;font-variant-numeric:tabular-nums">156</span></span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Lane7, Islington · yesterday</span></div>
+        <span style="margin-left:auto;font:700 9px 'Oxanium',sans-serif;letter-spacing:.1em;color:#5E7485;border:1px dashed #2A3B4E;border-radius:4px;padding:2px 6px">UNVERIFIED</span>
+      </div>
+    </div>
+    <div style="height:78px;border-top:1px solid #1B2A3B;display:flex;align-items:center;padding:0 12px 12px;flex:none">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFAE2B" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11 L12 4 L21 11 V20 H14 V15 H10 V20 H3 Z"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#FFAE2B;letter-spacing:.06em">Home</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="8.5" cy="9" r="3"></circle><circle cx="16.5" cy="10.5" r="2.4"></circle><path d="M3.5 19c0-3 2.5-4.5 5-4.5s5 1.5 5 4.5"></path><path d="M15.5 15.5c2.5 0 5 1.2 5 3.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Groups</span></div>
+      <div style="flex:1;display:flex;justify-content:center"><div style="width:54px;height:54px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.45);display:flex;align-items:center;justify-content:center;margin-top:-26px;border:4px solid #0A0E14"><span style="font:400 26px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;line-height:1">＋</span></div></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="#5E7485"><rect x="4" y="13" width="3.5" height="7" rx="1"></rect><rect x="10.2" y="8" width="3.5" height="12" rx="1"></rect><rect x="16.4" y="4" width="3.5" height="16" rx="1"></rect></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Stats</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Profile</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">ADD SHEET · PHOTO IS THE HERO</span>
+  <div data-screen-label="Add sheet" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none;position:relative">
+    <div style="position:absolute;inset:0;padding:44px 16px 0;display:flex;flex-direction:column;gap:12px;filter:blur(1.5px);opacity:.35">
+      <div style="height:48px"></div>
+      <div style="height:190px;background:#111A26;border:1px solid #223146;border-radius:16px"></div>
+      <div style="height:320px;background:#111A26;border:1px solid #223146;border-radius:16px"></div>
+      <div style="height:80px;background:#111A26;border:1px solid #223146;border-radius:16px"></div>
+    </div>
+    <div style="position:absolute;inset:0;background:rgba(5,8,12,.6)"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;background:#111A26;border:1px solid #223146;border-bottom:none;border-radius:24px 24px 40px 40px;padding:12px 16px 32px;display:flex;flex-direction:column;gap:10px;box-shadow:0 -12px 40px rgba(0,0,0,.5)">
+      <div style="width:36px;height:4px;border-radius:2px;background:#2A3B4E;align-self:center;margin-bottom:2px"></div>
+      <span style="font:700 16px 'Oxanium',sans-serif;color:#E9F1F6;padding:0 4px">Add a game</span>
+      <div style="border-radius:14px;background:#FFAE2B;box-shadow:0 0 24px rgba(255,174,43,.35);padding:16px;display:flex;align-items:center;gap:12px">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0A0E14" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7 L10 4.5 H14 L15.5 7"></path><circle cx="12" cy="13.2" r="3.4"></circle></svg>
+        <div style="display:flex;flex-direction:column"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Scan the scoreboard</span><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:rgba(10,14,20,.75)">Photograph the monitor — 20 seconds, verified</span></div>
+      </div>
+      <div style="border:1px solid #223146;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <div style="width:8px;height:8px;border-radius:50%;background:#FF5D45;flex:none;box-shadow:0 0 8px rgba(255,93,69,.6)"></div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Score live</span><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">One phone scores, everyone watches</span></div>
+      </div>
+      <div style="border:1px solid #223146;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <span style="font:600 13px 'Martian Mono',monospace;color:#8FA5B4">156</span>
+        <div style="display:flex;flex-direction:column"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Quick add</span><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Totals only — stays unverified</span></div>
+      </div>
+      <span style="text-align:center;font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;padding-top:6px">Cancel</span>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">QUICK ADD · TEN-SECOND FLOW</span>
+  <div data-screen-label="Quick add" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Quick add</span>
+      <span style="margin-left:auto;font:700 9px 'Oxanium',sans-serif;letter-spacing:.1em;color:#5E7485;border:1px dashed #2A3B4E;border-radius:4px;padding:2px 6px">POSTS AS UNVERIFIED</span>
+    </div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:18px;flex:1">
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:center;padding:14px 0">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">YOUR SCORE</span>
+        <span style="font:700 64px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums;line-height:1">156</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">0–300</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 16px;gap:10px"><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em;width:52px">DATE</span><span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Today, 6 Jul</span></div>
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 16px;gap:10px"><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em;width:52px">VENUE</span><span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Optional</span></div>
+        <div style="min-height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:10px 16px;gap:10px">
+          <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em;width:52px">WITH</span>
+          <div style="display:flex;align-items:center;gap:6px;background:#111A26;border:1px solid #223146;border-radius:999px;padding:4px 10px"><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave K</span><span style="font:600 12px 'Martian Mono',monospace;color:#8FA5B4">171</span></div>
+          <span style="font:400 13px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">＋ Add player</span>
+        </div>
+      </div>
+      <span style="font:400 12.5px/1.55 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Totals-only games count in your stats and averages. You can attach a photo or add frames later to upgrade it.</span>
+    </div>
+    <div style="padding:0 24px 40px"><div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Add game</span></div></div>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 06 CAPTURE ================= -->
+<section class="sec" id="s06">
+<div class="shd"><a class="snum" href="#s06">06</a><span class="stitle">Capture flow — the hero: camera → processing → review → confirmed</span></div>
+<p class="sdesc">Target: monitor photo to posted game in under 20 seconds. Clean scans collapse to one tap; amber frames are the only friction, scoped to the frame that fails to recompute. Offline is a first-class path, not an error.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">A · CAMERA</span>
+  <div data-screen-label="Capture camera" style="width:390px;height:844px;background:#05070A;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none;position:relative">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 38%, #16222F 0%, #05070A 70%)"></div>
+    <div style="position:relative;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="position:relative;height:48px;display:flex;align-items:center;padding:0 20px;flex:none">
+      <span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Cancel</span>
+      <span style="margin:0 auto;font:700 15px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.04em">Scan scoreboard</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8FA5B4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 L6 13 H11 L9.5 22 L18 10 H12.5 Z"></path></svg>
+    </div>
+    <div style="position:relative;flex:1;margin:12px 20px;border-radius:12px">
+      <div style="position:absolute;top:0;left:0;width:36px;height:36px;border-top:3px solid #FFAE2B;border-left:3px solid #FFAE2B;border-radius:8px 0 0 0"></div>
+      <div style="position:absolute;top:0;right:0;width:36px;height:36px;border-top:3px solid #FFAE2B;border-right:3px solid #FFAE2B;border-radius:0 8px 0 0"></div>
+      <div style="position:absolute;bottom:0;left:0;width:36px;height:36px;border-bottom:3px solid #FFAE2B;border-left:3px solid #FFAE2B;border-radius:0 0 0 8px"></div>
+      <div style="position:absolute;bottom:0;right:0;width:36px;height:36px;border-bottom:3px solid #FFAE2B;border-right:3px solid #FFAE2B;border-radius:0 0 8px 0"></div>
+      <div style="position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:230px;height:120px;border:1px solid rgba(150,220,255,.25);border-radius:6px;background:rgba(13,21,32,.5);display:flex;align-items:center;justify-content:center"><span style="font:500 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.14em">LANE MONITOR</span></div>
+      <div style="position:absolute;left:50%;bottom:80px;transform:translateX(-50%);background:rgba(10,14,20,.85);border:1px solid #223146;border-radius:999px;padding:8px 16px;white-space:nowrap"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Fill the frame with the scoreboard</span></div>
+      <div style="position:absolute;left:50%;bottom:44px;transform:translateX(-50%);white-space:nowrap"><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Wait for the score grid, not the adverts</span></div>
+    </div>
+    <div style="position:relative;height:130px;display:flex;align-items:center;justify-content:space-between;padding:0 44px 26px;flex:none">
+      <div style="width:46px;height:46px;border-radius:10px;border:1px solid #223146;background:#0D1520;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8FA5B4" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="3"></rect><path d="M3.5 15 L9 10 L14 15 L17 12.5 L20.5 15.5"></path><circle cx="15.5" cy="8" r="1.6"></circle></svg></div>
+      <div style="width:76px;height:76px;border-radius:50%;border:4px solid #E9F1F6;display:flex;align-items:center;justify-content:center"><div style="width:60px;height:60px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 24px rgba(255,174,43,.5)"></div></div>
+      <div style="width:46px;height:46px;border-radius:10px;border:1px solid #223146;background:#0D1520;display:flex;align-items:center;justify-content:center"><span style="font:600 9px 'Martian Mono',monospace;color:#8FA5B4">AUTO</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">B · PROCESSING · 3–5S, SWEEP RUNS</span>
+  <div data-screen-label="Capture processing" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;gap:22px">
+      <div style="height:400px;border-radius:16px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29 0%,#060A10 100%);position:relative;overflow:hidden">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.05) 0px,rgba(150,220,255,.05) 1px,transparent 1px,transparent 4px)"></div>
+        <div style="position:absolute;left:24px;right:24px;top:60px;bottom:120px;border:1px solid rgba(150,220,255,.18);border-radius:6px;display:flex;align-items:center;justify-content:center"><span style="font:500 9px 'Martian Mono',monospace;color:#33455A;letter-spacing:.14em">YOUR PHOTO</span></div>
+        <div style="position:absolute;left:0;right:0;top:42%;height:2.5px;background:#FFAE2B;box-shadow:0 0 22px 6px rgba(255,174,43,.5)"></div>
+        <div style="position:absolute;left:0;right:0;top:0;height:42%;background:linear-gradient(180deg,transparent 40%,rgba(255,174,43,.07) 100%)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center">
+        <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Reading the grid</span>
+        <span style="font:600 11px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.08em">NAMES ✓ &nbsp;· &nbsp;FRAMES ✓ &nbsp;· &nbsp;CHECKING TOTALS…</span>
+      </div>
+    </div>
+    <span style="text-align:center;font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;padding:0 24px 40px">Keep hold — a few seconds</span>
+  </div></div>
+
+  <div class="itm"><span class="lab">B2 · QUEUED OFFLINE · NORMAL BEHAVIOUR</span>
+  <div data-screen-label="Capture queued offline" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">No signal</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;gap:22px">
+      <div style="height:300px;border-radius:16px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29 0%,#060A10 100%);position:relative;overflow:hidden;opacity:.8">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.05) 0px,rgba(150,220,255,.05) 1px,transparent 1px,transparent 4px)"></div>
+        <div style="position:absolute;top:14px;right:14px;background:#111A26;border:1px solid #223146;border-radius:999px;padding:5px 12px;display:flex;align-items:center;gap:6px"><div style="width:6px;height:6px;border-radius:50%;background:#8FA5B4"></div><span style="font:700 10px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Queued</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center">
+        <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">No signal — saved to your queue</span>
+        <span style="font:400 13.5px/1.55 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">We&rsquo;ll scan this when you&rsquo;re back online and let you know. Nothing to redo.</span>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em">QUEUE</span>
+        <span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">1 scan · tonight 21:47</span>
+        <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">View</span>
+      </div>
+    </div>
+    <div style="padding:0 24px 40px"><div style="height:52px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Keep bowling</span></div></div>
+  </div></div>
+
+  <div class="itm"><span class="lab">C · REVIEW · ONE AMBER FRAME</span>
+  <div data-screen-label="Capture review amber" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Check the scorecard</span>
+      <span style="margin-left:auto;font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Retake</span>
+    </div>
+    <div style="padding:8px 16px 0;flex:none">
+      <div style="height:100px;border-radius:12px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29 0%,#060A10 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.05) 0px,rgba(150,220,255,.05) 1px,transparent 1px,transparent 4px)"></div>
+        <span style="font:500 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">LANE 12 MONITOR · PINCH TO ZOOM · COLLAPSE ⌃</span>
+      </div>
+    </div>
+    <div style="padding:12px 16px 0;flex:none;display:flex;flex-direction:column;gap:7px">
+      <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">PLAYERS · TAP TO CORRECT · REMEMBERED FOR THIS GROUP</span>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">MB</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">MATT</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;white-space:nowrap">Matt B</span></div></div>
+        <div style="flex:1;display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">DAVE</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;white-space:nowrap">Dave K</span></div></div>
+        <div style="flex:1;display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#20343E;color:#A8E4D8;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">ST</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">SOPH</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;white-space:nowrap">Soph T</span></div></div>
+        <div style="flex:1;display:flex;align-items:center;gap:7px;border:1px dashed #2A3B4E;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;border:1px dashed #3A4E63;color:#5E7485;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">J</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">JEN</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;white-space:nowrap">Guest</span></div></div>
+      </div>
+    </div>
+    <div style="padding:14px 16px 0;flex:1;display:flex;flex-direction:column;gap:9px;min-height:0">
+      <sc-for list="{{ players }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+            <span style="margin-left:auto;font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <div style="flex:1;position:relative;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:17px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.b }}</span>
+                </div>
+                <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+                <sc-if value="{{ f.amber }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;border:2px solid #FFAE2B;border-radius:4px;background:rgba(255,174,43,.14);box-shadow:0 0 10px rgba(255,174,43,.35)"></div>
+                </sc-if>
+              </div>
+            </sc-for>
+            <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:4px;overflow:hidden">
+              <div style="display:flex;height:17px;border-bottom:1px solid #1B2A3B">
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.a }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.b }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.c }}</span>
+              </div>
+              <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(255,174,43,.08);border:1px solid rgba(255,174,43,.35);border-radius:10px;padding:10px 12px">
+        <div style="width:8px;height:8px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 8px rgba(255,174,43,.6);flex:none"></div>
+        <span style="font:400 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;line-height:1.35">Frame 6 of Matt&rsquo;s doesn&rsquo;t add up — tap it to fix. Totals recalculate as you go.</span>
+      </div>
+    </div>
+    <div style="padding:10px 16px 26px;flex:none">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 24px rgba(255,174,43,.35);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14;letter-spacing:.04em">Confirm scorecard</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">C2 · REVIEW · CLEAN-SCAN FAST PATH</span>
+  <div data-screen-label="Capture review clean" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Looks right?</span>
+      <span style="margin-left:auto;font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Retake</span>
+    </div>
+    <div style="padding:14px 16px 0;flex:1;display:flex;flex-direction:column;gap:9px;min-height:0">
+      <div style="display:flex;align-items:center;gap:8px;padding-bottom:2px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">ALL 40 FRAMES RECOMPUTE ✓</span>
+        <span style="margin-left:auto;font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.08em">PHOTO ⌄</span>
+      </div>
+      <sc-for list="{{ playersClean }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+            <span style="margin-left:auto;font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:17px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.b }}</span>
+                </div>
+                <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+              </div>
+            </sc-for>
+            <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:4px;overflow:hidden">
+              <div style="display:flex;height:17px;border-bottom:1px solid #1B2A3B">
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.a }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.b }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.c }}</span>
+              </div>
+              <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;padding-top:14px">
+        <span style="font:700 18px 'Oxanium',sans-serif;color:#E9F1F6">Everything adds up</span>
+        <span style="font:400 12.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Nice scan. One tap and it&rsquo;s on the board.</span>
+      </div>
+    </div>
+    <div style="padding:10px 16px 26px;flex:none;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 24px rgba(255,174,43,.35);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14;letter-spacing:.04em">Confirm scorecard</span></div>
+      <span style="text-align:center;font:600 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Something&rsquo;s off? Tap a frame to edit it</span>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">D · CONFIRMED · STAMP MOMENT</span>
+  <div data-screen-label="Capture success" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none;position:relative">
+    <div style="position:absolute;left:0;right:0;top:34%;height:2px;background:#FFAE2B;box-shadow:0 0 20px 5px rgba(255,174,43,.4);opacity:.7"></div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:0 32px;text-align:center">
+      <span style="font:800 15px 'Oxanium',sans-serif;letter-spacing:.14em;color:#0A0E14;background:#FFAE2B;border-radius:8px;padding:10px 22px;box-shadow:0 0 32px rgba(255,174,43,.5);transform:rotate(-3deg)">✓ VERIFIED</span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:700 24px 'Oxanium',sans-serif;color:#E9F1F6">Scanned and on the board</span>
+        <span style="font:400 14px/1.55 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Dave&rsquo;s 213 is a new PB — posted to Thursday Pin Club.</span>
+      </div>
+      <div style="background:#111A26;border:1px solid rgba(255,174,43,.4);border-radius:12px;padding:12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 0 16px rgba(255,174,43,.15)">
+        <span style="font:800 26px 'Oxanium',sans-serif;color:#FFAE2B;text-shadow:0 0 12px rgba(255,174,43,.5)">213</span>
+        <div style="display:flex;flex-direction:column;align-items:flex-start"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave K · New PB · 200 club</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Previous best 204</span></div>
+      </div>
+    </div>
+    <div style="padding:0 24px 40px;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">See it in the feed</span></div>
+      <div style="height:48px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Scan the next game</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">E · ERROR + PARTIAL STATES</span>
+  <div data-screen-label="Capture error" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 24px;gap:22px">
+      <div style="height:280px;border-radius:16px;border:1px solid #223146;background:linear-gradient(180deg,#131C27 0%,#080C11 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 65% 20%, rgba(215,244,255,.14) 0%, transparent 45%)"></div>
+        <span style="font:500 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">GLARE ACROSS THE GRID</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;text-align:center;align-items:center">
+        <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Couldn&rsquo;t read that</span>
+        <span style="font:400 13.5px/1.55 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Fill the frame with the score grid and avoid glare from the lane lights. Cycling adverts trip it too.</span>
+      </div>
+    </div>
+    <div style="padding:0 24px 28px;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Retake photo</span></div>
+      <div style="height:48px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Enter the scores manually</span></div>
+    </div>
+  </div>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box;margin-top:10px">
+    <div style="width:8px;height:8px;border-radius:50%;background:#FFAE2B;flex:none"></div>
+    <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Partial game — frames 8–10 unreadable</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Accept what&rsquo;s here; the rest stay pending until edited</span></div>
+    <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Accept</span>
+  </div>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box">
+    <div style="width:8px;height:8px;border-radius:50%;background:#FF5D45;flex:none"></div>
+    <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">That doesn&rsquo;t look like a scoreboard</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Point at the lane monitor and try again</span></div>
+    <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Retake</span>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 07 LIVE SESSION ================= -->
+<section class="sec" id="s07">
+<div class="shd"><a class="snum" href="#s07">07</a><span class="stitle">Live session — create, scorer, spectator, end of game, connection states</span></div>
+<p class="sdesc">One phone scores; everyone else watches the same card update. The scorer keeps working offline — spectators see "reconnecting", never a dead screen. Game end prompts the photo that upgrades it to verified.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">CREATE SESSION</span>
+  <div data-screen-label="Live create" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Score live</span>
+    </div>
+    <div style="padding:12px 20px;display:flex;flex-direction:column;gap:14px;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">GROUP</span>
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 14px;gap:10px"><div style="display:flex"><div style="width:26px;height:26px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 9px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2px solid #0D1520">DK</div><div style="width:26px;height:26px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 9px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2px solid #0D1520;margin-left:-8px">MB</div></div><span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Thursday Pin Club</span><span style="margin-left:auto;font:400 16px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">⌄</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">VENUE</span>
+        <div style="height:52px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 14px"><span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Hollywood Bowl, Watford</span><span style="margin-left:auto;font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">most played</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">PLAYERS · DRAG TO SET ORDER</span>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="height:48px;background:#111A26;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 14px;gap:10px"><span style="font:600 12px 'Martian Mono',monospace;color:#5E7485">1</span><div style="width:28px;height:28px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">MB</div><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Matt B</span><span style="margin-left:auto;color:#33455A">≡</span></div>
+          <div style="height:48px;background:#111A26;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 14px;gap:10px"><span style="font:600 12px 'Martian Mono',monospace;color:#5E7485">2</span><div style="width:28px;height:28px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">DK</div><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave K</span><span style="margin-left:auto;color:#33455A">≡</span></div>
+          <div style="height:48px;background:#111A26;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 14px;gap:10px"><span style="font:600 12px 'Martian Mono',monospace;color:#5E7485">3</span><div style="width:28px;height:28px;border-radius:50%;background:#20343E;color:#A8E4D8;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">ST</div><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Soph T</span><span style="margin-left:auto;color:#33455A">≡</span></div>
+          <div style="height:48px;border:1px dashed #2A3B4E;border-radius:12px;display:flex;align-items:center;padding:0 14px;gap:10px"><span style="font:600 12px 'Martian Mono',monospace;color:#5E7485">4</span><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">＋ Add player or guest</span></div>
+        </div>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+        <div style="width:52px;height:52px;flex:none;background:repeating-conic-gradient(#D7F4FF 0% 25%, #0D1520 0% 50%) 0 0 / 8px 8px;border-radius:6px;border:3px solid #D7F4FF"></div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Others can join to watch</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">QR or share link — spectators see the card live</span></div>
+        <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Share</span>
+      </div>
+    </div>
+    <div style="padding:0 20px 32px"><div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Start session</span></div></div>
+  </div></div>
+
+  <div class="itm"><span class="lab">SCORER · ONE PHONE, FRAME 7</span>
+  <div data-screen-label="Live scorer" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;flex:none">
+      <div style="width:7px;height:7px;border-radius:50%;background:#FF5D45;box-shadow:0 0 8px rgba(255,93,69,.7)"></div>
+      <span style="font:700 14px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.04em">Game 2 · Thursday Pin Club</span>
+      <span style="margin-left:auto;font:600 10px 'Martian Mono',monospace;color:#5E7485">2 WATCHING</span>
+    </div>
+    <div style="padding:6px 14px 0;flex:none;display:flex;flex-direction:column;gap:7px">
+      <sc-for list="{{ livePlayers }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;align-items:baseline;gap:7px">
+            <span style="font:700 11px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+            <sc-if value="{{ p.current }}" hint-placeholder-val="{{ false }}"><span style="font:700 8px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:1px 5px">NOW</span></sc-if>
+            <span style="margin-left:auto;font:600 13.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <div style="flex:1;position:relative;background:#0D1520;border:1px solid #223146;border-radius:3px;overflow:hidden">
+                <div style="display:flex;height:15px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 8px 'Oxanium',sans-serif;color:#BFE9FF">{{ f.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 8px 'Oxanium',sans-serif;color:#BFE9FF">{{ f.b }}</span>
+                </div>
+                <div style="height:16px;display:flex;align-items:center;justify-content:center;font:600 9px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+                <sc-if value="{{ f.cur }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;inset:0;border:1.5px solid #FFAE2B;border-radius:3px;box-shadow:0 0 10px rgba(255,174,43,.45)"></div>
+                </sc-if>
+              </div>
+            </sc-for>
+            <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:3px;overflow:hidden">
+              <div style="display:flex;height:15px;border-bottom:1px solid #1B2A3B"><span style="flex:1"></span><span style="flex:1;border-left:1px solid #1B2A3B"></span><span style="flex:1;border-left:1px solid #1B2A3B"></span></div>
+              <div style="height:16px"></div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin:10px 14px 0;background:#111A26;border:1px solid #223146;border-radius:12px;padding:9px 12px;display:flex;align-items:center;gap:10px;flex:none">
+      <div style="width:32px;height:32px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div>
+      <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Oxanium',sans-serif;color:#E9F1F6">Dave · frame 7</span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Second roll · 2 pins standing</span></div>
+      <span style="margin-left:auto;font:600 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;border:1px solid #223146;border-radius:999px;padding:6px 12px">↺ Undo</span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:10px 14px 24px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr) 1.2fr;grid-auto-rows:50px;gap:7px">
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">7</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">8</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">9</span></div>
+        <div style="grid-row:1 / 3;background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:800 25px 'Oxanium',sans-serif;color:#33455A">X</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">4</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">5</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">6</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#E9F1F6">1</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#E9F1F6">2</span></div>
+        <div style="background:#0D1520;border:1px solid #16202E;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#33455A">3</span></div>
+        <div style="grid-row:2 / 4;background:#0D1520;border:1px solid rgba(150,220,255,.35);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(150,220,255,.18)"><span style="font:800 25px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.5)">/</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 16px 'Oxanium',sans-serif;color:#FF5D45">F</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#E9F1F6">0</span></div>
+        <div style="background:#0D1520;border:1px solid #223146;border-radius:10px;display:flex;align-items:center;justify-content:center"><span style="font:700 18px 'Oxanium',sans-serif;color:#E9F1F6">–</span></div>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">SPECTATOR · ARM&rsquo;S-LENGTH READ</span>
+  <div data-screen-label="Live spectator" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:8px;padding:0 20px;flex:none">
+      <div style="width:8px;height:8px;border-radius:50%;background:#FF5D45;box-shadow:0 0 8px rgba(255,93,69,.7)"></div>
+      <span style="font:700 16px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.04em">LIVE · Game 2</span>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:6px"><div style="width:6px;height:6px;border-radius:50%;background:#5AD08A"></div><span style="font:600 10px 'Martian Mono',monospace;color:#8FA5B4">SYNCED</span></span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:0 16px">
+      <div style="background:#111A26;border:1px solid rgba(255,174,43,.4);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:0 0 18px rgba(255,174,43,.12)">
+        <div style="width:52px;height:52px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:800 18px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div>
+        <div style="display:flex;flex-direction:column"><span style="font:800 22px 'Oxanium',sans-serif;color:#E9F1F6">Dave&rsquo;s up</span><span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Frame 7 · 8 down, 2 standing</span></div>
+        <span style="margin-left:auto;font:800 30px 'Martian Mono',monospace;color:#FFAE2B;text-shadow:0 0 14px rgba(255,174,43,.45);font-variant-numeric:tabular-nums">114</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ livePlayers }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;border-bottom:1px solid #1B2A3B;padding-bottom:12px">
+            <span style="font:700 16px 'Oxanium',sans-serif;color:#E9F1F6;width:64px;letter-spacing:.04em">{{ p.name }}</span>
+            <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">{{ p.done }}</span>
+            <span style="margin-left:auto;font:700 26px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="padding:0 20px 32px;display:flex;align-items:center;gap:10px">
+      <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Matt&rsquo;s phone is scoring</span>
+      <span style="margin-left:auto;font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.08em">JOIN CODE · PIN-4417</span>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">END OF GAME · VERIFY PROMPT</span>
+  <div data-screen-label="Live end" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:0 20px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.14em">GAME 2 · FINAL</span>
+        <span style="font:800 26px 'Oxanium',sans-serif;color:#E9F1F6">Dave takes it</span>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:11px">
+        <sc-for list="{{ playersClean }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:700 13px 'Oxanium',sans-serif;color:#E9F1F6;width:86px;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+            <div style="display:flex;gap:1.5px;flex:1">
+              <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+                <span style="flex:1;height:15px;background:#0D1520;border:1px solid #1B2A3B;border-radius:2px;display:flex;align-items:center;justify-content:center;font:600 7px 'Martian Mono',monospace;color:#BFE9FF">{{ f.m }}</span>
+              </sc-for>
+              <span style="flex:1.5;height:15px;background:#0D1520;border:1px solid #1B2A3B;border-radius:2px;display:flex;align-items:center;justify-content:center;font:600 7px 'Martian Mono',monospace;color:#BFE9FF">{{ p.tenth.m }}</span>
+            </div>
+            <span style="font:600 14px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums;width:34px;text-align:right">{{ p.total }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:8px;border-top:1px solid #1B2A3B;padding-top:10px">
+          <span style="font:700 10px 'Oxanium',sans-serif;letter-spacing:.1em;color:#8FA5B4;border:1px solid #2A3B4E;border-radius:4px;padding:3px 8px">LIVE-SCORED</span>
+          <span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Add the monitor photo to make it verified</span>
+        </div>
+      </div>
+      <div style="background:rgba(255,174,43,.07);border:1px solid rgba(255,174,43,.4);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFAE2B" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7 L10 4.5 H14 L15.5 7"></path><circle cx="12" cy="13.2" r="3.4"></circle></svg>
+        <div style="display:flex;flex-direction:column"><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Attach photo to verify</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">The monitor&rsquo;s still showing it — 10 seconds</span></div>
+        <span style="margin-left:auto;font:800 13px 'Oxanium',sans-serif;color:#FFAE2B">Scan</span>
+      </div>
+    </div>
+    <div style="padding:0 20px 32px;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Next game — same players</span></div>
+      <div style="height:48px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">End session</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">SESSION STATES</span>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box">
+    <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">WAITING FOR PLAYERS</span>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:64px;height:64px;flex:none;background:repeating-conic-gradient(#D7F4FF 0% 25%, #0D1520 0% 50%) 0 0 / 10px 10px;border-radius:8px;border:4px solid #D7F4FF"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:700 14px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Scan to watch live</span>
+        <div style="display:flex;gap:6px">
+          <span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:999px;padding:3px 9px">Dave ✓</span>
+          <span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:999px;padding:3px 9px">Soph ✓</span>
+          <span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;border:1px dashed #2A3B4E;border-radius:999px;padding:3px 9px">Jen…</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box">
+    <div style="width:8px;height:8px;border-radius:50%;background:#FFAE2B;flex:none"></div>
+    <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Reconnecting…</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Spectator view · scores catch up automatically</span></div>
+  </div>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box">
+    <div style="width:8px;height:8px;border-radius:50%;background:#5AD08A;flex:none"></div>
+    <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">You&rsquo;re offline — scoring carries on</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Scorer view · the game syncs when signal returns</span></div>
+  </div>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box">
+    <div style="width:8px;height:8px;border-radius:50%;background:#5E7485;flex:none"></div>
+    <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Game abandoned after frame 6</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Kept for the session, excluded from averages</span></div>
+    <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Resume</span>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 08 GAME DETAIL ================= -->
+<section class="sec" id="s08">
+<div class="shd"><a class="snum" href="#s08">08</a><span class="stitle">Game detail — canonical scorecard, photo, comments, the edit warning</span></div>
+<p class="sdesc">Editing a verified game warns before the badge comes off: edits that still reconcile with the photo keep it, edits that don&rsquo;t, don&rsquo;t.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">GAME DETAIL</span>
+  <div data-screen-label="Game detail" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <div style="display:flex;flex-direction:column"><span style="font:700 15px 'Oxanium',sans-serif;color:#E9F1F6">Thursday Pin Club</span><span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Hollywood Bowl, Watford · Fri 3 Jul</span></div>
+      <span style="margin-left:auto;font:700 9.5px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:4px;padding:3px 7px;box-shadow:0 0 10px rgba(255,174,43,.35)">✓ VERIFIED</span>
+    </div>
+    <div style="padding:8px 16px 0;flex:1;display:flex;flex-direction:column;gap:9px;min-height:0">
+      <sc-for list="{{ playersClean }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;align-items:baseline;gap:8px">
+            <span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+            <span style="margin-left:auto;font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+          </div>
+          <div style="display:flex;gap:2px">
+            <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+              <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:16px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 8.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 8.5px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.b }}</span>
+                </div>
+                <div style="height:18px;display:flex;align-items:center;justify-content:center;font:600 9.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+              </div>
+            </sc-for>
+            <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:4px;overflow:hidden">
+              <div style="display:flex;height:16px;border-bottom:1px solid #1B2A3B">
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 8.5px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.a }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 8.5px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.b }}</span>
+                <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 8.5px 'Oxanium',sans-serif;color:#BFE9FF">{{ p.tenth.c }}</span>
+              </div>
+              <div style="height:18px;display:flex;align-items:center;justify-content:center;font:600 9.5px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="height:70px;border-radius:10px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29 0%,#060A10 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex:none">
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.05) 0px,rgba(150,220,255,.05) 1px,transparent 1px,transparent 4px)"></div>
+        <span style="font:500 9px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">MONITOR PHOTO · TAP FOR FULL-BLEED</span>
+      </div>
+      <div style="display:flex;gap:7px">
+        <span style="font:600 10.5px 'Martian Mono',monospace;color:#8FA5B4;background:#111A26;border:1px solid #223146;border-radius:999px;padding:4px 10px">Dave · 7 strikes</span>
+        <span style="font:600 10.5px 'Martian Mono',monospace;color:#8FA5B4;background:#111A26;border:1px solid #223146;border-radius:999px;padding:4px 10px">2 spares</span>
+        <span style="font:600 10.5px 'Martian Mono',monospace;color:#8FA5B4;background:#111A26;border:1px solid #223146;border-radius:999px;padding:4px 10px">Matt · 5 strikes</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid #1B2A3B;padding-top:10px">
+        <div style="display:flex;gap:9px"><div style="width:26px;height:26px;border-radius:50%;background:#20343E;color:#A8E4D8;font:700 9px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">ST</div><div style="display:flex;flex-direction:column"><span style="font:700 11.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Soph T</span><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">He&rsquo;s been quiet about this all week 💀</span></div></div>
+        <div style="display:flex;gap:9px"><div style="width:26px;height:26px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 9px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div><div style="display:flex;flex-direction:column"><span style="font:700 11.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave K</span><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Framed it already 🎳</span></div></div>
+      </div>
+    </div>
+    <div style="padding:10px 16px 28px;display:flex;gap:8px;flex:none">
+      <div style="flex:1;height:46px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Edit frames</span></div>
+      <div style="flex:1;height:46px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Share card</span></div>
+      <div style="width:46px;height:46px;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;justify-content:center"><span style="font:400 18px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">⋯</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">EDIT WARNING · BADGE AT STAKE</span>
+  <div data-screen-label="Edit warning" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none;position:relative">
+    <div style="position:absolute;inset:0;padding:44px 16px 0;display:flex;flex-direction:column;gap:10px;filter:blur(1.5px);opacity:.3">
+      <div style="height:48px"></div>
+      <div style="height:250px;background:#111A26;border:1px solid #223146;border-radius:16px"></div>
+      <div style="height:80px;background:#111A26;border:1px solid #223146;border-radius:12px"></div>
+      <div style="height:160px;background:#111A26;border:1px solid #223146;border-radius:16px"></div>
+    </div>
+    <div style="position:absolute;inset:0;background:rgba(5,8,12,.62)"></div>
+    <div style="position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);background:#111A26;border:1px solid #223146;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.6)">
+      <span style="font:700 9.5px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:4px;padding:3px 7px;width:fit-content">✓ VERIFIED</span>
+      <span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">Edit a verified game?</span>
+      <span style="font:400 13.5px/1.55 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">If your edits still match the photo&rsquo;s totals, the badge stays. If they stop matching, this game becomes unverified.</span>
+      <div style="height:50px;border-radius:12px;background:#FFAE2B;display:flex;align-items:center;justify-content:center"><span style="font:800 14px 'Oxanium',sans-serif;color:#0A0E14">Edit frames</span></div>
+      <div style="height:44px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Cancel</span></div>
+    </div>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 09 GROUP ================= -->
+<section class="sec" id="s09">
+<div class="shd"><a class="snum" href="#s09">09</a><span class="stitle">Group — leaderboard, verified-only filter, head-to-head, empty</span></div>
+<p class="sdesc">The leaderboard is the heart of the page. The verified-only toggle is a group setting (default off) — both states designed. Seasons stay light: a named period with an end date, not league admin.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">GROUP PAGE · FILTER OFF</span>
+  <div data-screen-label="Group page" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="padding:8px 20px 0;display:flex;flex-direction:column;gap:12px;flex:1;min-height:0">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex">
+          <div style="width:38px;height:38px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 12px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14">DK</div>
+          <div style="width:38px;height:38px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 12px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14;margin-left:-9px">MB</div>
+          <div style="width:38px;height:38px;border-radius:50%;background:#20343E;color:#A8E4D8;font:700 12px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14;margin-left:-9px">ST</div>
+          <div style="width:38px;height:38px;border-radius:50%;background:#111A26;color:#8FA5B4;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2.5px solid #0A0E14;margin-left:-9px">+2</div>
+        </div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">Thursday Pin Club</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Home lane: Hollywood Bowl, Watford</span></div>
+        <span style="margin-left:auto;font:400 18px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">⚙</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font:700 11.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:999px;padding:6px 12px">2026 season ⌄</span>
+        <span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">ends 20 Dec · 52 games</span>
+        <span style="margin-left:auto;font:700 11.5px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Invite</span>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:16px;padding:14px 14px 10px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">LEADERBOARD · SEASON AVG</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:7px"><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Verified only</span><div style="width:34px;height:20px;border-radius:10px;background:#0D1520;border:1px solid #223146;position:relative"><div style="position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#5E7485"></div></div></div>
+        </div>
+        <sc-for list="{{ leaderboard }}" as="m" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #1B2A3B;padding-top:9px;padding-bottom:1px">
+            <span style="font:800 14px 'Oxanium',sans-serif;color:#FFAE2B;width:18px">{{ m.r }}</span>
+            <div style="width:30px;height:30px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">{{ m.i }}</div>
+            <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ m.n }}</span><span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">{{ m.g }} games</span></div>
+            <span style="font:700 10px 'Oxanium',sans-serif;color:#8FA5B4">{{ m.mv }}</span>
+            <div style="margin-left:auto;display:flex;align-items:baseline;gap:10px">
+              <span style="font:600 16px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ m.avg }}</span>
+              <span style="font:600 11px 'Martian Mono',monospace;color:#5E7485;font-variant-numeric:tabular-nums;width:30px;text-align:right">{{ m.high }}</span>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:flex-end"><span style="font:9px 'Martian Mono',monospace;color:#33455A;letter-spacing:.08em">AVG · HIGH</span></div>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+        <div style="display:flex"><div style="width:28px;height:28px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 9px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2px solid #111A26">MB</div><div style="width:28px;height:28px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 9px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;border:2px solid #111A26;margin-left:-8px">DK</div></div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">You&rsquo;re 7–3 up on Dave</span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Head-to-head · tap any two members</span></div>
+        <span style="margin-left:auto;font:400 16px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">›</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">MOST STRIKES</span><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave · 84</span>
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em;margin-left:12px">TURKEYS</span><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Dave · 6</span>
+        <span style="margin-left:auto;font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Past seasons ›</span>
+      </div>
+    </div>
+    <div style="height:78px;border-top:1px solid #1B2A3B;display:flex;align-items:center;padding:0 12px 12px;flex:none">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11 L12 4 L21 11 V20 H14 V15 H10 V20 H3 Z"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Home</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFAE2B" stroke-width="1.8" stroke-linecap="round"><circle cx="8.5" cy="9" r="3"></circle><circle cx="16.5" cy="10.5" r="2.4"></circle><path d="M3.5 19c0-3 2.5-4.5 5-4.5s5 1.5 5 4.5"></path><path d="M15.5 15.5c2.5 0 5 1.2 5 3.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#FFAE2B;letter-spacing:.06em">Groups</span></div>
+      <div style="flex:1;display:flex;justify-content:center"><div style="width:54px;height:54px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.45);display:flex;align-items:center;justify-content:center;margin-top:-26px;border:4px solid #0A0E14"><span style="font:400 26px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;line-height:1">＋</span></div></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="#5E7485"><rect x="4" y="13" width="3.5" height="7" rx="1"></rect><rect x="10.2" y="8" width="3.5" height="12" rx="1"></rect><rect x="16.4" y="4" width="3.5" height="16" rx="1"></rect></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Stats</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Profile</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">LEADERBOARD · VERIFIED ONLY ON</span>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:16px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">LEADERBOARD · SEASON AVG</span>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:7px"><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Verified only</span><div style="width:34px;height:20px;border-radius:10px;background:rgba(255,174,43,.25);border:1px solid #FFAE2B;position:relative;box-shadow:0 0 8px rgba(255,174,43,.25)"><div style="position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#FFAE2B"></div></div></div>
+    </div>
+    <span style="font:600 9.5px 'Martian Mono',monospace;color:#8FA5B4;letter-spacing:.08em">COUNTING 27 OF 52 GAMES · PHOTO-CHECKED ONLY</span>
+    <sc-for list="{{ leaderboardVerified }}" as="m" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #1B2A3B;padding-top:9px">
+        <span style="font:800 14px 'Oxanium',sans-serif;color:#FFAE2B;width:18px">{{ m.r }}</span>
+        <div style="width:30px;height:30px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">{{ m.i }}</div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ m.n }}</span><span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">{{ m.g }} verified games</span></div>
+        <span style="font:700 10px 'Oxanium',sans-serif;color:#8FA5B4">{{ m.mv }}</span>
+        <div style="margin-left:auto;display:flex;align-items:baseline;gap:10px">
+          <span style="font:600 16px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ m.avg }}</span>
+          <span style="font:600 11px 'Martian Mono',monospace;color:#5E7485;font-variant-numeric:tabular-nums;width:30px;text-align:right">{{ m.high }}</span>
+        </div>
+      </div>
+    </sc-for>
+    <div style="display:flex;align-items:center;gap:8px;border-top:1px dashed #1B2A3B;padding-top:9px;opacity:.65">
+      <span style="font:800 14px 'Oxanium',sans-serif;color:#33455A;width:18px">—</span>
+      <div style="width:30px;height:30px;border-radius:50%;background:#111A26;border:1px dashed #2A3B4E;color:#5E7485;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">JH</div>
+      <span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Jen H</span>
+      <span style="margin-left:auto;font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">No verified games yet</span>
+    </div>
+  </div>
+  <span class="lab" style="margin-top:14px">HEAD-TO-HEAD DETAIL</span>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;justify-content:center;gap:18px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:44px;height:44px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 14px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">MB</div><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">You</span></div>
+      <span style="font:800 30px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">7–3</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:44px;height:44px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 14px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">DK</div><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Dave</span></div>
+    </div>
+    <span style="text-align:center;font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">You&rsquo;ve won 3 of the last 4 meetings</span>
+    <div style="display:flex;flex-direction:column;gap:7px;border-top:1px solid #1B2A3B;padding-top:10px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;width:60px">Fri 3 Jul</span><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Dave won</span><span style="margin-left:auto;font:600 12px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">169 – 213</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;width:60px">Fri 3 Jul</span><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">You won</span><span style="margin-left:auto;font:600 12px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">178 – 171</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;width:60px">13 Jun</span><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">You won</span><span style="margin-left:auto;font:600 12px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">184 – 166</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">GROUP · EMPTY (JUST CREATED)</span>
+  <div data-screen-label="Group empty" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="padding:8px 20px 0;display:flex;align-items:center;gap:12px;flex:none">
+      <div style="width:38px;height:38px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 12px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">MB</div>
+      <span style="font:700 19px 'Oxanium',sans-serif;color:#E9F1F6">Friday Night Strikes</span>
+      <span style="margin-left:auto;font:400 18px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">⚙</span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:0 32px;text-align:center">
+      <div style="width:88px;height:88px;flex:none;background:repeating-conic-gradient(#D7F4FF 0% 25%, #0D1520 0% 50%) 0 0 / 12px 12px;border-radius:10px;border:4px solid #D7F4FF"></div>
+      <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Just you so far</span>
+      <span style="font:400 13.5px/1.55 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Share the invite — anyone who joins gets on the leaderboard from the first game.</span>
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+        <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Share invite link</span></div>
+        <div style="height:48px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Scan a game instead</span></div>
+      </div>
+    </div>
+    <div style="height:78px;flex:none"></div>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 10 STATS · FRIENDS · SETTINGS ================= -->
+<section class="sec" id="s10">
+<div class="shd"><a class="snum" href="#s10">10</a><span class="stitle">Stats, friends &amp; guest claim, settings</span></div>
+<p class="sdesc">Frame-level stats are visually separated and always footnoted with their sample — totals-only games are excluded there and that must be legible. Guest claim is the growth loop: the confirmation screen shows exactly which games will be absorbed.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">STATS · PERSONAL</span>
+  <div data-screen-label="Stats" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:44px;display:flex;align-items:center;padding:0 20px;flex:none"><span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6">Your stats</span><span style="margin-left:auto;font:700 11.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:999px;padding:5px 11px">Season ⌄</span></div>
+    <div style="padding:6px 16px 0;flex:1;display:flex;flex-direction:column;gap:11px;min-height:0">
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:600 8.5px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em">AVERAGE</span><div style="display:flex;align-items:baseline;gap:5px"><span style="font:800 22px 'Oxanium',sans-serif;color:#E9F1F6">158</span><span style="font:700 10px 'Oxanium',sans-serif;color:#5AD08A">▲</span></div></div>
+        <div style="flex:1;background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:600 8.5px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em">HIGH</span><div style="display:flex;align-items:baseline;gap:5px"><span style="font:800 22px 'Oxanium',sans-serif;color:#E9F1F6">192</span><span style="font:700 8px 'Oxanium',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:1px 4px">✓</span></div></div>
+        <div style="flex:1;background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:600 8.5px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em">GAMES</span><span style="font:800 22px 'Oxanium',sans-serif;color:#E9F1F6">34</span></div>
+        <div style="flex:1;background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:1px"><span style="font:600 8.5px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.1em">FORM</span><span style="font:800 22px 'Oxanium',sans-serif;color:#5AD08A">▲</span></div>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center"><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">SCORE OVER TIME</span>
+          <div style="margin-left:auto;display:flex;gap:4px">
+            <span style="font:700 10px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;padding:3px 8px">3m</span>
+            <span style="font:700 10px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:999px;padding:3px 8px">Season</span>
+            <span style="font:700 10px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;padding:3px 8px">All</span>
+          </div>
+        </div>
+        <svg width="100%" height="110" viewBox="0 0 320 110" preserveAspectRatio="none" style="display:block">
+          <line x1="0" y1="28" x2="320" y2="28" stroke="#1B2A3B" stroke-width="1"></line>
+          <line x1="0" y1="64" x2="320" y2="64" stroke="#1B2A3B" stroke-width="1"></line>
+          <line x1="0" y1="100" x2="320" y2="100" stroke="#1B2A3B" stroke-width="1"></line>
+          <polyline points="{{ formPts }}" fill="none" stroke="#FFAE2B" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+          <circle cx="309.2" cy="30.4" r="3.5" fill="#FFAE2B"></circle>
+        </svg>
+        <div style="display:flex;justify-content:space-between"><span style="font:9px 'Martian Mono',monospace;color:#33455A">MAR</span><span style="font:9px 'Martian Mono',monospace;color:#33455A">MAY</span><span style="font:9px 'Martian Mono',monospace;color:#33455A">JUL · 178</span></div>
+      </div>
+      <div style="background:#0D1520;border:1px dashed #2A3B4E;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:9px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">FRAME-LEVEL</span>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;display:flex;flex-direction:column"><span style="font:800 18px 'Oxanium',sans-serif;color:#E9F1F6">28%</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">STRIKE</span></div>
+          <div style="flex:1;display:flex;flex-direction:column"><span style="font:800 18px 'Oxanium',sans-serif;color:#E9F1F6">31%</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">SPARE</span></div>
+          <div style="flex:1;display:flex;flex-direction:column"><span style="font:800 18px 'Oxanium',sans-serif;color:#E9F1F6">41%</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">OPEN</span></div>
+          <div style="flex:1;display:flex;flex-direction:column"><span style="font:800 18px 'Oxanium',sans-serif;color:#E9F1F6">12</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">SPLITS</span></div>
+        </div>
+        <span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485;font-style:italic">Based on 21 frame-scored games — quick adds don&rsquo;t count here</span>
+      </div>
+      <div style="display:flex;gap:7px;overflow:hidden">
+        <sc-for list="{{ milestones }}" as="ms" hint-placeholder-count="6">
+          <sc-if value="{{ ms.done }}" hint-placeholder-val="{{ true }}">
+            <span style="flex:none;font:700 10px 'Oxanium',sans-serif;letter-spacing:.06em;color:#FFAE2B;border:1px solid rgba(255,174,43,.45);border-radius:999px;padding:5px 10px;white-space:nowrap">{{ ms.l }}</span>
+          </sc-if>
+        </sc-for>
+        <span style="flex:none;font:700 10px 'Oxanium',sans-serif;letter-spacing:.06em;color:#33455A;border:1px dashed #223146;border-radius:999px;padding:5px 10px;white-space:nowrap">First 200</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em;padding-bottom:4px">BY VENUE</span>
+        <sc-for list="{{ venues }}" as="v" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;border-top:1px solid #1B2A3B;padding:7px 0 5px">
+            <span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ v.n }}</span>
+            <div style="margin-left:auto;display:flex;align-items:baseline;gap:8px"><span style="font:600 13px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ v.avg }}</span><span style="font:9px 'Martian Mono',monospace;color:#5E7485">{{ v.g }} GAMES</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="height:78px;border-top:1px solid #1B2A3B;display:flex;align-items:center;padding:0 12px 12px;flex:none">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11 L12 4 L21 11 V20 H14 V15 H10 V20 H3 Z"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Home</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="8.5" cy="9" r="3"></circle><circle cx="16.5" cy="10.5" r="2.4"></circle><path d="M3.5 19c0-3 2.5-4.5 5-4.5s5 1.5 5 4.5"></path><path d="M15.5 15.5c2.5 0 5 1.2 5 3.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Groups</span></div>
+      <div style="flex:1;display:flex;justify-content:center"><div style="width:54px;height:54px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.45);display:flex;align-items:center;justify-content:center;margin-top:-26px;border:4px solid #0A0E14"><span style="font:400 26px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;line-height:1">＋</span></div></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FFAE2B"><rect x="4" y="13" width="3.5" height="7" rx="1"></rect><rect x="10.2" y="8" width="3.5" height="12" rx="1"></rect><rect x="16.4" y="4" width="3.5" height="16" rx="1"></rect></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#FFAE2B;letter-spacing:.06em">Stats</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5E7485" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"></path></svg><span style="font:600 9px 'Oxanium',sans-serif;color:#5E7485;letter-spacing:.06em">Profile</span></div>
+    </div>
+  </div>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-sizing:border-box;margin-top:10px">
+    <div style="width:8px;height:8px;border-radius:50%;background:#5E7485;flex:none"></div>
+    <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">No frame-scored games yet</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Frame-level block empty state — scan or score live to unlock it</span></div>
+  </div></div>
+
+  <div class="itm"><span class="lab">FRIENDS</span>
+  <div data-screen-label="Friends" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Friends</span>
+    </div>
+    <div style="padding:8px 16px 0;flex:1;display:flex;flex-direction:column;gap:12px;min-height:0">
+      <div style="height:46px;background:#0D1520;border:1px solid #223146;border-radius:12px;display:flex;align-items:center;padding:0 14px;gap:8px"><span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Search by username</span></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">REQUESTS · 1</span>
+        <div style="background:#111A26;border:1px solid rgba(255,174,43,.35);border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#2A2333;color:#CBB6E8;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">PM</div>
+          <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Priya M</span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">@priyam</span></div>
+          <div style="margin-left:auto;display:flex;gap:8px"><span style="font:800 12px 'Oxanium',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:8px;padding:8px 14px">Accept</span><span style="font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;padding:8px 4px">Ignore</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">FRIENDS · 3</span>
+        <sc-for list="{{ friends }}" as="f" hint-placeholder-count="3">
+          <div style="background:#111A26;border:1px solid #223146;border-radius:12px;padding:10px 12px;display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">{{ f.i }}</div>
+            <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ f.n }}</span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">{{ f.u }} · {{ f.meta }}</span></div>
+            <span style="margin-left:auto;font:400 16px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">›</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:rgba(255,174,43,.06);border:1px dashed rgba(255,174,43,.4);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;border-radius:50%;border:1px dashed #3A4E63;color:#5E7485;font:700 11px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">J</div>
+        <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">&ldquo;JEN&rdquo; has 3 unclaimed games</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Send her a claim link — history transfers to her profile</span></div>
+        <span style="margin-left:auto;font:700 12px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Send link</span>
+      </div>
+    </div>
+    <div style="height:32px;flex:none"></div>
+  </div></div>
+
+  <div class="itm"><span class="lab">GUEST CLAIM · GROWTH LOOP</span>
+  <div data-screen-label="Guest claim" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:0 24px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;border:2px dashed #3A4E63;color:#8FA5B4;font:800 22px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center">J</div>
+        <span style="font:700 24px 'Oxanium',sans-serif;color:#E9F1F6">Are you &ldquo;JEN&rdquo;?</span>
+        <span style="font:400 13.5px/1.55 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Thursday Pin Club recorded 3 games under this guest name. Claim them and they join your profile and stats.</span>
+      </div>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:14px;padding:6px 14px;display:flex;flex-direction:column">
+        <sc-for list="{{ claimGames }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #1B2A3B;padding:11px 0">
+            <div style="display:flex;flex-direction:column"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ g.d }}</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">{{ g.v }} · {{ g.w }}</span></div>
+            <span style="margin-left:auto;font:700 18px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ g.s }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;padding:10px 0 8px"><span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">These count towards your average from day one</span></div>
+      </div>
+    </div>
+    <div style="padding:0 24px 40px;display:flex;flex-direction:column;gap:10px">
+      <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 20px rgba(255,174,43,.3);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14">Claim these games</span></div>
+      <div style="height:44px;display:flex;align-items:center;justify-content:center"><span style="font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Not me</span></div>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">SETTINGS</span>
+  <div data-screen-label="Settings" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none">
+    <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+    <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+      <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+      <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6">Settings</span>
+    </div>
+    <div style="padding:8px 16px 0;flex:1;display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ settingsRows }}" as="s" hint-placeholder-count="5">
+        <div style="background:#111A26;border:1px solid #223146;border-radius:12px;padding:13px 14px;display:flex;align-items:center;gap:10px">
+          <div style="display:flex;flex-direction:column"><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">{{ s.l }}</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">{{ s.d }}</span></div>
+          <span style="margin-left:auto;font:400 16px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">›</span>
+        </div>
+      </sc-for>
+      <div style="background:#111A26;border:1px solid #223146;border-radius:12px;padding:13px 14px;display:flex;align-items:center"><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Sign out</span></div>
+      <div style="border:1px solid rgba(255,93,69,.35);border-radius:12px;padding:13px 14px;display:flex;align-items:center"><span style="font:700 13.5px 'Atkinson Hyperlegible',sans-serif;color:#FF5D45">Delete account</span></div>
+    </div>
+    <span style="text-align:center;font:600 10px 'Martian Mono',monospace;color:#33455A;letter-spacing:.1em;padding:0 0 32px">10 PINS · 0.9.2</span>
+  </div></div>
+
+</div>
+</section>
+
+<!-- ================= 11 SHARE ASSETS + FLOW MAP ================= -->
+<section class="sec" id="s11">
+<div class="shd"><a class="snum" href="#s11">11</a><span class="stitle">Share card, invite card, screen-flow map</span></div>
+<p class="sdesc">The share card is free marketing: an image render for WhatsApp / Instagram (exports at 1080 × 1350, shown at half size). A frozen sweep line and the verification stamp make it unmistakably 10 Pins.</p>
+<div class="row">
+
+  <div class="itm"><span class="lab">SHARE CARD · GAME RESULT · 1080×1350 EXPORT</span>
+  <div data-screen-label="Share card" style="width:540px;height:675px;background:#0A0E14;border-radius:20px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;flex:none;position:relative;padding:36px">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.03) 0px,rgba(150,220,255,.03) 1px,transparent 1px,transparent 5px)"></div>
+    <div style="position:absolute;left:0;right:0;top:57%;height:2.5px;background:#FFAE2B;box-shadow:0 0 24px 6px rgba(255,174,43,.4);opacity:.8"></div>
+    <div style="position:relative;display:flex;align-items:center;gap:8px">
+      <span style="font:800 17px 'Oxanium',sans-serif;color:#FFAE2B;border:2px solid #FFAE2B;border-radius:5px;padding:0 6px;line-height:1.35;text-shadow:0 0 10px rgba(255,174,43,.5)">10</span>
+      <span style="font:800 17px 'Oxanium',sans-serif;color:#D7F4FF;letter-spacing:.14em">PINS</span>
+      <span style="margin-left:auto;font:600 11px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.08em">FRI 3 JUL · HOLLYWOOD BOWL, WATFORD</span>
+    </div>
+    <div style="position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font:600 13px 'Martian Mono',monospace;color:#8FA5B4;letter-spacing:.14em">THURSDAY PIN CLUB</span>
+        <div style="display:flex;align-items:baseline;gap:16px">
+          <span style="font:800 56px 'Oxanium',sans-serif;color:#E9F1F6;line-height:1.05">Dave K</span>
+          <span style="font:700 64px 'Martian Mono',monospace;color:#FFAE2B;text-shadow:0 0 20px rgba(255,174,43,.5);font-variant-numeric:tabular-nums;line-height:1">213</span>
+        </div>
+        <div style="display:flex;gap:8px;padding-top:8px">
+          <span style="font:700 12px 'Oxanium',sans-serif;letter-spacing:.1em;color:#FFAE2B;border:1.5px solid rgba(255,174,43,.5);border-radius:5px;padding:4px 10px">NEW PB</span>
+          <span style="font:700 12px 'Oxanium',sans-serif;letter-spacing:.1em;color:#FFAE2B;border:1.5px solid rgba(255,174,43,.5);border-radius:5px;padding:4px 10px">200 CLUB</span>
+          <span style="font:700 12px 'Oxanium',sans-serif;letter-spacing:.1em;color:#BFE9FF;border:1.5px solid rgba(150,220,255,.4);border-radius:5px;padding:4px 10px">7 STRIKES</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:3px">
+        <sc-for list="{{ dave.first9 }}" as="f" hint-placeholder-count="9">
+          <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:5px;overflow:hidden">
+            <div style="display:flex;height:26px;border-bottom:1px solid #1B2A3B">
+              <span style="flex:1;display:flex;align-items:center;justify-content:center;font:700 13px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.5)">{{ f.a }}</span>
+              <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:700 13px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.5)">{{ f.b }}</span>
+            </div>
+            <div style="height:26px;display:flex;align-items:center;justify-content:center;font:600 13px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+          </div>
+        </sc-for>
+        <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-left:2px solid #2E4258;border-radius:5px;overflow:hidden">
+          <div style="display:flex;height:26px;border-bottom:1px solid #1B2A3B">
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;font:700 13px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.5)">{{ dave.tenth.a }}</span>
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:700 13px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.5)">{{ dave.tenth.b }}</span>
+            <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:700 13px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 8px rgba(150,220,255,.5)">{{ dave.tenth.c }}</span>
+          </div>
+          <div style="height:26px;display:flex;align-items:center;justify-content:center;font:600 13px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ dave.tenth.t }}</div>
+        </div>
+      </div>
+    </div>
+    <div style="position:relative;display:flex;align-items:center">
+      <span style="font:400 14px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Beat Matt by 44 · pics attached, so it counts</span>
+      <span style="margin-left:auto;font:800 13px 'Oxanium',sans-serif;letter-spacing:.14em;color:#0A0E14;background:#FFAE2B;border-radius:6px;padding:8px 16px;box-shadow:0 0 24px rgba(255,174,43,.5);transform:rotate(-3deg)">✓ VERIFIED</span>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">GROUP INVITE CARD</span>
+  <div data-screen-label="Invite card" style="width:390px;background:#0A0E14;border-radius:20px;border:1px solid #1E2C3D;box-shadow:0 12px 32px rgba(0,0,0,.25);overflow:hidden;box-sizing:border-box;flex:none;position:relative;padding:28px;display:flex;flex-direction:column;gap:18px">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.03) 0px,rgba(150,220,255,.03) 1px,transparent 1px,transparent 5px)"></div>
+    <div style="position:relative;display:flex;align-items:center;gap:8px">
+      <span style="font:800 15px 'Oxanium',sans-serif;color:#FFAE2B;border:2px solid #FFAE2B;border-radius:4px;padding:0 5px;line-height:1.35">10</span>
+      <span style="font:800 15px 'Oxanium',sans-serif;color:#D7F4FF;letter-spacing:.14em">PINS</span>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;gap:16px">
+      <div style="width:110px;height:110px;flex:none;background:repeating-conic-gradient(#D7F4FF 0% 25%, #0D1520 0% 50%) 0 0 / 14px 14px;border-radius:10px;border:5px solid #D7F4FF"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font:700 20px 'Oxanium',sans-serif;color:#E9F1F6;line-height:1.2">Join Thursday<br>Pin Club</span>
+        <span style="font:400 12.5px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">5 members · 52 games this season</span>
+        <span style="font:600 11px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.06em">10pins.app/j/PIN-4417</span>
+      </div>
+    </div>
+    <span style="position:relative;font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Your games from this group are waiting to be claimed</span>
+  </div>
+  <span class="lab" style="margin-top:14px">OFFLINE QUEUE · IN PROFILE</span>
+  <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;box-sizing:border-box">
+    <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">QUEUE · SYNCS AUTOMATICALLY</span>
+    <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #1B2A3B;padding-top:9px">
+      <div style="width:38px;height:28px;border-radius:5px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29,#060A10);flex:none"></div>
+      <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Scan · tonight 21:47</span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Waiting for signal</span></div>
+      <span style="margin-left:auto;font:600 10px 'Martian Mono',monospace;color:#5E7485">QUEUED</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;border-top:1px solid #1B2A3B;padding-top:9px">
+      <div style="width:38px;height:28px;border-radius:5px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29,#060A10);flex:none"></div>
+      <div style="display:flex;flex-direction:column"><span style="font:700 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6">Scan · 13 Jun</span><span style="font:400 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4">Scanned and posted ✓</span></div>
+      <span style="margin-left:auto;font:700 9px 'Oxanium',sans-serif;letter-spacing:.08em;color:#0A0E14;background:#FFAE2B;border-radius:3px;padding:2px 6px">✓ DONE</span>
+    </div>
+  </div></div>
+
+  <div class="itm"><span class="lab">SCREEN-FLOW MAP</span>
+  <div style="width:640px;background:#0A0E14;border-radius:14px;padding:24px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 10px 'Martian Mono',monospace;color:#FFAE2B;letter-spacing:.12em">FIRST RUN VIA GROUP INVITE</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Invite link</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Group preview</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Sign in</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Profile</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:7px;padding:6px 10px">In the group, history visible</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 10px 'Martian Mono',monospace;color:#FFAE2B;letter-spacing:.12em">SCAN → CONFIRM → FEED</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">＋ Add</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Camera</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Processing</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Review</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:7px;padding:6px 10px">✓ Verified in feed</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-left:18px">
+        <span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">offline ⤷</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;background:#0D1520;border:1px dashed #2A3B4E;border-radius:7px;padding:5px 9px">Queued</span><span style="color:#5E7485">→ auto-scan on signal &nbsp;·&nbsp;</span>
+        <span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">amber frame ⤷</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;background:#0D1520;border:1px dashed #2A3B4E;border-radius:7px;padding:5px 9px">Frame editor</span><span style="color:#5E7485">→ recompute → confirm</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 10px 'Martian Mono',monospace;color:#FFAE2B;letter-spacing:.12em">LIVE SESSION</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Create</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Waiting / QR join</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Score frames 1–10</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Final card</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:7px;padding:6px 10px">Attach photo → verified</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Next game ↺</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding-left:18px"><span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">spectators watch read-only throughout · scorer works offline, syncs on return</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 10px 'Martian Mono',monospace;color:#FFAE2B;letter-spacing:.12em">GUEST CLAIM</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Game saved with guest &ldquo;JEN&rdquo;</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Claim link shared</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">Sign up</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#111A26;border:1px solid #223146;border-radius:7px;padding:6px 10px">&ldquo;Are you JEN?&rdquo;</span><span style="color:#5E7485">→</span>
+        <span style="font:600 11px 'Atkinson Hyperlegible',sans-serif;color:#0A0E14;background:#FFAE2B;border-radius:7px;padding:6px 10px">History absorbed</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;padding-left:18px"><span style="font:400 10.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">claim link expired → plain explanation + &ldquo;Ask Matt to re-send&rdquo;</span></div>
+    </div>
+  </div></div>
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const F = (a, b, t, o) => Object.assign({ a, b, t, m: (a && b) ? a + b : (b || a || ''), amber: false, cur: false }, o || {});
+    const T = (a, b, c, t) => ({ a, b, c, t, m: (a + b + c) || '' });
+    const players = [
+      { name: 'MATT', total: 169,
+        first9: [F('9','/',20), F('','X',38), F('8','\u2013',46), F('','X',73), F('','X',92), F('7','2',101,{amber:true}), F('9','/',121), F('','X',140), F('8','1',149)],
+        tenth: T('X','9','/',169) },
+      { name: 'DAVE', total: 213,
+        first9: [F('','X',30), F('','X',59), F('','X',78), F('9','\u2013',87), F('8','/',107), F('','X',127), F('7','/',146), F('9','\u2013',155), F('','X',185)],
+        tenth: T('X','X','8',213) },
+      { name: 'SOPH', total: 125,
+        first9: [F('7','2',9), F('9','/',27), F('8','1',36), F('\u2013','6',42), F('','X',61), F('7','2',70), F('8','/',89), F('9','\u2013',98), F('6','3',107)],
+        tenth: T('7','/','8',125) },
+      { name: 'JEN (guest)', total: 141,
+        first9: [F('8','\u2013',8), F('7','/',28), F('','X',48), F('9','/',58), F('\u2013','7',65), F('8','1',74), F('','X',93), F('7','2',102), F('9','/',122)],
+        tenth: T('X','7','2',141) }
+    ];
+    const playersClean = players.map(p => Object.assign({}, p, { first9: p.first9.map(f => Object.assign({}, f, { amber: false })) }));
+    const E = () => F('','','' );
+    const livePlayers = [
+      { name: 'MATT', total: 107, done: '7 frames',
+        first9: [F('8','/',19), F('9','\u2013',28), F('','X',48), F('7','3',58), F('','X',87), F('','X',107), F('9','/',''), E(), E()],
+        tenth: T('','','','') },
+      { name: 'DAVE', total: 114, done: 'now bowling', current: true,
+        first9: [F('','X',28), F('','X',48), F('8','/',67), F('9','\u2013',76), F('','X',96), F('7','/',114), F('8','','',{cur:true}), E(), E()],
+        tenth: T('','','','') },
+      { name: 'SOPH', total: 71, done: '6 frames',
+        first9: [F('7','2',9), F('9','/',27), F('8','1',36), F('','X',54), F('6','2',62), F('9','\u2013',71), E(), E(), E()],
+        tenth: T('','','','') },
+      { name: 'JEN', total: 64, done: '6 frames',
+        first9: [F('8','\u2013',8), F('7','/',27), F('9','\u2013',36), F('','X',55), F('7','2',64), F('8','/',''), E(), E(), E()],
+        tenth: T('','','','') }
+    ];
+    const leaderboard = [
+      { r: 1, n: 'Dave K', i: 'DK', avg: 171, high: 213, g: 12, mv: '\u25B2 1', up: true },
+      { r: 2, n: 'Matt B', i: 'MB', avg: 158, high: 192, g: 14, mv: '\u25BC 1', up: false },
+      { r: 3, n: 'Ravi P', i: 'RP', avg: 149, high: 187, g: 9, mv: '\u25B2 2', up: true },
+      { r: 4, n: 'Soph T', i: 'ST', avg: 132, high: 166, g: 11, mv: '\u2014', up: null },
+      { r: 5, n: 'Jen H', i: 'JH', avg: 128, high: 154, g: 6, mv: '\u2014', up: null }
+    ];
+    const leaderboardVerified = [
+      { r: 1, n: 'Dave K', i: 'DK', avg: 168, high: 213, g: 8, mv: '\u2014', up: null },
+      { r: 2, n: 'Matt B', i: 'MB', avg: 161, high: 192, g: 9, mv: '\u2014', up: null },
+      { r: 3, n: 'Ravi P', i: 'RP', avg: 142, high: 187, g: 3, mv: '\u25B2 1', up: true },
+      { r: 4, n: 'Soph T', i: 'ST', avg: 129, high: 166, g: 7, mv: '\u25BC 1', up: false }
+    ];
+    const friends = [
+      { n: 'Dave K', i: 'DK', u: '@davek', meta: '12 games together' },
+      { n: 'Soph T', i: 'ST', u: '@sophtee', meta: '11 games together' },
+      { n: 'Ravi P', i: 'RP', u: '@ravip', meta: '9 games together' }
+    ];
+    const claimGames = [
+      { d: 'Fri 3 Jul 2026', v: 'Hollywood Bowl, Watford', s: 141, w: 'with Matt, Dave and Soph' },
+      { d: 'Sat 13 Jun 2026', v: 'Hollywood Bowl, Watford', s: 128, w: 'with Matt and Dave' },
+      { d: 'Fri 22 May 2026', v: 'Rowans, Finsbury Park', s: 117, w: 'with Soph and Ravi' }
+    ];
+    const venues = [
+      { n: 'Hollywood Bowl, Watford', avg: 161, g: 19 },
+      { n: 'Rowans, Finsbury Park', avg: 152, g: 9 },
+      { n: 'Lane7, Islington', avg: 148, g: 6 }
+    ];
+    const milestones = [
+      { l: 'First 100', done: true }, { l: 'First 150', done: true }, { l: 'First turkey', done: true },
+      { l: '10 games', done: true }, { l: '25 games', done: true }, { l: 'First 200', done: false }
+    ];
+    const scores = [132, 145, 138, 151, 160, 149, 155, 163, 158, 171, 166, 178];
+    const formPts = scores.map((s, i) => (10 + i * 27.2).toFixed(1) + ',' + (100 - ((s - 120) / 70) * 84).toFixed(1)).join(' ');
+    const sessionGames = [
+      { g: 'Game 1', top: 'Dave 213', you: 'You 169', v: true },
+      { g: 'Game 2', top: 'You 178', you: 'Dave 171', v: true },
+      { g: 'Game 3', top: 'Dave 191', you: 'You 164', v: false }
+    ];
+    const settingsRows = [
+      { l: 'Account', d: 'matt@continuum.je' },
+      { l: 'Theme', d: 'Dark (default)' },
+      { l: 'Notifications', d: 'Reactions, group activity' },
+      { l: 'Offline queue', d: '1 photo waiting' },
+      { l: 'Export my data', d: 'CSV of games and frames' }
+    ];
+    const dave = playersClean[1];
+    return { players, playersClean, dave, livePlayers, leaderboard, leaderboardVerified, friends, claimGames, venues, milestones, formPts, sessionGames, settingsRows };
+  }
+}
+</script>
+</body>
+</html>

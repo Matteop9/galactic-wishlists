@@ -1,0 +1,248 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens from the handoff README — the single source for colour.
+ * Amber (phosphor) is EARNED: verification, celebration, current frame,
+ * primary CTA. Never decorative (spec §12) — always use these tokens.
+ */
+@theme {
+  --color-ink: #0a0e14;
+  --color-panel: #111a26;
+  --color-well: #0d1520;
+  --color-glass: #d7f4ff;
+  --color-phosphor: #ffae2b;
+  --color-signal: #ff5d45;
+
+  --color-text: #e9f1f6;
+  --color-dim: #8fa5b4;
+  --color-faint: #5e7485;
+  --color-disabled: #33455a;
+  --color-mark: #bfe9ff;
+  --color-line: #223146;
+  --color-hairline: #1b2a3b;
+  --color-success: #5ad08a;
+
+  --font-display: 'Oxanium', sans-serif;
+  --font-body: 'Atkinson Hyperlegible', sans-serif;
+  --font-mono: 'Martian Mono', monospace;
+
+  /* Elevation is glow, not shadow, in dark */
+  --shadow-glow-amber: 0 0 16px rgb(255 174 43 / 0.3);
+  --shadow-sheet: 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-modal: 0 20px 60px rgb(0 0 0 / 0.6);
+
+  --ease-base: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-ink);
+  }
+
+  body {
+    @apply bg-ink font-body text-text antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-phosphor);
+    outline-offset: 2px;
+  }
+}
+
+/* Label style: 10px/600 tracked caps, mono, faint (README typography scale) */
+@utility label-caps {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+/* Every score and stat is tabular — mandatory (spec §1) */
+@utility score-text {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Glass glow on roll marks (X / spare digits) — always paired with colour `mark` */
+@utility glow-mark {
+  text-shadow: 0 0 6px rgb(150 220 255 / 0.4);
+}
+
+/* Settle motion: 120ms amber flash + 240ms fade on every changed downstream total */
+@keyframes settle-flash {
+  0%,
+  33% {
+    color: var(--color-phosphor);
+    text-shadow: 0 0 12px rgb(255 174 43 / 0.4);
+  }
+}
+
+@utility settle {
+  animation: settle-flash 360ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/*
+ * Skeletons (spec §8: feed, stats and leaderboards get skeleton states).
+ * Never amber — amber is earned (§12) — so the sweep is a faint glass tint
+ * over the well, on the same 1600ms loop as the capture scan line.
+ */
+@keyframes skeleton-sweep {
+  from {
+    background-position: -60% 0;
+  }
+  to {
+    background-position: 160% 0;
+  }
+}
+
+@utility skeleton {
+  background-color: var(--color-well);
+  background-image: linear-gradient(
+    90deg,
+    rgb(215 244 255 / 0) 0%,
+    rgb(215 244 255 / 0.05) 45%,
+    rgb(215 244 255 / 0.09) 50%,
+    rgb(215 244 255 / 0.05) 55%,
+    rgb(215 244 255 / 0) 100%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: skeleton-sweep 1600ms linear infinite;
+  border-radius: 6px;
+}
+
+/* Refetch (not first load): content stays, a hairline says "fetching" */
+@keyframes refetch-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+@utility refetch-line {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--color-hairline);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 33%;
+    border-radius: 2px;
+    background: var(--color-glass);
+    opacity: 0.5;
+    animation: refetch-slide 1200ms var(--ease-base) infinite;
+  }
+}
+
+/* List entrance: fade + 8px rise on the base curve, staggered by the caller */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@utility rise-in {
+  animation: rise-in 240ms var(--ease-base) both;
+}
+
+/* Route + boot cross-fade — fast enough never to sit between tap and content */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility fade-in {
+  animation: fade-in 120ms ease-out both;
+}
+
+@utility fade-in-base {
+  animation: fade-in 240ms var(--ease-base) both;
+}
+
+/* Sheets and expanders rise on the base curve */
+@keyframes sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@utility sheet-up {
+  animation: sheet-up 240ms var(--ease-base) both;
+}
+
+/* Press: 80ms linear, the handoff's press value */
+@utility press {
+  transition: transform 80ms linear;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Signature motif (README §Brand): the amber scan line reading the photo on a
+   1600ms loop. Runs ONLY while a scan is genuinely in flight — the restraint
+   rule is that it never idles. */
+@keyframes scan-sweep {
+  from {
+    top: 4%;
+  }
+  to {
+    top: 96%;
+  }
+}
+
+@utility scan-line {
+  animation: scan-sweep 1600ms var(--ease-base) infinite alternate;
+}
+
+/* The verified stamp landing on a confirmed scan (design §5.3c) */
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    transform: rotate(-3deg) scale(1.35);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-3deg) scale(1);
+  }
+}
+
+@utility stamp-in {
+  animation: stamp-in 320ms var(--ease-base) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settle,
+  .skeleton,
+  .rise-in,
+  .fade-in,
+  .fade-in-base,
+  .sheet-up,
+  .scan-line,
+  .stamp-in {
+    animation: none;
+  }
+
+  .refetch-line::after {
+    animation: none;
+  }
+
+  .press {
+    transition: none;
+  }
+
+  .press:active {
+    transform: none;
+  }
+}

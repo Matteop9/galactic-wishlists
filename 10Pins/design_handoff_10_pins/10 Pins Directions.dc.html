@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700;800&amp;family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;family=Martian+Mono:wght@400;600;700&amp;family=Bungee&amp;family=Karla:wght@400;600;700;800&amp;family=IBM+Plex+Mono:wght@400;600;700&amp;family=Alfa+Slab+One&amp;family=Libre+Franklin:wght@400;600;700&amp;family=Courier+Prime:wght@400;700&amp;family=Permanent+Marker&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">10 Pins — three candidate directions. Each: tokens, wordmark, X-and-/ glyph treatment, verification badges, the scorecard component inside the capture-review screen, and a feed card.</span></div>
+<div class="dv-opts">
+
+<!-- ============ 1a MONITOR GLOW ============ -->
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Monitor glow — the overhead CRT scoreboard. Signature: the glowing scan-grid; the scorecard IS the lane monitor.</div>
+<div class="dv-card" style="width:442px;padding:26px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+
+  <!-- wordmark -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">WORDMARK · PURE TYPE, SWAPS CLEANLY</span>
+    <div style="background:#0A0E14;border-radius:10px;padding:30px 24px;display:flex;align-items:center;gap:12px">
+      <span style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:34px;color:#FFAE2B;border:2px solid #FFAE2B;border-radius:6px;padding:0 10px;line-height:1.35;text-shadow:0 0 14px rgba(255,174,43,.55);box-shadow:0 0 18px rgba(255,174,43,.25), inset 0 0 12px rgba(255,174,43,.12)">10</span>
+      <span style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:34px;color:#D7F4FF;letter-spacing:.14em;text-shadow:0 0 12px rgba(150,220,255,.35)">PINS</span>
+    </div>
+  </div>
+
+  <!-- tokens -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">PALETTE</span>
+    <div style="display:flex;gap:6px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#0A0E14"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">ink #0A0E14</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#111A26"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">panel #111A26</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#D7F4FF"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">glass #D7F4FF</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#FFAE2B"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">phosphor #FFAE2B</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#FF5D45"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">signal #FF5D45</span></div>
+    </div>
+  </div>
+
+  <!-- type + glyphs + badges -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">TYPE · GLYPHS · BADGES</span>
+    <div style="background:#0A0E14;border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:'Oxanium',sans-serif;font-weight:700;font-size:22px;color:#D7F4FF;letter-spacing:.04em">That&rsquo;s a turkey — Oxanium</span>
+        <span style="font-family:'Atkinson Hyperlegible',sans-serif;font-size:13.5px;color:#8FA5B4;line-height:1.5">Dave took the last frame off Matt by four pins. Body is Atkinson Hyperlegible — built for legibility in a dark alley.</span>
+        <span style="font-family:'Martian Mono',monospace;font-weight:600;font-size:14px;color:#E9F1F6;font-variant-numeric:tabular-nums;letter-spacing:.02em">213&nbsp;&nbsp;169&nbsp;&nbsp;141&nbsp;&nbsp;125 · Martian Mono, tabular</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:26px;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.55)">X</span><span style="font:500 8.5px ui-monospace,monospace;color:#5E7485;letter-spacing:.1em">STRIKE</span></div>
+        <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:26px;color:#BFE9FF;text-shadow:0 0 10px rgba(150,220,255,.55)">/</span><span style="font:500 8.5px ui-monospace,monospace;color:#5E7485;letter-spacing:.1em">SPARE</span></div>
+        <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:26px;color:#5E7485">–</span><span style="font:500 8.5px ui-monospace,monospace;color:#5E7485;letter-spacing:.1em">MISS</span></div>
+        <div style="flex:1;background:#0D1520;border:1px solid #223146;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Oxanium',sans-serif;font-weight:800;font-size:26px;color:#FF5D45">F</span><span style="font:500 8.5px ui-monospace,monospace;color:#5E7485;letter-spacing:.1em">FOUL</span></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="font-family:'Oxanium',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:4px;padding:4px 9px;box-shadow:0 0 12px rgba(255,174,43,.4)">✓ VERIFIED</span>
+        <span style="font-family:'Oxanium',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;color:#8FA5B4;border:1px solid #2A3B4E;border-radius:4px;padding:3px 9px">LIVE-SCORED</span>
+        <span style="font-family:'Oxanium',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;color:#5E7485;border:1px dashed #2A3B4E;border-radius:4px;padding:3px 9px">UNVERIFIED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- phone: capture review, amber state -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">CAPTURE REVIEW · AMBER-FRAME STATE</span>
+    <div data-screen-label="1a capture review" style="width:390px;height:844px;background:#0A0E14;border-radius:40px;border:1px solid rgba(0,0,0,.25);box-shadow:0 12px 32px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box">
+      <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Oxanium',sans-serif;color:#E9F1F6">21:47</span><span style="font:600 10px 'Martian Mono',monospace;color:#5E7485">5G ▮▮▮</span></div>
+      <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+        <span style="font:400 22px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;width:24px">‹</span>
+        <span style="font:700 17px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.02em">Check the scorecard</span>
+        <span style="margin-left:auto;font:700 13px 'Atkinson Hyperlegible',sans-serif;color:#FFAE2B">Retake</span>
+      </div>
+      <div style="padding:8px 16px 0;flex:none">
+        <div style="height:112px;border-radius:12px;border:1px solid #223146;background:linear-gradient(180deg,#0F1B29 0%,#060A10 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(150,220,255,.05) 0px,rgba(150,220,255,.05) 1px,transparent 1px,transparent 4px)"></div>
+          <div style="position:absolute;left:0;right:0;top:38px;height:2px;background:#FFAE2B;box-shadow:0 0 16px 3px rgba(255,174,43,.5);opacity:.85"></div>
+          <span style="font:500 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">LANE 12 MONITOR · PINCH TO ZOOM</span>
+        </div>
+      </div>
+      <div style="padding:14px 16px 0;flex:none;display:flex;flex-direction:column;gap:8px">
+        <span style="font:600 10px 'Martian Mono',monospace;color:#5E7485;letter-spacing:.12em">PLAYERS</span>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#1E3A52;color:#BFE9FF;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">MB</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">MATT</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;white-space:nowrap">Matt B</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#3A2A16;color:#FFD48A;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">DAVE</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;white-space:nowrap">Dave K</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#111A26;border:1px solid #223146;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#20343E;color:#A8E4D8;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">ST</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">SOPH</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;white-space:nowrap">Soph T</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:transparent;border:1px dashed #2A3B4E;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;border:1px dashed #3A4E63;color:#5E7485;font:700 10px 'Oxanium',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">J</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'Martian Mono',monospace;color:#5E7485">JEN</span><span style="font:700 11px 'Atkinson Hyperlegible',sans-serif;color:#8FA5B4;white-space:nowrap">Guest</span></div></div>
+        </div>
+      </div>
+      <div style="padding:16px 16px 0;flex:1;display:flex;flex-direction:column;gap:10px;min-height:0">
+        <sc-for list="{{ players }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:baseline;gap:8px">
+              <span style="font:700 12px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.05em">{{ p.name }}</span>
+              <span style="margin-left:auto;font:600 15px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+            </div>
+            <div style="display:flex;gap:2px">
+              <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+                <div style="flex:1;position:relative;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                  <div style="display:flex;height:17px;border-bottom:1px solid #1B2A3B">
+                    <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.a }}</span>
+                    <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ f.b }}</span>
+                  </div>
+                  <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+                  <sc-if value="{{ f.amber }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;inset:0;border:2px solid #FFAE2B;border-radius:4px;background:rgba(255,174,43,.14);box-shadow:0 0 10px rgba(255,174,43,.35)"></div>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <div style="flex:1.7;background:#0D1520;border:1px solid #223146;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:17px;border-bottom:1px solid #1B2A3B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ p.tenth.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ p.tenth.b }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #1B2A3B;font:600 9px 'Oxanium',sans-serif;color:#BFE9FF;text-shadow:0 0 6px rgba(150,220,255,.4)">{{ p.tenth.c }}</span>
+                </div>
+                <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'Martian Mono',monospace;color:#E9F1F6;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(255,174,43,.08);border:1px solid rgba(255,174,43,.35);border-radius:10px;padding:10px 12px">
+          <div style="width:8px;height:8px;border-radius:50%;background:#FFAE2B;box-shadow:0 0 8px rgba(255,174,43,.6);flex:none"></div>
+          <span style="font:400 12.5px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;line-height:1.35">Frame 6 of Matt&rsquo;s doesn&rsquo;t add up — tap it to fix</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px 26px;flex:none">
+        <div style="height:52px;border-radius:12px;background:#FFAE2B;box-shadow:0 0 24px rgba(255,174,43,.35);display:flex;align-items:center;justify-content:center"><span style="font:800 15px 'Oxanium',sans-serif;color:#0A0E14;letter-spacing:.06em">Confirm scorecard</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- feed card -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">FEED CARD</span>
+    <div style="width:390px;background:#111A26;border:1px solid #223146;border-radius:16px;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:1px"><span style="font:700 14px 'Oxanium',sans-serif;color:#E9F1F6;letter-spacing:.03em">Thursday Pin Club</span><span style="font:400 11.5px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">Hollywood Bowl, Watford · Fri</span></div>
+        <span style="margin-left:auto;font:700 9.5px 'Oxanium',sans-serif;letter-spacing:.1em;color:#0A0E14;background:#FFAE2B;border-radius:4px;padding:3px 7px;box-shadow:0 0 10px rgba(255,174,43,.35)">✓ VERIFIED</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font:800 26px 'Oxanium',sans-serif;color:#FFAE2B;text-shadow:0 0 12px rgba(255,174,43,.4)">Dave K · <span style="font-family:'Martian Mono',monospace;font-weight:700;font-size:24px;font-variant-numeric:tabular-nums">213</span></span>
+        <span style="font:700 9.5px 'Oxanium',sans-serif;letter-spacing:.1em;color:#FFAE2B;border:1px solid rgba(255,174,43,.5);border-radius:4px;padding:2px 6px">NEW PB</span>
+        <span style="font:700 9.5px 'Oxanium',sans-serif;letter-spacing:.1em;color:#FFAE2B;border:1px solid rgba(255,174,43,.5);border-radius:4px;padding:2px 6px">200 CLUB</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <span style="font:600 11px 'Martian Mono',monospace;color:#8FA5B4;background:#0D1520;border:1px solid #223146;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Matt 169</span>
+        <span style="font:600 11px 'Martian Mono',monospace;color:#8FA5B4;background:#0D1520;border:1px solid #223146;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Jen 141</span>
+        <span style="font:600 11px 'Martian Mono',monospace;color:#8FA5B4;background:#0D1520;border:1px solid #223146;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Soph 125</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:4px 9px">🔥 4</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:4px 9px">💀 2</span>
+        <span style="font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#E9F1F6;background:#0D1520;border:1px solid #223146;border-radius:12px;padding:4px 9px">🎳 1</span>
+        <span style="margin-left:auto;font:400 12px 'Atkinson Hyperlegible',sans-serif;color:#5E7485">3 comments</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ 1b LACQUER & STRIPE ============ -->
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Lacquer &amp; stripe — lane wood, pin gloss, the red neck-band. Signature: the double pin-stripe, worn as the verification stamp.</div>
+<div class="dv-card" style="width:442px;padding:26px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+
+  <!-- wordmark -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">WORDMARK · PURE TYPE, SWAPS CLEANLY</span>
+    <div style="background:#201510;border-radius:10px;padding:28px 24px;display:flex;flex-direction:column;gap:8px">
+      <span style="font-family:'Bungee',sans-serif;font-size:32px;color:#F4EBDC;line-height:1">10 PINS</span>
+      <div style="display:flex;flex-direction:column;gap:3px;width:148px"><div style="height:5px;background:#D8452E;border-radius:2px"></div><div style="height:2px;background:#D8452E;border-radius:2px"></div></div>
+    </div>
+  </div>
+
+  <!-- tokens -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">PALETTE</span>
+    <div style="display:flex;gap:6px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#201510"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">espresso #201510</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#2A1C12"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">walnut #2A1C12</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#F4EBDC"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">pin gloss #F4EBDC</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#C9884A"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">maple #C9884A</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#D8452E"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">stripe #D8452E</span></div>
+    </div>
+  </div>
+
+  <!-- type + glyphs + badges -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">TYPE · GLYPHS · BADGES</span>
+    <div style="background:#201510;border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:'Bungee',sans-serif;font-size:19px;color:#F4EBDC">That&rsquo;s a turkey — Bungee</span>
+        <span style="font-family:'Karla',sans-serif;font-size:13.5px;color:#B49A80;line-height:1.5">Dave took the last frame off Matt by four pins. Body is Karla — warm, plain, confident.</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;color:#F4EBDC;font-variant-numeric:tabular-nums">213&nbsp;&nbsp;169&nbsp;&nbsp;141&nbsp;&nbsp;125 · IBM Plex Mono, tabular</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;background:#2A1C12;border:1px solid #4A3423;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Bungee',sans-serif;font-size:24px;color:#D8452E">X</span><span style="font:600 8.5px 'IBM Plex Mono',monospace;color:#8A6F58;letter-spacing:.1em">STRIKE</span></div>
+        <div style="flex:1;background:#2A1C12;border:1px solid #4A3423;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Bungee',sans-serif;font-size:24px;color:#D8452E">/</span><span style="font:600 8.5px 'IBM Plex Mono',monospace;color:#8A6F58;letter-spacing:.1em">SPARE</span></div>
+        <div style="flex:1;background:#2A1C12;border:1px solid #4A3423;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Bungee',sans-serif;font-size:24px;color:#8A6F58">–</span><span style="font:600 8.5px 'IBM Plex Mono',monospace;color:#8A6F58;letter-spacing:.1em">MISS</span></div>
+        <div style="flex:1;background:#2A1C12;border:1px solid #4A3423;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Bungee',sans-serif;font-size:24px;color:#C9884A">F</span><span style="font:600 8.5px 'IBM Plex Mono',monospace;color:#8A6F58;letter-spacing:.1em">FOUL</span></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:5px;font-family:'Karla',sans-serif;font-weight:800;font-size:10.5px;letter-spacing:.08em;color:#F4EBDC;background:#D8452E;border-radius:999px;padding:4px 10px;box-shadow:inset 0 0 0 2px #201510, inset 0 0 0 3.5px #F4EBDC">✓ VERIFIED</span>
+        <span style="font-family:'Karla',sans-serif;font-weight:800;font-size:10.5px;letter-spacing:.08em;color:#C9884A;border:1px solid #4A3423;border-radius:999px;padding:4px 10px">LIVE-SCORED</span>
+        <span style="font-family:'Karla',sans-serif;font-weight:800;font-size:10.5px;letter-spacing:.08em;color:#8A6F58;border:1px dashed #4A3423;border-radius:999px;padding:4px 10px">UNVERIFIED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- phone: capture review, clean fast path -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">CAPTURE REVIEW · CLEAN-SCAN FAST PATH</span>
+    <div data-screen-label="1b capture review" style="width:390px;height:844px;background:#201510;border-radius:40px;border:1px solid rgba(0,0,0,.25);box-shadow:0 12px 32px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box">
+      <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:700 13px 'Karla',sans-serif;color:#F4EBDC">21:47</span><span style="font:600 10px 'IBM Plex Mono',monospace;color:#8A6F58">5G ▮▮▮</span></div>
+      <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+        <span style="font:400 22px 'Karla',sans-serif;color:#B49A80;width:24px">‹</span>
+        <span style="font-family:'Bungee',sans-serif;font-size:15px;color:#F4EBDC">Check the scorecard</span>
+        <span style="margin-left:auto;font:700 13px 'Karla',sans-serif;color:#D8452E">Retake</span>
+      </div>
+      <div style="padding:8px 16px 0;flex:none">
+        <div style="height:112px;border-radius:12px;border:1px solid #4A3423;background:linear-gradient(180deg,#2E2013 0%,#150D08 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(201,136,74,.06) 0px,rgba(201,136,74,.06) 22px,transparent 22px,transparent 24px)"></div>
+          <span style="font:600 10px 'IBM Plex Mono',monospace;color:#8A6F58;letter-spacing:.12em">LANE 12 MONITOR · PINCH TO ZOOM</span>
+        </div>
+      </div>
+      <div style="padding:14px 16px 0;flex:none;display:flex;flex-direction:column;gap:8px">
+        <span style="font:600 10px 'IBM Plex Mono',monospace;color:#8A6F58;letter-spacing:.12em">PLAYERS</span>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#2A1C12;border:1px solid #4A3423;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#C9884A;color:#201510;font:800 10px 'Karla',sans-serif;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:inset 0 0 0 1.5px #201510, inset 0 0 0 3px #D8452E">MB</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'IBM Plex Mono',monospace;color:#8A6F58">MATT</span><span style="font:700 11px 'Karla',sans-serif;color:#F4EBDC;white-space:nowrap">Matt B</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#2A1C12;border:1px solid #4A3423;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#D8452E;color:#F4EBDC;font:800 10px 'Karla',sans-serif;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:inset 0 0 0 1.5px #201510, inset 0 0 0 3px #F4EBDC">DK</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'IBM Plex Mono',monospace;color:#8A6F58">DAVE</span><span style="font:700 11px 'Karla',sans-serif;color:#F4EBDC;white-space:nowrap">Dave K</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#2A1C12;border:1px solid #4A3423;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#F4EBDC;color:#201510;font:800 10px 'Karla',sans-serif;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:inset 0 0 0 1.5px #201510, inset 0 0 0 3px #C9884A">ST</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'IBM Plex Mono',monospace;color:#8A6F58">SOPH</span><span style="font:700 11px 'Karla',sans-serif;color:#F4EBDC;white-space:nowrap">Soph T</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:transparent;border:1px dashed #4A3423;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;border:1px dashed #8A6F58;color:#8A6F58;font:800 10px 'Karla',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">J</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:500 8px 'IBM Plex Mono',monospace;color:#8A6F58">JEN</span><span style="font:700 11px 'Karla',sans-serif;color:#B49A80;white-space:nowrap">Guest</span></div></div>
+        </div>
+      </div>
+      <div style="padding:16px 16px 0;flex:1;display:flex;flex-direction:column;gap:10px;min-height:0">
+        <sc-for list="{{ players }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:baseline;gap:8px">
+              <span style="font:800 12px 'Karla',sans-serif;color:#F4EBDC;letter-spacing:.05em">{{ p.name }}</span>
+              <span style="margin-left:auto;font:600 15px 'IBM Plex Mono',monospace;color:#F4EBDC;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+            </div>
+            <div style="display:flex;gap:2px">
+              <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+                <div style="flex:1;background:#2A1C12;border:1px solid #4A3423;border-radius:4px;overflow:hidden">
+                  <div style="display:flex;height:17px;border-bottom:1px solid #3C2A1B">
+                    <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'IBM Plex Mono',monospace;color:#D8452E">{{ f.a }}</span>
+                    <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #3C2A1B;font:600 9px 'IBM Plex Mono',monospace;color:#D8452E">{{ f.b }}</span>
+                  </div>
+                  <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#F4EBDC;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+                </div>
+              </sc-for>
+              <div style="flex:1.7;background:#2A1C12;border:1px solid #4A3423;border-radius:4px;overflow:hidden">
+                <div style="display:flex;height:17px;border-bottom:1px solid #3C2A1B">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font:600 9px 'IBM Plex Mono',monospace;color:#D8452E">{{ p.tenth.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #3C2A1B;font:600 9px 'IBM Plex Mono',monospace;color:#D8452E">{{ p.tenth.b }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #3C2A1B;font:600 9px 'IBM Plex Mono',monospace;color:#D8452E">{{ p.tenth.c }}</span>
+                </div>
+                <div style="height:19px;display:flex;align-items:center;justify-content:center;font:600 10px 'IBM Plex Mono',monospace;color:#F4EBDC;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:8px">
+          <span style="font-family:'Bungee',sans-serif;font-size:18px;color:#F4EBDC">Looks right?</span>
+          <span style="font:400 12.5px 'Karla',sans-serif;color:#B49A80">Everything adds up — nice scan.</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px 26px;flex:none;display:flex;flex-direction:column;gap:10px">
+        <div style="height:52px;border-radius:12px;background:#D8452E;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 2px #201510, inset 0 0 0 4px rgba(244,235,220,.55)"><span style="font:800 15px 'Karla',sans-serif;color:#F4EBDC;letter-spacing:.04em">Confirm scorecard</span></div>
+        <span style="text-align:center;font:600 12px 'Karla',sans-serif;color:#8A6F58">Something&rsquo;s off? Tap a frame to edit it</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- feed card -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">FEED CARD</span>
+    <div style="width:390px;background:#2A1C12;border:1px solid #4A3423;border-radius:16px;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:1px"><span style="font-family:'Bungee',sans-serif;font-size:12px;color:#F4EBDC">Thursday Pin Club</span><span style="font:400 11.5px 'Karla',sans-serif;color:#8A6F58">Hollywood Bowl, Watford · Fri</span></div>
+        <span style="margin-left:auto;display:inline-flex;align-items:center;gap:4px;font:800 9.5px 'Karla',sans-serif;letter-spacing:.08em;color:#F4EBDC;background:#D8452E;border-radius:999px;padding:3px 8px;box-shadow:inset 0 0 0 1.5px #2A1C12, inset 0 0 0 3px #F4EBDC">✓ VERIFIED</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font-family:'Bungee',sans-serif;font-size:20px;color:#F4EBDC">Dave K · <span style="color:#D8452E">213</span></span>
+        <span style="font:800 9.5px 'Karla',sans-serif;letter-spacing:.1em;color:#C9884A;border:1px solid #4A3423;border-radius:999px;padding:2px 7px">NEW PB</span>
+        <span style="font:800 9.5px 'Karla',sans-serif;letter-spacing:.1em;color:#C9884A;border:1px solid #4A3423;border-radius:999px;padding:2px 7px">200 CLUB</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <span style="font:600 11px 'IBM Plex Mono',monospace;color:#B49A80;background:#201510;border:1px solid #4A3423;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Matt 169</span>
+        <span style="font:600 11px 'IBM Plex Mono',monospace;color:#B49A80;background:#201510;border:1px solid #4A3423;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Jen 141</span>
+        <span style="font:600 11px 'IBM Plex Mono',monospace;color:#B49A80;background:#201510;border:1px solid #4A3423;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Soph 125</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font:400 12px 'Karla',sans-serif;color:#F4EBDC;background:#201510;border:1px solid #4A3423;border-radius:12px;padding:4px 9px">🔥 4</span>
+        <span style="font:400 12px 'Karla',sans-serif;color:#F4EBDC;background:#201510;border:1px solid #4A3423;border-radius:12px;padding:4px 9px">💀 2</span>
+        <span style="font:400 12px 'Karla',sans-serif;color:#F4EBDC;background:#201510;border:1px solid #4A3423;border-radius:12px;padding:4px 9px">🎳 1</span>
+        <span style="margin-left:auto;font:400 12px 'Karla',sans-serif;color:#8A6F58">3 comments</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ 1c GREASE PENCIL ============ -->
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Grease pencil — the hand-marked paper scorecard, dark. Signature: marker-scrawled X and / over a printed grid.</div>
+<div class="dv-card" style="width:442px;padding:26px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box">
+
+  <!-- wordmark -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">WORDMARK · PURE TYPE, SWAPS CLEANLY</span>
+    <div style="background:#15161B;border-radius:10px;padding:28px 24px;display:flex;align-items:baseline;gap:10px">
+      <span style="font-family:'Alfa Slab One',serif;font-size:32px;color:#ECEBE3;line-height:1">10 Pins</span>
+      <span style="font-family:'Permanent Marker',cursive;font-size:30px;color:#F2C230;transform:rotate(-6deg);display:inline-block;line-height:1">X</span>
+    </div>
+  </div>
+
+  <!-- tokens -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">PALETTE</span>
+    <div style="display:flex;gap:6px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#15161B"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">slate #15161B</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#1D1F26"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">board #1D1F26</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#ECEBE3"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">chalk #ECEBE3</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#F2C230"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">wax #F2C230</span></div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div style="height:44px;border-radius:6px;background:#E4573D"></div><span style="font:500 9px ui-monospace,monospace;color:rgba(0,0,0,.55)">pencil #E4573D</span></div>
+    </div>
+  </div>
+
+  <!-- type + glyphs + badges -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">TYPE · GLYPHS · BADGES</span>
+    <div style="background:#15161B;border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:'Alfa Slab One',serif;font-size:20px;color:#ECEBE3">That&rsquo;s a turkey — Alfa Slab</span>
+        <span style="font-family:'Libre Franklin',sans-serif;font-size:13px;color:#9A9A8F;line-height:1.5">Dave took the last frame off Matt by four pins. Body is Libre Franklin — the printed form the marks sit on.</span>
+        <span style="font-family:'Courier Prime',monospace;font-weight:700;font-size:15px;color:#ECEBE3;font-variant-numeric:tabular-nums">213&nbsp;&nbsp;169&nbsp;&nbsp;141&nbsp;&nbsp;125 · Courier Prime, tabular</span>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;background:#1D1F26;border:1px solid #3C404B;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Permanent Marker',cursive;font-size:26px;color:#F2C230;transform:rotate(-4deg)">X</span><span style="font:600 8.5px 'Courier Prime',monospace;color:#6E7076;letter-spacing:.1em">STRIKE</span></div>
+        <div style="flex:1;background:#1D1F26;border:1px solid #3C404B;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Permanent Marker',cursive;font-size:26px;color:#F2C230;transform:rotate(3deg)">/</span><span style="font:600 8.5px 'Courier Prime',monospace;color:#6E7076;letter-spacing:.1em">SPARE</span></div>
+        <div style="flex:1;background:#1D1F26;border:1px solid #3C404B;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Permanent Marker',cursive;font-size:26px;color:#6E7076">–</span><span style="font:600 8.5px 'Courier Prime',monospace;color:#6E7076;letter-spacing:.1em">MISS</span></div>
+        <div style="flex:1;background:#1D1F26;border:1px solid #3C404B;border-radius:8px;padding:10px 0;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Permanent Marker',cursive;font-size:26px;color:#E4573D">F</span><span style="font:600 8.5px 'Courier Prime',monospace;color:#6E7076;letter-spacing:.1em">FOUL</span></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="font-family:'Permanent Marker',cursive;font-size:12px;color:#F2C230;border:2px solid #F2C230;border-radius:6px;padding:2px 9px;transform:rotate(-2deg);display:inline-block">✓ verified</span>
+        <span style="font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:10.5px;letter-spacing:.08em;color:#9A9A8F;border:1px solid #3C404B;border-radius:4px;padding:4px 9px">LIVE-SCORED</span>
+        <span style="font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:10.5px;letter-spacing:.08em;color:#6E7076;border:1px dashed #3C404B;border-radius:4px;padding:4px 9px">UNVERIFIED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- phone: capture review, clean fast path -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">CAPTURE REVIEW · CLEAN-SCAN FAST PATH</span>
+    <div data-screen-label="1c capture review" style="width:390px;height:844px;background:#15161B;border-radius:40px;border:1px solid rgba(0,0,0,.25);box-shadow:0 12px 32px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box">
+      <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex:none"><span style="font:600 13px 'Libre Franklin',sans-serif;color:#ECEBE3">21:47</span><span style="font:600 10px 'Courier Prime',monospace;color:#6E7076">5G ▮▮▮</span></div>
+      <div style="height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;flex:none">
+        <span style="font:400 22px 'Libre Franklin',sans-serif;color:#9A9A8F;width:24px">‹</span>
+        <span style="font-family:'Alfa Slab One',serif;font-size:16px;color:#ECEBE3">Check the scorecard</span>
+        <span style="margin-left:auto;font:700 13px 'Libre Franklin',sans-serif;color:#F2C230">Retake</span>
+      </div>
+      <div style="padding:8px 16px 0;flex:none">
+        <div style="height:112px;border-radius:12px;border:1px solid #3C404B;background:linear-gradient(180deg,#22242C 0%,#0E0F13 100%);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(236,235,227,.045) 0px,rgba(236,235,227,.045) 1px,transparent 1px,transparent 12px), repeating-linear-gradient(90deg,rgba(236,235,227,.045) 0px,rgba(236,235,227,.045) 1px,transparent 1px,transparent 12px)"></div>
+          <span style="font:600 10px 'Courier Prime',monospace;color:#6E7076;letter-spacing:.12em">LANE 12 MONITOR · PINCH TO ZOOM</span>
+        </div>
+      </div>
+      <div style="padding:14px 16px 0;flex:none;display:flex;flex-direction:column;gap:8px">
+        <span style="font:600 10px 'Courier Prime',monospace;color:#6E7076;letter-spacing:.12em">PLAYERS</span>
+        <div style="display:flex;gap:8px">
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#1D1F26;border:1px solid #3C404B;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#2E3140;color:#ECEBE3;font:700 10px 'Libre Franklin',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">MB</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:600 8px 'Courier Prime',monospace;color:#6E7076">MATT</span><span style="font:700 11px 'Libre Franklin',sans-serif;color:#ECEBE3;white-space:nowrap">Matt B</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#1D1F26;border:1px solid #3C404B;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#4A3D1A;color:#F2C230;font:700 10px 'Libre Franklin',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">DK</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:600 8px 'Courier Prime',monospace;color:#6E7076">DAVE</span><span style="font:700 11px 'Libre Franklin',sans-serif;color:#ECEBE3;white-space:nowrap">Dave K</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:#1D1F26;border:1px solid #3C404B;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;background:#3A2C28;color:#E4573D;font:700 10px 'Libre Franklin',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">ST</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:600 8px 'Courier Prime',monospace;color:#6E7076">SOPH</span><span style="font:700 11px 'Libre Franklin',sans-serif;color:#ECEBE3;white-space:nowrap">Soph T</span></div></div>
+          <div style="flex:1;display:flex;align-items:center;gap:7px;background:transparent;border:1px dashed #3C404B;border-radius:10px;padding:7px 8px"><div style="width:26px;height:26px;border-radius:50%;border:1px dashed #6E7076;color:#6E7076;font:700 10px 'Libre Franklin',sans-serif;display:flex;align-items:center;justify-content:center;flex:none">J</div><div style="display:flex;flex-direction:column;min-width:0"><span style="font:600 8px 'Courier Prime',monospace;color:#6E7076">JEN</span><span style="font:700 11px 'Libre Franklin',sans-serif;color:#9A9A8F;white-space:nowrap">Guest</span></div></div>
+        </div>
+      </div>
+      <div style="padding:16px 16px 0;flex:1;display:flex;flex-direction:column;gap:10px;min-height:0">
+        <sc-for list="{{ players }}" as="p" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="display:flex;align-items:baseline;gap:8px">
+              <span style="font:700 12px 'Libre Franklin',sans-serif;color:#ECEBE3;letter-spacing:.05em">{{ p.name }}</span>
+              <span style="margin-left:auto;font:700 15px 'Courier Prime',monospace;color:#ECEBE3;font-variant-numeric:tabular-nums">{{ p.total }}</span>
+            </div>
+            <div style="display:flex;gap:2px">
+              <sc-for list="{{ p.first9 }}" as="f" hint-placeholder-count="9">
+                <div style="flex:1;background:#1D1F26;border:1px solid #3C404B;border-radius:2px;overflow:hidden">
+                  <div style="display:flex;height:17px;border-bottom:1px solid #33363F">
+                    <span style="flex:1;display:flex;align-items:center;justify-content:center;font-family:'Permanent Marker',cursive;font-size:10px;color:#F2C230;transform:rotate(-3deg)">{{ f.a }}</span>
+                    <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #33363F;font-family:'Permanent Marker',cursive;font-size:10px;color:#F2C230;transform:rotate(2deg)">{{ f.b }}</span>
+                  </div>
+                  <div style="height:19px;display:flex;align-items:center;justify-content:center;font:700 10px 'Courier Prime',monospace;color:#ECEBE3;font-variant-numeric:tabular-nums">{{ f.t }}</div>
+                </div>
+              </sc-for>
+              <div style="flex:1.7;background:#1D1F26;border:1px solid #3C404B;border-radius:2px;overflow:hidden">
+                <div style="display:flex;height:17px;border-bottom:1px solid #33363F">
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;font-family:'Permanent Marker',cursive;font-size:10px;color:#F2C230;transform:rotate(-3deg)">{{ p.tenth.a }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #33363F;font-family:'Permanent Marker',cursive;font-size:10px;color:#F2C230;transform:rotate(2deg)">{{ p.tenth.b }}</span>
+                  <span style="flex:1;display:flex;align-items:center;justify-content:center;border-left:1px solid #33363F;font-family:'Permanent Marker',cursive;font-size:10px;color:#F2C230;transform:rotate(-2deg)">{{ p.tenth.c }}</span>
+                </div>
+                <div style="height:19px;display:flex;align-items:center;justify-content:center;font:700 10px 'Courier Prime',monospace;color:#ECEBE3;font-variant-numeric:tabular-nums">{{ p.tenth.t }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:8px">
+          <span style="font-family:'Alfa Slab One',serif;font-size:18px;color:#ECEBE3">Looks right?</span>
+          <span style="font:400 12.5px 'Libre Franklin',sans-serif;color:#9A9A8F">Everything adds up — nice scan.</span>
+        </div>
+      </div>
+      <div style="padding:12px 16px 26px;flex:none;display:flex;flex-direction:column;gap:10px">
+        <div style="height:52px;border-radius:10px;background:#F2C230;display:flex;align-items:center;justify-content:center"><span style="font:700 15px 'Libre Franklin',sans-serif;color:#15161B">Confirm scorecard</span></div>
+        <span style="text-align:center;font:600 12px 'Libre Franklin',sans-serif;color:#6E7076">Something&rsquo;s off? Tap a frame to edit it</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- feed card -->
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font:600 9px ui-monospace,Menlo,monospace;letter-spacing:.08em;color:rgba(0,0,0,.4)">FEED CARD</span>
+    <div style="width:390px;background:#1D1F26;border:1px solid #3C404B;border-radius:14px;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:1px"><span style="font-family:'Alfa Slab One',serif;font-size:13px;color:#ECEBE3">Thursday Pin Club</span><span style="font:400 11.5px 'Libre Franklin',sans-serif;color:#6E7076">Hollywood Bowl, Watford · Fri</span></div>
+        <span style="margin-left:auto;font-family:'Permanent Marker',cursive;font-size:11px;color:#F2C230;border:2px solid #F2C230;border-radius:6px;padding:1px 8px;transform:rotate(-2deg)">✓ verified</span>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font-family:'Alfa Slab One',serif;font-size:20px;color:#ECEBE3">Dave K · <span style="color:#F2C230">213</span></span>
+        <span style="font:600 9.5px 'Libre Franklin',sans-serif;letter-spacing:.1em;color:#9A9A8F;border:1px solid #3C404B;border-radius:4px;padding:2px 7px">NEW PB</span>
+        <span style="font:600 9.5px 'Libre Franklin',sans-serif;letter-spacing:.1em;color:#9A9A8F;border:1px solid #3C404B;border-radius:4px;padding:2px 7px">200 CLUB</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <span style="font:700 11px 'Courier Prime',monospace;color:#9A9A8F;background:#15161B;border:1px solid #3C404B;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Matt 169</span>
+        <span style="font:700 11px 'Courier Prime',monospace;color:#9A9A8F;background:#15161B;border:1px solid #3C404B;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Jen 141</span>
+        <span style="font:700 11px 'Courier Prime',monospace;color:#9A9A8F;background:#15161B;border:1px solid #3C404B;border-radius:14px;padding:5px 10px;font-variant-numeric:tabular-nums">Soph 125</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font:400 12px 'Libre Franklin',sans-serif;color:#ECEBE3;background:#15161B;border:1px solid #3C404B;border-radius:12px;padding:4px 9px">🔥 4</span>
+        <span style="font:400 12px 'Libre Franklin',sans-serif;color:#ECEBE3;background:#15161B;border:1px solid #3C404B;border-radius:12px;padding:4px 9px">💀 2</span>
+        <span style="font:400 12px 'Libre Franklin',sans-serif;color:#ECEBE3;background:#15161B;border:1px solid #3C404B;border-radius:12px;padding:4px 9px">🎳 1</span>
+        <span style="margin-left:auto;font:400 12px 'Libre Franklin',sans-serif;color:#6E7076">3 comments</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: &ldquo;go with <a class="dv-oid" href="#1a">1a</a>, build the token sheet and hero screens&rdquo; · &ldquo;mix <a class="dv-oid" href="#1b">1b</a>&rsquo;s stripe stamp into <a class="dv-oid" href="#1a">1a</a>&rdquo; · &ldquo;new directions&rdquo;</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const F = (a, b, t, amber) => ({ a, b, t, amber: !!amber });
+    const T = (a, b, c, t) => ({ a, b, c, t });
+    const players = [
+      {
+        name: 'MATT', total: 169,
+        first9: [F('9','/',20), F('','X',38), F('8','\u2013',46), F('','X',73), F('','X',92), F('7','2',101,true), F('9','/',121), F('','X',140), F('8','1',149)],
+        tenth: T('X','9','/',169)
+      },
+      {
+        name: 'DAVE', total: 213,
+        first9: [F('','X',30), F('','X',59), F('','X',78), F('9','\u2013',87), F('8','/',107), F('','X',127), F('7','/',146), F('9','\u2013',155), F('','X',185)],
+        tenth: T('X','X','8',213)
+      },
+      {
+        name: 'SOPH', total: 125,
+        first9: [F('7','2',9), F('9','/',27), F('8','1',36), F('\u2013','6',42), F('','X',61), F('7','2',70), F('8','/',89), F('9','\u2013',98), F('6','3',107)],
+        tenth: T('7','/','8',125)
+      },
+      {
+        name: 'JEN (guest)', total: 141,
+        first9: [F('8','\u2013',8), F('7','/',28), F('','X',48), F('9','/',58), F('\u2013','7',65), F('8','1',74), F('','X',93), F('7','2',102), F('9','/',122)],
+        tenth: T('X','7','2',141)
+      }
+    ];
+    return { players };
+  }
+}
+</script>
+</body>
+</html>
