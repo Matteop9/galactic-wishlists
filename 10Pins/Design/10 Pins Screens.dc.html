@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; background: #E9E4D8; font-family: "Source Sans 3", sans-serif; color: #201E1A; }
+a { color: #2C4E9E; } a:hover { color: #B3372B; }
+</style>
+</helmet>
+<section id="1a" data-screen-label="Feed and groups" style="padding: 48px 40px 12px; display: flex; flex-direction: column; gap: 20px">
+  <div style="display: flex; align-items: baseline; gap: 14px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 26px">10 PINS · SCREENS</div><div style="font-size: 14px; color: #5C574C">390×844, light default. Feed and groups.</div></div>
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">01 · Home, empty</div>
+      <div data-screen-label="Home empty" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">10 PINS</div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.5a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4s2-1.5 2-6.5"></path><path d="M10 19a2.2 2.2 0 0 0 4 0"></path></svg></div>
+        <div style="display: flex; gap: 8px; padding: 12px 20px 4px">
+          <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #201E1A; border-radius: 6px; background: #201E1A; color: #F7F3EA">All</div>
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">Bowling Ballers</div>
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">JHH</div>
+        </div>
+        <div style="padding: 40px 20px; display: flex; flex-direction: column; gap: 12px">
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; align-items: baseline; gap: 10px; padding: 10px 14px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px; color: #5C574C">No games this season</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px; color: #5C574C">···</div></div>
+            <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+              <sc-for list="{{ eF }}" as="f" hint-placeholder-count="10">
+                <div style="border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column">
+                  <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="height: 18px; width: 15px"></div><div style="height: 18px; width: 15px; border-left: 1px solid rgba(32,30,26,0.18)"></div></div>
+                  <div style="font-family: Oswald, sans-serif; font-size: 14px; text-align: center; padding: 5px 0; color: #5C574C">–</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display: flex; gap: 10px; padding: 14px; border-top: 1px solid rgba(32,30,26,0.18)">
+              <div style="flex: 1; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 600; background: #201E1A; color: #F7F3EA; border-radius: 6px">Scan a scoreboard</div>
+              <div style="flex: 1; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 600; border: 1px solid #201E1A; border-radius: 6px">Type the totals</div>
+            </div>
+          </div>
+          <div style="font-size: 13px; color: #5C574C; text-align: center">Games from your groups land on this feed.</div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px; font-weight: 600">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">02 · Home, populated</div>
+      <div data-screen-label="Home populated" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">10 PINS</div><div style="position: relative"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.5a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4s2-1.5 2-6.5"></path><path d="M10 19a2.2 2.2 0 0 0 4 0"></path></svg><div style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 999px; background: #B3372B"></div></div></div>
+        <div style="display: flex; gap: 8px; padding: 12px 20px 4px">
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">All</div>
+          <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #201E1A; border-radius: 6px; background: #201E1A; color: #F7F3EA">Bowling Ballers</div>
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">JHH</div>
+        </div>
+        <div style="padding: 12px 16px; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+              <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Matteo</div><div style="font-size: 12px; color: #5C574C">Jersey Bowl · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums; color: #B3372B">203</div></div>
+              <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+                <sc-for list="{{ mF }}" as="f" hint-placeholder-count="10">
+                  <div style="border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column">
+                    <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(32,30,26,0.18); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                    <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div style="font-weight: 600; color: #B3372B">New high game</div><div>3 nice ones</div><div>2 comments</div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+              <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Dan</div><div style="font-size: 12px; color: #5C574C">Quick add, totals only · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">158</div></div>
+            </div>
+            <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div>1 nice one</div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+              <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Sam</div><div style="font-size: 12px; color: #5C574C">Jersey Bowl · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">166</div></div>
+              <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+                <sc-for list="{{ sF }}" as="f" hint-placeholder-count="10">
+                  <div style="border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column">
+                    <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(32,30,26,0.18); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                    <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div>2 nice ones</div><div>1 comment</div></div>
+          </div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px; font-weight: 600">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">03 · Feed post</div>
+      <div data-screen-label="Feed post" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 20px 4px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">Matteo at Jersey Bowl</div></div>
+        <div style="padding: 12px 16px; display: flex; flex-direction: column; gap: 14px">
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; align-items: baseline; gap: 8px; padding: 10px 12px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Game 2 of 3</div><div style="font-size: 12px; color: #5C574C">Sat 30 Aug, 8.42pm</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; font-variant-numeric: tabular-nums; color: #B3372B">203</div></div>
+            <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+              <sc-for list="{{ mF }}" as="f" hint-placeholder-count="10">
+                <div style="border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column">
+                  <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(32,30,26,0.18); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                  <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display: flex; gap: 16px; padding: 9px 12px; border-top: 1px solid rgba(32,30,26,0.18); font-size: 12px; color: #5C574C"><div><span style="color: #B3372B; font-weight: 600">5 strikes</span></div><div><span style="color: #2C4E9E; font-weight: 600">2 spares</span></div><div>Scanned from photo</div></div>
+          </div>
+          <div style="display: flex; gap: 10px">
+            <div style="padding: 8px 14px; font-size: 13px; font-weight: 600; border: 1px solid #201E1A; border-radius: 6px">Nice one · 3</div>
+            <div style="padding: 8px 14px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">Comment</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; padding-top: 4px">
+            <div style="display: flex; gap: 10px"><div style="width: 32px; height: 32px; border-radius: 999px; background: #201E1A; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 13px; flex-shrink: 0">D</div><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-size: 13px"><span style="font-weight: 600">Dan</span> <span style="color: #5C574C">8.51pm</span></div><div style="font-size: 14px">Four in a row and you still left the ten pin on the ninth.</div></div></div>
+            <div style="display: flex; gap: 10px"><div style="width: 32px; height: 32px; border-radius: 999px; background: #2C4E9E; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 13px; flex-shrink: 0">S</div><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-size: 13px"><span style="font-weight: 600">Sam</span> <span style="color: #5C574C">9.03pm</span></div><div style="font-size: 14px">New season high. Drinks are on you.</div></div></div>
+          </div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 16px; border-top: 1px solid rgba(32,30,26,0.18); display: flex; gap: 10px; align-items: center">
+          <div style="flex: 1; border: 1px solid rgba(32,30,26,0.4); border-radius: 2px; padding: 11px 12px; font-size: 14px; color: #5C574C; background: #FBF8F1">Say something</div>
+          <div style="padding: 11px 16px; font-size: 14px; font-weight: 600; background: #201E1A; color: #F7F3EA; border-radius: 6px">Send</div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">04 · Groups</div>
+      <div data-screen-label="Groups" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">Groups</div><div style="padding: 9px 16px; font-size: 13px; font-weight: 600; border: 1px solid #201E1A; border-radius: 6px">New group</div></div>
+        <div style="display: flex; flex-direction: column; padding: 0 16px; gap: 12px">
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px"><div style="display: flex"><div style="width: 34px; height: 34px; border-radius: 999px; background: #201E1A; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 14px; border: 2px solid #FBF8F1">M</div><div style="width: 34px; height: 34px; border-radius: 999px; background: #B3372B; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 14px; border: 2px solid #FBF8F1; margin-left: -10px">D</div><div style="width: 34px; height: 34px; border-radius: 999px; background: #2C4E9E; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 14px; border: 2px solid #FBF8F1; margin-left: -10px">S</div><div style="width: 34px; height: 34px; border-radius: 999px; background: #5C574C; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 12px; border: 2px solid #FBF8F1; margin-left: -10px">+2</div></div><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px">Bowling Ballers</div><div style="font-size: 13px; color: #5C574C">5 players · Autumn season</div></div><svg style="margin-left: auto" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid rgba(32,30,26,0.18)">
+              <div style="padding: 10px 14px; border-right: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">64</div><div style="font-size: 12px; color: #5C574C">Games</div></div>
+              <div style="padding: 10px 14px; border-right: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; color: #2C4E9E">144</div><div style="font-size: 12px; color: #5C574C">Group average</div></div>
+              <div style="padding: 10px 14px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; color: #B3372B">214</div><div style="font-size: 12px; color: #5C574C">High game</div></div>
+            </div>
+          </div>
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 14px"><div style="display: flex"><div style="width: 34px; height: 34px; border-radius: 999px; background: #201E1A; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 14px; border: 2px solid #FBF8F1">M</div><div style="width: 34px; height: 34px; border-radius: 999px; background: #5C574C; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 14px; border: 2px solid #FBF8F1; margin-left: -10px">J</div><div style="width: 34px; height: 34px; border-radius: 999px; background: #B3372B; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 14px; border: 2px solid #FBF8F1; margin-left: -10px">H</div></div><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px">JHH</div><div style="font-size: 13px; color: #5C574C">3 players · Autumn season</div></div><svg style="margin-left: auto" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid rgba(32,30,26,0.18)">
+              <div style="padding: 10px 14px; border-right: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">21</div><div style="font-size: 12px; color: #5C574C">Games</div></div>
+              <div style="padding: 10px 14px; border-right: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; color: #2C4E9E">128</div><div style="font-size: 12px; color: #5C574C">Group average</div></div>
+              <div style="padding: 10px 14px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums; color: #B3372B">187</div><div style="font-size: 12px; color: #5C574C">High game</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px; font-weight: 600">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="1b" data-screen-label="Boards and stats" style="padding: 24px 40px 12px; display: flex; flex-direction: column; gap: 20px">
+  <div style="font-size: 14px; color: #5C574C">Boards and stats</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">05 · Leaderboard</div>
+      <div data-screen-label="Leaderboard" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 20px 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg><div style="display: flex; flex-direction: column"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px">Bowling Ballers</div><div style="font-size: 13px; color: #5C574C">Autumn season · 5 players · 64 games</div></div></div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 6px">
+          <div style="display: flex; border: 1px solid #201E1A; border-radius: 2px; overflow: hidden; align-self: flex-start">
+            <div style="padding: 8px 18px; font-size: 13px; font-weight: 600; background: #201E1A; color: #F7F3EA">Season</div>
+            <div style="padding: 8px 18px; font-size: 13px; border-left: 1px solid #201E1A">30 days</div>
+            <div style="padding: 8px 18px; font-size: 13px; border-left: 1px solid #201E1A">All time</div>
+          </div>
+          <div style="display: flex; border: 1px solid rgba(32,30,26,0.4); border-radius: 2px; overflow: hidden; align-self: flex-start">
+            <div style="padding: 6px 16px; font-size: 12px; font-weight: 600; background: #201E1A; color: #F7F3EA">By average</div>
+            <div style="padding: 6px 16px; font-size: 12px; border-left: 1px solid rgba(32,30,26,0.4)">By high game</div>
+          </div>
+        </div>
+        <div style="margin: 8px 16px 0; border: 1.5px solid #201E1A; background: #FBF8F1">
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 9px 14px; font-size: 12px; color: #5C574C; border-bottom: 1px solid rgba(32,30,26,0.18)"><div>#</div><div>Player</div><div style="text-align: right">Games</div><div style="text-align: right">Average</div><div style="text-align: right">High</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">1</div><div style="font-weight: 600">Dan</div><div style="text-align: right; font-variant-numeric: tabular-nums">18</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #2C4E9E">152</div><div style="text-align: right; font-variant-numeric: tabular-nums">214</div></div>
+          <div style="display: grid; grid-template-columns: 31px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18); background: #EFEADD; border-left: 3px solid #201E1A"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">2</div><div style="font-weight: 600">Matteo <span style="font-weight: 400; color: #5C574C">you</span></div><div style="text-align: right; font-variant-numeric: tabular-nums">21</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #2C4E9E">147</div><div style="text-align: right; font-variant-numeric: tabular-nums">203</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">3</div><div style="font-weight: 600">Sam</div><div style="text-align: right; font-variant-numeric: tabular-nums">14</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #2C4E9E">139</div><div style="text-align: right; font-variant-numeric: tabular-nums">166</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">4</div><div style="font-weight: 600">Louis</div><div style="text-align: right; font-variant-numeric: tabular-nums">8</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #2C4E9E">121</div><div style="text-align: right; font-variant-numeric: tabular-nums">158</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">5</div><div style="font-weight: 600">Chris</div><div style="text-align: right; font-variant-numeric: tabular-nums">3</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #2C4E9E">104</div><div style="text-align: right; font-variant-numeric: tabular-nums">132</div></div>
+        </div>
+        <div style="padding: 10px 20px; font-size: 13px; color: #5C574C">Average needs 3 games this season to count.</div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px; font-weight: 600">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">06 · Stats, empty</div>
+      <div data-screen-label="Stats empty" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="padding: 10px 20px 12px; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">Your stats</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 0 20px">
+          <div style="border: 1.5px solid rgba(32,30,26,0.35); padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; line-height: 1; color: #5C574C">––</div><div style="font-size: 12px; color: #5C574C">Season average</div></div>
+          <div style="border: 1.5px solid rgba(32,30,26,0.35); padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; line-height: 1; color: #5C574C">––</div><div style="font-size: 12px; color: #5C574C">High game</div></div>
+          <div style="border: 1.5px solid rgba(32,30,26,0.35); padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; line-height: 1; color: #5C574C">0</div><div style="font-size: 12px; color: #5C574C">Games played</div></div>
+        </div>
+        <div style="margin: 14px 20px 0; border: 1.5px solid rgba(32,30,26,0.35); background: #FBF8F1; padding: 14px">
+          <div style="font-size: 13px; font-weight: 600; padding-bottom: 8px">Average over time</div>
+          <svg width="100%" height="120" viewBox="0 0 318 120" preserveAspectRatio="none"><line x1="0" y1="30" x2="318" y2="30" stroke="rgba(32,30,26,0.14)"></line><line x1="0" y1="60" x2="318" y2="60" stroke="rgba(32,30,26,0.14)"></line><line x1="0" y1="90" x2="318" y2="90" stroke="rgba(32,30,26,0.14)"></line><line x1="0" y1="119" x2="318" y2="119" stroke="rgba(32,30,26,0.35)"></line></svg>
+          <div style="font-size: 13px; color: #5C574C; padding-top: 8px">Your first game draws the line.</div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px; font-weight: 600">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">07 · Stats, populated</div>
+      <div data-screen-label="Stats populated" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 10px 20px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">Your stats</div><div style="font-size: 13px; color: #5C574C">Autumn season</div></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 0 20px">
+          <div style="border: 1.5px solid #201E1A; padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; color: #2C4E9E">147</div><div style="font-size: 12px; color: #5C574C">Season average</div></div>
+          <div style="border: 1.5px solid #201E1A; padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums; color: #B3372B">203</div><div style="font-size: 12px; color: #5C574C">High game</div></div>
+          <div style="border: 1.5px solid #201E1A; padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 30px; line-height: 1; font-variant-numeric: tabular-nums">21</div><div style="font-size: 12px; color: #5C574C">Games played</div></div>
+        </div>
+        <div style="margin: 14px 20px 0; border: 1.5px solid #201E1A; background: #FBF8F1; padding: 14px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 8px"><div style="font-size: 13px; font-weight: 600">Average over time</div><div style="font-size: 12px; color: #5C574C">Last 12 sessions</div></div>
+          <svg width="100%" height="130" viewBox="0 0 318 130" preserveAspectRatio="none">
+            <line x1="0" y1="32" x2="318" y2="32" stroke="rgba(32,30,26,0.14)"></line><line x1="0" y1="64" x2="318" y2="64" stroke="rgba(32,30,26,0.14)"></line><line x1="0" y1="96" x2="318" y2="96" stroke="rgba(32,30,26,0.14)"></line><line x1="0" y1="129" x2="318" y2="129" stroke="rgba(32,30,26,0.35)"></line>
+            <polyline points="6,92 34,86 62,95 90,74 118,80 146,66 174,71 202,58 230,63 258,44 286,50 312,30" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round"></polyline>
+            <circle cx="258" cy="44" r="4" fill="#B3372B"></circle>
+            <circle cx="312" cy="30" r="4" fill="#201E1A"></circle>
+          </svg>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #5C574C; padding-top: 6px"><div>Jun</div><div>Jul</div><div>Aug</div><div style="color: #B3372B; font-weight: 600">203 high</div></div>
+        </div>
+        <div style="margin: 14px 20px 0; display: flex; flex-direction: column; gap: 0; border: 1.5px solid #201E1A; background: #FBF8F1">
+          <div style="display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 13px; font-weight: 600">Recent games</div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 11px 14px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 14px"><div>Sat 30 Aug · Jersey Bowl</div><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; color: #B3372B">203</div></div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 11px 14px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 14px"><div>Sat 30 Aug · Jersey Bowl</div><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">156</div></div>
+          <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 11px 14px; font-size: 14px"><div>Fri 22 Aug · Jersey Bowl</div><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">141</div></div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px; font-weight: 600">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="1c" data-screen-label="Adding games" style="padding: 24px 40px 12px; display: flex; flex-direction: column; gap: 20px">
+  <div style="font-size: 14px; color: #5C574C">Adding games</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">08 · Add sheet</div>
+      <div data-screen-label="Add sheet" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden; position: relative">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">10 PINS</div></div>
+        <div style="display: flex; gap: 8px; padding: 12px 20px 4px">
+          <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #201E1A; border-radius: 6px; background: #201E1A; color: #F7F3EA">Bowling Ballers</div>
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">JHH</div>
+        </div>
+        <div style="position: absolute; inset: 0; background: rgba(23,21,17,0.45)"></div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; background: #F7F3EA; border-radius: 16px 16px 0 0; display: flex; flex-direction: column; padding: 8px 16px 12px">
+          <div style="display: flex; justify-content: center; padding: 4px 0 10px"><div style="width: 40px; height: 4px; border-radius: 999px; background: rgba(32,30,26,0.3)"></div></div>
+          <div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; padding: 0 4px 10px">Add to Bowling Ballers</div>
+          <div style="display: flex; flex-direction: column; border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-bottom: 1px solid rgba(32,30,26,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"></path><circle cx="12" cy="13" r="3.25"></circle></svg><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-size: 15px; font-weight: 600">Scan a scoreboard</div><div style="font-size: 13px; color: #5C574C">Photograph the lane monitor, we read the frames</div></div></div>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-bottom: 1px solid rgba(32,30,26,0.18)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20l-5 1 1-5z"></path></svg><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-size: 15px; font-weight: 600">Type the totals</div><div style="font-size: 13px; color: #5C574C">Just the final scores, no frames</div></div></div>
+            <div style="display: flex; align-items: center; gap: 14px; padding: 15px 16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="1"></rect><path d="M4 10h16M8 3v4M16 3v4"></path></svg><div style="display: flex; flex-direction: column; gap: 1px"><div style="font-size: 15px; font-weight: 600">Start a match day</div><div style="font-size: 13px; color: #5C574C">A session of games for the whole group</div></div></div>
+          </div>
+          <div style="text-align: center; font-size: 14px; font-weight: 600; padding: 16px 0 6px">Cancel</div>
+          <div style="display: flex; justify-content: center; padding: 6px 0 2px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">09 · Scan</div>
+      <div data-screen-label="Scan" style="width: 390px; height: 844px; background: #171511; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden; position: relative">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px; color: #ECE6D9"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#ECE6D9"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#ECE6D9"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#ECE6D9"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#ECE6D9" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#ECE6D9" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#ECE6D9"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#ECE6D9"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #ECE6D9">Scan a scoreboard</div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3l-3 8h4l-3 10 8-12h-5l3-6z"></path></svg></div>
+        <div style="flex: 1; margin: 8px 16px; position: relative; background: #201d17; overflow: hidden">
+          <div style="position: absolute; left: 18%; top: 34%; right: 18%; height: 26%; background: #262219; border: 1px solid rgba(236,230,217,0.12)"></div>
+          <div style="position: absolute; left: 24px; top: 24px; width: 34px; height: 34px; border-left: 3px solid #ECE6D9; border-top: 3px solid #ECE6D9"></div>
+          <div style="position: absolute; right: 24px; top: 24px; width: 34px; height: 34px; border-right: 3px solid #ECE6D9; border-top: 3px solid #ECE6D9"></div>
+          <div style="position: absolute; left: 24px; bottom: 24px; width: 34px; height: 34px; border-left: 3px solid #ECE6D9; border-bottom: 3px solid #ECE6D9"></div>
+          <div style="position: absolute; right: 24px; bottom: 24px; width: 34px; height: 34px; border-right: 3px solid #ECE6D9; border-bottom: 3px solid #ECE6D9"></div>
+          <div style="position: absolute; left: 0; right: 0; bottom: 18px; text-align: center; font-size: 14px; color: #ECE6D9">Fill the frame with the scoreboard</div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 44px; padding: 18px 0 8px">
+          <div style="font-size: 14px; color: #A39B8B; width: 64px">Photos</div>
+          <div style="width: 70px; height: 70px; border-radius: 999px; border: 4px solid #ECE6D9; display: flex; align-items: center; justify-content: center"><div style="width: 54px; height: 54px; border-radius: 999px; background: #ECE6D9"></div></div>
+          <div style="font-size: 14px; color: #A39B8B; width: 64px; text-align: right">Flip</div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #ECE6D9"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">10 · Quick add</div>
+      <div data-screen-label="Quick add" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">Type the totals</div><div style="width: 24px"></div></div>
+        <div style="display: flex; flex-direction: column; gap: 18px; padding: 18px 20px">
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1; display: flex; flex-direction: column; align-items: center; padding: 22px 0 16px; gap: 2px">
+            <div style="font-size: 13px; font-weight: 600; color: #5C574C">Your score</div>
+            <div style="display: flex; align-items: baseline"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 96px; line-height: 1; font-variant-numeric: tabular-nums">158</div><div style="width: 3px; height: 72px; background: #2C4E9E; margin-left: 4px"></div></div>
+            <div style="font-size: 13px; color: #5C574C">0 to 300</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="font-size: 13px; font-weight: 600">Group</div>
+            <div style="display: flex; gap: 8px">
+              <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #201E1A; border-radius: 6px; background: #201E1A; color: #F7F3EA">Bowling Ballers</div>
+              <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">JHH</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 13px; font-weight: 600">Date</div><div style="border: 1px solid rgba(32,30,26,0.4); border-radius: 2px; padding: 11px 12px; font-size: 15px; background: #FBF8F1">Today, Tue 2 Sep</div></div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 13px; font-weight: 600">Venue <span style="font-weight: 400; color: #5C574C">optional</span></div><div style="border: 1px solid rgba(32,30,26,0.4); border-radius: 2px; padding: 11px 12px; font-size: 15px; background: #FBF8F1; color: #5C574C">Jersey Bowl</div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="font-size: 13px; font-weight: 600">Games this session</div>
+            <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 11px 14px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 14px"><div>Game 1</div><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">142</div></div>
+              <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 11px 14px; font-size: 14px; color: #2C4E9E; font-weight: 600"><div>Game 2, typing</div><div style="font-family: Oswald, sans-serif; font-size: 18px; font-variant-numeric: tabular-nums">158</div></div>
+            </div>
+            <div style="font-size: 13px; color: #2C4E9E; font-weight: 600; padding-top: 2px">Add another game</div>
+          </div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 20px">
+          <div style="padding: 14px 0; text-align: center; font-size: 15px; font-weight: 600; background: #201E1A; color: #F7F3EA; border-radius: 6px">Save 2 games</div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 4px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="1d" data-screen-label="People" style="padding: 24px 40px 12px; display: flex; flex-direction: column; gap: 20px">
+  <div style="font-size: 14px; color: #5C574C">People</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">11 · Player page</div>
+      <div data-screen-label="Player page" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 20px 4px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg><div style="width: 44px; height: 44px; border-radius: 999px; background: #B3372B; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 18px">D</div><div style="display: flex; flex-direction: column"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px">Dan</div><div style="font-size: 13px; color: #5C574C">Bowling Ballers · average 152</div></div></div>
+        <div style="margin: 14px 20px 0; border: 1.5px solid #201E1A; background: #FBF8F1">
+          <div style="padding: 10px 14px; font-size: 13px; font-weight: 600; border-bottom: 1px solid rgba(32,30,26,0.18)">Head to head, this season</div>
+          <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 16px 14px">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums">9</div><div style="font-size: 13px; color: #5C574C">You</div></div>
+            <div style="font-size: 13px; color: #5C574C; padding: 0 18px">wins</div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 2px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; color: #B3372B">12</div><div style="font-size: 13px; color: #5C574C">Dan</div></div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(32,30,26,0.18)">
+            <div style="padding: 10px 14px; border-right: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">147 · 152</div><div style="font-size: 12px; color: #5C574C">Averages, you first</div></div>
+            <div style="padding: 10px 14px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 20px; font-variant-numeric: tabular-nums">203 · 214</div><div style="font-size: 12px; color: #5C574C">High games</div></div>
+          </div>
+        </div>
+        <div style="margin: 14px 20px 0; display: flex; flex-direction: column; gap: 8px">
+          <div style="font-size: 13px; font-weight: 600">Recent meetings</div>
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; justify-content: space-between; padding: 9px 14px; font-size: 12px; color: #5C574C; border-bottom: 1px solid rgba(32,30,26,0.18)"><div>Sat 30 Aug · Jersey Bowl</div><div style="color: #B3372B; font-weight: 600">You won</div></div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 10px 14px; font-size: 14px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-weight: 600">You</div><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums; color: #B3372B">203</div></div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 10px 14px; font-size: 14px"><div>Dan</div><div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 18px; font-variant-numeric: tabular-nums">187</div></div>
+          </div>
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: flex; justify-content: space-between; padding: 9px 14px; font-size: 12px; color: #5C574C; border-bottom: 1px solid rgba(32,30,26,0.18)"><div>Fri 22 Aug · Jersey Bowl</div><div>Dan won</div></div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 10px 14px; font-size: 14px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div>You</div><div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 18px; font-variant-numeric: tabular-nums">141</div></div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 10px 14px; font-size: 14px"><div style="font-weight: 600">Dan</div><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px; font-variant-numeric: tabular-nums">169</div></div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 12px 0 8px; margin-top: auto"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">12 · Profile</div>
+      <div data-screen-label="Profile" style="width: 390px; height: 844px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#201E1A"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#201E1A"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#201E1A"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#201E1A" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#201E1A" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#201E1A"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#201E1A"></rect></svg></div>
+        <div style="display: flex; align-items: center; gap: 14px; padding: 14px 20px">
+          <div style="width: 56px; height: 56px; border-radius: 999px; background: #201E1A; color: #F7F3EA; display: flex; align-items: center; justify-content: center; font-family: Oswald, sans-serif; font-size: 22px">M</div>
+          <div style="display: flex; flex-direction: column"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px">Matteo</div><div style="font-size: 14px; color: #5C574C">@matteo · bowling since 2024</div></div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; padding: 0 20px 6px">
+          <div style="border: 1.5px solid #201E1A; padding: 10px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums; color: #2C4E9E">147</div><div style="font-size: 12px; color: #5C574C">Average</div></div>
+          <div style="border: 1.5px solid #201E1A; padding: 10px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums; color: #B3372B">203</div><div style="font-size: 12px; color: #5C574C">High game</div></div>
+          <div style="border: 1.5px solid #201E1A; padding: 10px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums">21</div><div style="font-size: 12px; color: #5C574C">Games</div></div>
+        </div>
+        <div style="margin: 10px 16px 0; border: 1.5px solid #201E1A; background: #FBF8F1">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 15px"><div style="font-weight: 600">Friends</div><div style="display: flex; align-items: center; gap: 8px; color: #5C574C; font-size: 14px">5<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 15px"><div style="font-weight: 600">Theme</div><div style="display: flex; align-items: center; gap: 8px; color: #5C574C; font-size: 14px">System<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid rgba(32,30,26,0.18); font-size: 15px"><div style="font-weight: 600">What's new</div><div style="display: flex; align-items: center; gap: 8px; color: #5C574C; font-size: 14px">v0.4.0<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div></div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; font-size: 15px"><div style="font-weight: 600">Feedback</div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></div>
+        </div>
+        <div style="margin: 12px 16px 0; border: 1.5px solid rgba(32,30,26,0.35); background: #FBF8F1; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; font-size: 15px"><div style="font-weight: 600; color: #B3372B">Sign out</div></div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(32,30,26,0.18); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #201E1A; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #F7F3EA"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #5C574C"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px; font-weight: 600">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #201E1A"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="1e" data-screen-label="Dark theme" style="padding: 24px 40px 12px; display: flex; flex-direction: column; gap: 20px">
+  <div style="font-size: 14px; color: #5C574C">Dark theme, follows prefers-color-scheme. Alley ground, chalk ink, no glow.</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">13 · Home, dark</div>
+      <div data-screen-label="Home dark" style="width: 390px; height: 844px; background: #171511; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden; color: #ECE6D9">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#ECE6D9"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#ECE6D9"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#ECE6D9"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#ECE6D9" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#ECE6D9" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#ECE6D9"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#ECE6D9"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px">10 PINS</div><div style="position: relative"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.5a6 6 0 0 1 12 0c0 5 2 6.5 2 6.5H4s2-1.5 2-6.5"></path><path d="M10 19a2.2 2.2 0 0 0 4 0"></path></svg><div style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 999px; background: #E4574A"></div></div></div>
+        <div style="display: flex; gap: 8px; padding: 12px 20px 4px">
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(236,230,217,0.35); border-radius: 6px">All</div>
+          <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #ECE6D9; border-radius: 6px; background: #ECE6D9; color: #171511">Bowling Ballers</div>
+          <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(236,230,217,0.35); border-radius: 6px">JHH</div>
+        </div>
+        <div style="padding: 12px 16px; display: flex; flex-direction: column; gap: 16px; overflow: hidden">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="border: 1.5px solid rgba(236,230,217,0.5); background: #211E18">
+              <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Matteo</div><div style="font-size: 12px; color: #A39B8B">Jersey Bowl · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums; color: #E4574A">203</div></div>
+              <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+                <sc-for list="{{ mFD }}" as="f" hint-placeholder-count="10">
+                  <div style="border-right: 1px solid rgba(236,230,217,0.16); display: flex; flex-direction: column">
+                    <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(236,230,217,0.16); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                    <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; gap: 14px; font-size: 13px; color: #A39B8B; padding: 0 2px"><div style="font-weight: 600; color: #E4574A">New high game</div><div>3 nice ones</div><div>2 comments</div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="border: 1.5px solid rgba(236,230,217,0.5); background: #211E18">
+              <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Dan</div><div style="font-size: 12px; color: #A39B8B">Quick add, totals only · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">158</div></div>
+            </div>
+            <div style="display: flex; gap: 14px; font-size: 13px; color: #A39B8B; padding: 0 2px"><div>1 nice one</div></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="border: 1.5px solid rgba(236,230,217,0.5); background: #211E18">
+              <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Sam</div><div style="font-size: 12px; color: #A39B8B">Jersey Bowl · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">166</div></div>
+              <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+                <sc-for list="{{ dFD }}" as="f" hint-placeholder-count="10">
+                  <div style="border-right: 1px solid rgba(236,230,217,0.16); display: flex; flex-direction: column">
+                    <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(236,230,217,0.16); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                    <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; gap: 14px; font-size: 13px; color: #A39B8B; padding: 0 2px"><div>2 nice ones</div><div>1 comment</div></div>
+          </div>
+        </div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(236,230,217,0.16); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px; font-weight: 600">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #A39B8B"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A39B8B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #ECE6D9; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #171511"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171511" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #A39B8B"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A39B8B" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #A39B8B"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A39B8B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #ECE6D9"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">14 · Leaderboard, dark</div>
+      <div data-screen-label="Leaderboard dark" style="width: 390px; height: 844px; background: #171511; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden; color: #ECE6D9">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#ECE6D9"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#ECE6D9"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#ECE6D9"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#ECE6D9" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#ECE6D9" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#ECE6D9"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#ECE6D9"></rect></svg></div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 10px 20px 2px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg><div style="display: flex; flex-direction: column"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 22px">Bowling Ballers</div><div style="font-size: 13px; color: #A39B8B">Autumn season · 5 players · 64 games</div></div></div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 20px 6px">
+          <div style="display: flex; border: 1px solid #ECE6D9; border-radius: 2px; overflow: hidden; align-self: flex-start">
+            <div style="padding: 8px 18px; font-size: 13px; font-weight: 600; background: #ECE6D9; color: #171511">Season</div>
+            <div style="padding: 8px 18px; font-size: 13px; border-left: 1px solid #ECE6D9">30 days</div>
+            <div style="padding: 8px 18px; font-size: 13px; border-left: 1px solid #ECE6D9">All time</div>
+          </div>
+          <div style="display: flex; border: 1px solid rgba(236,230,217,0.4); border-radius: 2px; overflow: hidden; align-self: flex-start">
+            <div style="padding: 6px 16px; font-size: 12px; font-weight: 600; background: #ECE6D9; color: #171511">By average</div>
+            <div style="padding: 6px 16px; font-size: 12px; border-left: 1px solid rgba(236,230,217,0.4)">By high game</div>
+          </div>
+        </div>
+        <div style="margin: 8px 16px 0; border: 1.5px solid rgba(236,230,217,0.5); background: #211E18">
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 9px 14px; font-size: 12px; color: #A39B8B; border-bottom: 1px solid rgba(236,230,217,0.16)"><div>#</div><div>Player</div><div style="text-align: right">Games</div><div style="text-align: right">Average</div><div style="text-align: right">High</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">1</div><div style="font-weight: 600">Dan</div><div style="text-align: right; font-variant-numeric: tabular-nums">18</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #8FA7E8">152</div><div style="text-align: right; font-variant-numeric: tabular-nums">214</div></div>
+          <div style="display: grid; grid-template-columns: 31px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(236,230,217,0.16); background: #2A2620; border-left: 3px solid #ECE6D9"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">2</div><div style="font-weight: 600">Matteo <span style="font-weight: 400; color: #A39B8B">you</span></div><div style="text-align: right; font-variant-numeric: tabular-nums">21</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #8FA7E8">147</div><div style="text-align: right; font-variant-numeric: tabular-nums">203</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">3</div><div style="font-weight: 600">Sam</div><div style="text-align: right; font-variant-numeric: tabular-nums">14</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #8FA7E8">139</div><div style="text-align: right; font-variant-numeric: tabular-nums">166</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline; border-bottom: 1px solid rgba(236,230,217,0.16)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">4</div><div style="font-weight: 600">Louis</div><div style="text-align: right; font-variant-numeric: tabular-nums">8</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #8FA7E8">121</div><div style="text-align: right; font-variant-numeric: tabular-nums">158</div></div>
+          <div style="display: grid; grid-template-columns: 34px 1fr 52px 56px 52px; padding: 13px 14px; font-size: 14px; align-items: baseline"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 16px">5</div><div style="font-weight: 600">Chris</div><div style="text-align: right; font-variant-numeric: tabular-nums">3</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 17px; color: #8FA7E8">104</div><div style="text-align: right; font-variant-numeric: tabular-nums">132</div></div>
+        </div>
+        <div style="padding: 10px 20px; font-size: 13px; color: #A39B8B">Average needs 3 games this season to count.</div>
+        <div style="margin-top: auto; border-top: 1px solid rgba(236,230,217,0.16); display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; padding: 8px 8px 0">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #A39B8B"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A39B8B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg><div style="font-size: 11px">Feed</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg><div style="font-size: 11px; font-weight: 600">Groups</div></div>
+          <div style="display: flex; justify-content: center"><div style="width: 52px; height: 52px; border-radius: 999px; background: #ECE6D9; display: flex; align-items: center; justify-content: center; margin-top: -18px; border: 3px solid #171511"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#171511" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #A39B8B"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A39B8B" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg><div style="font-size: 11px">Stats</div></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; color: #A39B8B"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A39B8B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg><div style="font-size: 11px">Profile</div></div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 8px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #ECE6D9"></div></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">15 · Quick add, dark</div>
+      <div data-screen-label="Quick add dark" style="width: 390px; height: 844px; background: #171511; border: 1px solid #201E1A; display: flex; flex-direction: column; overflow: hidden; color: #ECE6D9">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px 6px"><div style="font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums">9:41</div><svg width="52" height="12" viewBox="0 0 52 12" fill="none"><rect x="0" y="4" width="3" height="8" rx="1" fill="#ECE6D9"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#ECE6D9"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#ECE6D9"></rect><path d="M21 6c2.3-2.3 6.7-2.3 9 0" stroke="#ECE6D9" stroke-width="1.5"></path><path d="M23.5 8.5c1.3-1.3 2.7-1.3 4 0" stroke="#ECE6D9" stroke-width="1.5"></path><rect x="35" y="1.5" width="15" height="9" rx="2.5" stroke="#ECE6D9"></rect><rect x="37" y="3.5" width="9" height="5" rx="1" fill="#ECE6D9"></rect></svg></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 4px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ECE6D9" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">Type the totals</div><div style="width: 24px"></div></div>
+        <div style="display: flex; flex-direction: column; gap: 18px; padding: 18px 20px">
+          <div style="border: 1.5px solid rgba(236,230,217,0.5); background: #211E18; display: flex; flex-direction: column; align-items: center; padding: 22px 0 16px; gap: 2px">
+            <div style="font-size: 13px; font-weight: 600; color: #A39B8B">Your score</div>
+            <div style="display: flex; align-items: baseline"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 96px; line-height: 1; font-variant-numeric: tabular-nums">158</div><div style="width: 3px; height: 72px; background: #8FA7E8; margin-left: 4px"></div></div>
+            <div style="font-size: 13px; color: #A39B8B">0 to 300</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="font-size: 13px; font-weight: 600">Group</div>
+            <div style="display: flex; gap: 8px">
+              <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #ECE6D9; border-radius: 6px; background: #ECE6D9; color: #171511">Bowling Ballers</div>
+              <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(236,230,217,0.35); border-radius: 6px">JHH</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 13px; font-weight: 600">Date</div><div style="border: 1px solid rgba(236,230,217,0.4); border-radius: 2px; padding: 11px 12px; font-size: 15px; background: #211E18">Today, Tue 2 Sep</div></div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 4px"><div style="font-size: 13px; font-weight: 600">Venue <span style="font-weight: 400; color: #A39B8B">optional</span></div><div style="border: 1px solid rgba(236,230,217,0.4); border-radius: 2px; padding: 11px 12px; font-size: 15px; background: #211E18; color: #A39B8B">Jersey Bowl</div></div>
+          </div>
+        </div>
+        <div style="margin-top: auto; padding: 12px 20px">
+          <div style="padding: 14px 0; text-align: center; font-size: 15px; font-weight: 600; background: #ECE6D9; color: #171511; border-radius: 6px">Save game</div>
+        </div>
+        <div style="display: flex; justify-content: center; padding: 4px 0 8px"><div style="width: 130px; height: 5px; border-radius: 999px; background: #ECE6D9"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="1f" data-screen-label="Tablet" style="padding: 24px 40px 80px; display: flex; flex-direction: column; gap: 20px">
+  <div style="font-size: 14px; color: #5C574C">Tablet, 1024. Tab bar becomes a left rail.</div>
+  <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">16 · Feed, tablet</div>
+      <div data-screen-label="Feed tablet" style="width: 1024px; height: 700px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; overflow: hidden">
+        <div style="width: 220px; border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column; padding: 24px 16px; gap: 4px">
+          <div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; padding: 0 12px 18px">10 PINS</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; background: #EFEADD; border-radius: 6px; font-weight: 600; font-size: 14px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>Feed</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; font-size: 14px; color: #5C574C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg>Groups</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; font-size: 14px; color: #5C574C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg>Stats</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; font-size: 14px; color: #5C574C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg>Profile</div>
+          <div style="margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0; background: #201E1A; color: #F7F3EA; border-radius: 6px; font-weight: 600; font-size: 14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add a game</div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden">
+          <div style="display: flex; gap: 8px; padding: 24px 28px 8px">
+            <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">All</div>
+            <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; border: 1.5px solid #201E1A; border-radius: 6px; background: #201E1A; color: #F7F3EA">Bowling Ballers</div>
+            <div style="padding: 8px 16px; font-size: 13px; border: 1px solid rgba(32,30,26,0.35); border-radius: 6px">JHH</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 12px 28px; align-items: start">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+                <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Matteo</div><div style="font-size: 12px; color: #5C574C">Jersey Bowl · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums; color: #B3372B">203</div></div>
+                <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+                  <sc-for list="{{ mF }}" as="f" hint-placeholder-count="10">
+                    <div style="border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column">
+                      <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(32,30,26,0.18); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                      <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div style="font-weight: 600; color: #B3372B">New high game</div><div>3 nice ones</div><div>2 comments</div></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+                <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Sam</div><div style="font-size: 12px; color: #5C574C">Jersey Bowl · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">166</div></div>
+                <div style="display: grid; grid-template-columns: repeat(10, 1fr)">
+                  <sc-for list="{{ sF }}" as="f" hint-placeholder-count="10">
+                    <div style="border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column">
+                      <div style="display: flex; justify-content: flex-end; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; color: {{ f.c1 }}">{{ f.b1 }}</div><div style="font-family: Oswald, sans-serif; font-size: 12px; padding: 2px 0; width: 15px; text-align: center; border-left: 1px solid rgba(32,30,26,0.18); color: {{ f.c2 }}">{{ f.b2 }}</div></div>
+                      <div style="font-family: Oswald, sans-serif; font-weight: 500; font-size: 13px; text-align: center; padding: 4px 0; font-variant-numeric: tabular-nums">{{ f.total }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div>2 nice ones</div><div>1 comment</div></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+                <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Dan</div><div style="font-size: 12px; color: #5C574C">Quick add, totals only · Sat 30 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">158</div></div>
+              </div>
+              <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div>1 nice one</div></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+                <div style="display: flex; align-items: baseline; gap: 8px; padding: 9px 12px"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 15px">Louis</div><div style="font-size: 12px; color: #5C574C">Quick add, totals only · Fri 22 Aug</div><div style="margin-left: auto; font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; font-variant-numeric: tabular-nums">131</div></div>
+              </div>
+              <div style="display: flex; gap: 14px; font-size: 13px; color: #5C574C; padding: 0 2px"><div>Comment</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-size: 12px; color: #5C574C">17 · Leaderboard, tablet</div>
+      <div data-screen-label="Leaderboard tablet" style="width: 1024px; height: 700px; background: #F7F3EA; border: 1px solid #201E1A; display: flex; overflow: hidden">
+        <div style="width: 220px; border-right: 1px solid rgba(32,30,26,0.18); display: flex; flex-direction: column; padding: 24px 16px; gap: 4px">
+          <div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 24px; padding: 0 12px 18px">10 PINS</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; font-size: 14px; color: #5C574C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>Feed</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; background: #EFEADD; border-radius: 6px; font-weight: 600; font-size: 14px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#201E1A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.25"></circle><path d="M3.5 20c.7-3.2 2.9-5 5.5-5s4.8 1.8 5.5 5"></path><circle cx="17" cy="9" r="2.5"></circle><path d="M16.5 14.5c2.2.2 3.6 1.7 4 4"></path></svg>Groups</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; font-size: 14px; color: #5C574C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-8"></path><path d="M21 20H3"></path></svg>Stats</div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 11px 12px; font-size: 14px; color: #5C574C"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C574C" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5 20c1-3.6 3.7-5.5 7-5.5s6 1.9 7 5.5"></path></svg>Profile</div>
+          <div style="margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 0; background: #201E1A; color: #F7F3EA; border-radius: 6px; font-weight: 600; font-size: 14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F7F3EA" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>Add a game</div>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; padding: 24px 28px; gap: 14px; overflow: hidden">
+          <div style="display: flex; align-items: baseline; justify-content: space-between">
+            <div style="display: flex; flex-direction: column"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 26px">Bowling Ballers</div><div style="font-size: 14px; color: #5C574C">Autumn season · 5 players · 64 games</div></div>
+            <div style="display: flex; gap: 12px">
+              <div style="display: flex; border: 1px solid #201E1A; border-radius: 2px; overflow: hidden">
+                <div style="padding: 8px 18px; font-size: 13px; font-weight: 600; background: #201E1A; color: #F7F3EA">Season</div>
+                <div style="padding: 8px 18px; font-size: 13px; border-left: 1px solid #201E1A">30 days</div>
+                <div style="padding: 8px 18px; font-size: 13px; border-left: 1px solid #201E1A">All time</div>
+              </div>
+              <div style="display: flex; border: 1px solid rgba(32,30,26,0.4); border-radius: 2px; overflow: hidden">
+                <div style="padding: 8px 16px; font-size: 13px; font-weight: 600; background: #201E1A; color: #F7F3EA">By average</div>
+                <div style="padding: 8px 16px; font-size: 13px; border-left: 1px solid rgba(32,30,26,0.4)">By high game</div>
+              </div>
+            </div>
+          </div>
+          <div style="border: 1.5px solid #201E1A; background: #FBF8F1">
+            <div style="display: grid; grid-template-columns: 56px 1fr 110px 110px 110px 150px; padding: 11px 20px; font-size: 12px; color: #5C574C; border-bottom: 1px solid rgba(32,30,26,0.18)"><div>#</div><div>Player</div><div style="text-align: right">Games</div><div style="text-align: right">Average</div><div style="text-align: right">High game</div><div style="text-align: right">Last game</div></div>
+            <div style="display: grid; grid-template-columns: 56px 1fr 110px 110px 110px 150px; padding: 15px 20px; font-size: 15px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">1</div><div style="font-weight: 600">Dan</div><div style="text-align: right; font-variant-numeric: tabular-nums">18</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 19px; color: #2C4E9E">152</div><div style="text-align: right; font-variant-numeric: tabular-nums; color: #B3372B; font-weight: 600">214</div><div style="text-align: right; font-variant-numeric: tabular-nums; color: #5C574C">Sat 30 Aug</div></div>
+            <div style="display: grid; grid-template-columns: 53px 1fr 110px 110px 110px 150px; padding: 15px 20px; font-size: 15px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18); background: #EFEADD; border-left: 3px solid #201E1A"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">2</div><div style="font-weight: 600">Matteo <span style="font-weight: 400; color: #5C574C">you</span></div><div style="text-align: right; font-variant-numeric: tabular-nums">21</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 19px; color: #2C4E9E">147</div><div style="text-align: right; font-variant-numeric: tabular-nums">203</div><div style="text-align: right; font-variant-numeric: tabular-nums; color: #5C574C">Sat 30 Aug</div></div>
+            <div style="display: grid; grid-template-columns: 56px 1fr 110px 110px 110px 150px; padding: 15px 20px; font-size: 15px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">3</div><div style="font-weight: 600">Sam</div><div style="text-align: right; font-variant-numeric: tabular-nums">14</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 19px; color: #2C4E9E">139</div><div style="text-align: right; font-variant-numeric: tabular-nums">166</div><div style="text-align: right; font-variant-numeric: tabular-nums; color: #5C574C">Sat 30 Aug</div></div>
+            <div style="display: grid; grid-template-columns: 56px 1fr 110px 110px 110px 150px; padding: 15px 20px; font-size: 15px; align-items: baseline; border-bottom: 1px solid rgba(32,30,26,0.18)"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">4</div><div style="font-weight: 600">Louis</div><div style="text-align: right; font-variant-numeric: tabular-nums">8</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 19px; color: #2C4E9E">121</div><div style="text-align: right; font-variant-numeric: tabular-nums">158</div><div style="text-align: right; font-variant-numeric: tabular-nums; color: #5C574C">Fri 22 Aug</div></div>
+            <div style="display: grid; grid-template-columns: 56px 1fr 110px 110px 110px 150px; padding: 15px 20px; font-size: 15px; align-items: baseline"><div style="font-family: Oswald, sans-serif; font-weight: 600; font-size: 18px">5</div><div style="font-weight: 600">Chris</div><div style="text-align: right; font-variant-numeric: tabular-nums">3</div><div style="text-align: right; font-variant-numeric: tabular-nums; font-family: Oswald, sans-serif; font-weight: 600; font-size: 19px; color: #2C4E9E">104</div><div style="text-align: right; font-variant-numeric: tabular-nums">132</div><div style="text-align: right; font-variant-numeric: tabular-nums; color: #5C574C">Sat 16 Aug</div></div>
+          </div>
+          <div style="font-size: 13px; color: #5C574C">Average needs 3 games this season to count.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section></x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const mk = (rows, R, B, I) => rows.map(r => {
+      const col = m => (m === "X" || m === "XX") ? R : m === "/" ? B : I;
+      return { b1: r[0], b2: r[1], total: r[2], c1: col(r[0]), c2: col(r[1]) };
+    });
+    const mRows = [["","X",20],["9","/",40],["","X",59],["8","1",68],["","X",95],["","X",115],["7","/",134],["9","-",143],["","X",173],["X","XX",203]];
+    const sRows = [["","X",20],["9","/",38],["8","-",46],["","X",70],["","X",89],["4","5",98],["9","/",118],["","X",138],["8","/",157],["9","-",166]];
+    return {
+      mF: mk(mRows, "#B3372B", "#2C4E9E", "#201E1A"),
+      sF: mk(sRows, "#B3372B", "#2C4E9E", "#201E1A"),
+      mFD: mk(mRows, "#E4574A", "#8FA7E8", "#ECE6D9"),
+      dFD: mk(sRows, "#E4574A", "#8FA7E8", "#ECE6D9"),
+      eF: [1,2,3,4,5,6,7,8,9,10]
+    };
+  }
+}
+</script>
+</body>
+</html>

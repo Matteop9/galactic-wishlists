@@ -1,19 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Avatar from '../../components/Avatar';
+import Strip from '../../components/Strip';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/auth';
 import { markSeen } from '../../lib/changelog';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return '?';
-  return parts
-    .slice(0, 2)
-    .map((part) => part[0]!.toUpperCase())
-    .join('');
-}
 
 function useDebounced<T>(value: T, ms: number): T {
   const [debounced, setDebounced] = useState(value);
@@ -22,6 +15,15 @@ function useDebounced<T>(value: T, ms: number): T {
     return () => clearTimeout(timer);
   }, [value, ms]);
   return debounced;
+}
+
+function UsernameRule() {
+  return (
+    <span className="text-ink-faded">
+      Lowercase letters, numbers and underscores, <span className="num">3</span> to{' '}
+      <span className="num">20</span> characters.
+    </span>
+  );
 }
 
 export default function FirstRun() {
@@ -66,8 +68,8 @@ export default function FirstRun() {
     if (err) {
       setError(
         err.code === '23505'
-          ? "That username’s just been taken — pick another."
-          : "That didn’t save — try again.",
+          ? 'That username has just been taken. Pick another.'
+          : 'That didn’t save. Check your connection and try again.',
       );
       setSaving(false);
       return;
@@ -84,71 +86,78 @@ export default function FirstRun() {
     await queryClient.invalidateQueries({ queryKey: ['profile'] });
   }
 
+  // The disc previews how the name will read on a scoresheet; "?" until typed.
+  const previewName = displayName.trim() || '?';
+
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col justify-center gap-8 px-6 py-12">
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex size-20 items-center justify-center rounded-full border-2 border-line bg-panel font-display text-[26px] font-bold text-glass">
-          {initials(displayName)}
+    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col justify-center gap-5 px-6 py-12">
+      <header className="flex items-center gap-3.5 px-1 py-2">
+        <Avatar name={previewName} size={56} />
+        <div className="min-w-0 flex-1">
+          <h1 className="num text-[24px] font-semibold leading-tight">Set up your profile</h1>
+          <p className="text-[13px] text-ink-faded">How your name reads on the scoresheet.</p>
         </div>
-        <h1 className="font-display text-[20px] font-bold">Set up your profile</h1>
-      </div>
+      </header>
 
-      <form onSubmit={createProfile} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="display-name" className="label-caps">
-            Display name
-          </label>
-          <input
-            id="display-name"
-            type="text"
-            required
-            maxLength={40}
-            placeholder="Matt Brown"
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-            className="w-full rounded-control border border-line bg-well px-4 py-3 text-[15px] text-text placeholder:text-faint"
-          />
-        </div>
+      <form onSubmit={createProfile} className="flex flex-col gap-4">
+        <Strip>
+          <div className="flex flex-col gap-1.5 p-3.5">
+            <label htmlFor="display-name" className="label">
+              Display name
+            </label>
+            <input
+              id="display-name"
+              type="text"
+              required
+              maxLength={40}
+              placeholder="Matt Brown"
+              value={displayName}
+              onChange={(event) => setDisplayName(event.target.value)}
+              className="field"
+            />
+          </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="username" className="label-caps">
-            Username
-          </label>
-          <div className="flex items-center rounded-control border border-line bg-well px-4">
-            <span className="text-[15px] text-faint">@</span>
+          <div className="flex flex-col gap-1.5 p-3.5">
+            <label htmlFor="username" className="label">
+              Username
+            </label>
             <input
               id="username"
               type="text"
               required
               maxLength={20}
               placeholder="mattb"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={username}
               onChange={(event) =>
                 setUsername(event.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))
               }
-              className="w-full bg-transparent py-3 pl-1 text-[15px] text-text placeholder:text-faint focus:outline-none"
+              className="field"
             />
+            <p className="min-h-5 text-[13px]" aria-live="polite">
+              {!usernameValid && <UsernameRule />}
+              {usernameValid && !settled && <span className="text-ink-faded">Checking…</span>}
+              {available && <span className="text-ink">@{username} is available</span>}
+              {settled && availability.data === false && (
+                <span className="text-red">@{username} is taken</span>
+              )}
+            </p>
           </div>
-          <p className="min-h-5 text-[13.5px]" aria-live="polite">
-            {username.length > 0 && !usernameValid && (
-              <span className="text-faint">3–20 characters: a–z, 0–9 and _</span>
-            )}
-            {usernameValid && !settled && <span className="text-faint">Checking…</span>}
-            {available && <span className="text-success">@{username} is available</span>}
-            {settled && availability.data === false && (
-              <span className="text-signal">@{username} is taken</span>
-            )}
-          </p>
-        </div>
 
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="btn-primary"
-        >
-          {saving ? 'Saving…' : 'Start bowling'}
-        </button>
-        {error && <p className="text-center text-[13.5px] text-signal">{error}</p>}
+          <div className="p-3.5">
+            <button type="submit" disabled={!canSubmit} className="btn-primary w-full">
+              {saving ? 'Saving…' : 'Start bowling'}
+            </button>
+          </div>
+        </Strip>
+
+        {error && (
+          <p className="text-center text-[13px] text-red" role="alert">
+            {error}
+          </p>
+        )}
       </form>
     </div>
   );

@@ -5,6 +5,10 @@ import { score, type FrameInput } from '../../engine';
 import FrameEditor from '../../components/FrameEditor';
 import Scorecard from '../../components/scorecard/Scorecard';
 import VerificationBadge from '../../components/VerificationBadge';
+import EmptyState from '../../components/EmptyState';
+import Icon from '../../components/Icon';
+import Sheet from '../../components/Sheet';
+import Strip from '../../components/Strip';
 import {
   abandonLiveGame,
   endLiveSession,
@@ -39,12 +43,13 @@ import ShareSheet from '../../components/share/ShareSheet';
 import type { ShareCardData } from '../../components/share/ShareCard';
 import type { Profile } from '../../lib/auth';
 
-const firstName = (name: string) => name.trim().split(/\s+/)[0].toUpperCase();
+/** The name on the strip header: first name only, as written. */
+const firstName = (name: string) => name.trim().split(/\s+/)[0];
 
 /**
  * Live session · scorer (README §Live session). One phone owns the game: every
  * keypad tap scores locally first, mirrors to localStorage, queues a frame
- * upsert and broadcasts to spectators. Losing signal is not a failure state —
+ * upsert and broadcasts to spectators. Losing the connection is not a failure state:
  * scoring carries on and the queue drains when the network comes back.
  */
 export default function LiveScorer({ profile }: { profile: Profile }) {
@@ -82,7 +87,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
 
   const state = session.data ?? null;
   // True only once `history` holds THIS game. Between "next game" and the
-  // refetched session landing, history still holds the finished game — reading
+  // refetched session landing, history still holds the finished game; reading
   // it then would treat the fresh game as already complete.
   const hydrated = !!state && gameId === state.gameId;
   const players = hydrated ? (history[history.length - 1] ?? []) : [];
@@ -137,7 +142,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
     }
   }, [persist, setQueue]);
 
-  // Hydrate: the local snapshot wins when it belongs to this game — this device
+  // Hydrate: the local snapshot wins when it belongs to this game. This device
   // is the only writer, so anything it has not flushed yet is the newest truth.
   useEffect(() => {
     if (!state || !sessionId || gameId === state.gameId) return;
@@ -191,8 +196,8 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
     onSuccess: (result) => {
       clearSnapshot(sessionId!);
       queryClient.invalidateQueries();
-      // Your own highlights first. If you weren’t bowling — someone else’s
-      // phone, or you’re just keeping score — celebrate the loudest thing that
+      // Your own highlights first. If you weren't bowling (someone else's
+      // phone, or you're just keeping score) celebrate the loudest thing that
       // happened on the lane, because this is the only screen that saw it.
       const mine = result.byProfile[profile.id];
       const loudest = mine ?? result.highlights;
@@ -202,7 +207,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
     },
     onError: () => {
       finishedRef.current = null;
-      setError("Couldn’t save the game — tap Save game to try again.");
+      setError('That didn’t save. Tap Save game to try again.');
     },
   });
 
@@ -230,7 +235,7 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       broadcast(GAME_EVENT, { gameId: newGameId, gameNumber: (state?.gameNumber ?? 1) + 1 });
       await queryClient.invalidateQueries();
     },
-    onError: () => setError("Couldn’t start the next game — try again."),
+    onError: () => setError('The next game didn’t start. Check your connection and try again.'),
   });
 
   const endSession = useMutation({
@@ -245,17 +250,17 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       await queryClient.invalidateQueries();
       navigate('/', { replace: true });
     },
-    onError: () => setError("Couldn’t end the session — try again."),
+    onError: () => setError('The session didn’t end. Check your connection and try again.'),
   });
 
   /** Every state change goes through here: queue, persist, broadcast, drain. */
   function commit(next: LivePlayer[]) {
     if (!state) return;
 
-    // Celebrate whoever just bowled — the scorer’s phone is keeping score for
-    // the whole lane, and the point is the table reacting, not the phone’s
+    // Celebrate whoever just bowled. The scorer's phone is keeping score for
+    // the whole lane, and the point is the table reacting, not the phone's
     // owner. Fired before any network work, so it lands at keypad speed. A
-    // roll that isn’t worth celebrating clears the last one: that is what
+    // roll that isn't worth celebrating clears the last one: that is what
     // makes the ladder feel skippable rather than sticky.
     const bowler = active?.gamePlayerId;
     const before = players.find((p) => p.gamePlayerId === bowler)?.frames ?? [];
@@ -305,14 +310,14 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
   async function share() {
     if (!state?.joinCode) return;
     const url = shareLink(state.joinCode);
-    const text = `Watch me bowl live on 10 Pins — ${url}`;
+    const text = `Watch me bowl live on 10 Pins: ${url}`;
     try {
-      if (navigator.share) await navigator.share({ title: '10 Pins — live', text, url });
+      if (navigator.share) await navigator.share({ title: '10 Pins live', text, url });
       else await navigator.clipboard.writeText(url);
       setShared(true);
       window.setTimeout(() => setShared(false), 2500);
     } catch {
-      /* dismissed the share sheet — nothing to report */
+      /* dismissed the share sheet, nothing to report */
     }
   }
 
@@ -326,34 +331,41 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
   if (session.isPending) return <div className="px-4 py-6" />;
   if (session.isError || !state) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">Session not found</h1>
-        <Link to="/" className="text-[13.5px] text-phosphor">
-          Back home
-        </Link>
+      <div className="px-4">
+        <EmptyState
+          title="Session not found"
+          body="That live session has finished or the link is wrong."
+          action={{ label: 'Back home', to: '/' }}
+        />
       </div>
     );
   }
   if (state.hostId !== profile.id) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">{state.hostName} is scoring</h1>
-        <p className="max-w-[260px] text-[13.5px] text-dim">
-          One phone keeps the score. You can watch this one live.
-        </p>
-        <Link to={`/live/${sessionId}/watch`} className="text-[13.5px] text-phosphor">
-          Watch the game
-        </Link>
+      <div className="px-4">
+        <EmptyState
+          title={`${state.hostName} is scoring`}
+          body="One phone keeps the score. You can watch this one live."
+          action={{ label: 'Watch the game', to: `/live/${sessionId}/watch` }}
+        />
       </div>
     );
   }
 
   const saved = pendingCount === 0 && !netError;
+  const syncLabel = netError
+    ? `Offline, scoring on this phone (${pendingCount} to sync)`
+    : syncing || pendingCount > 0
+      ? 'Syncing'
+      : status === 'live'
+        ? 'Synced'
+        : 'Connecting';
 
   // Everything the card needs is already on this phone.
-  const cardWinner = [...players].sort(
+  const standings = [...players].sort(
     (a, b) => (runningTotal(b.frames) ?? 0) - (runningTotal(a.frames) ?? 0),
-  )[0];
+  );
+  const cardWinner = standings[0];
   const liveShareData: ShareCardData | null = cardWinner
     ? {
         frames: cardWinner.frames,
@@ -371,66 +383,37 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
       }
     : null;
 
+  const abandoning = !complete && state.gameStatus === 'in_progress';
+
   return (
-    <div className="flex flex-col gap-4 px-4 py-6">
-      <header className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="size-2 shrink-0 live-dot rounded-full bg-signal" aria-hidden />
-          <h1 className="truncate font-display text-[18px] font-bold">Game {state.gameNumber}</h1>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[12px] text-faint">{watching} watching</span>
-          <button
-            type="button"
-            onClick={() => setShowShare((open) => !open)}
-            className="rounded-chip border border-line bg-panel px-3 py-1.5 text-[12.5px] text-dim"
-          >
-            Share
-          </button>
-        </div>
+    <div className="flex flex-col pb-6">
+      <header className="flex items-center gap-2 px-5 pb-1 pt-2.5">
+        <Link
+          to="/"
+          aria-label="Back"
+          className="press -ml-2.5 flex size-11 shrink-0 items-center justify-center text-ink"
+        >
+          <Icon name="chevron-left" className="size-6" />
+        </Link>
+        <h1 className="num min-w-0 flex-1 truncate text-[18px] font-semibold">{state.venueName ?? 'Live game'}</h1>
+        <span className="num shrink-0 text-[13px] text-ink-faded">{watching} watching</span>
+        <button type="button" onClick={() => setShowShare(true)} className="btn-secondary-sm shrink-0">
+          Share
+        </button>
       </header>
 
-      <div className="flex items-center justify-between text-[11.5px]">
-        <span className={saved ? 'text-success' : netError ? 'text-signal' : 'text-dim'}>
-          {netError
-            ? `Offline — scoring locally (${pendingCount} to sync)`
-            : syncing || pendingCount > 0
-              ? 'Syncing…'
-              : status === 'live'
-                ? 'Synced'
-                : 'Connecting…'}
-        </span>
-        <span className="text-faint">
-          {state.venueName ?? 'No venue'}
-          {state.groupName ? ` · ${state.groupName}` : ''}
-        </span>
-      </div>
-
-      {showShare && (
-        <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-          <p className="text-[13px] text-dim">Send this to anyone who wants to watch along.</p>
-          {state.joinCode && (
-            <JoinQr url={`${window.location.origin}/live/join/${state.joinCode}`} label="Scan to watch" />
-          )}
-          <p className="score-text text-center text-[26px] font-bold tracking-[.18em] text-phosphor">
-            {state.joinCode ?? '——'}
+      <div className="flex flex-col gap-4 px-4 py-4">
+        <div className="flex items-baseline justify-between gap-3 text-[13px] text-ink-faded">
+          <p className="num min-w-0 truncate">
+            <span className="font-semibold text-red">Live</span>
+            {` · Game ${state.gameNumber}`}
+            {state.groupName ? ` · ${state.groupName}` : ''}
           </p>
-          <button
-            type="button"
-            onClick={share}
-            className="rounded-control border border-line bg-well py-2.5 text-[13.5px] text-text"
-          >
-            {shared ? 'Link copied' : 'Share the link'}
-          </button>
-          {(viewers.data ?? []).length > 0 && (
-            <p className="text-[12px] text-faint">
-              Joined: {(viewers.data ?? []).map((v) => v.profiles?.display_name ?? 'Someone').join(', ')}
-            </p>
-          )}
+          <p className={`num shrink-0 ${netError ? 'font-semibold text-red' : ''}`} aria-live="polite">
+            {syncLabel}
+          </p>
         </div>
-      )}
 
-      <div className="rounded-card border border-line bg-panel p-3">
         <Scorecard
           players={players.map((player) => ({
             name: firstName(player.displayName),
@@ -440,110 +423,126 @@ export default function LiveScorer({ profile }: { profile: Profile }) {
           }))}
           variant="live"
         />
+
+        {!complete && active && (
+          <FrameEditor
+            frames={active.frames}
+            onChange={(next: FrameInput[]) =>
+              commit(players.map((p) => (p.gamePlayerId === active.gamePlayerId ? { ...p, frames: next } : p)))
+            }
+            onUndo={undo}
+            canUndo={history.length > 1}
+            playerName={active.displayName}
+          />
+        )}
+
+        {complete && (
+          <div className="flex flex-col gap-3">
+            <Strip as="section">
+              <div className="flex items-baseline justify-between gap-2 px-3.5 py-2.5">
+                <span className="num text-[15px] font-semibold">
+                  {finish.isPending ? 'Saving the game' : `Game ${state.gameNumber} done`}
+                </span>
+                <VerificationBadge status="live" />
+              </div>
+              {standings.map((player, i) => (
+                <div
+                  key={player.gamePlayerId}
+                  className="flex items-baseline justify-between gap-3 px-3.5 py-[11px]"
+                >
+                  <span className="num w-5 shrink-0 text-[15px] text-ink-faded">{i + 1}</span>
+                  <span className={`min-w-0 flex-1 truncate text-[15px] ${i === 0 ? 'font-semibold' : ''}`}>
+                    {player.displayName}
+                    {player.profileId === profile.id && <span className="font-normal text-ink-faded"> you</span>}
+                  </span>
+                  <span className={`num shrink-0 text-[18px] ${i === 0 ? 'font-semibold text-red' : ''}`}>
+                    {score(player.frames).total ?? '-'}
+                  </span>
+                </div>
+              ))}
+              <p className="px-3.5 py-2.5 text-[12px] text-ink-faded">
+                {saved ? 'Every frame is written. ' : ''}
+                {state.venueName ? `${state.venueName} · ` : ''}
+                Game {state.gameNumber}
+                {state.groupName ? ` · ${state.groupName}` : ''}
+              </p>
+            </Strip>
+
+            {finish.isError ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  finish.mutate();
+                }}
+                disabled={finish.isPending}
+                className="btn-primary"
+              >
+                Save game
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  nextGame.mutate();
+                }}
+                disabled={
+                  nextGame.isPending ||
+                  finish.isPending ||
+                  (state.gameStatus === 'in_progress' && !finish.isSuccess)
+                }
+                className="btn-primary"
+              >
+                {nextGame.isPending ? 'Starting the next game' : 'Next game, same players'}
+              </button>
+            )}
+
+            {!finish.isPending && !finish.isError && (
+              <button type="button" onClick={() => setSharing(true)} className="btn-secondary">
+                Share the card
+              </button>
+            )}
+
+            <Link to={`/games/${state.gameId}`} className="press self-center text-[13px] font-semibold text-blue">
+              See the scorecard
+            </Link>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={() => {
+            setError('');
+            endSession.mutate();
+          }}
+          disabled={endSession.isPending}
+          className={abandoning ? 'btn-danger-text self-center py-2 disabled:text-disabled-fg' : 'btn-secondary'}
+        >
+          {endSession.isPending ? 'Ending the session' : abandoning ? 'Abandon game and end session' : 'End session'}
+        </button>
+        {error && <p className="text-center text-[13px] text-red">{error}</p>}
       </div>
 
-      {!complete && active && (
-        <FrameEditor
-          frames={active.frames}
-          onChange={(next: FrameInput[]) =>
-            commit(players.map((p) => (p.gamePlayerId === active.gamePlayerId ? { ...p, frames: next } : p)))
-          }
-          onUndo={undo}
-          canUndo={history.length > 1}
-          playerName={active.displayName}
-        />
-      )}
-
-      {complete && (
-        <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-          <div className="flex items-center justify-between">
-            <p className="font-display text-[17px] font-bold">
-              {finish.isPending ? 'Saving the game…' : `Game ${state.gameNumber} done`}
+      {showShare && (
+        <Sheet onClose={() => setShowShare(false)} label="Invite people to watch" title="Invite people to watch">
+          <div className="flex flex-col items-center gap-4 px-1 pb-2 pt-1">
+            <p className="text-center text-[13px] text-ink-faded">
+              Anyone with the link or the code can watch this game as it is scored.
             </p>
-            <VerificationBadge status="live" />
+            {state.joinCode && <JoinQr url={shareLink(state.joinCode)} label="Scan to watch" />}
+            <p className="num text-center text-[20px]">{state.joinCode ?? 'No code'}</p>
+            <button type="button" onClick={share} className="btn-secondary-sm">
+              {shared ? 'Link copied' : 'Share the link'}
+            </button>
+            {(viewers.data ?? []).length > 0 && (
+              <p className="text-center text-[13px] text-ink-faded">
+                Watching: {(viewers.data ?? []).map((v) => v.profiles?.display_name ?? 'Someone').join(', ')}
+              </p>
+            )}
           </div>
-          <ol className="flex flex-col gap-1.5">
-            {[...players]
-              .sort((a, b) => (runningTotal(b.frames) ?? 0) - (runningTotal(a.frames) ?? 0))
-              .map((player, i) => (
-                <li key={player.gamePlayerId} className="flex items-baseline justify-between">
-                  <span className={`text-[14px] ${i === 0 ? 'font-display font-bold text-text' : 'text-dim'}`}>
-                    {i + 1}. {player.displayName}
-                  </span>
-                  <span
-                    className={`score-text text-[16px] font-bold ${i === 0 ? 'text-phosphor' : 'text-text'}`}
-                  >
-                    {score(player.frames).total ?? '—'}
-                  </span>
-                </li>
-              ))}
-          </ol>
-          <p className="text-[12px] text-faint">
-            Frame-by-frame scores count as live-scored. Photo verification lands with the scan flow.
-          </p>
-
-          {!finish.isPending && !finish.isError && (
-            <button
-              type="button"
-              onClick={() => setSharing(true)}
-              className="press rounded-control border border-line bg-well py-2.5 text-[13.5px] font-bold text-text"
-            >
-              Share the card
-            </button>
-          )}
-
-          {finish.isError && (
-            <button
-              type="button"
-              onClick={() => {
-                setError('');
-                finish.mutate();
-              }}
-              className="rounded-control border border-line bg-well py-2.5 text-[13.5px] text-text"
-            >
-              Save game
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              setError('');
-              nextGame.mutate();
-            }}
-            disabled={
-              nextGame.isPending ||
-              finish.isPending ||
-              (state.gameStatus === 'in_progress' && !finish.isSuccess)
-            }
-            className="btn-primary"
-          >
-            {nextGame.isPending ? 'Racking up…' : 'Next game — same players'}
-          </button>
-          <Link
-            to={`/games/${state.gameId}`}
-            className="text-center text-[13.5px] text-dim underline underline-offset-4"
-          >
-            See the scorecard
-          </Link>
-        </div>
+        </Sheet>
       )}
-
-      <button
-        type="button"
-        onClick={() => {
-          setError('');
-          endSession.mutate();
-        }}
-        disabled={endSession.isPending}
-        className="rounded-control border border-line bg-panel py-3 text-[13.5px] text-dim"
-      >
-        {endSession.isPending
-          ? 'Ending…'
-          : complete || state.gameStatus !== 'in_progress'
-            ? 'End session'
-            : 'Abandon game and end session'}
-      </button>
-      {error && <p className="text-center text-[13.5px] text-signal">{error}</p>}
 
       {sharing && liveShareData && (
         <ShareSheet data={liveShareData} onClose={() => setSharing(false)} />

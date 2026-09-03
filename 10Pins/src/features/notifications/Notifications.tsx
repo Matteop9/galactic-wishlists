@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import EmptyState from '../../components/EmptyState';
+import { Link, useLocation } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import PageHeader from '../../components/PageHeader';
+import Strip from '../../components/Strip';
+import EmptyState from '../../components/EmptyState';
 import {
   fetchNotifications,
   markAllRead,
@@ -12,8 +14,16 @@ import { ListSkeleton, RefetchLine } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
+/** "30 Aug": when it happened, in the meta register. */
+function shortDate(iso: string | null): string {
+  const date = new Date(iso ?? '');
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
 export default function Notifications({ profile }: { profile: Profile }) {
   const queryClient = useQueryClient();
+  const location = useLocation();
   const list = useQuery({
     queryKey: ['notifications', profile.id],
     queryFn: () => fetchNotifications(profile.id),
@@ -29,9 +39,13 @@ export default function Notifications({ profile }: { profile: Profile }) {
       .catch(() => {});
   }, [list.isSuccess, profile.id, queryClient]);
 
+  // A deep link or a fresh launch has nothing behind it, so back goes home.
+  const back = location.key === 'default' ? '/' : true;
+  const rows = list.data ?? [];
+
   return (
-    <div className="flex flex-col gap-4 px-4 py-6">
-      <h1 className="font-display text-[20px] font-bold">Notifications</h1>
+    <div className="flex flex-col gap-4 px-4 py-5">
+      <PageHeader back={back} title="Notifications" />
 
       <RefetchLine active={list.isFetching && !list.isPending} />
 
@@ -39,28 +53,26 @@ export default function Notifications({ profile }: { profile: Profile }) {
 
       {!showSkeleton && list.data && list.data.length === 0 && (
         <EmptyState
+          tone="inline"
           title="All quiet"
-          body="Reactions, comments, friend requests and match-day news land here."
+          body="Reactions, comments, friend requests and match-day news show up here."
         />
       )}
 
-      <div className="flex flex-col gap-2">
-        {(list.data ?? []).map((n, i) => (
-          <Link
-            key={n.id}
-            to={notificationLink(n)}
-            style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}
-            className={`rise-in press flex items-start justify-between gap-3 rounded-card border px-4 py-3 ${
-              n.read_at ? 'border-line bg-panel' : 'border-phosphor/40 bg-phosphor/5'
-            }`}
-          >
-            <p className="text-[13.5px] text-text">{notificationText(n)}</p>
-            <span className="shrink-0 text-[10.5px] text-faint">
-              {new Date(n.created_at ?? '').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-            </span>
-          </Link>
-        ))}
-      </div>
+      {rows.length > 0 && (
+        <Strip className="rise-in">
+          {rows.map((n) => (
+            <Link
+              key={n.id}
+              to={notificationLink(n)}
+              className={`press flex items-start gap-3 px-3.5 py-3 ${n.read_at ? '' : 'bg-card'}`}
+            >
+              <p className="min-w-0 flex-1 text-[14px]">{notificationText(n)}</p>
+              <span className="num shrink-0 text-[12px] text-ink-faded">{shortDate(n.created_at)}</span>
+            </Link>
+          ))}
+        </Strip>
+      )}
     </div>
   );
 }

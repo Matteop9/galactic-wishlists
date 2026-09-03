@@ -34,6 +34,18 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: '0.4.0',
+    date: '2026-09-02',
+    title: 'A new look, the scoresheet',
+    items: [
+      'The whole app is redrawn as a paper scoresheet: ruled frames, boxed numerals, strikes in red and spares in blue, on a light page.',
+      'Dark mode follows your phone, or pick light or dark yourself under Profile, Theme.',
+      'Every game is drawn as its scoresheet strip, on the feed and on the game page.',
+      'Reactions are now one thing, a nice one. Tap it once, tap again to take it back.',
+      'On a tablet or desktop the tab bar becomes a side rail and the feed runs in two columns.',
+    ],
+  },
+  {
     version: '0.3.0',
     date: '2026-09-02',
     title: 'What’s new, in the app',

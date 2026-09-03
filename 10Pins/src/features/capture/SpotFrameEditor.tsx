@@ -11,11 +11,11 @@ function withFrameRolls(frames: FrameInput[], frameIndex: number, rolls: Roll[])
 }
 
 /**
- * Spot-edit one frame from photo review (README §Flagship, mode "spot-edit").
+ * Spot-edit one frame from photo review (README, Flagship, mode "spot-edit").
  *
  * You re-enter the frame the monitor disagrees with, roll by roll, and every
  * later total re-derives immediately. Key legality is decided by handing the
- * candidate frame to the engine and seeing whether it objects — the same rules
+ * candidate frame to the engine and seeing whether it objects: the same rules
  * that score every other game here, not a second copy written for a keypad.
  */
 export default function SpotFrameEditor({
@@ -72,59 +72,50 @@ export default function SpotFrameEditor({
   }
 
   return (
-    <div className="sheet-up flex flex-col gap-4 rounded-card border border-phosphor/40 bg-panel p-4 shadow-sheet">
+    <div className="sheet-up strip flex flex-col gap-4 p-4">
       <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
-          <p className="font-display text-[15px] font-bold">
+          <p className="num truncate text-[17px] font-semibold">
             Frame {frameIndex + 1} · {playerName}
           </p>
-          <p className="text-[12px] text-dim">
-            {rolls.length === 0
-              ? 'Tap the rolls as the monitor shows them'
-              : `Roll ${Math.min(slot + 1, maxRolls)} of ${maxRolls}`}
+          <p className="text-[13px] text-ink-faded">
+            {rolls.length === 0 ? (
+              'Tap the rolls as the monitor shows them'
+            ) : (
+              <>
+                Roll <span className="num">{Math.min(slot + 1, maxRolls)}</span> of{' '}
+                <span className="num">{maxRolls}</span>
+              </>
+            )}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={clearFrame}
-          className="press rounded-chip border border-line bg-well px-3 py-2 text-[13px] text-dim"
-        >
+        <button type="button" onClick={clearFrame} className="btn-secondary-sm">
           Clear
         </button>
-        <button
-          type="button"
-          onClick={onDone}
-          className="press rounded-chip border border-line bg-well px-3 py-2 text-[13px] text-text"
-        >
+        <button type="button" onClick={onDone} className="btn-primary-sm">
           Save frame
         </button>
       </div>
 
-      <div
-        className={`mx-auto ${
-          isTenth ? 'w-36' : 'w-28'
-        } overflow-hidden rounded-cell border-[1.5px] border-phosphor bg-well shadow-glow-amber`}
-      >
-        <div className="flex h-9 divide-x divide-hairline">
+      {/* The boxed numeral: r0, 1.5px ink border, ball cells over the total. The
+          selected roll slot is filled with card, the same way a focused frame is. */}
+      <div className={`mx-auto ${isTenth ? 'w-40' : 'w-32'} strip`}>
+        <div className="flex h-10 divide-x divide-hairline">
           {glyphs.map((g, i) => (
             <button
               key={i}
               type="button"
               onClick={() => setSlot(i)}
               disabled={i > rolls.length}
-              className={`grid flex-1 place-items-center font-display text-[15px] font-semibold ${
-                i === slot ? 'bg-phosphor/15' : ''
-              } ${glyphColor(g)}`}
+              className={`num grid flex-1 place-items-center text-[20px] ${i === slot ? 'bg-card' : ''} ${glyphColor(g)}`}
               aria-label={`Roll ${i + 1}`}
             >
               {g}
             </button>
           ))}
         </div>
-        <div className="grid h-9 place-items-center border-t border-hairline">
-          <span className="score-text text-[14px] text-text">
-            {scored?.frames[frameIndex]?.cumulative ?? ''}
-          </span>
+        <div className="grid h-10 place-items-center border-t border-hairline">
+          <span className="num text-[20px] font-medium text-ink">{scored?.frames[frameIndex]?.cumulative ?? ''}</span>
         </div>
       </div>
 

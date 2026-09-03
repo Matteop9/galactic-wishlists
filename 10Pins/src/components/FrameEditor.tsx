@@ -1,11 +1,12 @@
 import { applyRoll, legalRolls, nextRoll, score, type FrameInput, type Roll } from '../engine';
+import Avatar from './Avatar';
 import Keypad from './Keypad';
 import { frameGlyphs, glyphColor } from './scorecard/display';
 
 /**
- * Frame editor: header (bowler + frame/roll context + always-visible Undo),
- * the focused frame cell, then the keypad. One component for live scoring,
- * photo-review correction and manual entry (README §Flagship).
+ * Frame editor: header (bowler, frame and roll, an always-visible Undo), the
+ * focused frame as a boxed numeral, then the keypad. One component for live
+ * scoring, photo-review correction and manual entry.
  */
 export default function FrameEditor({
   frames,
@@ -26,52 +27,33 @@ export default function FrameEditor({
   const focusIndex = pos?.frame ?? 9;
   const focusFrame = scored.frames[focusIndex];
   const glyphs = frameGlyphs(focusFrame, focusIndex === 9);
-  const initials = playerName
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-full border border-line bg-well font-display text-[13px] font-bold text-glass">
-          {initials}
-        </div>
+        <Avatar name={playerName} size={40} />
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-[15px] font-bold">{playerName}</p>
-          <p className="text-[12px] text-dim">
-            {pos ? `Frame ${pos.frame + 1} · Roll ${pos.roll + 1}` : 'Game complete'}
+          <p className="num truncate text-[17px] font-semibold">{playerName}</p>
+          <p className="text-[13px] text-ink-faded">
+            {pos ? `Frame ${pos.frame + 1}, roll ${pos.roll + 1}` : 'Game complete'}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onUndo}
-          disabled={!canUndo}
-          className="rounded-chip border border-line bg-well px-4 py-2 text-[13.5px] text-dim disabled:border-hairline disabled:text-disabled"
-        >
+        <button type="button" onClick={onUndo} disabled={!canUndo} className="btn-secondary-sm">
           Undo
         </button>
       </div>
 
-      <div
-        className={`mx-auto ${focusIndex === 9 ? 'w-36' : 'w-28'} overflow-hidden rounded-cell border-[1.5px] ${
-          pos ? 'border-phosphor shadow-glow-amber' : 'border-line'
-        } bg-well`}
-      >
-        <div className="flex h-9 divide-x divide-hairline">
+      {/* The boxed numeral: r0, 1.5px ink border, ball cells over the total. */}
+      <div className={`mx-auto ${focusIndex === 9 ? 'w-40' : 'w-32'} strip`}>
+        <div className="flex h-10 divide-x divide-hairline">
           {glyphs.map((g, i) => (
-            <span
-              key={i}
-              className={`grid flex-1 place-items-center font-display text-[15px] font-semibold ${glyphColor(g)}`}
-            >
+            <span key={i} className={`num grid flex-1 place-items-center text-[20px] ${glyphColor(g)}`}>
               {g}
             </span>
           ))}
         </div>
-        <div className="grid h-9 place-items-center border-t border-hairline">
-          <span className="score-text text-[14px] text-text">{focusFrame?.cumulative ?? ''}</span>
+        <div className="grid h-10 place-items-center border-t border-hairline">
+          <span className="num text-[20px] font-medium text-ink">{focusFrame?.cumulative ?? ''}</span>
         </div>
       </div>
 

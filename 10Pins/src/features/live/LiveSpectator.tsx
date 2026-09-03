@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import EmptyState from '../../components/EmptyState';
+import PageHeader from '../../components/PageHeader';
 import Scorecard from '../../components/scorecard/Scorecard';
+import Strip from '../../components/Strip';
 import { fetchLiveSession } from '../../lib/live';
-import { applyRollEvent, liveStandings, nextUp, runningTotal, type LivePlayer } from '../../lib/liveState';
+import { applyRollEvent, liveStandings, nextUp, type LivePlayer } from '../../lib/liveState';
 import { useLiveChannel } from './useLiveChannel';
 import { LaneSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
-const firstName = (name: string) => name.trim().split(/\s+/)[0].toUpperCase();
+/** The name on the strip header: first name only, as written. */
+const firstName = (name: string) => name.trim().split(/\s+/)[0];
 
 /**
  * Live session · spectator (README §Live session). Read-only and deliberately
  * large: this screen gets held up around the lane. Broadcast keeps it at the
- * scorer’s pace; every reconnect refetches `frames` so it can never drift.
+ * scorer's pace; every reconnect refetches `frames` so it can never drift.
  */
 export default function LiveSpectator({ profile }: { profile: Profile }) {
   const { id: sessionId } = useParams<{ id: string }>();
@@ -56,14 +60,12 @@ export default function LiveSpectator({ profile }: { profile: Profile }) {
   if (session.isPending) return <div className="px-4 py-6" />;
   if (session.isError || !state) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">Nothing to watch</h1>
-        <p className="max-w-[260px] text-[13.5px] text-dim">
-          This session has finished or the link has expired.
-        </p>
-        <Link to="/" className="text-[13.5px] text-phosphor">
-          Back home
-        </Link>
+      <div className="px-4">
+        <EmptyState
+          title="Nothing to watch"
+          body="This session has finished or the link has expired."
+          action={{ label: 'Back home', to: '/' }}
+        />
       </div>
     );
   }
@@ -72,88 +74,69 @@ export default function LiveSpectator({ profile }: { profile: Profile }) {
   const turn = nextUp(lane);
   const standings = liveStandings(lane);
   const finished = state.sessionStatus !== 'active' || state.gameStatus !== 'in_progress';
+  const sub = [state.venueName, state.groupName].filter(Boolean).join(' · ') || `Game ${state.gameNumber}`;
 
   return (
-    <div className="flex flex-col gap-5 px-4 py-6">
-      <header className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="label-caps text-faint">
-            {state.hostName}
-            {state.venueName ? ` · ${state.venueName}` : ''}
-          </p>
-          <h1 className="truncate font-display text-[22px] font-bold">Game {state.gameNumber}</h1>
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          <span
-            className={`rounded-full border px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[.12em] ${
-              status === 'live'
-                ? 'border-success/60 text-success'
-                : 'border-line text-dim'
-            }`}
-          >
-            {status === 'live' ? 'Synced' : 'Reconnecting'}
-          </span>
-          <span className="label-caps text-faint">{watching} watching</span>
-        </div>
-      </header>
+    <div className="flex flex-col pb-6">
+      <div className="px-5 pb-1 pt-2.5">
+        <PageHeader back title={`${state.hostName} is bowling`} sub={sub} />
+      </div>
 
-      {finished ? (
-        <p className="rounded-card border border-line bg-panel px-4 py-3 text-center text-[13px] text-dim">
-          {state.sessionStatus === 'active'
-            ? 'Game over — waiting for the next one to be racked up.'
-            : 'That’s the session done.'}
+      <div className="flex flex-col gap-4 px-4 py-4">
+        <p className="num text-[13px] text-ink-faded">
+          {finished ? (
+            <span className="font-semibold">Finished</span>
+          ) : (
+            <span className="font-semibold text-red">Live</span>
+          )}
+          {` · Game ${state.gameNumber} · ${watching} watching`}
+          {!finished && status !== 'live' ? ' · Reconnecting' : ''}
         </p>
-      ) : (
-        <div className="flex items-center justify-between rounded-card border-[1.5px] border-phosphor bg-panel px-4 py-4 shadow-glow-amber">
-          <div className="min-w-0">
-            <p className="label-caps text-phosphor">Now bowling</p>
-            <p className="truncate font-display text-[24px] font-bold">
-              {turn?.player.displayName ?? '—'}
-            </p>
-            <p className="text-[12px] text-dim">
-              {turn ? `Frame ${turn.frame + 1} · Roll ${turn.roll + 1}` : 'Game complete'}
-            </p>
-          </div>
-          <span className="score-text text-[40px] font-bold text-phosphor">
-            {(turn && runningTotal(turn.player.frames)) ?? '—'}
-          </span>
-        </div>
-      )}
 
-      <div className="rounded-card border border-line bg-panel p-3">
+        {finished && (
+          <Strip as="section">
+            <div className="px-3.5 py-2.5">
+              <span className="num text-[15px] font-semibold">Game {state.gameNumber} done</span>
+            </div>
+            {standings.map(({ player, total }, i) => (
+              <div key={player.gamePlayerId} className="flex items-baseline justify-between gap-3 px-3.5 py-[11px]">
+                <span className="num w-5 shrink-0 text-[15px] text-ink-faded">{i + 1}</span>
+                <span className={`min-w-0 flex-1 truncate text-[15px] ${i === 0 ? 'font-semibold' : ''}`}>
+                  {player.displayName}
+                  {player.profileId === profile.id && <span className="font-normal text-ink-faded"> you</span>}
+                </span>
+                <span className={`num shrink-0 text-[18px] ${i === 0 ? 'font-semibold text-red' : ''}`}>
+                  {total ?? '-'}
+                </span>
+              </div>
+            ))}
+            <p className="px-3.5 py-2.5 text-[13px] text-ink-faded">
+              {state.sessionStatus === 'active'
+                ? 'Waiting for the next game to start.'
+                : 'That is the session done.'}
+            </p>
+          </Strip>
+        )}
+
         <Scorecard
-          // No `current` flag: the panel above already says who is bowling, so
-          // the card only needs the amber frame, not a second NOW BOWLING pill.
           players={lane.map((player) => ({
             name: firstName(player.displayName),
             frames: player.frames,
+            current: !finished && player.gamePlayerId === turn?.player.gamePlayerId,
             currentFrame: player.gamePlayerId === turn?.player.gamePlayerId ? turn?.frame : undefined,
           }))}
           variant="live"
         />
-      </div>
 
-      <ol className="flex flex-col gap-2">
-        {standings.map(({ player, total }, i) => (
-          <li
-            key={player.gamePlayerId}
-            className="flex items-baseline justify-between rounded-card border border-line bg-panel px-4 py-3"
-          >
-            <span className={`text-[16px] ${i === 0 ? 'font-display font-bold text-text' : 'text-dim'}`}>
-              {i + 1}. {player.displayName}
-            </span>
-            <span className={`score-text text-[22px] font-bold ${i === 0 ? 'text-phosphor' : 'text-text'}`}>
-              {total ?? '—'}
-            </span>
-          </li>
-        ))}
-      </ol>
-
-      {state.joinCode && (
-        <p className="text-center text-[12px] text-faint">
-          Join code <span className="score-text tracking-[.18em] text-dim">{state.joinCode}</span>
+        <p className="text-center text-[13px] text-ink-faded">
+          {finished ? 'Scores are final for this game.' : 'Scores update as they are bowled.'}
         </p>
-      )}
+        {state.joinCode && (
+          <p className="num text-center text-[13px] text-ink-faded">
+            Join code <span className="text-ink">{state.joinCode}</span>
+          </p>
+        )}
+      </div>
     </div>
   );
 }

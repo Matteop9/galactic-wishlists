@@ -1,72 +1,76 @@
+import type { ReactNode } from 'react';
 import { score, type FrameInput } from '../../engine';
-import { frameGlyphs, glyphColor, miniGlyph } from './display';
+import { StripHeader } from '../Strip';
+import { frameGlyphs, glyphColor } from './display';
 
 /**
- * The canonical scorecard grid — the single most important object (README §Flagship).
- * Variants: full (feed detail/review), compact (feed cards), live (current frame
- * amber), editing (focused/mismatch frames), share (larger, branded render).
+ * The scoresheet strip for a game: the frame-grid primitive (DESIGN.md).
+ *
+ * One strip per player: a header row (name, meta, total right-aligned) over a
+ * ten-frame grid with two ball cells top-right per frame (three in the 10th)
+ * and the cumulative total beneath. Marks: X red, / blue, pin counts ink,
+ * misses as a dash.
+ *
+ * Variants change sizing and state marking, never the shape:
+ * - full: the game page (30px total)
+ * - compact: feed cards (24px total)
+ * - live: the frame being bowled is filled with `--card` and ruled in ink;
+ *   frames not yet bowled are blank
+ * - editing: tappable cells; flagged frames (a scan the engine can't
+ *   reconcile) are filled with `--card`
+ * - share: larger cells for the 540px share card
  */
 export type ScorecardVariant = 'full' | 'compact' | 'live' | 'editing' | 'share';
 
 export interface ScorecardPlayer {
   name: string;
   frames: FrameInput[];
-  /** live: this player is at the line — gets the NOW BOWLING pill */
+  /** the line under the name: venue and date, "Game 2 of 3", "at the line" */
+  meta?: ReactNode;
+  /** live: this player is at the line */
   current?: boolean;
-  /** live/editing: 0-based frame index with the amber focus outline */
+  /** live/editing: 0-based frame index being bowled or edited */
   currentFrame?: number;
-  /** editing: 0-based frames that fail to recompute — amber mismatch fill */
+  /** editing: 0-based frames the engine can't reconcile with the photo */
   amberFrames?: number[];
-  /** frames whose cumulative just changed — settle flash */
+  /** frames whose cumulative just changed: the total fills in */
   settleFrames?: number[];
+  /** colour the total: hot = red (a high game), steady = blue */
+  tone?: 'hot' | 'steady' | null;
+  /** override the header total (a totals-only game, or a running total) */
+  total?: number | null;
 }
 
 interface Sizing {
-  name: string;
-  strip: string;
-  roll: string;
+  ball: string;
+  ballText: string;
   total: string;
+  header: 'md' | 'lg';
 }
 
-// Totals are 10px, not 11: three digits of Martian Mono at 11px measure ~23px
-// and a frame cell is 22.3px at 375px wide, so every score over 99 was being
-// shaved a pixel (spec §12: totals must not clip).
-const BASE: Sizing = { name: 'w-11 text-[9px]', strip: 'h-[18px]', roll: 'text-[10px]', total: 'h-5 text-[10px]' };
-// The live variant spends 32px of the row on the running-total column, which
-// leaves 19px cells — 2px short of three digits at 10px. It gets 9px and
-// slightly tighter tracking rather than a clipped score.
-const LIVE: Sizing = { ...BASE, total: 'h-5 text-[9px] tracking-[-0.02em]' };
-const SHARE: Sizing = { name: 'w-14 text-[11px]', strip: 'h-6', roll: 'text-[13px]', total: 'h-7 text-[14px]' };
+const BASE: Sizing = { ball: 'h-[18px] w-[15px]', ballText: 'text-[12px]', total: 'py-1 text-[13px]', header: 'md' };
+const FULL: Sizing = { ...BASE, header: 'lg' };
+const SHARE: Sizing = { ball: 'h-6 w-5', ballText: 'text-[15px]', total: 'py-1.5 text-[16px]', header: 'lg' };
 
 export default function Scorecard({
   players,
   variant = 'full',
   onFrameTap,
+  className = '',
 }: {
   players: ScorecardPlayer[];
   variant?: ScorecardVariant;
   /** editing: make every cell tappable, for photo-review spot edits */
   onFrameTap?: (playerIndex: number, frameIndex: number) => void;
+  className?: string;
 }) {
-  if (variant === 'compact') return <CompactCard players={players} />;
-
-  const size = variant === 'share' ? SHARE : variant === 'live' ? LIVE : BASE;
-  const current = variant === 'live' ? players.find((p) => p.current) : undefined;
-
+  const size = variant === 'share' ? SHARE : variant === 'full' ? FULL : BASE;
   return (
-    <div className="flex flex-col gap-1.5">
-      {current && (
-        <div className="mb-1 flex items-center justify-between">
-          <span className="label-caps">{current.name}</span>
-          <span className="rounded-full border border-phosphor px-2.5 py-1 font-mono text-[9px] font-semibold uppercase tracking-[.12em] text-phosphor">
-            Now bowling
-          </span>
-        </div>
-      )}
+    <div className={`flex flex-col gap-2 ${className}`}>
       {players.map((player, playerIndex) => (
         // Keyed by seat, not name: a monitor photo can legitimately return two
         // players called MATT, and React would collapse them into one row.
-        <PlayerRow
+        <PlayerStrip
           key={playerIndex}
           player={player}
           variant={variant}
@@ -78,7 +82,7 @@ export default function Scorecard({
   );
 }
 
-function PlayerRow({
+function PlayerStrip({
   player,
   variant,
   size,
@@ -91,13 +95,21 @@ function PlayerRow({
 }) {
   const game = score(player.frames);
   const running = [...game.frames].reverse().find((f) => f.cumulative !== null)?.cumulative ?? null;
+  const total = player.total !== undefined ? player.total : game.total ?? running;
+  const meta =
+    player.meta ?? (variant === 'live' && player.current ? 'at the line' : undefined);
 
   return (
-    <div className="flex items-center gap-1">
-      <span className={`${size.name} shrink-0 truncate font-mono font-semibold uppercase tracking-[.08em] text-dim`}>
-        {player.name}
-      </span>
-      <div className="flex min-w-0 flex-1 items-stretch gap-[3px]">
+    <div className="strip">
+      <StripHeader
+        title={player.name}
+        meta={meta}
+        right={total ?? ''}
+        tone={player.tone ?? (total === null ? 'faded' : null)}
+        size={size.header}
+        className="border-b border-hairline"
+      />
+      <div className="grid grid-cols-[repeat(9,1fr)_1.45fr]">
         {Array.from({ length: 10 }, (_, i) => (
           <FrameCell
             key={i}
@@ -107,16 +119,10 @@ function PlayerRow({
             size={size}
             glyphs={frameGlyphs(game.frames[i], i === 9)}
             cumulative={game.frames[i]?.cumulative ?? null}
-            empty={(game.frames[i]?.rolls.length ?? 0) === 0}
             onTap={onFrameTap ? () => onFrameTap(i) : undefined}
           />
         ))}
       </div>
-      {variant === 'live' && (
-        <span className="score-text w-8 shrink-0 text-right text-[13px] font-semibold text-text">
-          {running ?? ''}
-        </span>
-      )}
     </div>
   );
 }
@@ -128,7 +134,6 @@ function FrameCell({
   size,
   glyphs,
   cumulative,
-  empty,
   onTap,
 }: {
   index: number;
@@ -137,84 +142,42 @@ function FrameCell({
   size: Sizing;
   glyphs: string[];
   cumulative: number | null;
-  empty: boolean;
   onTap?: () => void;
 }) {
   const isTenth = index === 9;
   const focused =
     (variant === 'live' || variant === 'editing') && player.current !== false && player.currentFrame === index;
-  const mismatch = variant === 'editing' && (player.amberFrames ?? []).includes(index);
+  const flagged = variant === 'editing' && (player.amberFrames ?? []).includes(index);
   const settling = (player.settleFrames ?? []).includes(index);
-  const pendingDim = variant === 'live' && empty && !focused;
-
-  const border = focused
-    ? 'border-[1.5px] border-phosphor shadow-glow-amber'
-    : mismatch
-      ? 'border-2 border-phosphor'
-      : 'border border-line';
 
   const Cell = onTap ? 'button' : 'div';
 
   return (
-    <>
-      {isTenth && <span className="w-[2px] shrink-0 self-stretch rounded-full bg-rule" />}
-      <Cell
-        {...(onTap ? { type: 'button' as const, onClick: onTap, 'aria-label': `Frame ${index + 1}` } : {})}
-        className={`relative min-w-0 overflow-hidden rounded-cell ${onTap ? 'press' : ''} ${border} ${
-          mismatch ? 'bg-phosphor/15' : 'bg-well'
-        } ${pendingDim ? 'opacity-45' : ''} ${isTenth ? 'flex-[1.7]' : 'flex-1'}`}
-      >
-        <div className={`flex divide-x divide-hairline ${size.strip}`}>
-          {glyphs.map((g, i) => (
-            <span
-              key={i}
-              className={`grid flex-1 place-items-center font-display font-semibold ${size.roll} ${glyphColor(g)}`}
-            >
-              {g}
-            </span>
-          ))}
-        </div>
-        <div className={`grid place-items-center border-t border-hairline ${size.total}`}>
-          <span key={`${index}-${cumulative}`} className={`score-text text-text ${settling ? 'settle' : ''}`}>
-            {cumulative ?? ''}
+    <Cell
+      {...(onTap ? { type: 'button' as const, onClick: onTap, 'aria-label': `Frame ${index + 1}` } : {})}
+      className={`relative flex min-w-0 flex-col ${isTenth ? '' : 'border-r border-hairline'} ${
+        onTap ? 'press text-left' : ''
+      } ${focused || flagged ? 'bg-card' : ''}`}
+    >
+      <div className={`flex ${isTenth ? '' : 'justify-end'} border-b border-hairline`}>
+        {glyphs.map((g, i) => (
+          <span
+            key={i}
+            className={`num flex items-center justify-center ${isTenth ? 'h-[18px] flex-1' : size.ball} ${
+              i > 0 ? 'border-l border-hairline' : ''
+            } ${size.ballText} ${glyphColor(g)}`}
+          >
+            {g}
           </span>
-        </div>
-        {focused && <span className="absolute inset-x-0 bottom-0 h-[2px] bg-phosphor" />}
-      </Cell>
-    </>
-  );
-}
-
-/** Compact variant: name (74px) + one-glyph mini strip + right-aligned total. */
-function CompactCard({ players }: { players: ScorecardPlayer[] }) {
-  return (
-    <div className="flex flex-col gap-2">
-      {players.map((player, playerIndex) => {
-        const game = score(player.frames);
-        return (
-          <div key={playerIndex} className="flex h-6 items-center gap-2">
-            <span className="w-[74px] shrink-0 truncate font-mono text-[10px] font-semibold uppercase tracking-[.08em] text-dim">
-              {player.name}
-            </span>
-            <div className="flex flex-1 gap-[3px]">
-              {Array.from({ length: 10 }, (_, i) => {
-                const g = miniGlyph(game.frames[i]);
-                return (
-                  <span
-                    key={i}
-                    className={`grid h-5 flex-1 place-items-center rounded-cell border border-hairline bg-well font-display text-[9px] font-semibold ${glyphColor(g)}`}
-                  >
-                    {g}
-                  </span>
-                );
-              })}
-            </div>
-            <span className="score-text w-8 shrink-0 text-right text-[14px] font-bold text-text">
-              {game.total ?? ''}
-            </span>
-          </div>
-        );
-      })}
-    </div>
+        ))}
+      </div>
+      <span
+        key={`${index}-${cumulative}`}
+        className={`num text-center font-medium leading-none ${size.total} ${settling ? 'settle' : ''}`}
+      >
+        {cumulative ?? ' '}
+      </span>
+      {focused && <span className="absolute inset-x-0 bottom-0 h-[2px] bg-ink" aria-hidden />}
+    </Cell>
   );
 }

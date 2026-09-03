@@ -53,9 +53,9 @@ export function notificationText(n: Notification): string {
     case 'match_day_added':
       return `${who} added you to a match day`;
     case 'match_day_result':
-      return `${who} finished your match day — see how it ended`;
+      return `${who} finished your match day. See how it ended`;
     case 'live_started':
-      return `${who} is bowling live — watch it`;
+      return `${who} is bowling live. Watch it`;
     default:
       return `New activity from ${who}`;
   }

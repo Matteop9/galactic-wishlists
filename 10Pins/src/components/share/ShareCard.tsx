@@ -1,112 +1,115 @@
+import type { CSSProperties } from 'react';
 import Scorecard from '../scorecard/Scorecard';
+import Wordmark from '../Wordmark';
+import { VERIFICATION_LABEL } from '../VerificationBadge';
 import type { FrameInput } from '../../engine';
+import { highlightLabel } from '../../lib/highlights';
 import { shareCopy, type ShareCopyInput } from '../../lib/shareCopy';
 
 /**
- * The share card (design §Share card): "free marketing — treat it as a
- * distinct branded asset". Exports at 1080 × 1350, drawn here at exactly half
- * that (540 × 675) so every value maps 1:1 to the hi-fi and the rasteriser
- * just doubles it.
+ * The share card: a scoresheet strip on light paper. Exports at 1080 x 1350,
+ * drawn here at exactly half that (540 x 675) so the rasteriser just doubles it.
  *
  * It reuses `Scorecard variant="share"` rather than redrawing the grid: one
  * scorecard component, so the card can never disagree with the app about what
  * a game looked like.
  *
- * This is sanctioned appearance #4 of the signature sweep — and the only one
- * that is *frozen*, which is precisely why it survives being rasterised.
+ * The card is an image, so it is always light whatever theme the page is in:
+ * the light tokens are pinned inline on the root, and every token class inside
+ * resolves against them.
  */
 export interface ShareCardData extends ShareCopyInput {
-  /** the winner’s frames, for the grid */
+  /** the winner's frames, for the grid */
   frames: FrameInput[];
+}
+
+const LIGHT_TOKENS = {
+  colorScheme: 'light',
+  '--paper': '#f7f3ea',
+  '--sheet': '#fbf8f1',
+  '--card': '#efeadd',
+  '--ink': '#201e1a',
+  '--ink-faded': '#5c574c',
+  '--hairline': 'rgba(32,30,26,0.18)',
+  '--rule': 'rgba(32,30,26,0.38)',
+  '--strip': '#201e1a',
+  '--red': '#b3372b',
+  '--blue': '#2c4e9e',
+} as CSSProperties;
+
+/**
+ * Sentence case for a label that arrives in capitals ("PERFECT GAME"), keeping
+ * "PB" as the initialism it is. Anything already mixed-case passes through.
+ */
+function sentence(text: string): string {
+  if (text !== text.toUpperCase() || !/[A-Z]/.test(text)) return text;
+  const lower = text.toLowerCase().replace(/\bpb\b/g, 'PB');
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+/** "Sat 30 Aug · Jersey Bowl", in the register the rest of the app uses. */
+function metaLine(playedAt?: string, venueName?: string | null): string {
+  const date = playedAt
+    ? new Date(playedAt).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+    : null;
+  return [date, venueName ?? null].filter(Boolean).join(' · ');
 }
 
 export default function ShareCard({ data }: { data: ShareCardData }) {
   const copy = shareCopy(data);
   if (!copy) return null;
 
-  const verified = data.verification === 'verified';
+  const meta = metaLine(data.playedAt, data.venueName);
+  const highlights = data.highlights.map((code) => sentence(highlightLabel(code)));
+  const strikes =
+    typeof data.strikes === 'number' && data.strikes > 0
+      ? `${data.strikes} ${data.strikes === 1 ? 'strike' : 'strikes'}`
+      : null;
 
   return (
     <div
-      className="relative flex h-[675px] w-[540px] flex-col justify-between overflow-hidden bg-ink p-9"
-      // A phosphor CRT texture, straight from the hi-fi.
-      style={{
-        backgroundImage:
-          'repeating-linear-gradient(180deg, rgb(150 220 255 / .03) 0px, rgb(150 220 255 / .03) 1px, transparent 1px, transparent 5px)',
-      }}
+      className="flex h-[675px] w-[540px] flex-col justify-between border-[1.5px] border-ink bg-sheet p-9 text-ink"
+      style={LIGHT_TOKENS}
     >
-      {/* the frozen sweep */}
-      <div
-        className="absolute inset-x-0 top-[57%] h-[2.5px] bg-phosphor opacity-80"
-        style={{ boxShadow: '0 0 24px 6px rgb(255 174 43 / .4)' }}
-        aria-hidden
-      />
-
-      <div className="relative flex items-center gap-2">
-        <span
-          className="score-text rounded-cell border-2 border-phosphor px-1.5 font-display text-[17px] font-extrabold leading-[1.35] text-phosphor"
-          style={{ textShadow: '0 0 10px rgb(255 174 43 / .5)' }}
-        >
-          10
-        </span>
-        <span className="font-display text-[17px] font-extrabold tracking-[.14em] text-glass">PINS</span>
-        {copy.meta && (
-          <span className="ml-auto font-mono text-[11px] font-semibold tracking-[.08em] text-faint">
-            {copy.meta}
-          </span>
-        )}
+      <div className="flex items-baseline">
+        <Wordmark size="sm" />
+        {meta && <span className="ml-auto text-[13px] text-ink-faded">{meta}</span>}
       </div>
 
-      <div className="relative flex flex-col gap-5">
-        <div className="flex flex-col gap-0.5">
-          {data.groupName && (
-            <span className="font-mono text-[13px] font-semibold tracking-[.14em] text-dim">
-              {data.groupName.toUpperCase()}
-            </span>
-          )}
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-1">
+          {data.groupName && <span className="text-[13px] text-ink-faded">{data.groupName}</span>}
           <div className="flex items-baseline gap-4">
-            <span className="font-display text-[56px] font-extrabold leading-[1.05] text-text">
-              {copy.winner}
-            </span>
-            <span
-              className="score-text text-[64px] font-bold leading-none text-phosphor"
-              style={{ textShadow: '0 0 20px rgb(255 174 43 / .5)' }}
-            >
-              {copy.score}
-            </span>
+            <span className="num min-w-0 truncate text-[56px] font-semibold leading-none">{copy.winner}</span>
+            <span className="num shrink-0 text-[64px] font-semibold leading-none text-red">{copy.score}</span>
           </div>
-          {(copy.pills.length > 0 || copy.statPill) && (
-            <div className="flex gap-2 pt-2">
-              {copy.pills.map((pill) => (
-                <span
-                  key={pill}
-                  className="rounded-cell border-[1.5px] border-phosphor/50 px-2.5 py-1 font-display text-[12px] font-bold tracking-[.1em] text-phosphor"
-                >
-                  {pill}
+          {(highlights.length > 0 || strikes) && (
+            <p className="flex flex-wrap gap-x-2 pt-1 text-[14px]">
+              {highlights.map((label, i) => (
+                <span key={label} className="flex gap-x-2">
+                  {i > 0 && <span className="text-ink-faded">·</span>}
+                  <span className="font-semibold text-red">{label}</span>
                 </span>
               ))}
-              {copy.statPill && (
-                <span className="rounded-cell border-[1.5px] border-mark/40 px-2.5 py-1 font-display text-[12px] font-bold tracking-[.1em] text-mark">
-                  {copy.statPill}
+              {strikes && (
+                <span className="flex gap-x-2">
+                  {highlights.length > 0 && <span className="text-ink-faded">·</span>}
+                  <span className="num font-semibold text-blue">{strikes}</span>
                 </span>
               )}
-            </div>
+            </p>
           )}
         </div>
 
-        <Scorecard players={[{ name: copy.winner.toUpperCase(), frames: data.frames }]} variant="share" />
+        <Scorecard
+          players={[{ name: copy.winner, frames: data.frames, meta, total: copy.score, tone: 'hot' }]}
+          variant="share"
+        />
       </div>
 
-      <div className="relative flex items-center">
-        <span className="text-[14px] text-dim">{copy.stinger}</span>
-        <span
-          className={`ml-auto -rotate-3 rounded-cell px-4 py-2 font-display text-[13px] font-extrabold tracking-[.14em] ${
-            verified ? 'bg-phosphor text-ink' : 'border border-line text-dim'
-          }`}
-          style={verified ? { boxShadow: '0 0 24px rgb(255 174 43 / .5)' } : undefined}
-        >
-          {verified ? '✓ VERIFIED' : data.verification === 'live' ? 'LIVE-SCORED' : 'UNVERIFIED'}
-        </span>
+      <div className="flex items-baseline gap-4">
+        <span className="min-w-0 text-[14px] text-ink-faded">{copy.stinger}</span>
+        <span className="ml-auto shrink-0 text-[13px] text-ink-faded">{VERIFICATION_LABEL[data.verification]}</span>
       </div>
     </div>
   );

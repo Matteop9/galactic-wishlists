@@ -4,10 +4,9 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import Wordmark from '../../components/Wordmark';
 import Icon from '../../components/Icon';
 import ChipRow from '../../components/ChipRow';
+import Strip, { StripHeader } from '../../components/Strip';
 import { FeedSkeleton, RefetchLine } from '../../components/Skeleton';
-import VerificationBadge from '../../components/VerificationBadge';
-import ReactionBar from '../../components/ReactionBar';
-import Avatar from '../../components/Avatar';
+import { niceOnes } from '../../components/ReactionBar';
 import PlayerLink from '../../components/PlayerLink';
 import { fetchFeed, highlightLabel, type FeedEvent } from '../../lib/feed';
 import { fetchLiveNow } from '../../lib/live';
@@ -21,7 +20,7 @@ import { FEED_FILTER_KEY, normaliseFeedFilter, writeFeedFilter, type FeedFilter 
 import WhatsNewCard from '../../components/WhatsNewCard';
 import { APP_VERSION, markSeen, readSeen, releasesSince } from '../../lib/changelog';
 
-/** localStorage can throw in private mode / blocked storage — never let that crash the feed. */
+/** localStorage can throw in private mode / blocked storage, so never let that crash the feed. */
 function localStorageOrNull(): Storage | null {
   try {
     return typeof localStorage === 'undefined' ? null : localStorage;
@@ -30,7 +29,17 @@ function localStorageOrNull(): Storage | null {
   }
 }
 
-/** Home: the feed — your games plus your groups' and friends' games. */
+/** "Sat 30 Aug", the date register the whole app uses. */
+function shortDate(date: Date): string {
+  return date.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+/** A highlight that means the total is hot: a personal best or a threshold club. */
+function isHotHighlight(code: string): boolean {
+  return code === 'PB' || code.endsWith('_CLUB');
+}
+
+/** Home: the feed, your games plus your groups' and friends' games. */
 export default function Home({ profile }: { profile: Profile }) {
   const myGroups = useQuery({
     queryKey: ['my-groups', profile.id],
@@ -40,7 +49,7 @@ export default function Home({ profile }: { profile: Profile }) {
   const groupIds = groups.map((g) => g.id);
 
   // The stored value has no group list to check against until `myGroups`
-  // resolves — normalising it against `[]` here would flip a real group
+  // resolves. Normalising it against `[]` here would flip a real group
   // filter to "all" for one render and waste the first feed fetch. So this
   // holds the raw stored value; `effective` below is the one thing that gets
   // reconciled against the real group list, and only once it's known.
@@ -72,28 +81,22 @@ export default function Home({ profile }: { profile: Profile }) {
     refetchInterval: 30_000,
     refetchOnWindowFocus: true,
   });
+  const unreadCount = unread.data ?? 0;
 
   return (
-    <div className="flex flex-col gap-5 px-4 py-6">
+    <div className="flex flex-col gap-4 px-4 py-5">
       <header className="flex items-center justify-between">
         <Wordmark size="sm" />
-        <div className="flex items-center gap-2">
-          <Link
-            to="/notifications"
-            aria-label={`Notifications${unread.data ? ` — ${unread.data} unread` : ''}`}
-            className="relative flex size-9 items-center justify-center rounded-full border border-line bg-panel text-dim"
-          >
-            <Icon name="bell" className="size-4" />
-            {(unread.data ?? 0) > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-phosphor px-1 font-display text-[10px] font-bold text-ink">
-                {unread.data! > 9 ? '9+' : unread.data}
-              </span>
-            )}
-          </Link>
-          <Link to="/profile" aria-label="Your profile">
-            <Avatar name={profile.display_name} url={profile.avatar_url} size={36} />
-          </Link>
-        </div>
+        <Link
+          to="/notifications"
+          aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+          className="press relative -mr-2.5 flex size-11 items-center justify-center text-ink"
+        >
+          <Icon name="bell" className="size-6" />
+          {unreadCount > 0 && (
+            <span aria-hidden className="absolute right-2 top-2 size-2 rounded-full bg-red" />
+          )}
+        </Link>
       </header>
 
       <ScanQueueBanner />
@@ -121,10 +124,10 @@ export default function Home({ profile }: { profile: Profile }) {
 
       {!showSkeleton && feed.data && feed.data.length === 0 && effective === 'all' && (
         <EmptyState
-          title="Nothing here yet"
-          body="Scan the scoreboard from your last game and it lands here — or start with the totals, which takes ten seconds."
-          action={{ label: 'Scan your first game', to: '/add/scan' }}
-          secondary={{ label: 'Quick add the totals', to: '/add/quick' }}
+          title="No games this season"
+          body="Games from your groups show up on this feed."
+          action={{ label: 'Scan a scoreboard', to: '/add/scan' }}
+          secondary={{ label: 'Type the totals', to: '/add/quick' }}
         />
       )}
 
@@ -132,13 +135,13 @@ export default function Home({ profile }: { profile: Profile }) {
         <EmptyState
           tone="inline"
           title={`No games in ${groups.find((g) => g.id === effective)?.name ?? 'this group'} yet`}
-          body="Add a game in this group and it’ll land here."
+          body="Add a game in this group and it shows up here."
           action={{ label: 'Quick add a game', to: '/add/quick' }}
           secondary={{ label: 'Show everything', onPress: () => setFeedFilter('all') }}
         />
       )}
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-[18px]">
         {(feed.data ?? []).map((event, i) =>
           event.games ? (
             <div
@@ -156,9 +159,9 @@ export default function Home({ profile }: { profile: Profile }) {
 }
 
 /**
- * The release note, on the feed, once per release (D1, 3 Sept). Sits below the
- * two banners that are actual jobs — a queued scan and a live game are things
- * to do; this is something to read — and above the filter, so it never pushes
+ * The release note, on the feed, once per release. Sits below the two
+ * banners that are actual jobs (a queued scan and a live game are things to
+ * do; this is something to read) and above the filter, so it never pushes
  * the games themselves off the first screen for more than a card.
  *
  * State is local rather than a store: nothing else in the app cares whether
@@ -184,7 +187,33 @@ function WhatsNewBanner() {
 }
 
 /**
- * Bowling right now — the scorer gets a resume link (the LaneTalk failure mode
+ * A plain strip row that goes somewhere: title, a faded line under it, and
+ * the action word on the right in link blue. The two banners share it.
+ */
+function BannerRow({
+  to,
+  title,
+  sub,
+  action,
+}: {
+  to: string;
+  title: string;
+  sub?: string;
+  action: string;
+}) {
+  return (
+    <Link to={to} className="press flex items-center justify-between gap-3 px-3.5 py-3">
+      <span className="min-w-0">
+        <span className="block truncate text-[15px] font-semibold">{title}</span>
+        {sub && <span className="block truncate text-[13px] text-ink-faded">{sub}</span>}
+      </span>
+      <span className="shrink-0 text-[13px] font-semibold text-blue">{action}</span>
+    </Link>
+  );
+}
+
+/**
+ * Bowling right now. The scorer gets a resume link (the LaneTalk failure mode
  * we are fixing), everyone else gets a way in to watch.
  */
 function LiveNow({ profile }: { profile: Profile }) {
@@ -198,40 +227,26 @@ function LiveNow({ profile }: { profile: Profile }) {
   if (sessions.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2">
+    <Strip>
       {sessions.map((session) => {
         const mine = session.created_by === profile.id;
         return (
-          <Link
+          <BannerRow
             key={session.id}
             to={mine ? `/live/${session.id}` : `/live/${session.id}/watch`}
-            className="press flex items-center justify-between gap-3 rounded-card border border-line bg-panel px-4 py-3"
-          >
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="size-2 shrink-0 live-dot rounded-full bg-signal" aria-hidden />
-              <div className="min-w-0">
-                <p className="truncate font-display text-[14px] font-bold text-text">
-                  {mine ? 'Your game is still going' : `${session.profiles?.display_name ?? 'Someone'} is bowling live`}
-                </p>
-                <p className="truncate text-[11.5px] text-faint">
-                  {[session.venues?.name, session.groups?.name].filter(Boolean).join(' · ') || 'Live scoring'}
-                </p>
-              </div>
-            </div>
-            <span className="shrink-0 font-display text-[12.5px] font-bold text-phosphor">
-              {mine ? 'Resume' : 'Watch'}
-            </span>
-          </Link>
+            title={mine ? 'Your game is still going' : `${session.profiles?.display_name ?? 'Someone'} is bowling live`}
+            sub={[session.venues?.name, session.groups?.name].filter(Boolean).join(' · ') || 'Live scoring'}
+            action={mine ? 'Resume' : 'Watch'}
+          />
         );
       })}
-    </div>
+    </Strip>
   );
 }
 
 /**
- * Scans taken without signal, surfaced where you’ll see them (design §Offline:
- * "banner + queue list in Profile"). A ready scan is a job waiting for you;
- * one still queued is just weather.
+ * Scans taken while offline, surfaced where you will see them. A ready scan
+ * is a job waiting for you; one still queued is just weather.
  */
 function ScanQueueBanner() {
   const { summary, firstReady } = useScanQueue();
@@ -239,30 +254,29 @@ function ScanQueueBanner() {
 
   if (firstReady) {
     return (
-      <Link
-        to={`/add/scan?queued=${firstReady.id}`}
-        className="press flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
-      >
-        <div className="min-w-0">
-          <p className="truncate font-display text-[14px] font-bold text-text">{summary.line}</p>
-          <p className="truncate text-[11.5px] text-faint">Scanned while you were offline</p>
-        </div>
-        <span className="shrink-0 font-display text-[12.5px] font-bold text-phosphor">Review</span>
-      </Link>
+      <Strip>
+        <BannerRow
+          to={`/add/scan?queued=${firstReady.id}`}
+          title={summary.line}
+          sub="Scanned while you were offline"
+          action="Review"
+        />
+      </Strip>
     );
   }
 
   return (
-    <Link
-      to="/profile"
-      className="press flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
-    >
-      <p className="truncate text-[13px] text-dim">{summary.line}</p>
-      <span className="shrink-0 text-[12.5px] font-bold text-dim">See the queue</span>
-    </Link>
+    <Strip soft>
+      <BannerRow to="/profile" title={summary.line} action="See the queue" />
+    </Strip>
   );
 }
 
+/**
+ * One feed post: a scoresheet strip per player (the feed query carries no
+ * frames, so every post is the header row only) and a footer line of what
+ * happened around it. The whole post opens the game.
+ */
 function GameCard({ event, profile }: { event: FeedEvent; profile: Profile }) {
   const navigate = useNavigate();
   const game = event.games!;
@@ -270,9 +284,31 @@ function GameCard({ event, profile }: { event: FeedEvent; profile: Profile }) {
   const playedAt = new Date(game.played_at);
   const highlights = Array.isArray(event.highlights) ? (event.highlights as string[]) : [];
   const commentCount = event.comments?.[0]?.count ?? 0;
+  const reactionCount = event.reactions?.length ?? 0;
 
   const nameOf = (p: (typeof players)[number]) =>
     p.profile_id === profile.id ? 'You' : (p.profiles?.display_name ?? p.guest_name ?? '?');
+
+  const date = shortDate(playedAt);
+  const venue = game.sessions?.venues?.name;
+  const meta =
+    game.entry_type === 'total'
+      ? `Quick add, totals only · ${date}`
+      : venue
+        ? `${venue} · ${date}`
+        : date;
+
+  // The event stores the union of everyone's highlights, so the hot total goes
+  // to the top scorer only.
+  const hot = highlights.some(isHotHighlight);
+  const topScore = players.reduce<number | null>(
+    (best, p) => (p.final_score !== null && (best === null || p.final_score > best) ? p.final_score : best),
+    null,
+  );
+
+  const nice = niceOnes(reactionCount);
+  const commentsLabel =
+    commentCount === 0 ? 'Comment' : commentCount === 1 ? '1 comment' : `${commentCount} comments`;
 
   return (
     <div
@@ -282,63 +318,33 @@ function GameCard({ event, profile }: { event: FeedEvent; profile: Profile }) {
       onKeyDown={(e) => {
         if (e.key === 'Enter') navigate(`/games/${game.id}`);
       }}
-      className="press flex cursor-pointer flex-col gap-3 rounded-card border border-line bg-panel p-4"
+      className="press flex cursor-pointer flex-col gap-2"
     >
-      <div className="flex items-center justify-between">
-        <span className="text-[12px] text-faint">
-          {playedAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-          {game.sessions?.venues?.name ? ` · ${game.sessions.venues.name}` : ''}
-          {event.groups?.name ? ` · ${event.groups.name}` : ''}
-        </span>
-        <VerificationBadge status={game.verification_status as 'verified' | 'live' | 'unverified'} />
-      </div>
-
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         {players.map((p, i) => (
-          <div key={i} className="flex items-baseline justify-between">
-            <PlayerLink
-              profileId={p.profile_id}
-              myId={profile.id}
-              className={`text-[15px] ${p.profile_id === profile.id ? 'font-display font-bold text-text' : 'text-dim'} ${
-                p.profile_id ? 'underline-offset-2 hover:text-text hover:underline' : ''
-              }`}
-            >
-              {nameOf(p)}
-            </PlayerLink>
-            <span
-              className={`score-text text-[18px] font-bold ${
-                p.profile_id === profile.id ? 'text-phosphor' : 'text-text'
-              }`}
-            >
-              {p.final_score ?? '—'}
-            </span>
-          </div>
+          <Strip key={i}>
+            <StripHeader
+              title={
+                <PlayerLink profileId={p.profile_id} myId={profile.id}>
+                  {nameOf(p)}
+                </PlayerLink>
+              }
+              meta={meta}
+              right={p.final_score ?? '–'}
+              tone={hot && p.final_score !== null && p.final_score === topScore ? 'hot' : p.final_score === null ? 'faded' : null}
+            />
+          </Strip>
         ))}
       </div>
 
-      {highlights.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {highlights.map((code) => (
-            <span
-              key={code}
-              className="rounded-full border border-phosphor/40 bg-phosphor/10 px-2 py-0.5 font-display text-[11px] font-bold text-phosphor"
-            >
-              {highlightLabel(code)}
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="flex items-center justify-between">
-        <ReactionBar feedEventId={event.id} profileId={profile.id} reactions={event.reactions ?? []} />
-        {commentCount > 0 ? (
-          <span className="flex items-center gap-1 text-[12px] text-faint" aria-label={`${commentCount} comments`}>
-            <Icon name="comment" className="size-3.5" />
-            {commentCount}
+      <div className="flex flex-wrap gap-3.5 px-0.5 text-[13px] text-ink-faded">
+        {highlights.map((code) => (
+          <span key={code} className="font-semibold text-red">
+            {highlightLabel(code)}
           </span>
-        ) : (
-          <span className="text-[12px] text-faint">Comment</span>
-        )}
+        ))}
+        {nice && <span>{nice}</span>}
+        <span aria-label={commentCount > 0 ? `${commentCount} comments` : undefined}>{commentsLabel}</span>
       </div>
     </div>
   );

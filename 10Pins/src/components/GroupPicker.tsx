@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
+import ChipRow from './ChipRow';
 import { fetchMyGroups } from '../lib/groups';
 
 /**
- * Optional group selector on game entry: a group game lands on that group’s
- * feed and leaderboard; "Just for me" stays personal (friends still see it).
+ * Group selector on game entry, as a row of chips: a group game lands on that
+ * group's feed and leaderboard; "Just for me" stays personal (friends still
+ * see it). Renders nothing for someone with no groups.
  */
 export default function GroupPicker({
   profileId,
@@ -21,25 +23,19 @@ export default function GroupPicker({
   if (list.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="label-caps">
-        Group (optional)
-      </label>
-      <select
-        id={id}
+    <div className="flex flex-col gap-1.5">
+      <span id={`${id}-label`} className="label">
+        Group
+      </span>
+      <ChipRow
+        label="Group"
         value={value ?? ''}
-        onChange={(event) => onChange(event.target.value || null)}
-        className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text [color-scheme:dark]"
-      >
-        <option value="">Just for me</option>
-        {list.map((m) =>
-          m.groups ? (
-            <option key={m.groups.id} value={m.groups.id}>
-              {m.groups.name}
-            </option>
-          ) : null,
-        )}
-      </select>
+        onChange={(v) => onChange(v || null)}
+        options={[
+          { value: '', label: 'Just for me' },
+          ...list.flatMap((m) => (m.groups ? [{ value: m.groups.id, label: m.groups.name }] : [])),
+        ]}
+      />
     </div>
   );
 }

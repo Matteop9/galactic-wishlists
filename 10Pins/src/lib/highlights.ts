@@ -60,7 +60,7 @@ const HIGHLIGHT_LABELS: Record<string, string> = {
   '150_CLUB': '150 club',
   '200_CLUB': '200 club',
   '250_CLUB': '250 club',
-  '300_CLUB': 'PERFECT GAME',
+  '300_CLUB': 'Perfect game',
 };
 
 /**

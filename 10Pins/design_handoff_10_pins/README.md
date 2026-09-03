@@ -1,3 +1,5 @@
+> **Superseded (2 Sept 2026).** The app now follows *The Scoresheet* in `../Design/DESIGN.md`. This dark-theme handoff is kept for history only.
+
 # Handoff: 10 Pins — mobile PWA (dark theme)
 
 ## Overview

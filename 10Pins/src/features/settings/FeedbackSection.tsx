@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Icon from '../../components/Icon';
+import Strip, { StripTitle } from '../../components/Strip';
+import ChipRow from '../../components/ChipRow';
+import EmptyState from '../../components/EmptyState';
 import {
   deleteFeedback,
   feedbackDate,
@@ -12,13 +15,12 @@ import {
   MAX_FEEDBACK_LENGTH,
   setFeedbackNote,
   setFeedbackStatus,
-  STATUS_STYLE,
   submitFeedback,
   type FeedbackKind,
   type FeedbackStatus,
   type QueueItem,
 } from '../../lib/feedback';
-import { ListSkeleton } from '../../components/Skeleton';
+import { Bar } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -73,140 +75,141 @@ export default function FeedbackSection({ profile }: { profile: Profile }) {
   const openCount = rows.filter((r) => r.status === 'new').length;
 
   return (
-    <section className="flex flex-col gap-3">
-      <div>
-        <span className="label-caps">Feedback</span>
-        <p className="mt-1 text-[12px] text-faint">
-          Bug, idea or gripe — it lands in the queue and you can watch the status change here.
+    <Strip as="section">
+      <StripTitle>Feedback</StripTitle>
+
+      <div className="flex flex-col gap-3 p-3.5">
+        <p className="text-[13px] text-ink-faded">
+          Send a bug or an idea. Its status updates here as it moves along.
         </p>
-      </div>
 
-      <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-        <div className="flex gap-2">
-          {FEEDBACK_KINDS.map((k) => (
-            <button
-              key={k.value}
-              type="button"
-              onClick={() => setKind(k.value)}
-              aria-pressed={kind === k.value}
-              className={
-                kind === k.value
-                  ? 'rounded-control border border-phosphor bg-phosphor/10 px-3 py-1.5 font-display text-[12px] font-bold text-phosphor'
-                  : 'rounded-control border border-line bg-well px-3 py-1.5 font-display text-[12px] font-bold text-dim'
-              }
-            >
-              {k.label}
-            </button>
-          ))}
-        </div>
-
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value.slice(0, MAX_FEEDBACK_LENGTH))}
-          rows={3}
-          placeholder="What happened, or what would you change?"
-          aria-label="Your feedback"
-          className="resize-y rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
+        <ChipRow
+          label="Kind"
+          options={FEEDBACK_KINDS}
+          value={kind}
+          onChange={(v) => setKind(v as FeedbackKind)}
         />
 
-        {remaining < 200 && (
-          <span className="score-text text-[11px] text-faint">{remaining} characters left</span>
-        )}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="feedback-message" className="label">
+            Your feedback
+          </label>
+          <textarea
+            id="feedback-message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value.slice(0, MAX_FEEDBACK_LENGTH))}
+            rows={3}
+            placeholder="What happened, or what would you change?"
+            aria-label="Your feedback"
+            className="field min-h-[96px] resize-y"
+          />
+          {remaining < 200 && (
+            <span className="text-[12px] text-ink-faded">
+              <span className="num">{remaining}</span> characters left
+            </span>
+          )}
+        </div>
 
-        <button
-          type="button"
-          onClick={() => trimmed && send.mutate()}
-          disabled={send.isPending || !trimmed}
-          className="rounded-control bg-phosphor py-3 font-display text-[14px] font-bold text-ink disabled:bg-disabled disabled:text-faint"
-        >
-          {send.isPending ? 'Sending…' : 'Send feedback'}
-        </button>
-
-        {send.isError && (
-          <p className="text-[12px] text-signal">
-            Couldn’t send that — check your signal and try again.
-          </p>
-        )}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => trimmed && send.mutate()}
+            disabled={send.isPending || !trimmed}
+            className="btn-primary-sm"
+          >
+            {send.isPending ? 'Sending…' : 'Send'}
+          </button>
+          {send.isError && (
+            <p className="text-[13px] text-red" role="alert">
+              That didn’t send. Check your connection and try again.
+            </p>
+          )}
+        </div>
       </div>
 
-      <span className="label-caps">Your items · {items.length}</span>
+      <StripTitle right={<span className="num">{items.length}</span>}>Your items</StripTitle>
       {showSkeleton ? (
-        <ListSkeleton rows={2} label="Loading your feedback" avatar={false} trailing={false} />
-      ) : items.length === 0 ? (
-        <p className="text-[12px] text-faint">Nothing sent yet</p>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {items.map((f) => (
-            <div
-              key={f.id}
-              className="flex flex-col gap-2 rounded-card border border-line bg-panel p-3.5"
-            >
-              <div className="flex items-center gap-2">
-                <StatusPill status={f.status as FeedbackStatus} />
-                <span className="text-[11px] text-faint">{f.kind}</span>
-                <span className="score-text ml-auto text-[11px] text-faint">
-                  {feedbackDate(f.created_at)}
-                </span>
-              </div>
-              <p className="text-[13.5px] text-text">{f.message}</p>
-              {f.admin_note && (
-                <p className="border-l-2 border-line pl-2 text-[12px] text-dim">{f.admin_note}</p>
-              )}
-              {f.status === 'new' && (
-                <button
-                  type="button"
-                  onClick={() => withdraw.mutate(f.id)}
-                  disabled={withdraw.isPending}
-                  className="self-start text-[12px] text-faint underline"
-                >
-                  Withdraw
-                </button>
-              )}
-            </div>
-          ))}
+        <div role="status" aria-busy="true" className="flex flex-col gap-2 px-3.5 py-3">
+          <span className="sr-only">Loading your feedback</span>
+          <Bar w="62%" h={12} />
+          <Bar w="38%" h={10} />
         </div>
+      ) : items.length === 0 ? (
+        <div className="px-3.5 py-3">
+          <EmptyState tone="quiet" body="You haven’t sent any feedback." />
+        </div>
+      ) : (
+        items.map((f) => (
+          <div key={f.id} className="flex flex-col gap-1.5 px-3.5 py-3">
+            <div className="flex items-center gap-2 text-[12px] text-ink-faded">
+              <span>{statusLabel(f.status as FeedbackStatus)}</span>
+              <span>·</span>
+              <span>{kindLabel(f.kind as FeedbackKind)}</span>
+              <span className="num ml-auto">{feedbackDate(f.created_at)}</span>
+            </div>
+            <p className="text-[14px]">{f.message}</p>
+            {f.admin_note && (
+              <p className="text-[13px] text-ink-faded">Reply: {f.admin_note}</p>
+            )}
+            {f.status === 'new' && (
+              <button
+                type="button"
+                onClick={() => withdraw.mutate(f.id)}
+                disabled={withdraw.isPending}
+                className="btn-secondary-sm self-start"
+              >
+                Withdraw
+              </button>
+            )}
+          </div>
+        ))
       )}
 
       {isAdmin.data === true && (
-        <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => setQueueOpen((open) => !open)}
-            className="press flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3.5"
-          >
-            <span className="text-[15px] text-text">
-              Queue · everyone
-              {openCount > 0 && <span className="text-phosphor"> · {openCount} new</span>}
-            </span>
-            <Icon name={queueOpen ? 'chevron-up' : 'chevron-down'} className="size-4 text-faint" />
-          </button>
-          {queueOpen &&
-            (rows.length === 0 ? (
-              <p className="text-[12px] text-faint">Queue is empty</p>
-            ) : (
-              rows.map((row, i) => (
-                <div
-                  key={row.id}
-                  className="sheet-up"
-                  style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}
-                >
-                  <QueueRow row={row} onChanged={invalidate} />
-                </div>
-              ))
-            ))}
+        <button
+          type="button"
+          onClick={() => setQueueOpen((open) => !open)}
+          aria-expanded={queueOpen}
+          aria-controls="feedback-queue"
+          className="press flex w-full items-center justify-between px-3.5 py-3 text-left text-[15px]"
+        >
+          <span className="font-semibold">
+            Everyone’s feedback
+            {openCount > 0 && (
+              <span className="font-normal text-ink-faded">
+                {' · '}
+                <span className="num">{openCount}</span> new
+              </span>
+            )}
+          </span>
+          <Icon name={queueOpen ? 'chevron-up' : 'chevron-down'} className="size-[18px] text-ink-faded" />
+        </button>
+      )}
+      {isAdmin.data === true && queueOpen && (
+        <div id="feedback-queue" className="flex flex-col divide-y divide-hairline">
+          {rows.length === 0 ? (
+            <div className="px-3.5 py-3">
+              <EmptyState tone="quiet" body="The queue is empty." />
+            </div>
+          ) : (
+            rows.map((row, i) => (
+              <div key={row.id} className="rise-in" style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}>
+                <QueueRow row={row} onChanged={invalidate} />
+              </div>
+            ))
+          )}
         </div>
       )}
-    </section>
+    </Strip>
   );
 }
 
-function StatusPill({ status }: { status: FeedbackStatus }) {
-  const label = FEEDBACK_STATUSES.find((s) => s.value === status)?.label ?? status;
-  return (
-    <span className={`label-caps rounded-cell border px-1.5 py-0.5 ${STATUS_STYLE[status]}`}>
-      {label}
-    </span>
-  );
+function statusLabel(status: FeedbackStatus): string {
+  return FEEDBACK_STATUSES.find((s) => s.value === status)?.label ?? status;
+}
+
+function kindLabel(kind: FeedbackKind): string {
+  return FEEDBACK_KINDS.find((k) => k.value === kind)?.label ?? kind;
 }
 
 /** One triage row: set the status, leave the author a note, or bin it. */
@@ -226,69 +229,67 @@ function QueueRow({ row, onChanged }: { row: QueueItem; onChanged: () => void })
   const noteDirty = note.trim() !== (row.admin_note ?? '');
 
   return (
-    <div className="flex flex-col gap-2.5 rounded-card border border-line bg-panel p-3.5">
-      <div className="flex items-center gap-2">
-        <StatusPill status={row.status as FeedbackStatus} />
-        <span className="text-[11px] text-faint">{row.kind}</span>
-        <span className="score-text ml-auto text-[11px] text-faint">
-          {feedbackDate(row.created_at)}
-        </span>
+    <div className="flex flex-col gap-2.5 px-3.5 py-3">
+      <div className="flex items-center gap-2 text-[12px] text-ink-faded">
+        <span>{statusLabel(row.status as FeedbackStatus)}</span>
+        <span>·</span>
+        <span>{kindLabel(row.kind as FeedbackKind)}</span>
+        <span className="num ml-auto">{feedbackDate(row.created_at)}</span>
       </div>
-      <p className="text-[13.5px] text-text">{row.message}</p>
-      <span className="text-[12px] text-dim">
+      <p className="text-[14px]">{row.message}</p>
+      <p className="text-[13px] text-ink-faded">
         {author}
-        {row.profiles?.username && <span className="text-faint"> @{row.profiles.username}</span>}
-      </span>
+        {row.profiles?.username && <span> @{row.profiles.username}</span>}
+      </p>
 
-      <div className="flex flex-wrap gap-1.5">
-        {FEEDBACK_STATUSES.map((s) => (
+      <ChipRow
+        label={`Status of ${author}’s feedback`}
+        options={FEEDBACK_STATUSES}
+        value={row.status}
+        onChange={(v) => {
+          if (row.status !== v && !status.isPending) status.mutate(v as FeedbackStatus);
+        }}
+      />
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor={`note-${row.id}`} className="label">
+          Note back to them <span className="optional">optional</span>
+        </label>
+        <div className="flex gap-2">
+          <input
+            id={`note-${row.id}`}
+            value={note}
+            onChange={(e) => setNote(e.target.value.slice(0, 500))}
+            placeholder="A line they will see under their item"
+            aria-label={`Note on ${author}’s feedback`}
+            className="field min-w-0 flex-1"
+          />
           <button
-            key={s.value}
             type="button"
-            onClick={() => row.status !== s.value && status.mutate(s.value)}
-            disabled={status.isPending}
-            aria-pressed={row.status === s.value}
-            className={
-              row.status === s.value
-                ? 'rounded-chip border border-phosphor bg-phosphor/10 px-2.5 py-1 font-display text-[11px] font-bold text-phosphor'
-                : 'rounded-chip border border-line bg-well px-2.5 py-1 font-display text-[11px] font-bold text-dim'
-            }
+            onClick={() => saveNote.mutate()}
+            disabled={!noteDirty || saveNote.isPending}
+            className="btn-secondary-sm shrink-0"
           >
-            {s.label}
+            Save
           </button>
-        ))}
+        </div>
       </div>
 
-      <div className="flex gap-2">
-        <input
-          value={note}
-          onChange={(e) => setNote(e.target.value.slice(0, 500))}
-          placeholder="Note back to them (optional)"
-          aria-label={`Note on ${author}’s feedback`}
-          className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2 text-[13px] text-text placeholder:text-faint"
-        />
+      <div className="flex items-center gap-3">
         <button
           type="button"
-          onClick={() => saveNote.mutate()}
-          disabled={!noteDirty || saveNote.isPending}
-          className="rounded-control border border-line bg-well px-3 py-2 font-display text-[12px] font-bold text-dim disabled:text-disabled"
+          onClick={() => remove.mutate()}
+          disabled={remove.isPending}
+          className="btn-danger-text"
         >
-          Save
+          Delete
         </button>
+        {(status.isError || saveNote.isError || remove.isError) && (
+          <p className="text-[13px] text-red" role="alert">
+            That didn’t save. Check your connection and try again.
+          </p>
+        )}
       </div>
-
-      <button
-        type="button"
-        onClick={() => remove.mutate()}
-        disabled={remove.isPending}
-        className="self-start text-[12px] text-faint underline"
-      >
-        Delete
-      </button>
-
-      {(status.isError || saveNote.isError || remove.isError) && (
-        <p className="text-[12px] text-signal">That didn’t save — try again.</p>
-      )}
     </div>
   );
 }

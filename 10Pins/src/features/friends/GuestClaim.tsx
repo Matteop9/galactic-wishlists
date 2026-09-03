@@ -1,10 +1,16 @@
 import { Link, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Strip from '../../components/Strip';
 import { claimGuestGames } from '../../lib/friends';
 
+function gameDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
 /**
- * /claim/:code — a guest claims their games. The claim RPC does everything in
- * one transaction and returns the games list for the confirmation view.
+ * /claim/:code: a guest claims their games. The claim RPC does everything in
+ * one transaction and returns the games list for the confirmation view, so the
+ * guest name and group are only known once the claim has gone through.
  */
 export default function GuestClaim() {
   const { code } = useParams<{ code: string }>();
@@ -17,65 +23,67 @@ export default function GuestClaim() {
 
   if (claim.isSuccess) {
     const r = claim.data;
+    const n = r.games.length;
     return (
-      <div className="flex flex-col gap-6 px-4 py-10">
-        <div className="flex flex-col items-center gap-2 text-center">
-          <span className="label-caps">Welcome to {r.group_name}</span>
-          <h1 className="font-display text-[24px] font-bold">
-            {r.games.length} {r.games.length === 1 ? 'game' : 'games'} claimed
-          </h1>
-          <p className="max-w-[280px] text-[13.5px] text-dim">
-            Every game recorded for “{r.guest_name}” is now yours — they count in your stats and on
-            the group leaderboard.
-          </p>
-        </div>
-
-        {r.games.length > 0 && (
-          <div className="flex flex-col gap-2 rounded-card border border-line bg-panel p-4">
-            {r.games.map((g) => (
-              <Link key={g.game_id} to={`/games/${g.game_id}`} className="flex items-baseline justify-between">
-                <span className="text-[13px] text-dim">
-                  {new Date(g.played_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  {g.venue_name ? ` · ${g.venue_name}` : ''}
-                </span>
-                <span className="score-text text-[15px] font-bold text-text">{g.final_score ?? '—'}</span>
-              </Link>
-            ))}
+      <div className="mx-auto flex min-h-[70dvh] w-full max-w-[390px] flex-col justify-center gap-4 px-4 py-10">
+        <Strip>
+          <div className="flex flex-col gap-0.5 px-3.5 py-3">
+            <p className="num text-[22px] font-semibold leading-tight">{r.guest_name}</p>
+            <p className="text-[14px] text-ink-faded">
+              <span className="num">{n}</span> {n === 1 ? 'game' : 'games'} as a guest in {r.group_name}, now yours
+            </p>
           </div>
-        )}
-
-        <Link
-          to="/stats"
-          className="btn-primary"
-        >
-          See your stats
-        </Link>
+          {r.games.map((g) => (
+            <Link
+              key={g.game_id}
+              to={`/games/${g.game_id}`}
+              className="press flex items-baseline justify-between gap-3 px-3.5 py-3 text-[14px]"
+            >
+              <span className="min-w-0 truncate text-ink-faded">
+                <span className="num">{gameDate(g.played_at)}</span>
+                {g.venue_name ? ` · ${g.venue_name}` : ''}
+              </span>
+              <span className="num shrink-0 text-[18px] font-semibold">{g.final_score ?? '–'}</span>
+            </Link>
+          ))}
+          <div className="p-3.5">
+            <Link to="/stats" className="btn-primary w-full">
+              See your stats
+            </Link>
+          </div>
+        </Strip>
+        <p className="text-center text-[13px] text-ink-faded">
+          These games now count in your stats and on the group leaderboard.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6 px-4 py-10">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <span className="label-caps">Claim your games</span>
-        <h1 className="font-display text-[24px] font-bold">Claim your guest games</h1>
-        <p className="max-w-[280px] text-[13.5px] text-dim">
-          This one-use link transfers every game recorded under a guest name in the group to your
-          account, and adds you to the group.
-        </p>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => claim.mutate()}
-        disabled={claim.isPending}
-        className="btn-primary"
-      >
-        {claim.isPending ? 'Claiming…' : 'Claim my games'}
-      </button>
+    <div className="mx-auto flex min-h-[70dvh] w-full max-w-[390px] flex-col justify-center gap-4 px-4 py-10">
+      <Strip>
+        <div className="flex flex-col gap-0.5 px-3.5 py-3">
+          <h1 className="num text-[22px] font-semibold leading-tight">Claim your guest games</h1>
+          <p className="text-[14px] text-ink-faded">Games recorded under a guest name in a group</p>
+        </div>
+        <div className="p-3.5">
+          <button
+            type="button"
+            onClick={() => claim.mutate()}
+            disabled={claim.isPending}
+            className="btn-primary w-full"
+          >
+            {claim.isPending ? 'Claiming…' : 'Claim these games'}
+          </button>
+        </div>
+      </Strip>
+      <p className="text-center text-[13px] text-ink-faded">
+        This link works once. It moves every game under that guest name to your account and adds you
+        to the group.
+      </p>
       {claim.isError && (
-        <p className="text-center text-[13px] text-signal" role="alert">
-          That claim link doesn’t work — it may already have been used.
+        <p className="text-center text-[13px] text-red" role="alert">
+          That claim link doesn’t work. It may already have been used.
         </p>
       )}
     </div>

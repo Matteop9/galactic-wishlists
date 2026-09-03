@@ -34,14 +34,14 @@ export interface ShareCopy {
   /** whose game the card is about */
   winner: string;
   score: number;
-  /** amber pills (earned highlights) then one glass pill (the strike count) */
+  /** earned highlights (red on the card) then one strike-count line (blue) */
   pills: string[];
   statPill: string | null;
   /** the line above the stamp */
   stinger: string;
   /** the message body when the image is shared */
   text: string;
-  /** e.g. "FRI 3 JUL · HOLLYWOOD BOWL" */
+  /** e.g. "Fri 3 Jul · Hollywood Bowl" */
   meta: string;
 }
 
@@ -77,10 +77,10 @@ export function shareCopy(input: ShareCopyInput): ShareCopy | null {
   const winner = pickWinner(input.players);
   if (!winner) return null;
 
-  const pills = input.highlights.map(highlightLabel).map((label) => label.toUpperCase());
+  const pills = input.highlights.map(highlightLabel);
   const statPill =
     typeof input.strikes === 'number' && input.strikes > 0
-      ? `${input.strikes} ${input.strikes === 1 ? 'STRIKE' : 'STRIKES'}`
+      ? `${input.strikes} ${input.strikes === 1 ? 'strike' : 'strikes'}`
       : null;
 
   const margin = marginLine(winner, input.players);
@@ -95,9 +95,8 @@ export function shareCopy(input: ShareCopyInput): ShareCopy | null {
     input.playedAt
       ? new Date(input.playedAt)
           .toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
-          .toUpperCase()
       : null,
-    input.venueName?.toUpperCase() ?? null,
+    input.venueName ?? null,
   ]
     .filter(Boolean)
     .join(' · ');

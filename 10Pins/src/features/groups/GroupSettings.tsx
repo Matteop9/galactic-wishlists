@@ -3,8 +3,17 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchGroup, removeMember, updateGroupSettings } from '../../lib/groups';
 import { FormSkeleton } from '../../components/Skeleton';
+import EmptyState from '../../components/EmptyState';
+import PageHeader from '../../components/PageHeader';
+import ChipRow from '../../components/ChipRow';
+import Strip, { StripTitle } from '../../components/Strip';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
+
+const ON_OFF = [
+  { value: 'on', label: 'On' },
+  { value: 'off', label: 'Off' },
+];
 
 export default function GroupSettings({ profile }: { profile: Profile }) {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +29,8 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [basis, setBasis] = useState(200);
   const [pct, setPct] = useState(90);
+  /** The member whose "Remove" is awaiting a second press. */
+  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
 
   // Seed the form once the group loads
   useEffect(() => {
@@ -54,7 +65,10 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
 
   const remove = useMutation({
     mutationFn: (profileId: string) => removeMember(id!, profileId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['group', id] }),
+    onSuccess: () => {
+      setConfirmRemove(null);
+      queryClient.invalidateQueries({ queryKey: ['group', id] });
+    },
   });
 
   if (showSkeleton) {
@@ -69,176 +83,223 @@ export default function GroupSettings({ profile }: { profile: Profile }) {
   const myRole = g?.group_members?.find((m) => m.profile_id === profile.id)?.role;
   if (!g || myRole !== 'admin') {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">Admins only</h1>
-        <Link to={`/groups/${id}`} className="text-[13.5px] text-phosphor">
-          Back to the group
-        </Link>
+      <div className="px-4 py-6">
+        <EmptyState
+          tone="page"
+          title="Admins only"
+          body="Only a group admin can change these settings."
+          action={{ label: 'Back to the group', to: `/groups/${id}` }}
+        />
       </div>
     );
   }
 
+  const members = g.group_members ?? [];
+  const canSave =
+    !save.isPending && name.trim().length >= 2 && basis >= 100 && basis <= 300 && pct >= 0 && pct <= 100;
+
   return (
-    <div className="flex flex-col gap-5 px-4 py-6">
-      <header className="flex items-center justify-between">
-        <h1 className="font-display text-[20px] font-bold">Group settings</h1>
-        <Link to={`/groups/${id}`} className="text-[13.5px] text-dim">
-          Cancel
-        </Link>
-      </header>
+    <div className="flex flex-col gap-4 px-4 py-6">
+      <div className="px-1">
+        <PageHeader
+          back={`/groups/${id}`}
+          title="Group settings"
+          right={
+            <Link to={`/groups/${id}`} className="btn-secondary-sm">
+              Cancel
+            </Link>
+          }
+        />
+      </div>
 
       <form
-        className="flex flex-col gap-5"
+        className="flex flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           if (name.trim().length >= 2) save.mutate();
         }}
       >
-        <Field label="Group name" htmlFor="gs-name">
-          <input id="gs-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} className={inputCls} />
-        </Field>
-
-        <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-          <span className="label-caps">Season</span>
-          <Field label="Season name" htmlFor="gs-season">
-            <input
-              id="gs-season"
-              value={seasonName}
-              onChange={(e) => setSeasonName(e.target.value)}
-              placeholder="2026 season"
-              maxLength={40}
-              className={inputCls}
-            />
-          </Field>
-          <div className="flex gap-3">
-            <Field label="Starts" htmlFor="gs-starts" grow>
-              <input id="gs-starts" type="date" value={seasonStarts} onChange={(e) => setSeasonStarts(e.target.value)} className={inputCls} />
-            </Field>
-            <Field label="Ends" htmlFor="gs-ends" grow>
-              <input id="gs-ends" type="date" value={seasonEnds} onChange={(e) => setSeasonEnds(e.target.value)} className={inputCls} />
-            </Field>
+        <Strip>
+          <div className="flex flex-col gap-1.5 p-3.5">
+            <label className="label" htmlFor="gs-name">
+              Group name
+            </label>
+            <input id="gs-name" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} className="field" />
           </div>
-          <p className="text-[11px] text-faint">Leave dates empty for an open season — every game counts.</p>
-        </section>
+        </Strip>
 
-        <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-          <label className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[14px] text-text">Verified games only</p>
-              <p className="text-[11px] text-faint">Leaderboard counts photo-verified games only</p>
+        <Strip>
+          <StripTitle>Season</StripTitle>
+          <div className="flex flex-col gap-3 p-3.5">
+            <div className="flex flex-col gap-1.5">
+              <label className="label" htmlFor="gs-season">
+                Season name <span className="optional">optional</span>
+              </label>
+              <input
+                id="gs-season"
+                value={seasonName}
+                onChange={(e) => setSeasonName(e.target.value)}
+                placeholder="Autumn season"
+                maxLength={40}
+                className="field"
+              />
             </div>
-            <input
-              type="checkbox"
-              checked={verifiedOnly}
-              onChange={(e) => setVerifiedOnly(e.target.checked)}
-              className="size-5 accent-[var(--color-phosphor)]"
-            />
-          </label>
-        </section>
-
-        <section className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-          <span className="label-caps">Handicaps</span>
-          <p className="text-[12px] text-dim">
-            Default handicap on a match day = {pct}% of ({basis} − player’s average), never below 0.
-            Organisers can override per player on the day.
-          </p>
-          <div className="flex gap-3">
-            <Field label="Basis" htmlFor="gs-basis" grow>
-              <input
-                id="gs-basis"
-                type="number"
-                min={100}
-                max={300}
-                value={basis}
-                onChange={(e) => setBasis(Number(e.target.value))}
-                className={inputCls}
-              />
-            </Field>
-            <Field label="Percent" htmlFor="gs-pct" grow>
-              <input
-                id="gs-pct"
-                type="number"
-                min={0}
-                max={100}
-                value={pct}
-                onChange={(e) => setPct(Number(e.target.value))}
-                className={inputCls}
-              />
-            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="label" htmlFor="gs-starts">
+                  Starts
+                </label>
+                <input
+                  id="gs-starts"
+                  type="date"
+                  value={seasonStarts}
+                  onChange={(e) => setSeasonStarts(e.target.value)}
+                  className="field num"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="label" htmlFor="gs-ends">
+                  Ends
+                </label>
+                <input
+                  id="gs-ends"
+                  type="date"
+                  value={seasonEnds}
+                  onChange={(e) => setSeasonEnds(e.target.value)}
+                  className="field num"
+                />
+              </div>
+            </div>
+            <p className="text-[13px] text-ink-faded">Leave the dates empty for an open season, every game counts.</p>
           </div>
-        </section>
+        </Strip>
 
-        <button
-          type="submit"
-          disabled={save.isPending || name.trim().length < 2 || basis < 100 || basis > 300 || pct < 0 || pct > 100}
-          className="btn-primary"
-        >
+        <Strip>
+          <div className="flex items-center justify-between gap-3 p-3.5">
+            <div className="min-w-0">
+              <p className="text-[15px]">Verified games only</p>
+              <p className="text-[13px] text-ink-faded">The leaderboard counts photo-verified games only.</p>
+            </div>
+            <div className="shrink-0">
+              <ChipRow
+                fill
+                label="Verified games only"
+                options={ON_OFF}
+                value={verifiedOnly ? 'on' : 'off'}
+                onChange={(v) => setVerifiedOnly(v === 'on')}
+              />
+            </div>
+          </div>
+        </Strip>
+
+        <Strip>
+          <StripTitle>Handicaps</StripTitle>
+          <div className="flex flex-col gap-3 p-3.5">
+            <p className="text-[13px] text-ink-faded">
+              A match day handicap is <span className="num">{pct}</span>% of <span className="num">{basis}</span> minus the
+              player’s average, never below <span className="num">0</span>. Organisers can change it per player on the day.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="label" htmlFor="gs-basis">
+                  Basis
+                </label>
+                <input
+                  id="gs-basis"
+                  type="number"
+                  min={100}
+                  max={300}
+                  value={basis}
+                  onChange={(e) => setBasis(Number(e.target.value))}
+                  className="field num"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="label" htmlFor="gs-pct">
+                  Percent
+                </label>
+                <input
+                  id="gs-pct"
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={pct}
+                  onChange={(e) => setPct(Number(e.target.value))}
+                  className="field num"
+                />
+              </div>
+            </div>
+          </div>
+        </Strip>
+
+        <button type="submit" disabled={!canSave} className="btn-primary">
           {save.isPending ? 'Saving…' : 'Save settings'}
         </button>
         {save.isError && (
-          <p className="text-center text-[13px] text-signal" role="alert">
-            Couldn’t save — try again.
+          <p className="text-center text-[13px] text-red" role="alert">
+            That didn’t save. Check your connection and try again.
           </p>
         )}
       </form>
 
-      <section className="flex flex-col gap-2">
-        <span className="label-caps">Members</span>
-        {(g.group_members ?? []).map((m) => (
-          <div
-            key={m.profile_id}
-            className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
-          >
-            <div>
-              <p className="text-[14px] text-text">
-                {m.profiles?.display_name}
-                {m.profile_id === profile.id ? ' (you)' : ''}
-              </p>
-              <p className="text-[11px] text-faint">
-                @{m.profiles?.username}
-                {m.role === 'admin' ? ' · admin' : ''}
-              </p>
+      <Strip>
+        <StripTitle right={<span className="num">{members.length}</span>}>Members</StripTitle>
+        {members.map((m) => {
+          const you = m.profile_id === profile.id;
+          const displayName = m.profiles?.display_name ?? 'this player';
+          const confirming = confirmRemove === m.profile_id;
+          return (
+            <div key={m.profile_id} className="flex flex-col">
+              <div className="flex items-center justify-between gap-3 px-3.5 py-[11px] text-[14px]">
+                <div className="min-w-0">
+                  <p className="truncate">
+                    {m.profiles?.display_name}
+                    {you && <span className="text-ink-faded"> you</span>}
+                  </p>
+                  <p className="truncate text-[12px] text-ink-faded">
+                    @{m.profiles?.username}
+                    {m.role === 'admin' ? ' · admin' : ''}
+                  </p>
+                </div>
+                {!you && !confirming && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmRemove(m.profile_id)}
+                    className="btn-danger-text shrink-0"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+              {confirming && (
+                <div className="px-3.5 pb-3.5">
+                  <div className="strip-soft flex flex-col gap-2.5 p-3">
+                    <p className="text-[13px]">Remove {displayName} from the group? Their games stay on their own record.</p>
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => setConfirmRemove(null)} className="btn-secondary-sm">
+                        Keep it
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => remove.mutate(m.profile_id)}
+                        disabled={remove.isPending}
+                        className="press rounded-r2 bg-red px-4 py-2 text-[13px] font-semibold text-paper disabled:bg-disabled-bg disabled:text-disabled-fg"
+                      >
+                        {remove.isPending ? 'Removing…' : 'Remove'}
+                      </button>
+                    </div>
+                    {remove.isError && (
+                      <p className="text-[13px] text-red" role="alert">
+                        That didn’t save. Check your connection and try again.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-            {m.profile_id !== profile.id && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (window.confirm(`Remove ${m.profiles?.display_name} from the group?`)) {
-                    remove.mutate(m.profile_id);
-                  }
-                }}
-                className="rounded-control border border-line bg-well px-3 py-1.5 text-[12px] font-bold text-signal"
-              >
-                Remove
-              </button>
-            )}
-          </div>
-        ))}
-      </section>
-    </div>
-  );
-}
-
-const inputCls =
-  'w-full rounded-control border border-line bg-well px-3 py-3 text-[15px] text-text placeholder:text-faint';
-
-function Field({
-  label,
-  htmlFor,
-  grow,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  grow?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className={`flex flex-col gap-1.5 ${grow ? 'flex-1' : ''}`}>
-      <label className="label-caps" htmlFor={htmlFor}>
-        {label}
-      </label>
-      {children}
+          );
+        })}
+      </Strip>
     </div>
   );
 }

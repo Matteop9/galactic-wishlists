@@ -22,10 +22,10 @@ describe('shareCopy', () => {
     const copy = shareCopy(input())!;
     expect(copy.winner).toBe('Dave K');
     expect(copy.score).toBe(213);
-    expect(copy.pills).toEqual(['NEW PB', '200 CLUB']);
-    expect(copy.statPill).toBe('7 STRIKES');
+    expect(copy.pills).toEqual(['New PB', '200 club']);
+    expect(copy.statPill).toBe('7 strikes');
     expect(copy.stinger).toBe('Beat Matt by 44 · pics attached, so it counts');
-    expect(copy.meta).toBe('FRI 3 JUL · HOLLYWOOD BOWL');
+    expect(copy.meta).toBe('Fri 3 Jul · Hollywood Bowl');
   });
 
   it('has nothing to say about a game with no scores', () => {
@@ -89,8 +89,8 @@ describe('shareCopy', () => {
     expect(shareCopy(input({ strikes: undefined }))!.statPill).toBeNull();
   });
 
-  it('says "1 STRIKE", not "1 STRIKES"', () => {
-    expect(shareCopy(input({ strikes: 1 }))!.statPill).toBe('1 STRIKE');
+  it('says "1 strike", not "1 strikes"', () => {
+    expect(shareCopy(input({ strikes: 1 }))!.statPill).toBe('1 strike');
   });
 
   it('keeps the shared message short enough for a chat preview', () => {

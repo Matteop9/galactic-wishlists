@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import GroupPicker from '../../components/GroupPicker';
 import Icon from '../../components/Icon';
+import Strip from '../../components/Strip';
 import { fetchVenueNames } from '../../lib/games';
 import { fetchGroup } from '../../lib/groups';
 import { fetchFriendships, otherProfile } from '../../lib/friends';
@@ -15,8 +16,8 @@ interface DraftPlayer extends NewLivePlayer {
 
 /**
  * Live session · create (README §Live session): group, venue, the line-up in
- * bowling order. You are always in the game and always seat one — the phone
- * doing the scoring is at the lane.
+ * bowling order. You are always in the game and always seat one, because the
+ * phone doing the scoring is at the lane.
  */
 export default function LiveSetup({ profile }: { profile: Profile }) {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
   const [groupId, setGroupId] = useState<string | null>(null);
   const [venue, setVenue] = useState('');
   const [guestName, setGuestName] = useState('');
+  const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
   const [players, setPlayers] = useState<DraftPlayer[]>([
     { key: profile.id, profile_id: profile.id, guest_name: null, display_name: profile.display_name },
@@ -99,150 +101,158 @@ export default function LiveSetup({ profile }: { profile: Profile }) {
       queryClient.invalidateQueries();
       navigate(`/live/${sessionId}`, { replace: true });
     },
-    onError: () => setError("Couldn’t start the session — check your signal and try again."),
+    onError: () => setError('That didn’t start. Check your connection and try again.'),
   });
 
   return (
-    <div className="flex flex-col gap-5 px-4 py-6">
-      <header className="flex items-center justify-between">
-        <h1 className="font-display text-[20px] font-bold">Score live</h1>
-        <Link to="/" className="text-[13.5px] text-dim">
-          Cancel
+    <div className="flex flex-col pb-6">
+      <header className="flex items-center justify-between px-5 pb-1 pt-2.5">
+        <Link
+          to="/"
+          aria-label="Cancel"
+          className="press -ml-2.5 flex size-11 shrink-0 items-center justify-center text-ink"
+        >
+          <Icon name="x" className="size-6" />
         </Link>
+        <h1 className="num text-[18px] font-semibold">Score live</h1>
+        <span className="size-11 shrink-0" aria-hidden />
       </header>
-      <p className="-mt-2 text-[13px] text-dim">
-        This phone keeps the score. Everyone else can watch on theirs.
-      </p>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="live-venue" className="label-caps">
-          Venue (optional)
-        </label>
-        <input
-          id="live-venue"
-          type="text"
-          list="venue-names-live"
-          placeholder="Hollywood Bowl…"
-          value={venue}
-          onChange={(event) => setVenue(event.target.value)}
-          className="rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
-        />
-        <datalist id="venue-names-live">
-          {(venues.data ?? []).map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-      </div>
+      <div className="flex flex-col gap-[18px] px-5 py-[18px]">
+        <p className="text-[13px] text-ink-faded">This phone keeps the score. Everyone else can watch on theirs.</p>
 
-      <GroupPicker profileId={profile.id} value={groupId} onChange={setGroupId} id="live-group" />
-
-      <div className="flex flex-col gap-2">
-        <span className="label-caps">Bowling order</span>
-        <ol className="flex flex-col gap-2">
-          {players.map((player, index) => (
-            <li
-              key={player.key}
-              className="flex items-center gap-2 rounded-card border border-line bg-panel px-3 py-2.5"
-            >
-              <span className="score-text w-5 text-[13px] text-faint">{index + 1}</span>
-              <span className="min-w-0 flex-1 truncate text-[14px] text-text">
-                {player.display_name}
-                {player.profile_id === profile.id && <span className="text-faint"> · you</span>}
-                {!player.profile_id && <span className="text-faint"> · guest</span>}
-              </span>
-              <button
-                type="button"
-                onClick={() => move(index, -1)}
-                disabled={index === 0}
-                aria-label={`Move ${player.display_name} up`}
-                className="grid size-8 place-items-center rounded-chip border border-line bg-well text-dim disabled:text-disabled"
-              >
-                <Icon name="arrow-up" className="size-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => move(index, 1)}
-                disabled={index === players.length - 1}
-                aria-label={`Move ${player.display_name} down`}
-                className="grid size-8 place-items-center rounded-chip border border-line bg-well text-dim disabled:text-disabled"
-              >
-                <Icon name="arrow-down" className="size-4" />
-              </button>
-              {player.profile_id !== profile.id && (
+        <div className="flex flex-col gap-1.5">
+          <span className="label">Bowling order</span>
+          <Strip as="ul">
+            {players.map((player, index) => (
+              <li key={player.key} className="flex items-center gap-1 py-1 pl-3.5 pr-1">
+                <span className="num w-5 shrink-0 text-[15px] text-ink-faded">{index + 1}</span>
+                <span className="min-w-0 flex-1 truncate text-[15px]">
+                  {player.display_name}
+                  {player.profile_id === profile.id && <span className="text-ink-faded"> you</span>}
+                  {!player.profile_id && <span className="text-ink-faded"> guest</span>}
+                </span>
                 <button
                   type="button"
-                  onClick={() => setPlayers((list) => list.filter((p) => p.key !== player.key))}
-                  aria-label={`Remove ${player.display_name}`}
-                  className="grid size-8 place-items-center rounded-chip border border-line bg-well text-dim"
+                  onClick={() => move(index, -1)}
+                  disabled={index === 0}
+                  aria-label={`Move ${player.display_name} up`}
+                  className="press flex size-11 items-center justify-center text-ink disabled:text-disabled-fg"
                 >
-                  <Icon name="x" className="size-4" />
+                  <Icon name="arrow-up" className="size-5" />
                 </button>
-              )}
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      {candidates.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <span className="label-caps">Add a player</span>
-          <div className="flex flex-wrap gap-1.5">
-            {candidates.map((candidate) => (
-              <button
-                key={candidate.key}
-                type="button"
-                onClick={() => setPlayers((list) => [...list, candidate])}
-                className="rounded-full border border-line bg-panel px-3 py-1.5 text-[12.5px] text-dim"
-              >
-                + {candidate.display_name}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => move(index, 1)}
+                  disabled={index === players.length - 1}
+                  aria-label={`Move ${player.display_name} down`}
+                  className="press flex size-11 items-center justify-center text-ink disabled:text-disabled-fg"
+                >
+                  <Icon name="arrow-down" className="size-5" />
+                </button>
+                {player.profile_id !== profile.id ? (
+                  <button
+                    type="button"
+                    onClick={() => setPlayers((list) => list.filter((p) => p.key !== player.key))}
+                    aria-label={`Remove ${player.display_name}`}
+                    className="press flex size-11 items-center justify-center text-ink"
+                  >
+                    <Icon name="x" className="size-5" />
+                  </button>
+                ) : (
+                  <span className="size-11 shrink-0" aria-hidden />
+                )}
+              </li>
             ))}
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-col gap-2">
-        <label htmlFor="live-guest" className="label-caps">
-          Add a guest
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="live-guest"
-            type="text"
-            placeholder="Name on the monitor"
-            value={guestName}
-            onChange={(event) => setGuestName(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                addGuest();
-              }
-            }}
-            className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2.5 text-[14px] text-text placeholder:text-faint"
-          />
+            {adding && (
+              <li className="flex flex-col gap-3 p-3.5">
+                {candidates.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[13px] text-ink-faded">Friends and group members</span>
+                    <div className="flex flex-wrap gap-2">
+                      {candidates.map((candidate) => (
+                        <button
+                          key={candidate.key}
+                          type="button"
+                          onClick={() => setPlayers((list) => [...list, candidate])}
+                          className="chip"
+                        >
+                          {candidate.display_name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="live-guest" className="label">
+                    Guest <span className="optional">name on the monitor</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="live-guest"
+                      type="text"
+                      value={guestName}
+                      onChange={(event) => setGuestName(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                          event.preventDefault();
+                          addGuest();
+                        }
+                      }}
+                      className="field min-w-0 flex-1"
+                    />
+                    <button type="button" onClick={addGuest} disabled={!guestName.trim()} className="btn-secondary-sm">
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </li>
+            )}
+          </Strip>
           <button
             type="button"
-            onClick={addGuest}
-            disabled={!guestName.trim()}
-            className="rounded-control border border-line bg-panel px-4 text-[13.5px] text-dim disabled:text-disabled"
+            onClick={() => setAdding((open) => !open)}
+            aria-expanded={adding}
+            className="press self-start pt-0.5 text-[13px] font-semibold text-blue"
           >
-            Add
+            {adding ? 'Done adding' : 'Add a player'}
           </button>
         </div>
-      </div>
 
-      <button
-        type="button"
-        onClick={() => {
-          setError('');
-          start.mutate();
-        }}
-        disabled={start.isPending || players.length === 0}
-        className="btn-primary"
-      >
-        {start.isPending ? 'Starting…' : 'Start scoring'}
-      </button>
-      {error && <p className="text-center text-[13.5px] text-signal">{error}</p>}
+        <GroupPicker profileId={profile.id} value={groupId} onChange={setGroupId} id="live-group" />
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="live-venue" className="label">
+            Venue <span className="optional">optional</span>
+          </label>
+          <input
+            id="live-venue"
+            type="text"
+            list="venue-names-live"
+            value={venue}
+            onChange={(event) => setVenue(event.target.value)}
+            className="field"
+          />
+          <datalist id="venue-names-live">
+            {(venues.data ?? []).map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setError('');
+            start.mutate();
+          }}
+          disabled={start.isPending || players.length === 0}
+          className="btn-primary"
+        >
+          {start.isPending ? 'Starting' : 'Start scoring'}
+        </button>
+        {error && <p className="text-center text-[13px] text-red">{error}</p>}
+      </div>
     </div>
   );
 }

@@ -2,10 +2,8 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 import Wordmark from './Wordmark';
 
 /**
- * The last line of defence (COUNCIL_REVIEW_TODO item 12). Without this, one
- * render throw anywhere gives a white screen with no way back — and this
- * release adds canvas rendering and celebration overlays, which are exactly
- * the kind of code that throws on a device you haven’t tested.
+ * The last line of defence. Without this, one render throw anywhere gives a
+ * blank screen with no way back.
  *
  * Deliberately not clever: no error reporting service, no retry-in-place. It
  * tells you what happened and gives you the one action that reliably works.
@@ -34,19 +32,15 @@ export default class ErrorBoundary extends Component<
           <Wordmark />
         </div>
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="font-display text-[20px] font-bold">That screen broke</h1>
-          <p className="text-[13.5px] leading-relaxed text-dim">
-            Nothing you did — and nothing you’ve scored is lost. Reloading usually sorts it.
+          <h1 className="num text-[22px] font-semibold">That screen broke</h1>
+          <p className="text-[14px] leading-relaxed text-ink-faded">
+            Nothing you did, and nothing you have scored is lost. Reloading usually sorts it.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="btn-primary"
-        >
+        <button type="button" onClick={() => window.location.reload()} className="btn-primary">
           Reload 10 Pins
         </button>
-        <p className="text-center text-[11px] text-faint">{this.state.error.message}</p>
+        <p className="text-center text-[12px] text-ink-faded">{this.state.error.message}</p>
       </div>
     );
   }

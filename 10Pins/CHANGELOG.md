@@ -2,6 +2,28 @@
 
 > **Release routine (from v0.3.0 on):** every release gets a version bump, an entry in `src/lib/changelog.ts` (what changed, for players) and an entry here headed `## v<version> — <date> — <what shipped>` (how it was built). `npm run check:release` runs as `prebuild`, so a build fails if the three disagree. See `CLAUDE.md` § Releasing.
 
+## v0.4.0 — 2026-09-02 — The Scoresheet redesign — LIVE
+
+The whole app moves from the dark "phosphor" handoff to **The Scoresheet** (`Design/DESIGN.md`): a light-first paper identity built from the bowling scoresheet. Ruled hairlines, boxed numerals, right-aligned totals, grease-pencil red for hot (strikes, high games, destructive) and ballpoint blue for steady (spares, averages, links). Oswald for every number and heading, Source Sans 3 for words. Radius 0 on strips and tables, 2px on inputs and segmented controls, 6px on chips and buttons, 16px on sheet corners. No glow, no shadows, no gradients, no emoji, no all-caps labels.
+
+**Tokens.** `src/index.css` now defines the palette as CSS variables on `:root` (light) with dark overrides under `prefers-color-scheme: dark` and `[data-theme="dark"]`, and maps them into Tailwind with `@theme inline` while switching the default palette, radii, shadows and fonts off (`--color-*: initial` and friends), so a class outside the design system does not exist. Utilities: `strip`/`strip-soft`, `label`/`optional`, `field`, `btn-primary|secondary(-sm)`, `btn-danger-text`, `chip`/`chip-active`, `num`, `press`, `fade-in`, `rise-in`, `sheet-up`, `settle`, `progress-line`. Tabular numerals are set on `body`. Everything animated in the old system that looped or decorated (skeleton shimmer, live dot, scan sweep, stamp, glow pulses) is gone; skeletons are static card-toned blocks.
+
+**Theme.** `src/lib/theme.ts` (`useTheme`, `THEME_OPTIONS`, `tenpins.theme`): light by default, dark follows the system, and Profile pins either. `index.html` applies the stored choice before first paint. Both `theme-color` metas are set per scheme; the PWA manifest and icons are redrawn in paper and ink (`public/icons/*`, generated with PIL from the frame-cell motif).
+
+**Primitives.** `Strip.tsx` is the frame-grid box everything sits in (`Strip`, `StripHeader`, `StripRow`, `StripTitle`, `StatTile`, `StatCell`, `EmptyFrames`). `Scorecard` is rebuilt as one strip per player: header row (name, meta, total; `tone` colours the total) over a ten-frame grid with two ball cells top-right (three in the 10th) and the cumulative beneath; X red, / blue, pins ink, a miss is a dash. Live marks the frame at the line with `--card` and a 2px ink rule; editing shades unreconciled frames the same way. New: `PageHeader`, `Sheet`, `CountUp`, `AvatarStack`; `Icon` grows to a 40-glyph Lucide-style set. `ChipRow` renders chips or, with `fill`, a segmented control. `EmptyState` is the dashed strip with the actions inside it. `VerificationBadge` is plain faded text ("Scanned from photo", "Scored live", "Unverified"). `MobileTabBar` is the five-slot bar with the ink add disc, hides on scroll-down, and becomes a 220px left rail from 1024px; the add sheet lists the five entry routes in a strip.
+
+**Reactions.** One reaction, "Nice one". `feed.ts` writes a fixed emoji value into the existing `reactions.emoji` column and counts every row (whatever emoji older rows carry) as a nice one; removing deletes all of yours on the event. `ReactionBar` is a single chip; feed footers read "3 nice ones · 2 comments".
+
+**Screens.** Every feature screen was rewritten against `Design/IMPLEMENTATION.md`, behaviour untouched: feed (posts are strips with a footer line, two columns on tablet), game page, groups list and group page (the leaderboard is a ruled table with the own-row marker), stats (three tiles, the average graph, recent games), player page (head-to-head numerals), profile (settings list, theme row), sign-in, first run, friends, invites and claims, quick add (96px score entry), manual entry, scan capture (the one deliberately dark screen: a camera view), review, live setup/scorer/spectator/join, match day setup/live/leg entry, notifications, what's new, and the `/gallery` component sheet.
+
+**Copy.** Sentence case everywhere, British English, no em dashes or exclamation marks in anything a player reads; "PERFECT GAME" and the share card's caps pills are gone. Banned phrases removed ("Nothing here yet", "takes ten seconds", "lands here").
+
+**Left for later.** The feed query still returns no frames, so feed posts are header-only strips until `fetchFeed` selects `game_players.frames`. Leaderboard "last game" column (tablet) and a minimum-games rule are not modelled in the data, so they are not shown.
+
+Verified: `npm run check:release` passes, `tsc --noEmit` clean, 280 tests green, the codebase-wide sweep for old tokens (`bg-panel`, `text-phosphor`, `rounded-card`, `label-caps`, `font-mono`, `uppercase`, glow and shadow classes) and for em dashes, exclamation marks, symbol glyphs and banned phrases in user-visible strings returns nothing. `/gallery` (now carrying the tab bar and rail) screenshotted at 390 wide in light and dark and at 1024 wide in light; the sign-in screen at 390. Screens behind sign-in with live data (live scorer, match day, scan) were converted against the same components and type-check, but were not screenshotted.
+
+Deployed to https://10pins.vercel.app via `npm run deploy` (dpl_8V3BqwPjicZBTZ2amn7tKaB6aKn2).
+
 ## v0.3.0 — 2026-09-02 — What's new, in the app — LIVE
 
 The app shipped eleven releases without ever telling anyone. This adds the player-facing half of the changelog, and a gate so the next one can't skip it.

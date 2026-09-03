@@ -17,14 +17,6 @@ export const FEEDBACK_STATUSES: { value: FeedbackStatus; label: string }[] = [
   { value: 'dismissed', label: 'Parked' },
 ];
 
-/** Amber is earned (spec §12): only the live states get it. */
-export const STATUS_STYLE: Record<FeedbackStatus, string> = {
-  new: 'border-phosphor/40 text-phosphor',
-  planned: 'border-mark/40 text-mark',
-  done: 'border-success/40 text-success',
-  dismissed: 'border-line text-faint',
-};
-
 export const MAX_FEEDBACK_LENGTH = 2000;
 
 type FeedbackRow = Tables<'feedback'>;

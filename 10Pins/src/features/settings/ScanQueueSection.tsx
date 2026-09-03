@@ -1,18 +1,29 @@
 import { Link } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Strip, { StripTitle } from '../../components/Strip';
 import { processScanQueue, removeQueuedScan, type QueuedScan } from '../../lib/scanQueue';
 import { deleteScanPhoto } from '../../lib/capture';
 import { useScanQueue } from '../../lib/useScanQueue';
 import type { Profile } from '../../lib/auth';
 
 const STATUS_LABEL: Record<QueuedScan['status'], string> = {
-  queued: 'Waiting for signal',
+  queued: 'Waiting for a connection',
   ready: 'Ready to review',
-  failed: "Couldn’t read it",
+  failed: 'Couldn’t read it',
 };
 
+function queuedAt(iso: string): string {
+  return new Date(iso).toLocaleString('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 /**
- * The offline scan queue, visible where the design puts it (§Offline: "queue
+ * The offline scan queue, visible where the design puts it (Offline: "queue
  * list in Profile"). Framed as normal behaviour: a queued scan is a job in
  * hand, not a failure.
  */
@@ -30,36 +41,22 @@ export default function ScanQueueSection({ profile }: { profile: Profile }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex items-baseline gap-2">
-        <span className="label-caps">Scan queue</span>
-        {summary.line && <span className="text-[12px] text-dim">{summary.line}</span>}
-      </div>
+    <Strip as="section">
+      <StripTitle right={summary.line || undefined}>Scans waiting</StripTitle>
 
       {items.map((item) => (
-        <div
-          key={item.id}
-          className="rise-in flex items-center gap-3 rounded-card border border-line bg-panel px-3 py-2.5"
-        >
+        <div key={item.id} className="rise-in flex items-center gap-3 px-3.5 py-3">
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-bold text-text">
-              {STATUS_LABEL[item.status]}
-              {item.status === 'failed' && item.error === 'daily_cap' && ' · daily limit'}
+            <p className="truncate text-[14px] font-semibold">
+              Scan from <span className="num">{queuedAt(item.queuedAt)}</span>
             </p>
-            <p className="text-[11.5px] text-faint">
-              {new Date(item.queuedAt).toLocaleString('en-GB', {
-                day: 'numeric',
-                month: 'short',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+            <p className="text-[13px] text-ink-faded">
+              {STATUS_LABEL[item.status]}
+              {item.status === 'failed' && item.error === 'daily_cap' && ', daily limit reached'}
             </p>
           </div>
           {item.status === 'ready' && (
-            <Link
-              to={`/add/scan?queued=${item.id}`}
-              className="press rounded-chip bg-phosphor px-3 py-1.5 text-[12.5px] font-bold text-ink"
-            >
+            <Link to={`/add/scan?queued=${item.id}`} className="btn-primary-sm shrink-0">
               Review
             </Link>
           )}
@@ -68,7 +65,7 @@ export default function ScanQueueSection({ profile }: { profile: Profile }) {
               type="button"
               onClick={() => drain.mutate()}
               disabled={drain.isPending}
-              className="press rounded-chip border border-line bg-well px-3 py-1.5 text-[12.5px] text-dim"
+              className="btn-secondary-sm shrink-0"
             >
               {drain.isPending ? 'Trying…' : 'Try now'}
             </button>
@@ -80,12 +77,12 @@ export default function ScanQueueSection({ profile }: { profile: Profile }) {
               await removeQueuedScan(item.id);
               queryClient.invalidateQueries({ queryKey: ['scan-queue'] });
             }}
-            className="text-[12px] text-signal"
+            className="btn-danger-text shrink-0"
           >
             {item.status === 'ready' ? 'Discard' : 'Remove'}
           </button>
         </div>
       ))}
-    </section>
+    </Strip>
   );
 }

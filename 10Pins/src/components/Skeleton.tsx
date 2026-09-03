@@ -1,14 +1,10 @@
 /**
- * Skeleton states (spec §8: feed, stats and leaderboards get them; capture gets
- * its own sweep). Two rules hold everywhere in here:
- *
- * 1. Never amber — amber is earned (§12). Skeletons are well/hairline greys
- *    with the faint glass sweep defined in index.css.
- * 2. Mirror the real layout box-for-box — same rounding, padding, heights and
- *    mono score widths — so nothing jumps when the data lands.
+ * Skeleton states: static card-toned blocks in the same strips the real
+ * content uses, so nothing jumps when the data lands. No shimmer: motion is
+ * functional only (DESIGN.md), and a loop while waiting is decoration.
  */
 
-/** One grey bar. Width/height in px unless a % string is given. */
+/** One card-toned bar. Width/height in px unless a % string is given. */
 export function Bar({
   w = '100%',
   h = 12,
@@ -37,7 +33,7 @@ export function Circle({ size = 36 }: { size?: number }) {
   );
 }
 
-/** The bordered panel every card on the app uses. */
+/** The strip every box on the app uses. */
 export function Panel({
   children,
   className = '',
@@ -45,14 +41,12 @@ export function Panel({
   children?: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <div className={`rounded-card border border-line bg-panel p-4 ${className}`}>{children}</div>
-  );
+  return <div className={`strip p-3.5 ${className}`}>{children}</div>;
 }
 
 /**
  * Wrapper for a whole loading screen: announces itself once to a screen reader
- * and hides the grey furniture from it.
+ * and hides the furniture from it.
  */
 export function SkeletonScreen({
   label,
@@ -74,80 +68,74 @@ export function SkeletonScreen({
 /** Shown instead of a skeleton when content is already on screen and refetching. */
 export function RefetchLine({ active }: { active: boolean }) {
   if (!active) return null;
-  return <span aria-hidden className="refetch-line block" />;
+  return <span aria-hidden className="progress-line block" />;
+}
+
+/** A strip-shaped skeleton: header row + ten frame boxes. */
+function StripSkeleton({ header = true }: { header?: boolean }) {
+  return (
+    <div className="strip">
+      {header && (
+        <div className="flex items-center justify-between px-3 py-2.5">
+          <div className="flex items-center gap-2">
+            <Bar w={64} h={14} />
+            <Bar w={96} h={10} />
+          </div>
+          <Bar w={40} h={20} />
+        </div>
+      )}
+      <div className="grid grid-cols-10 border-t border-hairline">
+        {Array.from({ length: 10 }).map((_, f) => (
+          <div key={f} className={`h-[44px] ${f < 9 ? 'border-r border-hairline' : ''}`} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 /* ---------------------------------------------------------------- screens -- */
 
-/** Home feed: date row, player lines with mono score blocks, reaction row. */
+/** Home feed: strips with a footer line. */
 export function FeedSkeleton({ cards = 3 }: { cards?: number }) {
   return (
-    <SkeletonScreen label="Loading the feed" className="flex flex-col gap-3">
+    <SkeletonScreen label="Loading the feed" className="flex flex-col gap-4">
       {Array.from({ length: cards }).map((_, i) => (
-        <Panel key={i} className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <Bar w={116} h={10} />
-            <Bar w={68} h={16} className="rounded-cell" />
+        <div key={i} className="flex flex-col gap-2">
+          <StripSkeleton />
+          <div className="flex gap-3.5 px-0.5">
+            <Bar w={72} h={11} />
+            <Bar w={56} h={11} />
           </div>
-          <div className="flex flex-col gap-1">
-            {Array.from({ length: i === 0 ? 3 : 2 }).map((_, row) => (
-              <div key={row} className="flex items-center justify-between py-0.5">
-                <Bar w={92 - row * 8} h={13} />
-                <Bar w={34} h={15} />
-              </div>
-            ))}
-          </div>
-          <div className="flex gap-2 pt-1">
-            {Array.from({ length: 4 }).map((_, chip) => (
-              <Bar key={chip} w={44} h={26} className="rounded-control" />
-            ))}
-          </div>
-        </Panel>
+        </div>
       ))}
     </SkeletonScreen>
   );
 }
 
-/** Stats: four tiles, form graph, the dashed frame-level well, venue rows. */
+/** Stats: three tiles, the graph strip, recent games. */
 export function StatsSkeleton() {
   return (
-    <SkeletonScreen label="Loading your stats" className="flex flex-col gap-6">
-      <div className="grid grid-cols-2 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Panel key={i} className="flex flex-col gap-2">
-            <Bar w={62} h={10} />
-            <Bar w={72} h={26} />
-          </Panel>
+    <SkeletonScreen label="Loading your stats" className="flex flex-col gap-3.5">
+      <div className="grid grid-cols-3 gap-2.5">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="strip flex flex-col gap-1.5 px-3 pb-2.5 pt-3">
+            <Bar w={52} h={26} />
+            <Bar w={72} h={10} />
+          </div>
         ))}
       </div>
-
       <Panel className="flex flex-col gap-3">
-        <Bar w={96} h={10} />
-        <Bar h={64} className="rounded-control" />
+        <Bar w={110} h={12} />
+        <Bar h={120} />
       </Panel>
-
-      <div className="flex flex-col gap-3 rounded-card border border-dashed border-line bg-well/50 p-4">
-        <Bar w={84} h={10} />
-        <div className="flex justify-between">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex flex-col gap-2">
-              <Bar w={54} h={10} />
-              <Bar w={44} h={20} />
-            </div>
-          ))}
+      <div className="strip">
+        <div className="px-3.5 py-2.5">
+          <Bar w={88} h={12} />
         </div>
-        <Bar w="70%" h={9} />
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Bar w={70} h={10} />
-        {Array.from({ length: 2 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between rounded-card border border-line bg-panel px-4 py-3"
-          >
-            <Bar w={128} h={13} />
-            <Bar w={40} h={15} />
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between border-t border-hairline px-3.5 py-3">
+            <Bar w={150 - i * 12} h={12} />
+            <Bar w={32} h={16} />
           </div>
         ))}
       </div>
@@ -158,51 +146,42 @@ export function StatsSkeleton() {
 /** Leaderboard rows on their own, for composing inside a bigger skeleton. */
 function LeaderboardRows({ rows }: { rows: number }) {
   return (
-    <>
+    <div className="strip">
+      <div className="flex justify-between px-3.5 py-2.5">
+        <Bar w={20} h={10} />
+        <Bar w={120} h={10} />
+      </div>
       {Array.from({ length: rows }).map((_, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3"
-        >
-          <Bar w={16} h={15} />
-          <Circle size={32} />
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <Bar w={`${64 - i * 5}%`} h={14} />
-            <Bar w={`${44 - i * 4}%`} h={11} />
-          </div>
-          <div className="flex items-center gap-4">
+        <div key={i} className="flex items-center gap-3 border-t border-hairline px-3.5 py-3.5">
+          <Bar w={14} h={14} />
+          <Bar w={`${40 - i * 4}%`} h={13} />
+          <div className="ml-auto flex items-center gap-4">
+            <Bar w={22} h={12} />
             <Bar w={30} h={15} />
-            <Bar w={22} h={15} />
+            <Bar w={26} h={12} />
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }
 
 /**
- * Group leaderboard: rank, avatar, name + games line, then the mono numbers.
- * `bare` drops the live region so it can nest inside another SkeletonScreen
- * without a screen reader announcing two loading messages.
+ * Group leaderboard: the table strip. `bare` drops the live region so it can
+ * nest inside another SkeletonScreen.
  */
 export function LeaderboardSkeleton({ rows = 5, bare = false }: { rows?: number; bare?: boolean }) {
-  if (bare) {
-    return (
-      <div className="flex flex-col gap-2">
-        <LeaderboardRows rows={rows} />
-      </div>
-    );
-  }
+  if (bare) return <LeaderboardRows rows={rows} />;
   return (
-    <SkeletonScreen label="Loading the leaderboard" className="flex flex-col gap-2">
+    <SkeletonScreen label="Loading the leaderboard">
       <LeaderboardRows rows={rows} />
     </SkeletonScreen>
   );
 }
 
 /**
- * Generic person/notification/game rows — avatar, two lines, trailing chip.
- * `bare` drops the live region for nesting inside another SkeletonScreen.
+ * Generic person/notification/game rows inside one strip. `bare` drops the
+ * live region for nesting inside another SkeletonScreen.
  */
 export function ListSkeleton({
   rows = 4,
@@ -217,50 +196,26 @@ export function ListSkeleton({
   trailing?: boolean;
   bare?: boolean;
 }) {
-  const body = Array.from({ length: rows }).map((_, i) => (
-    <div
-      key={i}
-      className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3.5"
-    >
-      {avatar && <Circle size={36} />}
-      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-        <Bar w={`${70 - i * 6}%`} h={13} />
-        <Bar w={`${42 - i * 4}%`} h={10} />
-      </div>
-      {trailing && <Bar w={54} h={22} className="rounded-control" />}
-    </div>
-  ));
-
-  if (bare) return <div className="flex flex-col gap-2">{body}</div>;
-  return (
-    <SkeletonScreen label={label} className="flex flex-col gap-2">
-      {body}
-    </SkeletonScreen>
-  );
-}
-
-/** Player cards with ten frame boxes each — no screen wrapper, so it composes. */
-function ScorecardPanels({ players }: { players: number }) {
-  return (
-    <>
-      {Array.from({ length: players }).map((_, p) => (
-        <Panel key={p} className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Bar w={104} h={13} />
-            <Bar w={38} h={18} />
+  const body = (
+    <div className="strip">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className={`flex items-center gap-3 px-3.5 py-3.5 ${i > 0 ? 'border-t border-hairline' : ''}`}>
+          {avatar && <Circle size={34} />}
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+            <Bar w={`${70 - i * 6}%`} h={13} />
+            <Bar w={`${42 - i * 4}%`} h={10} />
           </div>
-          <div className="flex gap-1">
-            {Array.from({ length: 10 }).map((_, f) => (
-              <Bar key={f} h={38} className="flex-1 rounded-cell" />
-            ))}
-          </div>
-        </Panel>
+          {trailing && <Bar w={54} h={22} />}
+        </div>
       ))}
-    </>
+    </div>
   );
+
+  if (bare) return body;
+  return <SkeletonScreen label={label}>{body}</SkeletonScreen>;
 }
 
-/** A scorecard: ten frame boxes per player row, plus the running total column. */
+/** A scorecard: one strip per player. */
 export function ScorecardSkeleton({
   players = 2,
   label = 'Loading the game',
@@ -269,13 +224,15 @@ export function ScorecardSkeleton({
   label?: string;
 }) {
   return (
-    <SkeletonScreen label={label} className="flex flex-col gap-3">
-      <ScorecardPanels players={players} />
+    <SkeletonScreen label={label} className="flex flex-col gap-2">
+      {Array.from({ length: players }).map((_, p) => (
+        <StripSkeleton key={p} />
+      ))}
     </SkeletonScreen>
   );
 }
 
-/** The pre-join preview cards (/join/:code, /live/join/:code). */
+/** The pre-join preview (/join/:code, /live/join/:code). */
 export function PreviewSkeleton({ label }: { label: string }) {
   return (
     <SkeletonScreen label={label} className="flex flex-col gap-4">
@@ -289,77 +246,71 @@ export function PreviewSkeleton({ label }: { label: string }) {
           ))}
         </div>
       </Panel>
-      <Bar h={48} className="rounded-control" />
+      <Bar h={48} />
     </SkeletonScreen>
   );
 }
 
-/** Form-shaped screens (entry flows, settings) — label + field pairs. */
+/** Form-shaped screens (entry flows, settings): label + field pairs. */
 export function FormSkeleton({ fields = 3, label }: { fields?: number; label: string }) {
   return (
     <SkeletonScreen label={label} className="flex flex-col gap-5">
       {Array.from({ length: fields }).map((_, i) => (
-        <div key={i} className="flex flex-col gap-2">
-          <Bar w={78} h={10} />
-          <Bar h={46} className="rounded-control" />
+        <div key={i} className="flex flex-col gap-1.5">
+          <Bar w={78} h={12} />
+          <Bar h={44} />
         </div>
       ))}
-      <Bar h={48} className="rounded-control" />
+      <Bar h={48} />
     </SkeletonScreen>
   );
 }
 
 /**
- * Player page: avatar + name/username header, the head-to-head panel (two
- * avatars either side of a wide record bar, three meeting rows), then the
- * same 2×2 tile grid `StatsSkeleton` uses for "their stats".
+ * Player page: avatar + name header, the head-to-head strip (two big
+ * numerals, a two-cell stat row), then recent meetings.
  */
 export function PlayerSkeleton() {
   return (
-    <SkeletonScreen label="Loading their profile" className="flex flex-col gap-5">
+    <SkeletonScreen label="Loading their profile" className="flex flex-col gap-3.5">
       <div className="flex items-center gap-3">
-        <Circle size={56} />
+        <Circle size={44} />
         <div className="flex flex-col gap-2">
-          <Bar w={140} h={16} />
-          <Bar w={92} h={11} />
+          <Bar w={120} h={18} />
+          <Bar w={160} h={11} />
         </div>
       </div>
-
-      <Panel className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <Circle size={40} />
-          <Bar w={80} h={22} />
-          <Circle size={40} />
+      <div className="strip">
+        <div className="px-3.5 py-2.5">
+          <Bar w={140} h={12} />
         </div>
-        <div className="flex flex-col gap-2">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Bar key={i} h={40} className="rounded-card" />
-          ))}
+        <div className="flex items-center justify-around border-t border-hairline px-3.5 py-4">
+          <Bar w={36} h={44} />
+          <Bar w={30} h={11} />
+          <Bar w={36} h={44} />
         </div>
-      </Panel>
-
-      <div className="grid grid-cols-2 gap-3">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Panel key={i} className="flex flex-col gap-2">
-            <Bar w={62} h={10} />
-            <Bar w={72} h={26} />
-          </Panel>
-        ))}
+        <div className="grid grid-cols-2 border-t border-hairline">
+          <div className="flex flex-col gap-1.5 border-r border-hairline px-3.5 py-2.5">
+            <Bar w={72} h={18} />
+            <Bar w={90} h={10} />
+          </div>
+          <div className="flex flex-col gap-1.5 px-3.5 py-2.5">
+            <Bar w={72} h={18} />
+            <Bar w={70} h={10} />
+          </div>
+        </div>
       </div>
+      <ListSkeleton rows={2} label="" avatar={false} bare />
     </SkeletonScreen>
   );
 }
 
-/** Live scorer / spectator: NOW BOWLING panel over the card. */
+/** Live scorer / spectator: the at-the-line strip over the sheet. */
 export function LaneSkeleton({ label = 'Loading the lane' }: { label?: string }) {
   return (
-    <SkeletonScreen label={label} className="flex flex-col gap-3">
-      <Panel className="flex flex-col items-center gap-3 py-6">
-        <Bar w={92} h={10} />
-        <Bar w={140} h={22} />
-        <Bar w={64} h={34} />
-      </Panel>
-      <ScorecardPanels players={2} />
+    <SkeletonScreen label={label} className="flex flex-col gap-2">
+      <StripSkeleton />
+      <StripSkeleton />
     </SkeletonScreen>
   );
 }

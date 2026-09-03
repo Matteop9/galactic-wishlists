@@ -5,8 +5,10 @@ import { fetchGroup, fetchMyGroups } from '../../lib/groups';
 import { defaultHandicap } from '../../lib/handicap';
 import { createMatchDay, fetchAverages, type ScoringMode } from '../../lib/matchday';
 import { fetchVenueNames } from '../../lib/games';
+import ChipRow from '../../components/ChipRow';
 import Icon from '../../components/Icon';
 import EmptyState from '../../components/EmptyState';
+import Strip, { StripTitle } from '../../components/Strip';
 import { FormSkeleton, ListSkeleton } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
@@ -25,6 +27,13 @@ interface DraftTeam {
   players: DraftPlayer[];
 }
 
+type DraftSeed = Omit<DraftPlayer, 'handicap' | 'handicapTouched'>;
+
+/**
+ * Match day · setup: pick the group, split it into teams, choose the series
+ * and scoring, check the handicaps, name the venue. Handicaps default from the
+ * group's basis and percentage; any of them can be changed for the day.
+ */
 export default function MatchDaySetup({ profile }: { profile: Profile }) {
   const { id: paramGroupId } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -67,10 +76,13 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
   const basis = group.data?.handicap_basis ?? 200;
   const pct = group.data?.handicap_pct ?? 90;
 
-  const assignedKeys = new Set(teams.flatMap((t) => t.players.map((p) => p.key)));
-  const unassigned = (group.data?.group_members ?? []).filter((m) => !assignedKeys.has(m.profile_id));
+  const teamLabel = (team: DraftTeam, index: number) => team.name.trim() || `Team ${index + 1}`;
+  const teamOptions = teams.map((team, index) => ({ value: String(index), label: teamLabel(team, index) }));
+  const teamIndexOf = (key: string) => teams.findIndex((t) => t.players.some((p) => p.key === key));
+  const assigned = teams.flatMap((team, index) => team.players.map((player) => ({ player, team, index })));
+  const guests = assigned.filter(({ player }) => !player.profile_id).map(({ player }) => player);
 
-  function assign(teamIdx: number, player: Omit<DraftPlayer, 'handicap' | 'handicapTouched'>) {
+  function assign(teamIdx: number, player: DraftSeed) {
     const avg = player.profile_id ? averages.data?.[player.profile_id] ?? null : null;
     setTeams((ts) =>
       ts.map((t, i) =>
@@ -89,6 +101,25 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
 
   function unassign(key: string) {
     setTeams((ts) => ts.map((t) => ({ ...t, players: t.players.filter((p) => p.key !== key) })));
+  }
+
+  /** The segmented control per player: tap a team to join it, tap it again to leave. */
+  function pickTeam(value: string, player: DraftSeed) {
+    const current = teamIndexOf(player.key);
+    unassign(player.key);
+    if (String(current) !== value) assign(Number(value), player);
+  }
+
+  function addGuest(value: string) {
+    const name = guestName.trim();
+    if (!name) return;
+    assign(Number(value), {
+      key: `guest:${name.toLowerCase()}`,
+      profile_id: null,
+      guest_name: name,
+      display_name: name,
+    });
+    setGuestName('');
   }
 
   function setHandicap(key: string, handicap: number) {
@@ -127,10 +158,24 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
     onSuccess: (id) => navigate(`/matchday/${id}`, { replace: true }),
   });
 
+  const header = (
+    <header className="flex items-center justify-between px-5 pb-1 pt-2.5">
+      <Link
+        to={paramGroupId ? `/groups/${paramGroupId}` : '/'}
+        aria-label="Cancel"
+        className="press -ml-2.5 flex size-11 shrink-0 items-center justify-center text-ink"
+      >
+        <Icon name="x" className="size-6" />
+      </Link>
+      <h1 className="num text-[18px] font-semibold">Start a match day</h1>
+      <span className="size-11 shrink-0" aria-hidden />
+    </header>
+  );
+
   if (!groupId) {
     if (showGroupsSkeleton) {
       return (
-        <div className="flex flex-col gap-5 px-4 py-6">
+        <div className="flex flex-col gap-5 px-5 py-6">
           <ListSkeleton rows={3} label="Loading your groups" avatar={false} trailing={false} />
         </div>
       );
@@ -138,41 +183,39 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
     const groups = myGroups.data ?? [];
     if (groups.length === 0) {
       return (
-        <EmptyState
-          tone="page"
-          title="Match days live in a group"
-          body="Split your crew into teams, set handicaps and bowl a series — you need a group first."
-          action={{ label: 'Create a group', to: '/groups' }}
-        />
+        <div className="px-5">
+          <EmptyState
+            tone="page"
+            title="Match days live in a group"
+            body="Split a group into teams, set handicaps and bowl a series. You need a group first."
+            action={{ label: 'Create a group', to: '/groups' }}
+          />
+        </div>
       );
     }
     return (
-      <div className="flex flex-col gap-5 px-4 py-6">
-        <header className="flex items-center justify-between">
-          <h1 className="font-display text-[20px] font-bold">New match day</h1>
-          <Link to="/" className="text-[13.5px] text-dim">
-            Cancel
-          </Link>
-        </header>
-        <div className="flex flex-col gap-2">
-          <span className="label-caps">Which group?</span>
-          <div className="flex flex-col gap-2">
+      <div className="flex flex-col pb-6">
+        {header}
+        <div className="flex flex-col gap-1.5 px-5 py-[18px]">
+          <span className="label">Which group</span>
+          <Strip>
             {groups.map((m) =>
               m.groups ? (
                 <button
                   key={m.groups.id}
                   type="button"
                   onClick={() => setPickedGroupId(m.groups!.id)}
-                  className="flex items-center justify-between rounded-card border border-line bg-well px-4 py-3.5 text-left"
+                  className="press flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-[15px]"
                 >
-                  <span className="text-[14px] font-bold text-text">{m.groups.name}</span>
+                  <span className="min-w-0 flex-1 truncate">{m.groups.name}</span>
                   {m.groups.season_name && (
-                    <span className="text-[12px] text-faint">{m.groups.season_name}</span>
+                    <span className="truncate text-[13px] text-ink-faded">{m.groups.season_name}</span>
                   )}
+                  <Icon name="chevron-right" className="size-5 shrink-0 text-ink-faded" />
                 </button>
               ) : null,
             )}
-          </div>
+          </Strip>
         </div>
       </div>
     );
@@ -180,243 +223,266 @@ export default function MatchDaySetup({ profile }: { profile: Profile }) {
 
   if (showSkeleton) {
     return (
-      <div className="flex flex-col gap-5 px-4 py-6">
+      <div className="flex flex-col gap-5 px-5 py-6">
         <FormSkeleton fields={3} label="Loading the match day setup" />
       </div>
     );
   }
-  if (group.isPending) return <div className="px-4 py-6" />;
+  if (group.isPending) return <div className="px-5 py-6" />;
+
+  const members = group.data?.group_members ?? [];
 
   return (
-    <div className="flex flex-col gap-5 px-4 py-6">
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h1 className="font-display text-[20px] font-bold">New match day</h1>
+    <div className="flex flex-col pb-6">
+      {header}
+
+      <div className="flex flex-col gap-[18px] px-5 py-[18px]">
+        <p className="flex items-baseline gap-2 text-[13px] text-ink-faded">
+          <span className="min-w-0 truncate">{group.data?.name}</span>
           {!paramGroupId && pickedGroupId && (
             <button
               type="button"
               onClick={() => setPickedGroupId(null)}
-              className="text-[12px] text-dim underline"
+              className="press shrink-0 font-semibold text-blue"
             >
               Change group
             </button>
           )}
-        </div>
-        <Link to={paramGroupId ? `/groups/${paramGroupId}` : '/'} className="text-[13.5px] text-dim">
-          Cancel
-        </Link>
-      </header>
+        </p>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="md-venue" className="label-caps">
-          Venue (optional)
-        </label>
-        <input
-          id="md-venue"
-          list="md-venues"
-          value={venue}
-          onChange={(e) => setVenue(e.target.value)}
-          placeholder="Hollywood Bowl…"
-          className="rounded-control border border-line bg-well px-3 py-3 text-[14px] text-text placeholder:text-faint"
-        />
-        <datalist id="md-venues">
-          {(venues.data ?? []).map((name) => (
-            <option key={name} value={name} />
-          ))}
-        </datalist>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <span className="label-caps">Series</span>
-        <div className="flex gap-2">
-          {([1, 3, 5] as const).map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setBestOf(n)}
-              className={`flex-1 rounded-control border py-2.5 text-[13px] font-bold ${
-                bestOf === n ? 'border-phosphor/50 bg-phosphor/10 text-phosphor' : 'border-line bg-panel text-dim'
-              }`}
-            >
-              {n === 1 ? 'Single game' : `Best of ${n}`}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <span className="label-caps">Scoring</span>
-        <div className="flex gap-2">
-          <ModeButton active={mode === 'total_pins'} onClick={() => setMode('total_pins')} title="Total pins" hint="Team totals incl. handicap" />
-          <ModeButton active={mode === 'points'} onClick={() => setMode('points')} title="Points" hint="Head-to-head pairings + team total" />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <span className="label-caps">Teams</span>
+        {/* Teams: a name each, and who is on it so far. */}
+        <div className="flex flex-col gap-1.5">
+          <Strip>
+            <StripTitle right={mode === 'points' ? 'Order sets the pairings' : undefined}>Teams</StripTitle>
+            {teams.map((team, ti) => (
+              <div key={ti} className="flex flex-col gap-2 p-3.5">
+                <div className="flex items-center gap-2">
+                  <input
+                    value={team.name}
+                    aria-label={`Team ${ti + 1} name`}
+                    onChange={(e) => setTeams((ts) => ts.map((t, i) => (i === ti ? { ...t, name: e.target.value } : t)))}
+                    maxLength={24}
+                    className="field min-w-0 flex-1"
+                  />
+                  {teams.length > 2 && team.players.length === 0 && (
+                    <button
+                      type="button"
+                      aria-label={`Remove team ${ti + 1}`}
+                      onClick={() => setTeams((ts) => ts.filter((_, i) => i !== ti))}
+                      className="press flex size-11 shrink-0 items-center justify-center text-ink"
+                    >
+                      <Icon name="x" className="size-5" />
+                    </button>
+                  )}
+                </div>
+                {team.players.length === 0 ? (
+                  <p className="text-[13px] text-ink-faded">No players on this team yet.</p>
+                ) : (
+                  <ul className="flex flex-col gap-1">
+                    {team.players.map((p, pi) => (
+                      <li key={p.key} className="flex items-center gap-2 text-[15px]">
+                        {mode === 'points' && (
+                          <span className="num w-5 shrink-0 text-[15px] text-ink-faded">{pi + 1}</span>
+                        )}
+                        <span className="min-w-0 flex-1 truncate">
+                          {p.display_name}
+                          {p.guest_name && <span className="text-ink-faded"> guest</span>}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </Strip>
           <button
             type="button"
             onClick={() => setTeams((ts) => [...ts, { name: `Team ${ts.length + 1}`, players: [] }])}
-            className="rounded-chip border border-line bg-well px-3 py-1.5 text-[12px] text-dim"
+            className="press self-start pt-0.5 text-[13px] font-semibold text-blue"
           >
-            Add team
+            Add a team
           </button>
         </div>
 
-        {teams.map((team, ti) => (
-          <div key={ti} className="flex flex-col gap-2 rounded-card border border-line bg-panel p-3">
-            <div className="flex items-center gap-2">
-              <input
-                value={team.name}
-                aria-label={`Team ${ti + 1} name`}
-                onChange={(e) => setTeams((ts) => ts.map((t, i) => (i === ti ? { ...t, name: e.target.value } : t)))}
-                maxLength={24}
-                className="min-w-0 flex-1 rounded-control border border-line bg-well px-3 py-2 font-display text-[14px] font-bold text-text"
-              />
-              {teams.length > 2 && team.players.length === 0 && (
-                <button
-                  type="button"
-                  aria-label={`Remove team ${ti + 1}`}
-                  onClick={() => setTeams((ts) => ts.filter((_, i) => i !== ti))}
-                  className="text-faint"
-                >
-                  <Icon name="x" className="size-4" />
-                </button>
-              )}
-            </div>
-            {team.players.map((p, pi) => (
-              <div key={p.key} className="flex items-center gap-2">
-                {mode === 'points' && <span className="score-text w-4 text-[12px] text-faint">{pi + 1}</span>}
-                <span className="min-w-0 flex-1 truncate text-[14px] text-text">
-                  {p.display_name}
-                  {p.guest_name ? ' (guest)' : ''}
+        {/* Players: every group member, and each guest, with a team picker. */}
+        <Strip>
+          <StripTitle right="Tap a team again to take them off it">Players</StripTitle>
+          {members.map((m) => {
+            const name = m.profiles?.display_name ?? 'Player';
+            const index = teamIndexOf(m.profile_id);
+            return (
+              <div key={m.profile_id} className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5">
+                <span className="min-w-0 flex-1 truncate text-[15px]">
+                  {name}
+                  {m.profile_id === profile.id && <span className="text-ink-faded"> you</span>}
                 </span>
-                <label className="flex items-center gap-1 text-[11px] text-faint">
-                  HCP
-                  <input
-                    type="number"
-                    min={0}
-                    max={220}
-                    value={p.handicap}
-                    aria-label={`${p.display_name} handicap`}
-                    onChange={(e) => setHandicap(p.key, Math.max(0, Number(e.target.value)))}
-                    className={`score-text w-16 rounded-chip border border-line bg-well px-2 py-1.5 text-right text-[13px] ${
-                      p.handicapTouched ? 'text-phosphor' : 'text-text'
-                    }`}
-                  />
-                </label>
-                <button
-                  type="button"
-                  aria-label={`Remove ${p.display_name}`}
-                  onClick={() => unassign(p.key)}
-                  className="text-faint"
-                >
-                  <Icon name="x" className="size-4" />
-                </button>
+                <ChipRow
+                  label={`${name}, team`}
+                  fill
+                  size="sm"
+                  options={teamOptions}
+                  value={index >= 0 ? String(index) : ''}
+                  onChange={(v) =>
+                    pickTeam(v, {
+                      key: m.profile_id,
+                      profile_id: m.profile_id,
+                      guest_name: null,
+                      display_name: name,
+                    })
+                  }
+                />
               </div>
-            ))}
-            {team.players.length === 0 && <p className="text-[12px] text-faint">No players yet — add from below.</p>}
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <span className="label-caps">Who’s playing?</span>
-        {unassigned.map((m) => (
-          <div key={m.profile_id} className="flex items-center gap-2 rounded-card border border-line bg-panel px-3 py-2.5">
-            <span className="min-w-0 flex-1 truncate text-[14px] text-text">{m.profiles?.display_name}</span>
-            {teams.map((t, ti) => (
-              <button
-                key={ti}
-                type="button"
-                onClick={() =>
-                  assign(ti, {
-                    key: m.profile_id,
-                    profile_id: m.profile_id,
-                    guest_name: null,
-                    display_name: m.profiles?.display_name ?? '?',
+            );
+          })}
+          {guests.map((g) => (
+            <div key={g.key} className="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5">
+              <span className="min-w-0 flex-1 truncate text-[15px]">
+                {g.display_name}
+                <span className="text-ink-faded"> guest</span>
+              </span>
+              <ChipRow
+                label={`${g.display_name}, team`}
+                fill
+                size="sm"
+                options={teamOptions}
+                value={String(teamIndexOf(g.key))}
+                onChange={(v) =>
+                  pickTeam(v, {
+                    key: g.key,
+                    profile_id: null,
+                    guest_name: g.guest_name,
+                    display_name: g.display_name,
                   })
                 }
-                className="rounded-chip border border-line bg-well px-2.5 py-1.5 text-[11px] font-bold text-dim"
-              >
-                {t.name.trim() || `Team ${ti + 1}`}
-              </button>
-            ))}
-          </div>
-        ))}
-        <div className="flex items-center gap-2 rounded-card border border-dashed border-line bg-well/50 px-3 py-2.5">
-          <input
-            value={guestName}
-            onChange={(e) => setGuestName(e.target.value)}
-            placeholder="Guest name…"
-            aria-label="Guest name"
-            className="min-w-0 flex-1 rounded-chip border border-line bg-well px-2.5 py-1.5 text-[13px] text-text placeholder:text-faint"
-          />
-          {teams.map((t, ti) => (
-            <button
-              key={ti}
-              type="button"
-              disabled={guestName.trim().length === 0}
-              onClick={() => {
-                const name = guestName.trim();
-                assign(ti, {
-                  key: `guest:${name.toLowerCase()}`,
-                  profile_id: null,
-                  guest_name: name,
-                  display_name: name,
-                });
-                setGuestName('');
-              }}
-              className="rounded-chip border border-line bg-well px-2.5 py-1.5 text-[11px] font-bold text-dim disabled:border-hairline disabled:text-disabled"
-            >
-              {t.name.trim() || `Team ${ti + 1}`}
-            </button>
+              />
+            </div>
           ))}
+          <div className="flex flex-col gap-1.5 p-3.5">
+            <label htmlFor="md-guest" className="label">
+              Guest <span className="optional">name on the monitor</span>
+            </label>
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                id="md-guest"
+                value={guestName}
+                onChange={(e) => setGuestName(e.target.value)}
+                aria-label="Guest name"
+                className="field min-w-0 flex-1"
+              />
+              {guestName.trim() ? (
+                <ChipRow label="Guest team" fill size="sm" options={teamOptions} value="" onChange={addGuest} />
+              ) : (
+                <span className="text-[12px] text-ink-faded">Type a name, then pick their team.</span>
+              )}
+            </div>
+          </div>
+        </Strip>
+
+        {/* Series and scoring. */}
+        <Strip>
+          <StripTitle>Series</StripTitle>
+          <div className="px-3.5 py-3">
+            <ChipRow
+              label="Series"
+              fill
+              options={[
+                { value: '1', label: 'Single game' },
+                { value: '3', label: 'Best of 3' },
+                { value: '5', label: 'Best of 5' },
+              ]}
+              value={String(bestOf)}
+              onChange={(v) => setBestOf(Number(v) as 1 | 3 | 5)}
+            />
+          </div>
+        </Strip>
+
+        <Strip>
+          <StripTitle right={mode === 'points' ? 'Pairings plus the team total' : 'Team totals with handicap'}>
+            Scoring
+          </StripTitle>
+          <div className="px-3.5 py-3">
+            <ChipRow
+              label="Scoring"
+              fill
+              options={[
+                { value: 'total_pins', label: 'Total pins' },
+                { value: 'points', label: 'Points' },
+              ]}
+              value={mode}
+              onChange={(v) => setMode(v as ScoringMode)}
+            />
+          </div>
+        </Strip>
+
+        {/* Handicaps: one row per assigned player, editable for the day. */}
+        <Strip>
+          <StripTitle
+            right={
+              <>
+                <span className="num">{pct}</span>% of <span className="num">{basis}</span> minus average
+              </>
+            }
+          >
+            Handicaps
+          </StripTitle>
+          {assigned.length === 0 ? (
+            <p className="px-3.5 py-3 text-[13px] text-ink-faded">Put players on teams to see their handicaps.</p>
+          ) : (
+            assigned.map(({ player, team, index }) => (
+              <div key={player.key} className="flex items-center gap-3 px-3.5 py-2">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[15px]">{player.display_name}</p>
+                  <p className="truncate text-[12px] text-ink-faded">{teamLabel(team, index)}</p>
+                </div>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={220}
+                  value={player.handicap}
+                  aria-label={`${player.display_name} handicap`}
+                  onChange={(e) => setHandicap(player.key, Math.max(0, Number(e.target.value)))}
+                  className="field num w-20 text-right [appearance:textfield]"
+                />
+              </div>
+            ))
+          )}
+          <p className="px-3.5 py-2.5 text-[12px] text-ink-faded">Change any number to set it for the day.</p>
+        </Strip>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="md-venue" className="label">
+            Venue <span className="optional">optional</span>
+          </label>
+          <input
+            id="md-venue"
+            type="text"
+            list="md-venues"
+            value={venue}
+            onChange={(e) => setVenue(e.target.value)}
+            className="field"
+          />
+          <datalist id="md-venues">
+            {(venues.data ?? []).map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
         </div>
-        <p className="text-[11px] text-faint">
-          Handicaps default to {pct}% of ({basis} − average) — tap a number to override for the day.
-        </p>
+
+        <button
+          type="button"
+          onClick={() => create.mutate()}
+          disabled={!valid || create.isPending}
+          className="btn-primary"
+        >
+          {create.isPending ? 'Starting' : 'Start match day'}
+        </button>
+        {create.isError && (
+          <p className="text-center text-[13px] text-red" role="alert">
+            That didn’t start. Check your connection and try again.
+          </p>
+        )}
       </div>
-
-      <button
-        type="button"
-        onClick={() => create.mutate()}
-        disabled={!valid || create.isPending}
-        className="btn-primary"
-      >
-        {create.isPending ? 'Setting up…' : 'Start match day'}
-      </button>
-      {create.isError && (
-        <p className="text-center text-[13px] text-signal" role="alert">
-          Couldn’t create the match day — try again.
-        </p>
-      )}
     </div>
-  );
-}
-
-function ModeButton({
-  active,
-  onClick,
-  title,
-  hint,
-}: {
-  active: boolean;
-  onClick: () => void;
-  title: string;
-  hint: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-1 flex-col items-start gap-0.5 rounded-control border px-3 py-2.5 text-left ${
-        active ? 'border-phosphor/50 bg-phosphor/10' : 'border-line bg-panel'
-      }`}
-    >
-      <span className={`text-[13px] font-bold ${active ? 'text-phosphor' : 'text-text'}`}>{title}</span>
-      <span className="text-[10.5px] text-faint">{hint}</span>
-    </button>
   );
 }

@@ -3,24 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0A0E14" />
-    <meta name="description" content="10 Pins — the app for your bowling crew" />
+    <meta name="theme-color" content="#F7F3EA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171511" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="10 Pins, the scoresheet for your bowling group" />
     <title>10 Pins</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="10 Pins" />
-    <!-- black-translucent pairs with viewport-fit=cover: the app paints its
-         own ink behind the status bar, and the safe-area insets keep the tab
-         bar off the home indicator. -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- The app paints its own paper behind the status bar (viewport-fit=cover),
+         and the safe-area insets keep the tab bar off the home indicator. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!-- Theme before first paint: a stored light/dark choice is applied here so
+         the page never flashes the other theme while React boots. The key and
+         values are owned by src/lib/theme.ts. -->
+    <script>
+      try {
+        var t = localStorage.getItem('tenpins.theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- crossorigin is load-bearing: without it the stylesheet is opaque to
          same-origin script, so the share card's rasteriser can't read its
          @font-face rules and silently renders in fallback faces. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700&family=Martian+Mono:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap"
       rel="stylesheet"
       crossorigin
     />

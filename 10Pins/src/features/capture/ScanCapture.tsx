@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ReviewScan from './ReviewScan';
 import Icon from '../../components/Icon';
+import Strip, { StripRow } from '../../components/Strip';
+import VerificationBadge from '../../components/VerificationBadge';
 import {
   compressPhoto,
   deleteScanPhoto,
@@ -29,24 +31,24 @@ interface Loaded {
 
 const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
   unreadable: {
-    title: "Couldn’t read that one",
-    body: 'Fill the frame with the score grid and keep glare off it — or enter the frames yourself.',
+    title: 'Could not read that one',
+    body: 'Fill the frame with the score grid and keep glare off it, or enter the frames yourself.',
   },
   daily_cap: {
-    title: "That’s today’s scans used up",
+    title: 'That is today’s scans used up',
     body: 'Scanning resets 24 hours after your first one. You can still score live or enter frames yourself.',
   },
   model_failed: {
-    title: "Couldn’t read the scores this time",
-    body: "Your photo’s fine. Try again in a minute, or enter the frames yourself.",
+    title: 'Could not read the scores this time',
+    body: 'Your photo is fine. Try again in a minute, or enter the frames yourself.',
   },
   model_unreachable: {
-    title: "Couldn’t reach the reader",
+    title: 'Could not reach the reader',
     body: 'Your photo is safe. Try again when you have signal.',
   },
   photo_missing: {
     title: 'That photo went missing',
-    body: 'Take it again — it only takes a second.',
+    body: 'Take it again.',
   },
   not_configured: {
     title: 'Scanning is off right now',
@@ -58,10 +60,10 @@ const ERROR_COPY: Record<ScanErrorCode, { title: string; body: string }> = {
   },
   offline: {
     title: 'No signal',
-    body: "We’ll scan this when you’re back online.",
+    body: 'We will scan this when you are back online.',
   },
   unknown: {
-    title: "That scan didn’t finish",
+    title: 'That scan did not finish',
     body: 'Try again, or enter the frames yourself.',
   },
 };
@@ -82,7 +84,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   const [errorCode, setErrorCode] = useState<ScanErrorCode>('unknown');
   const [savedGameId, setSavedGameId] = useState<string | null>(null);
   const [savedVerified, setSavedVerified] = useState(false);
-  const [savedTop, setSavedTop] = useState<{ name: string; score: number } | null>(null);
+  const [savedRows, setSavedRows] = useState<{ name: string; score: number | null }[]>([]);
   const [savedHighlights, setSavedHighlights] = useState<string[]>([]);
   const [queuedGroupId, setQueuedGroupId] = useState<string | null>(null);
   /** the upload behind the current attempt, so an abandoned scan doesn’t leave a photo behind */
@@ -114,8 +116,8 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
     if (preview) URL.revokeObjectURL(preview);
   }, [preview]);
 
-  // The stamp lands first (320ms), then the celebration — design §5.3d asks
-  // for the badge and then "a brief celebration if PB/milestone", in that order.
+  // The saved sheet lands first, then the celebration — design §5.3d asks
+  // for the result and then "a brief celebration if PB/milestone", in that order.
   useEffect(() => {
     if (phase !== 'done' || savedHighlights.length === 0) return;
     const timer = window.setTimeout(
@@ -230,7 +232,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
 
             setSavedGameId(gameId);
             setSavedVerified(verification === 'verified');
-            setSavedTop(topScore(rows));
+            setSavedRows(scoresOf(rows));
             setSavedHighlights(highlights);
             setPhase('done');
           }}
@@ -241,47 +243,42 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
 
   if (phase === 'processing') {
     return (
-      <div className="flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6">
-        <div className="relative h-[360px] overflow-hidden rounded-card border border-line bg-well">
-          {preview && <img src={preview} alt="" className="size-full object-contain opacity-80" />}
-          <span
-            className="scan-line pointer-events-none absolute inset-x-0 h-[2.5px] bg-phosphor"
-            aria-hidden
-          />
+      <CameraStage title="Scan a scoreboard" busy>
+        <div className="relative m-4 flex-1 overflow-hidden bg-[#201d17]">
+          {preview && <img src={preview} alt="" className="size-full object-contain" />}
+          <Brackets />
+          <div
+            className="absolute inset-x-0 bottom-[18px] flex flex-col items-center gap-1 px-4 text-center"
+            role="status"
+          >
+            <span className="text-[14px]">Reading the sheet</span>
+            <ProcessingTicker />
+          </div>
         </div>
-        <div className="flex flex-col items-center gap-2 text-center" role="status">
-          <h1 className="font-display text-[20px] font-bold">Reading the grid</h1>
-          <ProcessingTicker />
-        </div>
-        <p className="text-center text-[12px] text-faint">Keep hold — a few seconds</p>
-      </div>
+        <p className="py-4 text-center text-[13px] text-[#a39b8b]">Keep hold, a few seconds</p>
+      </CameraStage>
     );
   }
 
   if (phase === 'queued') {
     return (
-      <div className="flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6">
-        <div className="relative h-[280px] overflow-hidden rounded-card border border-line bg-well opacity-80">
-          {preview && <img src={preview} alt="" className="size-full object-contain" />}
-          <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full border border-line bg-panel px-3 py-1">
-            <span className="size-1.5 rounded-full bg-dim" />
-            <span className="text-[10px] font-bold text-dim">Queued</span>
-          </span>
-        </div>
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="font-display text-[20px] font-bold">No signal — saved to your queue</h1>
-          <p className="text-[13.5px] leading-relaxed text-dim">
-            We’ll scan this when you’re back online and let you know. Nothing to redo.
+      <div className="flex flex-col gap-4 px-5 py-5">
+        <h1 className="num text-[22px] font-semibold leading-tight">No signal</h1>
+        <Strip soft>
+          {preview && (
+            <div className="h-[200px] bg-card">
+              <img src={preview} alt="" className="size-full object-contain" />
+            </div>
+          )}
+          <p className="p-3.5 text-[13px] text-ink-faded">
+            Saved to your queue. It will be read when you are back online.
           </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Link
-            to="/profile"
-            className="press grid h-[52px] place-items-center rounded-control border border-line font-display text-[14px] font-bold text-text"
-          >
+        </Strip>
+        <div className="flex flex-col gap-3">
+          <Link to="/profile" className="btn-secondary">
             See the queue
           </Link>
-          <Link to="/" className="grid h-12 place-items-center text-[13px] font-bold text-dim">
+          <Link to="/" className="press py-2.5 text-center text-[13px] font-semibold text-blue">
             Keep bowling
           </Link>
         </div>
@@ -292,35 +289,33 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   if (phase === 'error') {
     const copy = ERROR_COPY[errorCode];
     return (
-      <div className="flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6">
+      <div className="flex flex-col gap-4 px-5 py-5">
         {hiddenInputs}
-        <div className="relative h-[240px] overflow-hidden rounded-card border border-line bg-well">
-          {preview && <img src={preview} alt="" className="size-full object-contain opacity-50" />}
-        </div>
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="font-display text-[20px] font-bold">{copy.title}</h1>
-          <p className="text-[13.5px] leading-relaxed text-dim">{copy.body}</p>
-        </div>
-        <div className="flex flex-col gap-2">
+        <h1 className="num text-[22px] font-semibold leading-tight">Scan a scoreboard</h1>
+        <Strip soft>
+          {preview && (
+            <div className="h-[200px] bg-card">
+              <img src={preview} alt="" className="size-full object-contain" />
+            </div>
+          )}
+          <div className="flex flex-col gap-1 p-3.5" role="alert">
+            <p className="text-[13px] font-semibold text-red">{copy.title}</p>
+            <p className="text-[13px] text-ink-faded">{copy.body}</p>
+          </div>
+        </Strip>
+        <div className="flex flex-col gap-3">
           {errorCode !== 'daily_cap' && (
-            <button
-              type="button"
-              onClick={retake}
-              className="btn-primary grid h-[52px] place-items-center"
-            >
+            <button type="button" onClick={retake} className="btn-primary">
               Take it again
             </button>
           )}
-          <Link
-            to="/add/manual"
-            className="press grid h-[52px] place-items-center rounded-control border border-line font-display text-[14px] font-bold text-text"
-          >
+          <Link to="/add/manual" className="btn-secondary">
             Enter the frames
           </Link>
           <Link
             to="/"
             onClick={discardUpload}
-            className="grid h-12 place-items-center text-[13px] font-bold text-dim"
+            className="press py-2.5 text-center text-[13px] font-semibold text-blue"
           >
             Not now
           </Link>
@@ -331,35 +326,36 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
 
   if (phase === 'done') {
     return (
-      <div className="relative flex min-h-[70vh] flex-col justify-center gap-6 px-6 py-6 text-center">
-        <div className="flex flex-col items-center gap-5">
-          <span
-            className={`stamp-in rounded-chip px-5 py-2.5 font-display text-[15px] font-extrabold tracking-[.14em] ${
-              savedVerified ? 'bg-phosphor text-ink shadow-glow-amber' : 'border border-line text-dim'
-            }`}
-          >
-            {savedVerified ? '✓ VERIFIED' : 'UNVERIFIED'}
-          </span>
-          <div className="flex flex-col gap-1.5">
-            <p className="font-display text-[24px] font-bold">Scanned and on the board</p>
-            <p className="text-[14px] leading-relaxed text-dim">
-              {savedVerified
-                ? 'Every frame recomputed against the monitor.'
-                : 'Saved as entered — the frames didn’t match the printed totals.'}
-            </p>
+      <div className="flex flex-col gap-4 px-5 py-5">
+        <h1 className="num text-[22px] font-semibold leading-tight">Scanned and on the board</h1>
+        <Strip>
+          <div className="flex items-baseline justify-between gap-2 px-3.5 py-2.5">
+            <span className="label">Result</span>
+            <VerificationBadge status={savedVerified ? 'verified' : 'unverified'} />
           </div>
-          {savedTop && (
-            <div className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3">
-              <span className="score-text text-[26px] font-bold text-phosphor">{savedTop.score}</span>
-              <span className="text-[13px] font-bold text-text">{savedTop.name}</span>
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-2">
+          {savedRows.map((row, i) => (
+            <StripRow
+              key={`${row.name}-${i}`}
+              right={
+                <span className={`num text-[18px] font-semibold ${row.score === null ? 'text-ink-faded' : ''}`}>
+                  {row.score ?? '–'}
+                </span>
+              }
+            >
+              <span className="num text-[15px] font-semibold">{row.name}</span>
+            </StripRow>
+          ))}
+        </Strip>
+        <p className="text-[13px] text-ink-faded">
+          {savedVerified
+            ? 'Every frame was checked against the photo.'
+            : 'Saved as entered. The frames did not match the printed totals.'}
+        </p>
+        <div className="flex flex-col gap-3">
           <button
             type="button"
             onClick={() => navigate(savedGameId ? `/games/${savedGameId}` : '/')}
-            className="btn-primary grid h-[52px] place-items-center"
+            className="btn-primary"
           >
             See it in the feed
           </button>
@@ -370,7 +366,7 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
               setSavedGameId(null);
               setPhase('camera');
             }}
-            className="grid h-12 place-items-center text-[13px] font-bold text-dim"
+            className="btn-secondary"
           >
             Scan the next game
           </button>
@@ -380,57 +376,87 @@ export default function ScanCapture({ profile }: { profile: Profile }) {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-78px)] flex-col px-4 py-4">
+    <CameraStage title="Scan a scoreboard" onClose={() => navigate('/')}>
       {hiddenInputs}
-      <header className="flex items-center">
-        <Link to="/" className="text-[14px] font-bold text-text">
-          Cancel
-        </Link>
-        <h1 className="mx-auto font-display text-[15px] font-bold tracking-[.04em]">Scan scoreboard</h1>
-        <span className="w-12" />
-      </header>
-
-      <div className="relative mx-1 my-3 flex-1 rounded-card">
-        <Corner className="left-0 top-0 rounded-tl-chip border-l-[3px] border-t-[3px]" />
-        <Corner className="right-0 top-0 rounded-tr-chip border-r-[3px] border-t-[3px]" />
-        <Corner className="bottom-0 left-0 rounded-bl-chip border-b-[3px] border-l-[3px]" />
-        <Corner className="bottom-0 right-0 rounded-br-chip border-b-[3px] border-r-[3px]" />
-        <div className="absolute left-1/2 top-[38%] w-[230px] -translate-x-1/2 -translate-y-1/2 rounded-cell border border-mark/25 bg-well/50 py-10 text-center">
-          <span className="label-caps">Lane monitor</span>
-        </div>
-        <div className="absolute inset-x-0 bottom-16 flex flex-col items-center gap-2 px-4 text-center">
-          <span className="rounded-full border border-line bg-ink/85 px-4 py-2 text-[12.5px] font-bold text-text">
-            Fill the frame with the scoreboard
-          </span>
-          <span className="text-[11.5px] text-dim">Wait for the score grid, not the adverts</span>
-        </div>
+      <div className="relative m-4 flex-1 overflow-hidden bg-[#201d17]">
+        <Brackets />
+        <p className="absolute inset-x-0 bottom-[18px] px-4 text-center text-[14px]">
+          Fill the frame with the scoreboard
+        </p>
       </div>
 
-      <div className="flex items-center justify-between px-6 pb-6">
+      <div className="flex items-center justify-center gap-11 py-4">
         <button
           type="button"
           onClick={() => galleryInput.current?.click()}
           aria-label="Choose a photo"
-          className="press grid size-12 place-items-center rounded-control border border-line bg-well text-dim"
+          className="press w-16 py-3 text-left text-[14px] text-[#a39b8b]"
         >
-          <Icon name="image" />
+          Photos
         </button>
         <button
           type="button"
           onClick={() => cameraInput.current?.click()}
           aria-label="Take the photo"
-          className="press grid size-[76px] place-items-center rounded-full border-4 border-text"
+          className="press grid size-[70px] place-items-center rounded-full border-4 border-[#ece6d9]"
         >
-          <span className="size-[58px] rounded-full bg-phosphor shadow-glow-amber" />
+          <span className="size-[54px] rounded-full bg-[#ece6d9]" />
         </button>
-        <span className="size-12" />
+        <span className="w-16" aria-hidden />
       </div>
+    </CameraStage>
+  );
+}
+
+/**
+ * The camera view is dark whatever the theme, so it uses literal colours
+ * rather than the paper tokens: the one place in the app that does.
+ */
+function CameraStage({
+  title,
+  onClose,
+  busy = false,
+  children,
+}: {
+  title: string;
+  onClose?: () => void;
+  busy?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex min-h-[calc(100dvh-96px)] flex-col bg-[#171511] text-[#ece6d9] lg:min-h-[calc(100dvh-40px)]">
+      <header className="flex items-center justify-between px-5 py-2.5">
+        {onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="press -ml-2.5 flex size-11 items-center justify-center"
+          >
+            <Icon name="x" className="size-6" />
+          </button>
+        ) : (
+          <span className="w-6" aria-hidden />
+        )}
+        <h1 className="num text-[17px] font-semibold">{title}</h1>
+        <span className="w-6" aria-hidden />
+      </header>
+      {busy && <span aria-hidden className="progress-line mx-4 block" />}
+      {children}
     </div>
   );
 }
 
-function Corner({ className }: { className: string }) {
-  return <span className={`absolute size-9 border-phosphor ${className}`} aria-hidden />;
+/** The four corner brackets of the viewfinder: 34px, 3px stroke, 24px in. */
+function Brackets() {
+  return (
+    <>
+      <span aria-hidden className="absolute left-6 top-6 size-[34px] border-l-[3px] border-t-[3px] border-[#ece6d9]" />
+      <span aria-hidden className="absolute right-6 top-6 size-[34px] border-r-[3px] border-t-[3px] border-[#ece6d9]" />
+      <span aria-hidden className="absolute bottom-6 left-6 size-[34px] border-b-[3px] border-l-[3px] border-[#ece6d9]" />
+      <span aria-hidden className="absolute bottom-6 right-6 size-[34px] border-b-[3px] border-r-[3px] border-[#ece6d9]" />
+    </>
+  );
 }
 
 /** The processing screen’s staged status line — the reader’s actual order of work. */
@@ -444,21 +470,19 @@ function ProcessingTicker() {
     return () => timers.forEach(window.clearTimeout);
   }, []);
   const label =
-    stage === 0 ? 'READING NAMES…' : stage === 1 ? 'NAMES ✓ · READING FRAMES…' : 'NAMES ✓ · FRAMES ✓ · CHECKING TOTALS…';
-  return <span className="label-caps">{label}</span>;
+    stage === 0 ? 'Reading names' : stage === 1 ? 'Names read, reading frames' : 'Checking totals';
+  return <span className="text-[13px] text-[#a39b8b]">{label}</span>;
 }
 
-function topScore(rows: { displayedName: string; frames: { rolls: unknown[] }[] }[]) {
-  let best: { name: string; score: number } | null = null;
-  for (const row of rows) {
+/** Every player's total from the saved rows, best first, so the sheet reads like a result. */
+function scoresOf(rows: { displayedName: string; frames: { rolls: unknown[] }[] }[]) {
+  const scored = rows.map((row) => {
     try {
-      const scored = score(row.frames as never);
-      if (scored.total !== null && (!best || scored.total > best.score)) {
-        best = { name: row.displayedName, score: scored.total };
-      }
+      return { name: row.displayedName, score: score(row.frames as never).total };
     } catch {
-      /* an unscoreable row just doesn’t win */
+      /* an unscoreable row still gets its name on the sheet */
+      return { name: row.displayedName, score: null };
     }
-  }
-  return best;
+  });
+  return scored.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
 }

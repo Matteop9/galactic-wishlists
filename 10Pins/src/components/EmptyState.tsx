@@ -1,17 +1,15 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import Strip, { EmptyFrames } from './Strip';
 
 /**
- * One shape for "there’s nothing here yet".
+ * Empty states are the same box a game would fill, with dashes in the frames
+ * and the actions inside it. Never a floating headline (DESIGN.md).
  *
- * Three tones rather than one, because the app has three registers and
- * flattening them would make quiet corners shout: a screen with nothing on it
- * gets a `page` state, a section inside a busy screen gets `inline`, and a
- * one-line aside (no comments yet, queue is empty) stays `quiet`.
- *
- * Where there’s an obvious next move, an empty state should offer the control
- * rather than describe it — telling someone to "tap ＋" without giving them
- * anything to press is a sign, not a door.
+ * Three tones: a screen with nothing on it gets `page` (a full strip with a
+ * faded header, ten dashed frames and the actions in a footer row), a section
+ * inside a busy screen gets `inline` (a soft strip, one dashed row, the copy
+ * and actions inside), and a one-line aside stays `quiet`.
  */
 export type EmptyTone = 'page' | 'inline' | 'quiet';
 
@@ -35,33 +33,65 @@ export default function EmptyState({
   children?: ReactNode;
 }) {
   if (tone === 'quiet') {
-    return <p className="text-[12px] text-faint">{body}</p>;
+    return <p className="text-[13px] text-ink-faded">{body}</p>;
   }
 
-  const wrapper =
-    tone === 'page'
-      ? 'flex flex-col items-center gap-3 px-4 py-20 text-center'
-      : 'flex flex-col items-center gap-2.5 rounded-card border border-dashed border-line bg-well/50 px-4 py-6 text-center';
+  if (tone === 'inline') {
+    return (
+      <Strip soft>
+        <EmptyFrames />
+        <div className="flex flex-col gap-3 p-3.5">
+          {title && <p className="label">{title}</p>}
+          <p className="text-[13px] text-ink-faded">{body}</p>
+          {children}
+          {(action || secondary) && (
+            <div className="flex flex-wrap gap-2">
+              {action && <ActionButton action={action} primary small />}
+              {secondary && <ActionButton action={secondary} small />}
+            </div>
+          )}
+        </div>
+      </Strip>
+    );
+  }
 
   return (
-    <div className={wrapper}>
-      {title && (
-        <h2 className={tone === 'page' ? 'font-display text-[20px] font-bold' : 'font-display text-[15px] font-bold'}>
-          {title}
-        </h2>
-      )}
-      <p className="max-w-[260px] text-[13.5px] leading-relaxed text-dim">{body}</p>
-      {children}
-      {action && <ActionButton action={action} primary />}
-      {secondary && <ActionButton action={secondary} />}
+    <div className="flex flex-col gap-3 py-6">
+      <Strip>
+        <div className="flex items-baseline gap-2.5 px-3.5 py-2.5">
+          <span className="num text-[15px] font-semibold text-ink-faded">{title ?? 'No games yet'}</span>
+          <span className="num ml-auto text-[22px] font-semibold leading-none text-ink-faded">···</span>
+        </div>
+        <EmptyFrames />
+        {children && <div className="p-3.5">{children}</div>}
+        {(action || secondary) && (
+          <div className="flex gap-2.5 p-3.5">
+            {action && <ActionButton action={action} primary />}
+            {secondary && <ActionButton action={secondary} />}
+          </div>
+        )}
+      </Strip>
+      <p className="text-center text-[13px] text-ink-faded">{body}</p>
     </div>
   );
 }
 
-function ActionButton({ action, primary = false }: { action: EmptyAction; primary?: boolean }) {
-  const className = primary
-    ? 'press mt-1 rounded-control bg-phosphor px-5 py-2.5 font-display text-[14px] font-bold text-ink shadow-glow-amber'
-    : 'press rounded-control px-5 py-2 text-[13px] font-bold text-dim';
+function ActionButton({
+  action,
+  primary = false,
+  small = false,
+}: {
+  action: EmptyAction;
+  primary?: boolean;
+  small?: boolean;
+}) {
+  const className = small
+    ? primary
+      ? 'btn-primary-sm'
+      : 'btn-secondary-sm'
+    : primary
+      ? 'btn-primary flex-1 px-2 py-3 text-[14px]'
+      : 'btn-secondary flex-1 px-2 py-3 text-[14px]';
 
   return action.to ? (
     <Link to={action.to} className={className}>

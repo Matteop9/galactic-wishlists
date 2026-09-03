@@ -1,9 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { nextRoll, score, type FrameInput } from '../../engine';
+import ChipRow from '../../components/ChipRow';
+import EmptyState from '../../components/EmptyState';
 import FrameEditor from '../../components/FrameEditor';
+import PageHeader from '../../components/PageHeader';
 import Scorecard from '../../components/scorecard/Scorecard';
+import Strip, { StripTitle } from '../../components/Strip';
 import { fetchMatchDay, saveLeg, type MdPlayer } from '../../lib/matchday';
 import { toPlayers, toTeams } from './MatchDayLive';
 import { ScorecardSkeleton } from '../../components/Skeleton';
@@ -66,37 +70,38 @@ export default function LegEntry({ profile }: { profile: Profile }) {
       queryClient.invalidateQueries();
       navigate(`/matchday/${id}`, { replace: true });
     },
-    onError: () => setError("That didn’t save — your scores are still here, try again."),
+    onError: () => setError('That didn’t save. Your scores are still here, so try again.'),
   });
 
   if (showSkeleton) {
     return (
-      <div className="flex flex-col gap-4 px-4 py-6">
+      <div className="flex flex-col gap-4 px-4 py-5">
         <ScorecardSkeleton players={2} label="Loading the leg" />
       </div>
     );
   }
-  if (md.isPending) return <div className="px-4 py-6" />;
+  if (md.isPending) return <div className="px-4 py-5" />;
   if (md.isError || !md.data) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">Match day not found</h1>
-        <Link to="/groups" className="text-[13.5px] text-phosphor">
-          Back to groups
-        </Link>
+      <div className="px-4">
+        <EmptyState
+          tone="page"
+          title="Match day not found"
+          body="It may have been removed, or the link is wrong."
+          action={{ label: 'Back to groups', to: '/groups' }}
+        />
       </div>
     );
   }
   if (md.data.created_by !== profile.id) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">Organiser only</h1>
-        <p className="max-w-[260px] text-[13.5px] text-dim">
-          Only the match-day organiser can enter leg scores.
-        </p>
-        <Link to={`/matchday/${id}`} className="text-[13.5px] text-phosphor">
-          Back to the match day
-        </Link>
+      <div className="px-4">
+        <EmptyState
+          tone="page"
+          title="Organiser only"
+          body="Only the person who set up the match day can enter leg scores."
+          action={{ label: 'Back to the match day', to: `/matchday/${id}` }}
+        />
       </div>
     );
   }
@@ -105,6 +110,8 @@ export default function LegEntry({ profile }: { profile: Profile }) {
     const history = frameHistories[playerId] ?? [[]];
     return history[history.length - 1];
   }
+
+  const teamName = (teamId: string) => teams.find((t) => t.id === teamId)?.name ?? 'Team';
 
   const active: MdPlayer | null = players.find((p) => p.id === activeId) ?? players[0] ?? null;
   const activeFrames = active ? currentFrames(active.id) : [];
@@ -120,75 +127,49 @@ export default function LegEntry({ profile }: { profile: Profile }) {
   const ready = entryMode === 'frames' ? framesReady : totalsReady;
 
   return (
-    <div className="flex flex-col gap-5 px-4 py-6">
-      <header className="flex items-center justify-between">
-        <h1 className="font-display text-[20px] font-bold">Leg {legNumber}</h1>
-        <Link to={`/matchday/${id}`} className="text-[13.5px] text-dim">
-          Back
-        </Link>
-      </header>
+    <div className="flex flex-col gap-4 px-4 py-5">
+      <PageHeader back={`/matchday/${id}`} title={`Leg ${legNumber}`} sub={teams.map((t) => t.name).join(' v ')} />
 
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => setEntryMode('frames')}
-          className={`flex-1 rounded-control border py-2 text-[12.5px] font-bold ${
-            entryMode === 'frames' ? 'border-phosphor/50 bg-phosphor/10 text-phosphor' : 'border-line bg-panel text-dim'
-          }`}
-        >
-          Frame by frame
-        </button>
-        <button
-          type="button"
-          onClick={() => setEntryMode('totals')}
-          className={`flex-1 rounded-control border py-2 text-[12.5px] font-bold ${
-            entryMode === 'totals' ? 'border-phosphor/50 bg-phosphor/10 text-phosphor' : 'border-line bg-panel text-dim'
-          }`}
-        >
-          Just totals
-        </button>
-      </div>
+      <ChipRow
+        label="How to enter scores"
+        fill
+        options={[
+          { value: 'frames', label: 'Frame by frame' },
+          { value: 'totals', label: 'Just totals' },
+        ]}
+        value={entryMode}
+        onChange={(v) => setEntryMode(v as 'frames' | 'totals')}
+      />
 
       {entryMode === 'frames' && active && (
         <>
-          {/* player switcher, grouped by team order */}
-          <div className="flex flex-wrap gap-1.5">
-            {players.map((p) => {
-              const scored = score(currentFrames(p.id));
-              const isActive = p.id === active.id;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setActiveId(p.id)}
-                  className={`rounded-full border px-3 py-1.5 text-[12px] font-bold ${
-                    isActive
-                      ? 'border-phosphor/60 bg-phosphor/10 text-phosphor'
-                      : scored.complete
-                        ? 'border-line bg-well text-success'
-                        : 'border-line bg-panel text-dim'
-                  }`}
-                >
-                  {p.display_name.split(/\s+/)[0]}
-                  {scored.total !== null ? ` ${scored.total}` : ''}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="rounded-card border border-line bg-panel p-3">
-            <Scorecard
-              players={[
-                {
-                  name: active.display_name.split(/\s+/)[0].toUpperCase(),
-                  frames: activeFrames,
-                  current: true,
-                  currentFrame: activePos?.frame,
-                },
-              ]}
-              variant="live"
+          {/* Player switcher, in team then pairing order. A finished game shows its total. */}
+          <div className="flex flex-col gap-1.5">
+            <span className="label">Bowler</span>
+            <ChipRow
+              label="Bowler"
+              options={players.map((p) => {
+                const total = score(currentFrames(p.id)).total;
+                const first = p.display_name.split(/\s+/)[0];
+                return { value: p.id, label: total !== null ? `${first} · ${total}` : first };
+              })}
+              value={active.id}
+              onChange={setActiveId}
             />
           </div>
+
+          <Scorecard
+            players={[
+              {
+                name: active.display_name,
+                frames: activeFrames,
+                meta: teamName(active.team_id),
+                current: true,
+                currentFrame: activePos?.frame,
+              },
+            ]}
+            variant="live"
+          />
 
           <FrameEditor
             frames={activeFrames}
@@ -209,59 +190,82 @@ export default function LegEntry({ profile }: { profile: Profile }) {
           />
 
           {activeScored.complete && (
-            <p className="text-center text-[12.5px] text-dim">
-              {active.display_name} done — {activeScored.total}. Pick the next bowler above.
+            <p className="text-center text-[13px] text-ink-faded">
+              {active.display_name} is done on <span className="num">{activeScored.total}</span>. Pick the next
+              bowler above.
             </p>
           )}
         </>
       )}
 
       {entryMode === 'totals' && (
-        <div className="flex flex-col gap-2">
+        <Strip>
+          <StripTitle
+            right={
+              <>
+                <span className="num">0</span> to <span className="num">300</span>
+              </>
+            }
+          >
+            Totals
+          </StripTitle>
           {players.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 rounded-card border border-line bg-panel px-4 py-3">
+            <div key={p.id} className="flex items-center gap-3 px-3.5 py-2.5">
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[14px] text-text">{p.display_name}</p>
-                <p className="text-[11px] text-faint">
-                  {teams.find((t) => t.id === p.team_id)?.name}
-                  {p.handicap > 0 ? ` · +${p.handicap} HCP` : ''}
+                <label htmlFor={`leg-total-${p.id}`} className="block truncate text-[15px]">
+                  {p.display_name}
+                </label>
+                <p className="truncate text-[12px] text-ink-faded">
+                  {teamName(p.team_id)}
+                  {p.handicap > 0 && (
+                    <>
+                      {' · '}
+                      <span className="num">+{p.handicap}</span> handicap
+                    </>
+                  )}
                 </p>
               </div>
               <input
+                id={`leg-total-${p.id}`}
                 type="number"
                 inputMode="numeric"
                 min={0}
                 max={300}
-                placeholder="0–300"
                 aria-label={`${p.display_name} score`}
                 value={totals[p.id] ?? ''}
                 onChange={(e) => setTotals((t) => ({ ...t, [p.id]: e.target.value }))}
-                className="score-text w-24 rounded-control border border-line bg-well px-3 py-2.5 text-right text-[16px] font-bold text-text placeholder:text-[12px] placeholder:font-normal placeholder:text-faint"
+                className="field num w-20 text-right [appearance:textfield]"
               />
             </div>
           ))}
-        </div>
+        </Strip>
       )}
 
-      <button
-        type="button"
-        onClick={() => {
-          setError('');
-          save.mutate();
-        }}
-        disabled={!ready || save.isPending}
-        className="btn-primary"
-      >
-        {save.isPending ? 'Saving…' : `Save leg ${legNumber}`}
-      </button>
-      {!ready && (
-        <p className="text-center text-[11.5px] text-faint">
-          {entryMode === 'frames'
-            ? 'Every player needs a complete game before the leg can be saved.'
-            : 'Enter a 0–300 total for every player.'}
-        </p>
-      )}
-      {error && <p className="text-center text-[13.5px] text-signal">{error}</p>}
+      <div className="flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            setError('');
+            save.mutate();
+          }}
+          disabled={!ready || save.isPending}
+          className="btn-primary"
+        >
+          {save.isPending ? 'Saving' : `Save leg ${legNumber}`}
+        </button>
+        {!ready && (
+          <p className="text-center text-[12px] text-ink-faded">
+            {entryMode === 'frames'
+              ? 'Every player needs a complete game before the leg can be saved.'
+              : 'Enter a total for every player.'}
+          </p>
+        )}
+        {error && (
+          <p className="text-center text-[13px] text-red" role="alert">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,13 +9,13 @@
  * one component every other screen renders, and the fork would drift.
  */
 
-/** The four faces the card draws in. */
+/** The faces the card draws in: Oswald for numbers and headings, Source Sans 3 for words. */
 const CARD_FONTS = [
-  '800 56px Oxanium',
-  '800 17px Oxanium',
-  '700 64px "Martian Mono"',
-  '600 13px "Martian Mono"',
-  '400 14px "Atkinson Hyperlegible"',
+  '600 64px Oswald',
+  '600 24px Oswald',
+  '500 16px Oswald',
+  '400 14px "Source Sans 3"',
+  '600 14px "Source Sans 3"',
 ];
 
 /**
@@ -32,7 +32,7 @@ async function ensureFonts(): Promise<void> {
   await document.fonts.ready;
 }
 
-/** Inlining three font families is expensive; do it once per session — but only cache a success. */
+/** Inlining two font families is expensive; do it once per session — but only cache a success. */
 let fontEmbedCache: Promise<string> | null = null;
 
 /**
@@ -73,7 +73,7 @@ export async function renderShareCard(node: HTMLElement): Promise<Blob> {
 
   const options = {
     pixelRatio: 2, // 540×675 CSS px → 1080×1350
-    backgroundColor: '#0A0E14',
+    backgroundColor: '#fbf8f1', // the card is always the light sheet
     fontEmbedCSS,
     cacheBust: true,
   };
@@ -89,7 +89,7 @@ export type ShareOutcome = 'shared' | 'downloaded' | 'cancelled';
 /**
  * Hand the image to the OS share sheet, or save it.
  *
- * ⚠️ Safari drops the transient user activation across an `await`, so the
+ * Safari drops the transient user activation across an `await`, so the
  * caller must render the blob BEFORE the tap that calls this — which is why
  * the share sheet renders on open and shares a cached blob.
  *

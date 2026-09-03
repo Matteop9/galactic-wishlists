@@ -1,8 +1,12 @@
 import { supabase } from './supabase';
 import type { FeedFilter } from './feedFilter';
 
-export const REACTION_EMOJI = ['🔥', '👏', '💀', '🎳'] as const;
-export type ReactionEmoji = (typeof REACTION_EMOJI)[number];
+/**
+ * The one reaction the app offers is "Nice one". The `reactions.emoji` column
+ * predates the redesign and still needs a value; this is it. Older rows carry
+ * the four emoji the app used to offer, and every row counts as a nice one.
+ */
+export const NICE_ONE = '👏';
 
 const FEED_SELECT = `
   id, type, created_at, highlights, group_id,
@@ -33,20 +37,20 @@ export async function fetchFeed(filter: FeedFilter = 'all') {
 
 export type FeedEvent = Awaited<ReturnType<typeof fetchFeed>>[number];
 
-export async function addReaction(feedEventId: string, profileId: string, emoji: ReactionEmoji) {
+export async function addReaction(feedEventId: string, profileId: string) {
   const { error } = await supabase
     .from('reactions')
-    .insert({ feed_event_id: feedEventId, profile_id: profileId, emoji });
+    .insert({ feed_event_id: feedEventId, profile_id: profileId, emoji: NICE_ONE });
   if (error) throw error;
 }
 
-export async function removeReaction(feedEventId: string, profileId: string, emoji: ReactionEmoji) {
+/** Removes every reaction of mine on the event, whichever emoji it was stored under. */
+export async function removeReaction(feedEventId: string, profileId: string) {
   const { error } = await supabase
     .from('reactions')
     .delete()
     .eq('feed_event_id', feedEventId)
-    .eq('profile_id', profileId)
-    .eq('emoji', emoji);
+    .eq('profile_id', profileId);
   if (error) throw error;
 }
 
@@ -84,6 +88,6 @@ export async function fetchGameFeedEvent(gameId: string) {
 }
 
 // Moved to ./highlights (pure) so celebrations and the share card can use the
-// labels without importing this module’s Supabase client. Re-exported so the
+// labels without importing this module's Supabase client. Re-exported so the
 // existing `from '../../lib/feed'` imports keep working.
 export { highlightLabel } from './highlights';

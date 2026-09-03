@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react';
+import Strip from '../../components/Strip';
 import Wordmark from '../../components/Wordmark';
 import { supabase } from '../../lib/supabase';
 
 // Demo sign-in is anonymous: every visitor gets their own throwaway user and
-// `join_demo` drops them into the demo group so there’s something to look at.
-// It used to sign in to a shared account with VITE_DEMO_EMAIL/PASSWORD — but
+// `join_demo` drops them into the demo group so there is something to look at.
+// It used to sign in to a shared account with VITE_DEMO_EMAIL/PASSWORD, but
 // VITE_ vars are inlined into the deployed bundle, so those credentials were
 // readable by anyone (COUNCIL_REVIEW_TODO item 2). No credential now exists
 // to leak. Requires "Anonymous sign-ins" enabled on the Supabase project.
 //
 // The button only appears once the project has confirmed that setting. It
-// used to default to visible and hide itself after a failed tap — which, with
+// used to default to visible and hide itself after a failed tap, which, with
 // the setting off in production, meant every visitor saw a button that
 // errored the first time they pressed it.
 
 /**
  * Ask GoTrue whether anonymous sign-ins are on. `/auth/v1/settings` is the
  * public, unauthenticated capability endpoint; supabase-js has no wrapper for
- * it. Any failure means "don’t offer the demo" — the Google button still works.
+ * it. Any failure means "do not offer the demo": the Google button still works.
  */
 async function anonymousSignInEnabled(): Promise<boolean> {
   const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -50,7 +51,7 @@ export default function SignIn() {
   }, []);
 
   // A bounced or cancelled OAuth redirect can land you back here with `busy`
-  // still true from before the browser navigated away — the button is then
+  // still true from before the browser navigated away, leaving the button
   // stuck on "Opening Google…" forever (COUNCIL_REVIEW_TODO item 26). Both
   // `pageshow` (bfcache restores, including back-navigation) and a tab
   // becoming visible again catch that.
@@ -73,15 +74,15 @@ export default function SignIn() {
     const { error: err } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       // Return to the current path so deep links (invite/claim landings) survive
-      // sign-in — origin + pathname + search, not the full href, so a stale hash
+      // sign-in: origin + pathname + search, not the full href, so a stale hash
       // never rides along into the redirect (COUNCIL_REVIEW_TODO item 26).
       options: { redirectTo: window.location.origin + window.location.pathname + window.location.search },
     });
     if (err) {
-      setError("Google sign-in didn’t start — try again.");
+      setError('Google sign-in didn’t start. Try again.');
       setBusy(false);
     }
-    // On success the browser redirects to Google, so there’s no local success state.
+    // On success the browser redirects to Google, so there is no local state to set.
   }
 
   async function signInAsDemo() {
@@ -90,52 +91,47 @@ export default function SignIn() {
     const { error: err } = await supabase.auth.signInAnonymously();
     if (err) {
       setDemoAvailable(false);
-      setError("The demo isn’t available right now — sign in with Google instead.");
+      setError('The demo isn’t available right now. Sign in with Google instead.');
       setBusy(false);
       return;
     }
-    // A profile and a seat in the demo group, so the app isn’t empty. If this
-    // fails the app still works — you land on first-run like any new player.
+    // A profile and a seat in the demo group, so the app is not empty. If this
+    // fails the app still works: you land on first-run like any new player.
     const { error: joinErr } = await supabase.rpc('join_demo');
-    if (joinErr) setError("The demo group didn’t load — everything else works.");
+    if (joinErr) setError('The demo group didn’t load. Everything else works.');
     setBusy(false);
   }
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col justify-center gap-10 px-6 py-12">
-      <div className="flex flex-col items-center gap-3">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col justify-center gap-8 px-6 py-12">
+      <div className="flex flex-col items-center gap-2">
         <Wordmark />
-        <p className="text-[13.5px] text-dim">The app for your bowling crew</p>
+        <p className="text-[13px] text-ink-faded">The scoresheet for your bowling group</p>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={signInWithGoogle}
-          disabled={busy}
-          className="btn-primary"
-        >
-          {busy ? 'Opening Google…' : 'Continue with Google'}
-        </button>
-        <p className="text-center text-[12px] text-faint">
-          No password needed — your Google account signs you in.
-        </p>
-        {demoAvailable && (
-          <button
-            type="button"
-            onClick={signInAsDemo}
-            disabled={busy}
-            className="btn-secondary mt-2"
-          >
-            Try the demo
+      <Strip>
+        <div className="flex flex-col gap-2.5 p-3.5">
+          <button type="button" onClick={signInWithGoogle} disabled={busy} className="btn-primary w-full">
+            {busy ? 'Opening Google…' : 'Continue with Google'}
           </button>
-        )}
-        {error && (
-          <p className="text-center text-[13.5px] text-signal" role="alert">
-            {error}
+          <p className="text-center text-[13px] text-ink-faded">
+            No password. Your Google account signs you in.
           </p>
+        </div>
+        {demoAvailable && (
+          <div className="p-3.5">
+            <button type="button" onClick={signInAsDemo} disabled={busy} className="btn-secondary w-full">
+              Try the demo
+            </button>
+          </div>
         )}
-      </div>
+      </Strip>
+
+      {error && (
+        <p className="text-center text-[13px] text-red" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

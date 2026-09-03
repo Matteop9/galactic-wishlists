@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Scorecard, { type ScorecardPlayer } from '../../components/scorecard/Scorecard';
 import GroupPicker from '../../components/GroupPicker';
 import Icon from '../../components/Icon';
+import Strip, { StripRow, StripTitle } from '../../components/Strip';
 import SpotFrameEditor from './SpotFrameEditor';
 import { score, type FrameInput } from '../../engine';
 import {
@@ -45,9 +46,10 @@ function sameIdentity(a: Identity, b: Identity): boolean {
 /**
  * Review & confirm (design §5.3c) — the make-or-break screen.
  *
- * The photo is pinned above the extracted card. Amber frames are the only
- * friction: tap one, re-enter it, and every later total re-derives. A card
- * where nothing is amber collapses to a single Confirm.
+ * The photo is pinned above the extracted sheet. Flagged frames (filled with
+ * card by the Scorecard) are the only friction: tap one, re-enter it, and
+ * every later total re-derives. A sheet where nothing is flagged saves in one
+ * tap.
  */
 export default function ReviewScan({
   profile,
@@ -64,7 +66,7 @@ export default function ReviewScan({
   profile: Profile;
   photoPath: string;
   result: ScanResult;
-  /** the extraction already mapped through the engine (amber frames included) */
+  /** the extraction already mapped through the engine (flagged frames included) */
   players: ReviewPlayer[];
   initialGroupId: string | null;
   initialVenue: string | null;
@@ -149,7 +151,7 @@ export default function ReviewScan({
   const amberCount = rows.reduce((n, r) => n + r.badFrames.length, 0);
 
   const cardPlayers: ScorecardPlayer[] = rows.map((row) => ({
-    name: row.displayedName.toUpperCase(),
+    name: row.displayedName,
     frames: row.frames,
     amberFrames: row.badFrames,
     current: false,
@@ -196,140 +198,135 @@ export default function ReviewScan({
       queryClient.invalidateQueries();
       onConfirmed(saved.gameId, rows, verification, saved.highlights);
     },
-    onError: () => setError("That didn’t save — your scan is still here, try again."),
+    onError: () => setError('That didn’t save. Your scan is still here, try again.'),
   });
 
   const editingRow = editing ? rows[editing.player] : null;
+  const monitorTotals = rows.some((r) => r.finalScore !== null);
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-5">
+    <div className="flex flex-col gap-4 px-5 py-5">
+      {/* The header is PageHeader's shape, hand-rolled because going back here
+          must discard the upload, not just pop history. */}
       <header className="flex items-center gap-3">
-        <button type="button" onClick={onDiscard} aria-label="Back" className="text-dim">
-          <Icon name="chevron-left" className="size-6" />
-        </button>
-        <h1 className="font-display text-[17px] font-bold">
-          {clean ? 'Looks right?' : 'Check the scorecard'}
-        </h1>
         <button
           type="button"
-          onClick={onRetake}
-          className="press ml-auto text-[13px] font-bold text-phosphor"
+          onClick={onDiscard}
+          aria-label="Back"
+          className="press -ml-1.5 flex size-9 shrink-0 items-center justify-center text-ink"
         >
-          Retake
+          <Icon name="chevron-left" className="size-[22px]" />
         </button>
+        <div className="min-w-0 flex-1">
+          <h1 className="num truncate text-[22px] font-semibold leading-tight">Check the sheet</h1>
+          {rows.length > 0 && (
+            <p className="truncate text-[13px] text-ink-faded">
+              {clean ? (
+                'Every total adds up from the photo'
+              ) : (
+                <>
+                  <span className="num">{amberCount}</span> {amberCount === 1 ? 'frame' : 'frames'} to check
+                </>
+              )}
+            </p>
+          )}
+        </div>
       </header>
 
-      {photoOpen ? (
-        <button
-          type="button"
-          onClick={() => setPhotoOpen(false)}
-          className="press relative h-[110px] overflow-hidden rounded-card border border-line bg-well"
+      <Strip soft>
+        <StripRow
+          onClick={() => setPhotoOpen((open) => !open)}
+          right={<Icon name={photoOpen ? 'chevron-up' : 'chevron-down'} className="size-5 text-ink-faded" />}
         >
-          {photo.data ? (
-            <img src={photo.data} alt="The scoreboard you photographed" className="size-full object-contain" />
-          ) : (
-            <span className="label-caps absolute inset-0 grid place-items-center">Your photo</span>
-          )}
-          <span className="label-caps absolute inset-x-0 bottom-0 bg-ink/70 py-1 text-center">
-            Tap to collapse
-          </span>
-        </button>
-      ) : (
-        <button type="button" onClick={() => setPhotoOpen(true)} className="press flex items-center gap-1 self-start">
-          <span className="label-caps">Photo</span>
-          <Icon name="chevron-down" className="size-3.5 text-faint" />
-        </button>
-      )}
-
-      <div className="flex flex-col gap-2">
-        <span className="label-caps">
-          {groupId ? 'Players · tap to correct · remembered for this group' : 'Players · tap to correct'}
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {rows.map((row, i) => (
-            <button
-              key={`${row.displayedName}-${i}`}
-              type="button"
-              onClick={() => setPickerFor(i)}
-              className={`press flex min-w-[104px] flex-1 items-center gap-2 rounded-control border px-2 py-1.5 text-left ${
-                row.identity.kind === 'profile' ? 'border-line bg-panel' : 'border-dashed border-line'
-              }`}
-            >
-              <span className="grid size-7 shrink-0 place-items-center rounded-full border border-line bg-well font-display text-[10px] font-bold text-glass">
-                {initialsOf(identityLabel(row.identity))}
-              </span>
-              <span className="min-w-0">
-                <span className="label-caps block">{row.displayedName}</span>
-                <span
-                  className={`block truncate text-[11px] font-bold ${
-                    row.identity.kind === 'profile' ? 'text-text' : 'text-dim'
-                  }`}
-                >
-                  {row.identity.kind === 'profile' ? identityLabel(row.identity) : 'Guest'}
-                </span>
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {pickerFor !== null && (
-        <div className="sheet-up flex flex-col gap-2 rounded-card border border-line bg-panel p-3">
-          <div className="flex items-center">
-            <span className="label-caps">Who is “{rows[pickerFor].displayedName}”?</span>
-            <button
-              type="button"
-              onClick={() => setPickerFor(null)}
-              className="ml-auto text-[13px] text-dim"
-            >
-              Close
-            </button>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            {candidates.map((candidate) => (
-              <button
-                key={candidate.profileId}
-                type="button"
-                onClick={() =>
-                  chooseIdentity(pickerFor, {
-                    kind: 'profile',
-                    profileId: candidate.profileId,
-                    displayName: candidate.displayName,
-                  })
-                }
-                className="press rounded-card border border-line bg-well px-3 py-2.5 text-left text-[13.5px] text-text"
-              >
-                {candidate.displayName}
-                {candidate.profileId === profile.id && <span className="ml-2 text-[11px] text-dim">you</span>}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() =>
-                chooseIdentity(pickerFor, {
-                  kind: 'guest',
-                  guestName: rows[pickerFor].displayedName.trim() || 'Guest',
-                })
-              }
-              className="press rounded-card border border-dashed border-line px-3 py-2.5 text-left text-[13.5px] text-dim"
-            >
-              Guest · {rows[pickerFor].displayedName}
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="flex flex-col gap-2">
-        {rows.length > 0 && (
-          <div className="flex items-center justify-between">
-            <span className="label-caps">
-              {clean ? `All ${rows.length * 10} frames recompute` : `${amberCount} frame${amberCount === 1 ? '' : 's'} to check`}
-            </span>
-            {rows.some((r) => r.finalScore !== null) && (
-              <span className="label-caps">Monitor · {rows.map((r) => r.finalScore ?? '–').join(' / ')}</span>
+          <span className="label">Your photo</span>
+        </StripRow>
+        {photoOpen && (
+          <div className="h-[140px] bg-card">
+            {photo.data ? (
+              <img src={photo.data} alt="The scoreboard you photographed" className="size-full object-contain" />
+            ) : (
+              <span className="grid size-full place-items-center text-[13px] text-ink-faded">Loading the photo</span>
             )}
           </div>
         )}
+      </Strip>
+
+      <div className="flex flex-col gap-3">
+        <span className="label">
+          Players{' '}
+          <span className="optional">{groupId ? 'corrections are remembered for this group' : 'tap a name to correct it'}</span>
+        </span>
+        {rows.map((row, i) => (
+          <div key={`${row.displayedName}-${i}`} className="flex flex-col gap-1">
+            <span id={`scan-player-${i}`} className="text-[13px] text-ink-faded">
+              {row.displayedName} on the sheet
+            </span>
+            <button
+              type="button"
+              aria-labelledby={`scan-player-${i}`}
+              aria-expanded={pickerFor === i}
+              onClick={() => setPickerFor(pickerFor === i ? null : i)}
+              className="field press flex items-center justify-between gap-2 text-left"
+            >
+              <span className="truncate">
+                {row.identity.kind === 'profile' ? identityLabel(row.identity) : 'Guest'}
+                {row.identity.kind === 'profile' && row.identity.profileId === profile.id && (
+                  <span className="ml-1.5 text-ink-faded">you</span>
+                )}
+                {row.identity.kind === 'guest' && (
+                  <span className="ml-1.5 text-ink-faded">{identityLabel(row.identity)}</span>
+                )}
+              </span>
+              <Icon name="chevron-down" className="size-5 shrink-0 text-ink-faded" />
+            </button>
+            {pickerFor === i && (
+              <Strip className="sheet-up">
+                <StripTitle
+                  right={
+                    <button type="button" onClick={() => setPickerFor(null)} className="press text-blue">
+                      Close
+                    </button>
+                  }
+                >
+                  Who is {row.displayedName}?
+                </StripTitle>
+                {candidates.map((candidate) => (
+                  <StripRow
+                    key={candidate.profileId}
+                    onClick={() =>
+                      chooseIdentity(i, {
+                        kind: 'profile',
+                        profileId: candidate.profileId,
+                        displayName: candidate.displayName,
+                      })
+                    }
+                    right={
+                      candidate.profileId === profile.id ? (
+                        <span className="text-[12px] text-ink-faded">you</span>
+                      ) : undefined
+                    }
+                  >
+                    {candidate.displayName}
+                  </StripRow>
+                ))}
+                <StripRow
+                  onClick={() =>
+                    chooseIdentity(i, {
+                      kind: 'guest',
+                      guestName: row.displayedName.trim() || 'Guest',
+                    })
+                  }
+                  className="text-ink-faded"
+                >
+                  Guest · {row.displayedName}
+                </StripRow>
+              </Strip>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-2">
         <Scorecard
           players={cardPlayers}
           variant="editing"
@@ -338,14 +335,14 @@ export default function ReviewScan({
             setEditing({ player, frame });
           }}
         />
-        {rows.map((row, i) => (
-          <div key={`total-${i}`} className="flex items-baseline justify-between">
-            <span className="label-caps">{row.displayedName}</span>
-            <span className="score-text text-[15px] font-semibold text-text">
-              {totalOf(row.frames)}
-            </span>
-          </div>
-        ))}
+        {!clean && !editing && (
+          <p className="text-[13px] text-ink-faded">
+            A shaded frame does not add up from the photo. Tap it to fix it. Totals recalculate as you go.
+          </p>
+        )}
+        {clean && !editing && rows.length > 0 && (
+          <p className="text-[13px] text-ink-faded">Every total recomputes from the photo. Tap a frame to change it.</p>
+        )}
       </div>
 
       {editing && editingRow && (
@@ -358,34 +355,39 @@ export default function ReviewScan({
         />
       )}
 
-      {!clean && !editing && (
-        <div className="flex items-center gap-2 rounded-control border border-phosphor/35 bg-phosphor/10 px-3 py-2.5">
-          <span className="size-2 shrink-0 rounded-full bg-phosphor" />
-          <p className="text-[12.5px] leading-snug text-text">
-            {firstAmberSentence(rows)} Totals recalculate as you go.
-          </p>
-        </div>
-      )}
-
-      {clean && !editing && (
-        <div className="flex flex-col items-center gap-1 pt-1">
-          <h2 className="font-display text-[18px] font-bold">Everything adds up</h2>
-          <p className="text-[12.5px] text-dim">Every total recomputes from the photo. Confirm to post it.</p>
-        </div>
+      {rows.length > 0 && (
+        <Strip>
+          <StripTitle right={monitorTotals ? 'Monitor total in grey' : undefined}>Totals</StripTitle>
+          {rows.map((row, i) => (
+            <StripRow
+              key={`total-${i}`}
+              right={
+                <span className="flex items-baseline gap-2">
+                  {row.finalScore !== null && (
+                    <span className="num text-[13px] text-ink-faded">{row.finalScore}</span>
+                  )}
+                  <span className="num text-[18px] font-semibold">{totalOf(row.frames) || '–'}</span>
+                </span>
+              }
+            >
+              <span className="num text-[15px] font-semibold">{row.displayedName}</span>
+            </StripRow>
+          ))}
+        </Strip>
       )}
 
       {!complete && rows.length > 0 && (
-        <p className="text-[12px] text-dim">
-          This card isn’t a finished game — it’ll be saved as in progress and left out of averages until
+        <p className="text-[13px] text-ink-faded">
+          This sheet is not a finished game. It will be saved as in progress and left out of averages until
           the rest is scored.
         </p>
       )}
 
-      <div className="flex flex-col gap-3 border-t border-hairline pt-3">
-        <GroupPicker profileId={profile.id} value={groupId} onChange={setGroupId} />
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-4 border-t border-hairline pt-4">
+        <GroupPicker profileId={profile.id} value={groupId} onChange={setGroupId} id="scan-group" />
+        <div className="flex gap-3">
           <div className="flex flex-1 flex-col gap-1">
-            <label htmlFor="scan-date" className="label-caps">
+            <label htmlFor="scan-date" className="label">
               Date
             </label>
             <input
@@ -393,20 +395,21 @@ export default function ReviewScan({
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
-              className="rounded-control border border-line bg-well px-3 py-2.5 text-[13.5px] text-text"
+              className="field num"
             />
           </div>
           <div className="flex flex-1 flex-col gap-1">
-            <label htmlFor="scan-venue" className="label-caps">
-              Venue (optional)
+            <label htmlFor="scan-venue" className="label">
+              Venue <span className="optional">optional</span>
             </label>
             <input
               id="scan-venue"
+              type="text"
               list="scan-venues"
               value={venue}
               onChange={(event) => setVenue(event.target.value)}
-              placeholder="Hollywood Bowl…"
-              className="rounded-control border border-line bg-well px-3 py-2.5 text-[13.5px] text-text placeholder:text-faint"
+              placeholder="Hollywood Bowl"
+              className="field"
             />
             <datalist id="scan-venues">
               {(venues.data ?? []).map((name) => (
@@ -417,27 +420,29 @@ export default function ReviewScan({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => confirm.mutate()}
-        disabled={confirm.isPending || rows.length === 0}
-        className="btn-primary tracking-[.04em]"
-      >
-        {confirm.isPending ? 'Posting…' : 'Confirm scorecard'}
-      </button>
-      {!clean && (
-        <p className="text-center text-[12px] text-faint">
-          You can post it as it is — it just won’t be verified.
-        </p>
-      )}
-      {clean && (
-        <p className="text-center text-[12px] text-faint">Something’s off? Tap a frame to edit it</p>
-      )}
-      {error && (
-        <p className="text-center text-[13px] text-signal" role="alert">
-          {error}
-        </p>
-      )}
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={() => confirm.mutate()}
+          disabled={confirm.isPending || rows.length === 0}
+          className="btn-primary"
+        >
+          {confirm.isPending ? 'Saving' : 'Save game'}
+        </button>
+        <button type="button" onClick={onRetake} className="btn-secondary">
+          Retake
+        </button>
+        {!clean && rows.length > 0 && (
+          <p className="text-center text-[12px] text-ink-faded">
+            You can save it as it is. It will be marked unverified.
+          </p>
+        )}
+        {error && (
+          <p className="text-center text-[13px] text-red" role="alert">
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -450,24 +455,4 @@ function totalOf(frames: FrameInput[]): string {
   } catch {
     return '';
   }
-}
-
-function initialsOf(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-}
-
-function firstAmberSentence(rows: Row[]): string {
-  for (const row of rows) {
-    if (row.badFrames.length > 0) {
-      const frame = row.badFrames[0] + 1;
-      const extra = row.badFrames.length > 1 ? ` (and ${row.badFrames.length - 1} more)` : '';
-      return `Frame ${frame} of ${row.displayedName}’s doesn’t add up${extra} — tap it to fix.`;
-    }
-  }
-  return '';
 }

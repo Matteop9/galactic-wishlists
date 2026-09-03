@@ -4,6 +4,16 @@ Social bowling PWA. Live at https://10pins.vercel.app.
 
 Stack: Vite + React + TS + Tailwind v4 + Supabase (the Acca project, `tenpins` schema — migrations are `tp_00xx`). Deploy with `npm run deploy` from this folder, never `vercel deploy --prod` on its own.
 
+## Design
+
+The design system is **The Scoresheet** (v0.4.0, 2 Sept 2026): light-first paper, Oswald numerals, Source Sans 3 body, red for hot and blue for steady, radius 0 strips, no glow, no emoji.
+
+- `Design/DESIGN.md` is the contract. When in doubt, do the plainer thing.
+- `Design/IMPLEMENTATION.md` maps the contract to this codebase: the only Tailwind classes that exist (`src/index.css` switches the default palette off), the utilities (`strip`, `label`, `field`, `btn-*`, `chip`, `num`) and the components (`Strip`, `Scorecard`, `PageHeader`, `Sheet`, `ChipRow`, `EmptyState`, …). Read it before touching any screen.
+- `Design/10 Pins Screens.dc.html` has the reference screens (390×844, plus dark and tablet).
+- `/gallery` renders every component from fixtures without auth; check it at 390 and 1024 wide, light and dark, after a UI change.
+- `design_handoff_10_pins/` is the superseded dark-theme handoff, kept for history only.
+
 ## Releasing
 
 **Every release tells the players what changed.** There are two changelogs and they are not the same document:

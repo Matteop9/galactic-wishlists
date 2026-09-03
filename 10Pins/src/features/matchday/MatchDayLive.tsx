@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import EmptyState from '../../components/EmptyState';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,7 +13,11 @@ import {
   type MdTeam,
   type ScoringMode,
 } from '../../lib/matchday';
-import { Bar, Circle, ListSkeleton, Panel, SkeletonScreen } from '../../components/Skeleton';
+import Avatar from '../../components/Avatar';
+import Icon from '../../components/Icon';
+import PageHeader from '../../components/PageHeader';
+import Strip, { StripTitle } from '../../components/Strip';
+import { Bar, ListSkeleton, Panel, SkeletonScreen } from '../../components/Skeleton';
 import { useSkeleton } from '../../lib/useSkeleton';
 import type { Profile } from '../../lib/auth';
 
@@ -28,10 +33,15 @@ export function toPlayers(md: NonNullable<Awaited<ReturnType<typeof fetchMatchDa
     guest_name: p.guest_name,
     pairing_order: p.pairing_order,
     handicap: p.handicap,
-    display_name: p.profiles?.display_name ?? p.guest_name ?? '?',
+    display_name: p.profiles?.display_name ?? p.guest_name ?? 'Player',
   }));
 }
 
+/**
+ * Match day · live: the series score as a head-to-head, a row per leg, and
+ * the two line-ups with their handicaps. The organiser enters each leg from
+ * here and finishes the day when it is decided.
+ */
 export default function MatchDayLive({ profile }: { profile: Profile }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -59,34 +69,32 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
 
   if (showSkeleton) {
     return (
-      <div className="flex flex-col gap-4 px-4 py-6">
+      <div className="flex flex-col gap-4 px-4 py-5">
         <SkeletonScreen label="Loading the match day" className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Bar w={180} h={22} />
             <Bar w={132} h={11} />
           </div>
-          <Panel className="flex items-center justify-between">
-            <Bar w={104} h={16} />
-            <div className="flex gap-1.5">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Circle key={i} size={12} />
-              ))}
-            </div>
-            <Bar w={104} h={16} />
+          <Panel className="flex items-center justify-around py-5">
+            <Bar w={36} h={44} />
+            <Bar w={30} h={11} />
+            <Bar w={36} h={44} />
           </Panel>
           <ListSkeleton rows={3} label="Loading the legs" avatar={false} bare />
         </SkeletonScreen>
       </div>
     );
   }
-  if (md.isPending || (md.data && games.isPending)) return <div className="px-4 py-6" />;
+  if (md.isPending || (md.data && games.isPending)) return <div className="px-4 py-5" />;
   if (md.isError || !md.data) {
     return (
-      <div className="flex flex-col items-center gap-3 px-4 py-16 text-center">
-        <h1 className="font-display text-[20px] font-bold">Match day not found</h1>
-        <Link to="/groups" className="text-[13.5px] text-phosphor">
-          Back to groups
-        </Link>
+      <div className="px-4">
+        <EmptyState
+          tone="page"
+          title="Match day not found"
+          body="It may have been removed, or the link is wrong."
+          action={{ label: 'Back to groups', to: '/groups' }}
+        />
       </div>
     );
   }
@@ -101,173 +109,263 @@ export default function MatchDayLive({ profile }: { profile: Profile }) {
   const nextLeg = (games.data ?? []).length + 1;
   const active = data.status === 'active';
   const canScoreNext = isOrganiser && active && !series.decided && nextLeg <= data.best_of;
+  const waitingOnOrganiser = !isOrganiser && active && !series.decided && nextLeg <= data.best_of;
   const winner = teams.find((t) => t.id === series.winnerTeamId);
 
-  return (
-    <div className="flex flex-col gap-5 px-4 py-6">
-      <header className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h1 className="font-display text-[20px] font-bold">Match day</h1>
-          <p className="text-[12px] text-faint">
-            {data.groups?.name}
-            {data.sessions?.venues?.name ? ` · ${data.sessions.venues.name}` : ''} ·{' '}
-            {data.best_of === 1 ? 'single game' : `best of ${data.best_of}`} ·{' '}
-            {mode === 'points' ? 'points' : 'total pins'}
-          </p>
-        </div>
-        <Link to={`/groups/${data.group_id}`} className="shrink-0 text-[13.5px] text-dim">
-          Group
-        </Link>
-      </header>
+  // The team ahead on legs is "hot": strictly ahead, and at least one leg up.
+  const topWins = Math.max(0, ...teams.map((t) => series.legsWon[t.id] ?? 0));
+  const ahead = teams.filter((t) => (series.legsWon[t.id] ?? 0) === topWins);
+  const leaderId = topWins > 0 && ahead.length === 1 ? ahead[0].id : null;
 
-      {/* Series header: legs won + best-of pips */}
-      <div className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4">
-        {teams.map((team) => (
-          <div key={team.id} className="flex items-center justify-between gap-3">
-            <span
-              className={`min-w-0 truncate font-display text-[17px] font-bold ${
-                series.winnerTeamId === team.id ? 'text-phosphor' : 'text-text'
-              }`}
-            >
-              {team.name}
-            </span>
-            <div className="flex items-center gap-1.5">
-              {Array.from({ length: Math.ceil(data.best_of / 2) }, (_, i) => (
-                <span
-                  key={i}
-                  className={`size-2.5 rounded-full ${
-                    i < (series.legsWon[team.id] ?? 0) ? 'bg-phosphor' : 'border border-line bg-well'
-                  }`}
-                />
-              ))}
-              <span className="score-text ml-1 w-5 text-right text-[18px] font-bold text-text">
-                {series.legsWon[team.id] ?? 0}
-              </span>
-            </div>
+  const seriesLabel = data.best_of === 1 ? 'Single game' : `Best of ${data.best_of}`;
+  const modeLabel = mode === 'points' ? 'points' : 'total pins';
+  const venueName = data.sessions?.venues?.name;
+  const legWord = legs.length === 1 ? 'leg' : 'legs';
+
+  return (
+    <div className="flex flex-col gap-4 px-4 py-5">
+      <PageHeader
+        back={`/groups/${data.group_id}`}
+        title={teams.map((t) => t.name).join(' v ')}
+        sub={`${seriesLabel} · ${modeLabel}${venueName ? ` · ${venueName}` : ''}`}
+      />
+
+      {/* The series: legs won, head to head. */}
+      <Strip>
+        <div className="flex items-baseline justify-between px-3.5 py-2.5">
+          <span className="label">Legs won</span>
+          {active && !series.decided ? (
+            <span className="text-[13px] font-semibold text-red">Live</span>
+          ) : (
+            <span className="text-[13px] text-ink-faded">{active ? 'Decided' : 'Finished'}</span>
+          )}
+        </div>
+        {teams.length === 2 ? (
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center p-4">
+            <TeamLegs team={teams[0]} won={series.legsWon[teams[0].id] ?? 0} hot={leaderId === teams[0].id} />
+            <span className="px-[18px] text-[13px] text-ink-faded">legs</span>
+            <TeamLegs team={teams[1]} won={series.legsWon[teams[1].id] ?? 0} hot={leaderId === teams[1].id} />
           </div>
-        ))}
+        ) : (
+          <div className="grid divide-x divide-hairline" style={{ gridTemplateColumns: `repeat(${teams.length}, 1fr)` }}>
+            {teams.map((team) => (
+              <div key={team.id} className="flex flex-col px-3.5 py-3">
+                <span
+                  className={`num text-[30px] font-semibold leading-none ${
+                    leaderId === team.id ? 'text-red' : 'text-ink'
+                  }`}
+                >
+                  {series.legsWon[team.id] ?? 0}
+                </span>
+                <span className="truncate text-[12px] text-ink-faded">{team.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
         {series.drawn && (
-          <p className="text-[12px] text-dim">
-            Series drawn — level after {legs.length} leg{legs.length === 1 ? '' : 's'}.
+          <p className="px-3.5 py-2.5 text-[13px] text-ink-faded">
+            Level after <span className="num">{legs.length}</span> {legWord}. The day is shared.
           </p>
         )}
         {series.decided && !series.drawn && winner && (
-          <p className="text-[12px] text-dim">{winner.name} take the day.</p>
+          <p className="px-3.5 py-2.5 text-[13px] text-ink-faded">{winner.name} take the day.</p>
         )}
-      </div>
+      </Strip>
 
-      {canScoreNext && (
-        <button
-          type="button"
-          onClick={() => navigate(`/matchday/${data.id}/leg/${nextLeg}`)}
-          className="btn-primary"
-        >
-          Score leg {nextLeg}
-        </button>
-      )}
-
-      {legs.length === 0 && (
+      {/* The legs: one row each, newest last, then the next one to play. */}
+      {legs.length === 0 ? (
         <EmptyState
           tone="inline"
-          body={`No legs bowled yet${isOrganiser ? ' — score leg 1 to get going.' : '.'}`}
-          action={isOrganiser ? { label: 'Score leg 1', to: `/matchday/${md.data.id}/leg/1` } : undefined}
+          title="No legs bowled yet"
+          body={
+            isOrganiser
+              ? 'Enter the scores for leg 1 once it has been bowled.'
+              : 'The organiser enters the scores after each leg.'
+          }
+          action={isOrganiser ? { label: 'Enter leg 1 scores', to: `/matchday/${data.id}/leg/1` } : undefined}
         />
+      ) : (
+        <Strip>
+          <StripTitle
+            right={
+              <>
+                <span className="num">{legs.length}</span> of <span className="num">{data.best_of}</span> played
+              </>
+            }
+          >
+            Legs
+          </StripTitle>
+          {legs.map((leg) => (
+            <LegRow key={leg.gameNumber} leg={leg} mode={mode} teams={teams} />
+          ))}
+          {(canScoreNext || waitingOnOrganiser) && (
+            <div className="flex items-center gap-3 px-3.5 py-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px]">
+                  Leg <span className="num">{nextLeg}</span>
+                </p>
+                <p className="text-[12px] text-ink-faded">{canScoreNext ? 'Up next' : 'Waiting for the organiser'}</p>
+              </div>
+              {canScoreNext && (
+                <button
+                  type="button"
+                  onClick={() => navigate(`/matchday/${data.id}/leg/${nextLeg}`)}
+                  className="btn-primary-sm"
+                >
+                  Enter scores
+                </button>
+              )}
+            </div>
+          )}
+        </Strip>
       )}
 
-      {[...legs].reverse().map((leg) => (
-        <LegCard key={leg.gameNumber} leg={leg} mode={mode} teams={teams} />
-      ))}
+      {/* The line-ups, with the handicap each player carries. */}
+      <Strip>
+        <StripTitle right={mode === 'points' ? 'Paired in order' : undefined}>Players</StripTitle>
+        {teams.map((team) => {
+          const lineUp = players
+            .filter((p) => p.team_id === team.id)
+            .sort((a, b) => a.pairing_order - b.pairing_order);
+          return (
+            <Fragment key={team.id}>
+              <div className="flex items-baseline justify-between px-3.5 py-2">
+                <span className="num text-[15px] font-semibold">{team.name}</span>
+                <span className="text-[12px] text-ink-faded">
+                  <span className="num">{lineUp.length}</span> {lineUp.length === 1 ? 'player' : 'players'}
+                </span>
+              </div>
+              {lineUp.map((p, i) => (
+                <div key={p.id} className="flex items-center gap-3 px-3.5 py-2.5">
+                  {mode === 'points' && <span className="num w-4 shrink-0 text-[13px] text-ink-faded">{i + 1}</span>}
+                  <Avatar name={p.display_name} size={32} />
+                  <span className="min-w-0 flex-1 truncate text-[15px]">
+                    {p.display_name}
+                    {p.guest_name && <span className="text-ink-faded"> guest</span>}
+                  </span>
+                  <span className="num text-[15px] text-ink-faded">+{p.handicap}</span>
+                </div>
+              ))}
+            </Fragment>
+          );
+        })}
+      </Strip>
 
       {isOrganiser && active && (series.decided || legs.length > 0) && (
         <button
           type="button"
           onClick={() => finish.mutate()}
           disabled={finish.isPending}
-          className={`rounded-control py-3 font-display text-[14px] font-bold ${
-            series.decided
-              ? 'bg-phosphor text-ink disabled:bg-disabled disabled:text-faint disabled:shadow-none'
-              : 'border border-line bg-panel text-dim disabled:border-hairline disabled:text-disabled'
-          }`}
+          className={series.decided ? 'btn-primary' : 'btn-secondary'}
         >
-          {finish.isPending ? 'Finishing…' : 'Finish match day'}
+          {finish.isPending ? 'Finishing' : 'Finish match day'}
         </button>
       )}
     </div>
   );
 }
 
-function LegCard({ leg, mode, teams }: { leg: LegResult; mode: ScoringMode; teams: MdTeam[] }) {
-  const teamName = (id: string) => teams.find((t) => t.id === id)?.name ?? '?';
+/** One side of the head to head: legs won over the team name. */
+function TeamLegs({ team, won, hot }: { team: MdTeam; won: number; hot: boolean }) {
   return (
-    <Link
-      to={`/games/${leg.gameId}`}
-      className="flex flex-col gap-3 rounded-card border border-line bg-panel p-4"
-    >
-      <div className="flex items-center justify-between">
-        <span className="label-caps">Leg {leg.gameNumber}</span>
-        {!leg.complete && <span className="text-[11px] text-faint">In progress</span>}
-        {leg.complete && leg.winnerTeamId === null && <span className="text-[11px] text-dim">Drawn</span>}
-        {leg.complete && leg.winnerTeamId !== null && (
-          <span className="text-[11px] text-phosphor">{teamName(leg.winnerTeamId)} won</span>
+    <div className="flex min-w-0 flex-col items-center gap-0.5">
+      <span className={`num text-[44px] font-semibold leading-none ${hot ? 'text-red' : 'text-ink'}`}>{won}</span>
+      <span className="max-w-full truncate text-[13px] text-ink-faded">{team.name}</span>
+    </div>
+  );
+}
+
+/**
+ * A leg: the row links to the game; under it, the breakdown that only this
+ * screen knows (handicaps, and in points mode the pairings).
+ */
+function LegRow({ leg, mode, teams }: { leg: LegResult; mode: ScoringMode; teams: MdTeam[] }) {
+  const teamName = (id: string) => teams.find((t) => t.id === id)?.name ?? 'Team';
+  const status = !leg.complete
+    ? 'In progress'
+    : leg.winnerTeamId === null
+      ? 'Drawn'
+      : `${teamName(leg.winnerTeamId)} won`;
+
+  return (
+    <div className="flex flex-col">
+      <Link to={`/games/${leg.gameId}`} className="press flex items-center gap-3 px-3.5 py-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-[15px]">
+            Leg <span className="num">{leg.gameNumber}</span>
+          </p>
+          <p className="text-[12px] text-ink-faded">{status}</p>
+        </div>
+        <span className="num shrink-0 text-[18px] font-semibold leading-none">
+          {leg.teams.map((t, i) => (
+            <Fragment key={t.team.id}>
+              {i > 0 && <span className="text-ink-faded"> · </span>}
+              <span className={leg.winnerTeamId === t.team.id ? 'text-red' : 'text-ink'}>{t.handicapTotal}</span>
+            </Fragment>
+          ))}
+        </span>
+        <Icon name="chevron-right" className="size-5 shrink-0 text-ink-faded" />
+      </Link>
+
+      <div className="flex flex-col gap-0.5 px-3.5 pb-3 text-[12px] text-ink-faded">
+        {mode === 'points' && (
+          <p>
+            Points:{' '}
+            {leg.teams.map((t, i) => (
+              <Fragment key={t.team.id}>
+                {i > 0 && ', '}
+                {t.team.name} <span className="num">{formatPoints(t.points)}</span>
+              </Fragment>
+            ))}
+          </p>
         )}
-      </div>
-
-      {leg.teams.map((t) => (
-        <div key={t.team.id} className="flex flex-col gap-1">
-          <div className="flex items-baseline justify-between">
-            <span
-              className={`text-[14px] font-bold ${
-                leg.winnerTeamId === t.team.id ? 'text-phosphor' : 'text-text'
-              }`}
-            >
-              {t.team.name}
-            </span>
-            <span className="score-text text-[17px] font-bold text-text">
-              {t.handicapTotal}
-              {mode === 'points' && <span className="ml-2 text-[12px] text-dim">{formatPoints(t.points)} pts</span>}
-            </span>
-          </div>
-          {t.players.map((p) => (
-            <div key={p.player.id} className="flex items-baseline justify-between pl-2">
-              <span className="text-[12px] text-dim">{p.player.display_name}</span>
-              <span className="score-text text-[12px] text-dim">
-                {p.scratch ?? '—'}
-                {p.player.handicap > 0 && p.scratch !== null && (
-                  <span className="text-faint"> +{p.player.handicap} = {p.total}</span>
-                )}
-              </span>
-            </div>
-          ))}
-        </div>
-      ))}
-
-      {mode === 'points' && leg.pairings.length > 0 && (
-        <div className="flex flex-col gap-1 border-t border-line pt-2">
-          {leg.pairings.map((pair, i) => (
-            <div key={i} className="flex items-baseline justify-between text-[11px] text-faint">
-              <span>
-                {pair.a?.player.display_name ?? '—'} v {pair.b?.player.display_name ?? '—'}
-              </span>
-              <span className="score-text">
+        {mode === 'points' && leg.pairings.length > 0
+          ? leg.pairings.map((pair, i) => (
+              <p key={i} className="truncate">
+                <PlayerScore entry={pair.a} /> v <PlayerScore entry={pair.b} />
+                {' · '}
                 {pair.pointsToA === null
-                  ? '· pending'
+                  ? 'pending'
                   : pair.pointsToA === 0.5
-                    ? '½ each'
+                    ? 'a half each'
                     : pair.pointsToA === 1
-                      ? `${teamName(pair.teamA)} +1`
-                      : `${teamName(pair.teamB)} +1`}
-              </span>
-            </div>
-          ))}
-        </div>
+                      ? teamName(pair.teamA)
+                      : teamName(pair.teamB)}
+              </p>
+            ))
+          : leg.teams.map((t) => (
+              <p key={t.team.id} className="truncate">
+                {t.team.name}:{' '}
+                {t.players.map((p, i) => (
+                  <Fragment key={p.player.id}>
+                    {i > 0 && ', '}
+                    <PlayerScore entry={p} />
+                  </Fragment>
+                ))}
+              </p>
+            ))}
+      </div>
+    </div>
+  );
+}
+
+/** "Dan 163 +12", or "Dan, no score" while the leg is in progress. */
+function PlayerScore({ entry }: { entry: LegResult['teams'][number]['players'][number] | null }) {
+  if (!entry) return <>unpaired</>;
+  if (entry.scratch === null) return <>{entry.player.display_name}, no score</>;
+  return (
+    <>
+      {entry.player.display_name} <span className="num">{entry.scratch}</span>
+      {entry.player.handicap > 0 && (
+        <>
+          {' '}
+          <span className="num">+{entry.player.handicap}</span>
+        </>
       )}
-    </Link>
+    </>
   );
 }
 
 function formatPoints(points: number): string {
-  const whole = Math.floor(points);
-  const half = points - whole === 0.5;
-  if (whole === 0 && half) return '½';
-  return `${whole}${half ? '½' : ''}`;
+  return String(points);
 }

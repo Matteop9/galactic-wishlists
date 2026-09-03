@@ -17,14 +17,14 @@ export default defineConfig({
       manifest: {
         name: '10 Pins',
         short_name: '10 Pins',
-        description: 'The app for your bowling crew',
+        description: 'The scoresheet for your bowling group',
         lang: 'en-GB',
         start_url: '/',
         scope: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#0A0E14',
-        theme_color: '#0A0E14',
+        background_color: '#F7F3EA',
+        theme_color: '#F7F3EA',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
@@ -72,6 +72,7 @@ export default defineConfig({
       },
     }),
   ],
-  // Port 3000 matches Supabase's default Site URL, so magic links redirect correctly in dev
-  server: { port: 3000 },
+  // Port 3000 matches Supabase's default Site URL, so OAuth redirects land in dev;
+  // PORT overrides it for a second local server (previews) that doesn't need OAuth.
+  server: { port: Number(process.env.PORT) || 3000 },
 });
