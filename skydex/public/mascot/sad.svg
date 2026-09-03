@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<g id="tail"><path d="M16 38 L6 36 L10 42 L5 49 L16 43 Z" fill="#4A5560" stroke="#20262B" stroke-width="2" stroke-linejoin="round"></path></g>
+<g id="wing-l"><path d="M36 24 Q26 18 16 20 Q26 25 36 26 Z" fill="#0A5D64" stroke="#20262B" stroke-width="1.5" stroke-linejoin="round"></path></g>
+<path id="body" d="M14 38 Q14 26 28 24 Q44 22 50 32 Q52 42 40 46 Q24 50 14 38 Z" fill="#E7DCC6" stroke="#20262B" stroke-width="2"></path>
+<path d="M22 44 Q30 48 38 45 Q32 39 24 40 Z" fill="#F2EBDC"></path>
+<g id="wing-r"><path d="M38 32 Q28 30 16 38 Q26 42 36 40 Q40 38 38 32 Z" fill="#0E7C86" stroke="#20262B" stroke-width="2" stroke-linejoin="round"></path></g>
+<g id="head" transform="rotate(7 46 24)"><circle cx="46" cy="24" r="10" fill="#E7DCC6" stroke="#20262B" stroke-width="2"></circle><g id="goggles"><path d="M36 17 Q46 8 56 15" stroke="#B98A2E" stroke-width="2" fill="none"></path><circle cx="42" cy="14.5" r="4" fill="#CDE5E6" stroke="#B98A2E" stroke-width="2"></circle><circle cx="50" cy="13.5" r="4" fill="#CDE5E6" stroke="#B98A2E" stroke-width="2"></circle></g><g id="eyes"><circle cx="49" cy="24.6" r="2" fill="#20262B"></circle><path d="M46 21.6 Q49 20.8 52 21.6 L52 23.8 Q49 23 46 23.8 Z" fill="#E7DCC6"></path></g><path id="beak" d="M54.5 26 L61 29.5 L54 31.5 Z" fill="#4A5560" stroke="#20262B" stroke-width="1.5" stroke-linejoin="round"></path></g>
+</svg>

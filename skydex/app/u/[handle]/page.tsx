@@ -10,6 +10,7 @@ import { getViewer } from "@/lib/auth";
 import { type Sighting } from "@/components/SightingCard";
 import { RARITY_RANK, RARITY_COLOR } from "@/lib/rarity";
 import { airportName } from "@/lib/airports";
+import MascotSays from "@/components/MascotSays";
 import {
   PROFILE_PAGE_SIZE,
   SIGHTING_COLS as COLS,
@@ -346,8 +347,13 @@ export default async function PublicProfile({ params }: { params: Promise<{ hand
           <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink-soft">
             Medals
           </h2>
-          <div className="mt-3 rounded-lg border border-dashed border-paper-edge px-4 py-6 text-center font-mono text-xs text-ink-faint">
-            Medals are coming soon — earn them by topping the boards and hitting milestones.
+          <div className="mt-3 flex flex-col items-center rounded-lg border border-dashed border-paper-edge px-4 py-6 text-center">
+            <MascotSays pose="think" size={40} plainClassName="hidden">
+              Medals are still in the hangar.
+            </MascotSays>
+            <p className="mt-2 font-mono text-xs text-ink-faint">
+              Coming soon — earn them by topping the boards and hitting milestones.
+            </p>
           </div>
         </section>
 

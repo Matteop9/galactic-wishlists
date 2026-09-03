@@ -7,6 +7,7 @@ import DevModeToggle from "@/components/DevModeToggle";
 import OpenGuideButton from "@/components/OpenGuideButton";
 import AvatarEditor from "@/components/AvatarEditor";
 import CoverThemePicker from "@/components/CoverThemePicker";
+import MascotToggle from "@/components/MascotToggle";
 import PublicSharingPanel from "@/components/PublicSharingPanel";
 import BlockedUsersList, { type BlockedRow } from "@/components/BlockedUsersList";
 import { createClient } from "@/lib/supabase/server";
@@ -79,7 +80,9 @@ export default async function SettingsPage() {
         consentedAt={profile?.public_consent_at ?? null}
       />
 
-      <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">
+      <MascotToggle />
+
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">
         <div>
           <h2 className="font-display text-lg font-semibold uppercase tracking-wide text-ink">
             How it works

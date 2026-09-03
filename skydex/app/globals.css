@@ -252,6 +252,118 @@ body {
   animation: sd-card-rise 0.5s ease-out 0.7s both;
 }
 
+/* ---- Mascot (components/Mascot.tsx; poses in public/mascot/) --------------
+   Per design-handoff/09-skye/HANDOFF.md: idle sway ±1.5° over 3–4 s, a blink
+   every 4–6 s (crossfade to idle-blink), celebrate = one hop-and-settle then
+   hold, sad = one 0.4 s droop, point = gentle 2 s rise-fall. All gated below. */
+@keyframes sd-mascot-sway {
+  0%,
+  100% {
+    transform: rotate(-1.5deg);
+  }
+  50% {
+    transform: rotate(1.5deg);
+  }
+}
+@keyframes sd-mascot-blink {
+  0%,
+  94%,
+  100% {
+    opacity: 0;
+  }
+  95%,
+  98% {
+    opacity: 1;
+  }
+}
+@keyframes sd-mascot-hop {
+  0% {
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+  60% {
+    transform: translateY(1px) rotate(1deg);
+  }
+  80% {
+    transform: translateY(-1.5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes sd-mascot-droop {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+  100% {
+    transform: translateY(2px) rotate(4deg);
+  }
+}
+@keyframes sd-mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+.sd-mascot {
+  position: relative;
+  display: inline-block;
+  transform-origin: 50% 80%;
+}
+.sd-mascot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.sd-mascot .sd-mascot__blink {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: sd-mascot-blink 5.2s step-end infinite;
+}
+.sd-mascot--idle {
+  animation: sd-mascot-sway 3.6s ease-in-out infinite;
+}
+.sd-mascot--celebrate {
+  animation: sd-mascot-hop 0.7s cubic-bezier(0.3, 0.9, 0.3, 1.1) both;
+}
+.sd-mascot--sad {
+  animation: sd-mascot-droop 0.4s ease-out both;
+}
+.sd-mascot--point {
+  animation: sd-mascot-bob 2s ease-in-out infinite;
+}
+/* Speech bubble: paper-deep card, 1 px paper-edge, 10 px radius, square tail. */
+.sd-says {
+  position: relative;
+  border: 1px solid var(--color-paper-edge);
+  background: var(--color-paper-deep);
+  border-radius: 10px;
+  padding: 0.45rem 0.8rem;
+}
+.sd-says::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--color-paper-deep);
+  border-left: 1px solid var(--color-paper-edge);
+  border-bottom: 1px solid var(--color-paper-edge);
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+}
+.sd-says--below::after {
+  left: 50%;
+  top: -6px;
+  transform: translateX(-50%) rotate(135deg);
+}
+
 /* ---- Loading language ---------------------------------------------------- */
 /* Spinner: the jet circling a dashed range ring (components/Loading.tsx). */
 @keyframes sd-spin {
@@ -341,6 +453,14 @@ body {
   }
   .sd-confetti-layer {
     display: none;
+  }
+  /* mascot: every pose reads as a still; no sway, hop, droop or blink */
+  .sd-mascot--idle,
+  .sd-mascot--celebrate,
+  .sd-mascot--sad,
+  .sd-mascot--point,
+  .sd-mascot .sd-mascot__blink {
+    animation: none !important;
   }
   /* loading stays legible without motion: spinner fades instead of spinning,
      skeletons hold their static fill */

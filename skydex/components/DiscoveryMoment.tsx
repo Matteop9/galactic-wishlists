@@ -22,7 +22,13 @@ export type DiscoveryResult = {
   origin: string | null;
   destination: string | null;
   rarity: string;
-  discoveries: { type: boolean; airline: boolean; origin: boolean; destination: boolean };
+  discoveries: {
+    type: boolean;
+    airline: boolean;
+    origin: boolean;
+    destination: boolean;
+    livery?: boolean; // first time this special-livery airframe is in the logbook (v1.0.8+)
+  };
   /** Server celebration flags (v1.0.7+; optional so older responses still render). */
   firstCatch?: boolean;
   newRarityTier?: boolean;
@@ -97,6 +103,7 @@ export default function DiscoveryMoment({
 
   const d = result.discoveries;
   const newChips = [
+    d.livery && result.specialLivery && { k: "LIVERY", v: result.specialLivery },
     d.type && { k: "TYPE", v: result.typeName ?? result.typeCode },
     d.airline && { k: "CARRIER", v: result.airline },
     d.origin && { k: "DEPARTURE", v: result.origin },

@@ -27,6 +27,29 @@ POST now rejects with 403 when `public_consent_at` is null, so no photo or score
 
 **Note:** the boards read empty until users accept (all 20 existing profiles start at `public_consent_at is null`); each is restored the moment its owner agrees.
 
+## v1.0.8 — 2026-09-03
+
+**The mascot lands (Slice 3) + "Special delivery".** Claude Design returned direction A (aviation-coded bird) as `design-handoff/09-skye/` (7 poses, stable ids `#head #eyes #wing-l #wing-r`, brass only on the goggle rim, name proposals Wilco / Pip / Vera — Skye stays the working name pending a word-mark search).
+
+### Added — companion components
+- `public/mascot/{idle,idle-blink,wave,celebrate,think,sad,point}.svg` — the handoff SVGs with the c2pa `<metadata>` blob stripped (9 KB → 1.3 KB each).
+- `components/Mascot.tsx` — `pose` + `size`, renders `/mascot/{pose}.svg`; `fallback` node when switched off; `useMascotEnabled()` (localStorage `skydex_mascot`, default on, `skydex:mascot-changed` event) returns null until mounted so server-rendered pages never mismatch. Idle pose stacks `idle-blink.svg` and crossfades it for the blink.
+- `components/MascotSays.tsx` — bird + paper speech bubble (`.sd-says`, `--below` variant for the stacked layout); renders the line as plain text when she is off so no screen loses its copy (or `plainClassName="hidden"` where the line is purely hers).
+- `components/MascotToggle.tsx` — Settings card "Your companion", between the public-sharing panel and "How it works".
+- `app/globals.css` — `sd-mascot-sway` (±1.5°, 3.6 s), `sd-mascot-blink` (step-end, ~150 ms every 5.2 s), `sd-mascot-hop` (celebrate, 0.7 s once), `sd-mascot-droop` (sad, 0.4 s once), `sd-mascot-bob` (point, 2 s); all under the reduced-motion gate (every pose reads as a still).
+
+### Changed — touchpoints (presence rule: moments only, never the viewfinder)
+`GuideModal` (point, 56 px, above step 1 — steps 2–5 without her) · `app/scrapbook/page.tsx` empty state (think, 160 px; swinging tag is the switched-off fallback) · `app/spot/page.tsx` capture error line + out-of-Tickets card (sad, 48 px, inline under the button) · `app/error.tsx` (sad, 120 px) · `WeeklyReview` (wave, 48 px, top row) · `DiscoveryMoment` via the v1.0.7 `mascotSlot` (celebrate, 72 px, tier ≥ 2) · `app/u/[handle]` medals placeholder (think, 40 px, "Medals are still in the hangar."). The "Scanning the sky…" / GPS chips and the raised Spot tab deliberately carry nothing.
+
+### Added — "Special delivery" (new livery)
+`/api/sightings` computes `specialLivery()` before the pre-insert probes and adds `discoveries.livery` = known special-livery airframe AND registration never logged by this user. `lib/celebration.ts`: `livery` counts as a discovery (tier ≥ 1; the livery itself already makes it tier 2) and `celebrationHeadline()` returns **"Special delivery"** for it; `DiscoveryMoment` adds a `New LIVERY · {name}` chip and the companion says "Special delivery — new livery for the logbook." Test added.
+
+### Fixed — honest headline
+`celebrationHeadline()` says "New discovery" only when a `discoveries.*` flag is true. v1.0.7 keyed it on tier ≥ 1, so a repeat catch of a rare type read "New discovery"; it is now "Caught!" with the tier-2 treatment intact.
+
+### Dev
+`/spot?celebrate=2` preview now models a new special livery (`Retro (preview)`), so the pun and the chip can be seen without a real airframe.
+
 ## v1.0.7 — 2026-09-03
 
 **New-catch celebration tiers + mascot groundwork.** The Discovery moment (`components/DiscoveryMoment.tsx`) had no entrance motion at all, and the two keyframes written for it in the June redesign (`.sd-stamp-thunk`, `.sd-card-rise`) were never wired up. This release makes the post-capture screen celebrate in proportion to novelty, and lays the documents for a mascot character (research + a brief for Claude Design).

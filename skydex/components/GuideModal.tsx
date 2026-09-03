@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useDialog } from "@/components/useDialog";
+import MascotSays from "@/components/MascotSays";
 
 const SEEN_KEY = "skydex_guide_seen";
 
@@ -70,7 +71,12 @@ function GuideDialog({ onClose }: { onClose: () => void }) {
           A real logbook of the sky — you photograph planes you can actually see, and we verify them.
         </p>
 
-        <ol className="mt-5 flex flex-col gap-3">
+        {/* Companion greets once, at step 1 only (design handoff: steps 2–5 without her). */}
+        <MascotSays pose="point" size={56} className="mt-4" plainClassName="hidden">
+          Eyes up. There&apos;s one coming over now.
+        </MascotSays>
+
+        <ol className="mt-4 flex flex-col gap-3">
           {STEPS.map(([title, body], i) => (
             <li key={title} className="flex gap-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sky font-display text-sm font-bold text-paper">

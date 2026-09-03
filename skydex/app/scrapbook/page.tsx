@@ -4,6 +4,8 @@ import { type Sighting } from "@/components/SightingCard";
 import SightingBrowser from "@/components/SightingBrowser";
 import ProgressWheel from "@/components/ProgressWheel";
 import AirportAtlas from "@/components/AirportAtlas";
+import Mascot from "@/components/Mascot";
+import MascotSays from "@/components/MascotSays";
 import { RARITY_TIERS, RARITY_RANK, RARITY_COLOR } from "@/lib/rarity";
 import { SPECIAL_LIVERIES, SPECIAL_LIVERIES_COUNT, normalizeReg } from "@/lib/specialLiveries";
 
@@ -114,9 +116,19 @@ export default async function ScrapbookPage() {
           Scrapbook
         </h1>
         <div className="mt-8 flex flex-col items-center rounded-lg border border-dashed border-paper-edge p-8 text-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-tag.svg" alt="" className="sd-tag-swing h-32 w-auto opacity-90" />
-          <p className="mt-4 text-ink-soft">Your logbook is empty.</p>
+          {/* Companion takes the empty state (handoff: think, 160 px); the swinging
+              tag stays as the fallback when she is switched off. */}
+          <Mascot
+            pose="think"
+            size={160}
+            fallback={
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/logo-tag.svg" alt="" className="sd-tag-swing h-32 w-auto opacity-90" />
+            }
+          />
+          <MascotSays pose="think" size={0} layout="stack" className="mt-1" plainClassName="mt-4 text-ink-soft">
+            Logbook&apos;s empty. First entry&apos;s the hardest.
+          </MascotSays>
           <Link href="/spot" className="sd-btn sd-btn--capture mt-5 inline-flex">
             Spot your first aircraft
           </Link>

@@ -404,18 +404,26 @@ export async function POST(request: Request) {
       .limit(1);
     return (data?.length ?? 0) > 0;
   };
-  const [seenType, seenAirline, seenOrigin, seenDestination, seenAny] = await Promise.all([
+  // Special livery? Matched by registration against the static collection.
+  // Computed here (registration is final) so "new livery" can ride the same
+  // pre-insert probe set.
+  const liv = specialLivery(registration);
+  const [seenType, seenAirline, seenOrigin, seenDestination, seenAny, seenReg] = await Promise.all([
     seenBefore("aircraft_type", aircraftType),
     seenBefore("airline_icao", airlineIcao),
     seenBefore("origin", origin),
     seenBefore("destination", destination),
     anyBefore(),
+    liv ? seenBefore("registration", registration) : Promise.resolve(false),
   ]);
   const discoveries = {
     type: Boolean(aircraftType) && !seenType,
     airline: Boolean(airlineIcao) && !seenAirline,
     origin: Boolean(origin) && !seenOrigin,
     destination: Boolean(destination) && !seenDestination,
+    // First time this special-livery airframe lands in their logbook →
+    // "Special delivery" (v1.0.8). Optional for older clients.
+    livery: Boolean(liv) && !seenReg,
   };
   const firstCatch = !seenAny;
 
@@ -547,9 +555,6 @@ export async function POST(request: Request) {
   const photoUrl = photoPath
     ? supabase.storage.from("sightings").getPublicUrl(photoPath).data.publicUrl
     : null;
-
-  // Special livery? Matched by registration against the static collection.
-  const liv = specialLivery(registration);
 
   return NextResponse.json({
     sighting: data,

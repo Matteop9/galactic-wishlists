@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { RARITY_RANK } from "@/lib/rarity";
 import { useDialog } from "@/components/useDialog";
 import SightingPhoto from "@/components/SightingPhoto";
+import MascotSays from "@/components/MascotSays";
 
 // Monday-morning weekly review (feedback 2026-07-17): a once-a-week card
 // summarising the PREVIOUS Mon–Sun week, shown on the first visit on/after
@@ -210,6 +211,11 @@ function WeeklyReviewDialog({ summary, onClose }: { summary: Summary; onClose: (
         <p className="mt-1 text-center font-mono text-xs uppercase tracking-wide text-ink-faint">
           {summary.rangeLabel}
         </p>
+
+        {/* Companion opens the Monday recap (handoff: wave, 48 px, top row). */}
+        <MascotSays pose="wave" size={48} className="mt-3 justify-center" plainClassName="hidden">
+          Here&apos;s your week in the sky.
+        </MascotSays>
 
         <div className="mt-4 grid grid-cols-4 gap-1 border-t border-paper-edge pt-3">
           {stat("Spots", summary.spots)}

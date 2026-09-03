@@ -44,6 +44,15 @@ test("first catch overrides a common repeat and wins the headline", () => {
   assert.equal(celebrationHeadline(r, 3), "First catch");
 });
 
+test("first catch of a special-livery airframe reads Special delivery", () => {
+  const r = { ...base, specialLivery: "Retro", discoveries: { ...none, livery: true } };
+  assert.equal(celebrationTier(r), 2);
+  assert.equal(celebrationHeadline(r, 2), "Special delivery");
+  // Seen this airframe before → livery badge still shows, but no pun.
+  const again = { ...base, specialLivery: "Retro" };
+  assert.equal(celebrationHeadline(again, 2), "Caught!");
+});
+
 test("unknown rarity string degrades safely", () => {
   assert.equal(celebrationTier({ ...base, rarity: "mythic" }), 0);
 });

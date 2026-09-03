@@ -15,6 +15,15 @@ export const RELEASES: Release[] = [
     version: "1.0.8",
     date: "2026-09-03",
     changes: [
+      "Meet Skye. A small goggled bird who turns up at the quiet moments — the first-run guide, an empty logbook, a failed catch, the Monday recap, and a big catch — and never on the viewfinder. Switch her off any time under Settings → Your companion.",
+      "Special delivery: the first time you log a special-livery airframe, the catch card says so and the livery joins the \"New\" chips.",
+      "Repeat catches of a rare plane now say \"Caught!\" instead of \"New discovery\" — the celebration stays, the headline is honest.",
+    ],
+  },
+  {
+    version: "1.0.8",
+    date: "2026-09-03",
+    changes: [
       "SkyDex now asks before it shares. The first time you open the app signed in, a screen spells out exactly what goes public — your username and scores on the global leaderboards, your photo and the aircraft's details on the feed — and nothing of yours is published until you agree.",
       "The leaderboards are optional. Untick them on that screen, or switch them off any time under Settings → Public sharing, and your scores stay off the public boards.",
       "The support page says where your message goes (straight to the team's queue) and now always takes an email so we can actually reply.",

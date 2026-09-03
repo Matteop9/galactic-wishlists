@@ -18,6 +18,8 @@ import { createClient } from "@/lib/supabase/client";
 import { enqueueCapture, listCaptures, removeCapture, countCaptures } from "@/lib/captureQueue";
 import { announceTicketsChanged, type CaptureTickets, type TicketStatus } from "@/lib/tickets";
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
+import Mascot from "@/components/Mascot";
+import MascotSays from "@/components/MascotSays";
 import { PlaneSpinner, SpinnerBlock } from "@/components/Loading";
 import { TicketGlyph } from "@/components/TicketChip";
 import TargetOverlay from "@/components/TargetOverlay";
@@ -40,10 +42,10 @@ function fakeDiscovery(tier: number): DiscoveryResult {
     origin: isNew ? "LHR" : null,
     destination: isNew ? "JFK" : null,
     rarity,
-    discoveries: { type: isNew, airline: isNew, origin: false, destination: isNew },
+    discoveries: { type: isNew, airline: isNew, origin: false, destination: isNew, livery: tier === 2 },
     firstCatch: tier === 3,
-    newRarityTier: tier === 2,
-    specialLivery: null,
+    newRarityTier: false,
+    specialLivery: tier === 2 ? "Retro (preview)" : null,
     tickets: null,
     sighting: {
       id: "preview",
@@ -1494,10 +1496,18 @@ export default function SpotPage() {
         </p>
       )}
 
-      {error && <p className="mt-3 text-sm text-stamp">{error}</p>}
+      {error && (
+        // Companion softens a failed capture — inline under the button, never on the viewfinder.
+        <div className="mt-3 flex items-center gap-3">
+          <Mascot pose="sad" size={48} className="shrink-0" />
+          <p className="text-sm text-stamp">{error}</p>
+        </div>
+      )}
       {notice && <p className="mt-3 text-sm text-sky">{notice}</p>}
       {wall && (
-        <div className="mt-3 rounded-lg border border-brass bg-brass-tint p-3 text-sm text-ink">
+        <div className="mt-3 flex gap-3 rounded-lg border border-brass bg-brass-tint p-3 text-sm text-ink">
+          <Mascot pose="sad" size={48} className="shrink-0" />
+          <div>
           <p className="font-semibold">You&apos;re out of free spots and Tickets for today.</p>
           <p className="mt-1 text-ink-soft">
             Earn more by{" "}
@@ -1511,6 +1521,7 @@ export default function SpotPage() {
             , or get more in the SkyDex app. Fresh spots arrive tomorrow — any banked catch
             uploads by itself.
           </p>
+          </div>
         </div>
       )}
       {pendingCount > 0 && (
@@ -1523,6 +1534,13 @@ export default function SpotPage() {
       {result && (
         <DiscoveryMoment
           result={result}
+          mascotSlot={
+            <MascotSays pose="celebrate" size={72}>
+              {result.discoveries.livery && result.specialLivery
+                ? "Special delivery — new livery for the logbook."
+                : "Didn’t see that coming — nice catch."}
+            </MascotSays>
+          }
           onClose={() => {
             // "Spot another" (also backdrop click / Escape) — a fresh target:
             // keeping the lock re-offered the plane just logged, and re-tapping
