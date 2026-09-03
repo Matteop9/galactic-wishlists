@@ -29,6 +29,12 @@ SkyDex normally offers only Sign in with Apple and Sign in with Google (no passw
 USING THE MAIN FEATURES
 1. Sign in (above). 2. Spot: grant location, camera and motion when prompted; the radar shows live aircraft around you; when the camera points at a real flight the reticle locks and you capture. NOTE: a genuine capture requires a real aircraft in view — verification against live flight data is the core feature — so the attached screen recording demonstrates the full capture flow outdoors. 3. Scrapbook and Books: the collection. 4. Feed: community catches with comments and reactions. 5. Settings: blocked-users list, data export, account deletion, sign out. No sample files are required.
 
+PRIVACY CONSENT (GUIDELINE 5.1.2)
+Nothing a spotter creates is published until they explicitly agree, inside the app. On the first launch after signing in, a blocking consent screen ("What SkyDex shares publicly") states exactly what is uploaded and shown to other people: username and sighting scores on the global leaderboards, photo + username + aircraft details on the public feed, and that GPS position/heading/tilt are used only for verification and never shown publicly. The only ways past it are "I agree — continue" or "No thanks — sign out". The leaderboards themselves are optional: a tick-box on that screen, and a switch under Settings -> Public sharing, keep the spotter's scores off the public boards. Until consent is given, the server excludes the account from the leaderboards entirely and refuses capture uploads. Full policy: https://sky-dex.com/privacy.
+
+SUPPORT (GUIDELINE 1.5)
+https://sky-dex.com/support — FAQ plus a contact form that works signed out; messages reach the team's support queue and are answered by email, usually within two working days.
+
 UGC SAFETY: server-side profanity filtering, per-item reporting on photos and comments, user blocking (from any profile or comment; managed in Settings), a community photo-review queue, and admin moderation tooling.
 
 DEVICES TESTED

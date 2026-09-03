@@ -101,6 +101,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not signed in" }, { status: 401 });
   }
 
+  // Nothing is uploaded before the user has explicitly agreed to publishing
+  // (App Store 5.1.2). The UI blocks this with ConsentGate; enforce it here too
+  // so no photo or score can reach the server ahead of the agreement.
+  const { data: consent } = await supabase
+    .from("profiles")
+    .select("public_consent_at")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (!consent?.public_consent_at) {
+    return NextResponse.json(
+      { error: "Please agree to what SkyDex shares publicly before capturing." },
+      { status: 403 },
+    );
+  }
+
   // ---- Parse + validate the untrusted meta blob ----
   let form: FormData;
   try {

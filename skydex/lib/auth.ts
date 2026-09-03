@@ -21,10 +21,12 @@ export async function getViewer() {
       isAdmin: false,
       handle: null as string | null,
       avatarSeed: null as string | null,
+      consented: false,
+      leaderboardOptIn: true,
     };
   const { data } = await supabase
     .from("profiles")
-    .select("handle, is_admin, avatar_seed")
+    .select("handle, is_admin, avatar_seed, public_consent_at, leaderboard_opt_in")
     .eq("id", user.id)
     .maybeSingle();
   return {
@@ -32,5 +34,8 @@ export async function getViewer() {
     isAdmin: Boolean(data?.is_admin),
     handle: data?.handle ?? null,
     avatarSeed: data?.avatar_seed ?? null,
+    // Explicit in-app agreement to publishing (see components/ConsentGate).
+    consented: data?.public_consent_at != null,
+    leaderboardOptIn: data?.leaderboard_opt_in ?? true,
   };
 }

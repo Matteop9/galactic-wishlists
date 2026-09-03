@@ -6,6 +6,7 @@ import "./globals.css";
 import TopNav from "@/components/TopNav";
 import MobileTabBar from "@/components/MobileTabBar";
 import GuideModal from "@/components/GuideModal";
+import ConsentGate from "@/components/ConsentGate";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import WeeklyReview from "@/components/WeeklyReview";
 import { getViewer } from "@/lib/auth";
@@ -68,7 +69,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { user, handle } = await getViewer();
+  const { user, handle, consented, leaderboardOptIn } = await getViewer();
 
   return (
     <html
@@ -86,6 +87,8 @@ export default async function RootLayout({
         <AnnouncementBanner />
         <div className="flex flex-1 flex-col">{children}</div>
         <GuideModal />
+        {/* Blocking until the user explicitly agrees to publishing (5.1.2). */}
+        {user && !consented && <ConsentGate optIn={leaderboardOptIn} />}
         {user && <WeeklyReview userId={user.id} />}
         <footer className="border-t border-paper-edge">
           <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-5 py-4 font-mono text-xs text-ink-faint">

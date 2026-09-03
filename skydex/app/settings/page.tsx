@@ -7,6 +7,7 @@ import DevModeToggle from "@/components/DevModeToggle";
 import OpenGuideButton from "@/components/OpenGuideButton";
 import AvatarEditor from "@/components/AvatarEditor";
 import CoverThemePicker from "@/components/CoverThemePicker";
+import PublicSharingPanel from "@/components/PublicSharingPanel";
 import BlockedUsersList, { type BlockedRow } from "@/components/BlockedUsersList";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,7 +23,7 @@ export default async function SettingsPage() {
   const [{ data: profile }, { data: blockedRows }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("handle, home_airport, is_admin, avatar_seed, avatar_updated_at, cover_theme")
+      .select("handle, home_airport, is_admin, avatar_seed, avatar_updated_at, cover_theme, public_consent_at, leaderboard_opt_in")
       .eq("id", user!.id)
       .single(),
     // RLS scopes blocks to the caller's own rows; !blocked_id picks the right
@@ -72,6 +73,11 @@ export default async function SettingsPage() {
       />
 
       <CoverThemePicker initial={profile?.cover_theme ?? "day"} />
+
+      <PublicSharingPanel
+        optIn={profile?.leaderboard_opt_in ?? true}
+        consentedAt={profile?.public_consent_at ?? null}
+      />
 
       <div className="mt-10 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-paper-edge p-4">
         <div>

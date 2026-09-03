@@ -42,8 +42,11 @@ export default function SupportForm() {
   if (done) {
     return (
       <p className="rounded-lg border border-paper-edge bg-paper-deep p-4 text-sm text-sky">
-        Thanks — your message has been sent to the team.
-        {email.trim() ? " We'll reply to the email you gave." : ""}
+        Thanks — your message is in the SkyDex support queue and the team that builds
+        the app will see it.
+        {email.trim()
+          ? ` We'll reply to ${email.trim()}, usually within two working days.`
+          : ""}
       </p>
     );
   }
@@ -64,7 +67,8 @@ export default function SupportForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         maxLength={200}
-        placeholder="Your email (optional — so we can reply)"
+        required
+        placeholder="Your email — so the team can reply to you"
         className="rounded-md border border-paper-edge bg-paper-deep px-3 py-2 text-sm text-ink outline-none focus:border-sky"
       />
       <textarea
@@ -79,7 +83,7 @@ export default function SupportForm() {
       {error && <p className="text-sm text-stamp">{error}</p>}
       <button
         type="submit"
-        disabled={busy || !body.trim()}
+        disabled={busy || !body.trim() || !email.trim()}
         className="sd-btn sd-btn--capture self-start"
       >
         {busy ? "Sending…" : "Send message"}

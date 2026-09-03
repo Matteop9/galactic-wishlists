@@ -52,6 +52,18 @@ const FAQS: { q: string; a: React.ReactNode }[] = [
     ),
   },
   {
+    q: "Can I keep my scores off the global leaderboards?",
+    a: (
+      <>
+        Yes. SkyDex asks for your explicit agreement before anything of yours is
+        published, and the leaderboards are optional: untick &ldquo;Include me on the
+        global leaderboards&rdquo; when you first sign in, or switch it off later under{" "}
+        <Link href="/settings" className="text-sky underline">Settings → Public sharing</Link>.
+        Your scores then stop appearing on the public boards.
+      </>
+    ),
+  },
+  {
     q: "What does SkyDex do with my location?",
     a: (
       <>
@@ -89,9 +101,11 @@ export default function SupportPage() {
             Contact the team
           </h2>
           <p className="mt-1 text-sm">
-            Send us a question, a problem, or an idea — messages go straight to the
-            people who build SkyDex. Signed-in spotters can also use the feedback box
-            in the app.
+            Send us a question, a problem, or an idea. Messages land in the SkyDex
+            support queue, which the team that builds SkyDex reads directly — no
+            account needed, and we reply to the email address you leave here, usually
+            within two working days. Signed-in spotters can also use the feedback box
+            in Settings.
           </p>
           <div className="mt-3">
             <SupportForm />

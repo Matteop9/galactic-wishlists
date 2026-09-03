@@ -100,11 +100,12 @@ function LoginForm() {
       {oauthError && <p className="mt-2 text-sm text-stamp">{oauthError}</p>}
 
       <p className="mt-4 text-xs text-ink-faint">
-        By continuing you agree to the{" "}
+        Signing in accepts the{" "}
         <Link href="/terms" className="underline hover:text-ink">terms</Link> and the{" "}
-        <Link href="/privacy" className="underline hover:text-ink">privacy policy</Link> —
-        including your username and verified sightings appearing on the public feed and
-        leaderboards.
+        <Link href="/privacy" className="underline hover:text-ink">privacy policy</Link>.
+        Before anything of yours is published, SkyDex asks you to agree to exactly what
+        appears on the public feed and the global leaderboards — and the leaderboards
+        stay optional.
       </p>
 
       {!reviewOpen ? (

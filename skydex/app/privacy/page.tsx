@@ -32,6 +32,21 @@ export default function PrivacyPage() {
           </p>
         </section>
         <section>
+          <h2 className="font-display text-lg font-semibold text-ink">Your consent, and your choice</h2>
+          <p className="mt-2">
+            Nothing is published until you agree to it. The first time you open SkyDex
+            signed in, the app asks for your explicit agreement to your username, photos
+            and sighting scores being uploaded and shown on the public feed and the global
+            leaderboards — you can decline and sign out instead. Until you agree, you are
+            not on the leaderboards at all.
+          </p>
+          <p className="mt-2">
+            You can also leave the global leaderboards at any time from{" "}
+            <a href="/settings" className="text-sky underline">Settings → Public sharing</a>;
+            switching it off removes your scores from the public boards immediately.
+          </p>
+        </section>
+        <section>
           <h2 className="font-display text-lg font-semibold text-ink">Storage</h2>
           <p className="mt-2">
             Data is stored with Supabase in the EU (London region). Photos are kept in object
@@ -49,8 +64,10 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-display text-lg font-semibold text-ink">Questions</h2>
           <p className="mt-2">
-            Anything unclear, or a request about your data? Reach the team via the{" "}
-            <a href="/support" className="text-sky underline">support page</a>.
+            Anything unclear, or a request about your data? Write to the team from the{" "}
+            <a href="/support" className="text-sky underline">support page</a> — messages go
+            straight to the SkyDex support queue, and we reply to the email address you leave
+            there (usually within two working days).
           </p>
         </section>
         <p className="text-sm text-ink-faint">

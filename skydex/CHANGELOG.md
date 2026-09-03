@@ -2,6 +2,31 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.8 — 2026-09-03
+
+**App Review response #2 (submission 99babdee, re-reviewed 3 Sept): Guideline 5.1.2 — "The consent needs to be present inside the app binary."** The v1.0.6 fix was web/metadata only (privacy policy wording + a support page); the reviewer wants the agreement obtained *in the app* before a score reaches a global leaderboard. This release adds that consent, makes the leaderboards genuinely optional, and enforces both server-side. Because the iOS shell is Capacitor hosted-mode, this reaches build 1.0(5) with the Vercel deploy — no new binary needed.
+
+### Added — migration `20260903130001_public_sharing_consent.sql` (applied via Supabase MCP)
+`profiles` gains `public_consent_at timestamptz` (null = hasn't agreed) and `leaderboard_opt_in boolean not null default true` (user-controlled). `leaderboard(p_metric, p_window)` recreated unchanged apart from `and p.public_consent_at is not null and p.leaderboard_opt_in` on all five metric branches — an account that hasn't agreed, or has opted out, is absent from every board. Verified in a rolled-back transaction: 0 rows before consent → 10 after → 0 after opt-out. Both new columns are covered by the existing table-level `UPDATE` grant + `profiles_update_own` RLS policy, so the owner can write their own consent (checked with `set local role authenticated`).
+
+### Added — `components/ConsentGate.tsx` + `app/actions/consent.ts`
+Blocking modal rendered from `app/layout.tsx` for any signed-in user with `public_consent_at is null` (`lib/auth.ts`'s `getViewer` now returns `consented` + `leaderboardOptIn` from the same query, so no extra round-trip). Deliberately not dismissable — no backdrop click, no Escape, no close button; the only exits are "I agree — continue" (`agreeToPublicSharing`) or "No thanks — sign out". Names the three things that matter: leaderboards (username + scores, uploaded and ranked, visible to every user), public feed (photo, username, aircraft details), and that GPS/heading/tilt are verification-only and never shown. Carries a tick-box for leaderboard inclusion (default on) whose value is written with the consent. The gate steps aside on `/privacy`, `/terms`, `/support`, `/attributions` so the policy is actually readable before agreeing, and returns on any other route. Action row sits outside the scroll area — on a 375×812 viewport the agree button is on screen without scrolling (the review device is an iPhone 17 Pro Max).
+
+### Added — `components/PublicSharingPanel.tsx` (Settings)
+Withdrawable consent: a Global leaderboards on/off switch (`setLeaderboardOptIn`) that takes effect immediately, the sharing summary, and the date consent was given.
+
+### Changed — `app/api/sightings/route.ts`
+POST now rejects with 403 when `public_consent_at` is null, so no photo or score can reach the server ahead of the agreement even if the UI is bypassed.
+
+### Changed — copy
+- `app/privacy/page.tsx`: new "Your consent, and your choice" section (in-app agreement, decline = sign out, not on the boards until you agree, Settings opt-out) + the Questions section now says where support messages go and the reply time.
+- `app/support/page.tsx`: new FAQ "Can I keep my scores off the global leaderboards?"; the Contact section states the destination (the team's support queue, no account needed, reply by email within two working days) — Guideline 1.5 asked for contact information.
+- `components/SupportForm.tsx`: reply-to email is now **required** (submit stays disabled without it) and the confirmation names the address it will reply to.
+- `app/login/page.tsx`: no longer implies consent by continuing — it says the app will ask, and that the leaderboards are optional.
+- `APP_REVIEW.md`: ASC Notes block gains PRIVACY CONSENT (5.1.2) and SUPPORT (1.5) paragraphs.
+
+**Note:** the boards read empty until users accept (all 20 existing profiles start at `public_consent_at is null`); each is restored the moment its owner agrees.
+
 ## v1.0.7 — 2026-09-03
 
 **New-catch celebration tiers + mascot groundwork.** The Discovery moment (`components/DiscoveryMoment.tsx`) had no entrance motion at all, and the two keyframes written for it in the June redesign (`.sd-stamp-thunk`, `.sd-card-rise`) were never wired up. This release makes the post-capture screen celebrate in proportion to novelty, and lays the documents for a mascot character (research + a brief for Claude Design).
