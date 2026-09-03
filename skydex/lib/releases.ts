@@ -12,6 +12,15 @@ export type Release = {
 
 export const RELEASES: Release[] = [
   {
+    version: "1.0.7",
+    date: "2026-09-03",
+    changes: [
+      "Catches now celebrate in proportion to how special they are. A repeat is quiet; anything new to your collection slams the rarity stamp down and pops the \"New\" chips in; a rare or better (or a special livery, or your first of a rarity tier) adds a burst in that tier’s colour and counts the community numbers up; your very first catch or a legendary gets the paper confetti.",
+      "Two new headlines for the biggest moments: \"First catch\" and \"Legendary\".",
+      "All of it respects your phone’s reduce-motion setting — a big catch still looks special, it just holds still.",
+    ],
+  },
+  {
     version: "1.0.6",
     date: "2026-08-31",
     changes: [

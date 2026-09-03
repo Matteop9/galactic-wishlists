@@ -24,6 +24,42 @@ import TargetOverlay from "@/components/TargetOverlay";
 import { deleteSighting } from "@/app/actions/admin";
 import SpotMap from "@/components/SpotMap";
 
+// Synthetic Discovery result for the ?celebrate=N dev preview (see the effect
+// near ticket_status). Each tier flips exactly the flags lib/celebration.ts
+// keys on, so the preview exercises the real decision path.
+function fakeDiscovery(tier: number): DiscoveryResult {
+  const rarity = tier === 3 ? "legendary" : tier === 2 ? "rare" : "common";
+  const isNew = tier >= 1;
+  return {
+    id: "preview",
+    photoUrl: null,
+    label: "G-PRVW",
+    typeCode: tier === 3 ? "A388" : tier === 2 ? "B788" : "A320",
+    typeName: tier === 3 ? "Airbus A380-800" : tier === 2 ? "Boeing 787-8" : "Airbus A320",
+    airline: "Preview Air",
+    origin: isNew ? "LHR" : null,
+    destination: isNew ? "JFK" : null,
+    rarity,
+    discoveries: { type: isNew, airline: isNew, origin: false, destination: isNew },
+    firstCatch: tier === 3,
+    newRarityTier: tier === 2,
+    specialLivery: null,
+    tickets: null,
+    sighting: {
+      id: "preview",
+      photo_url: null,
+      captured_at: new Date().toISOString(),
+      callsign: "PRV001",
+      registration: "G-PRVW",
+      aircraft_type: "Preview",
+      airline: "Preview Air",
+      altitude_m: 10000,
+      rarity,
+      verified: true,
+    },
+  };
+}
+
 type Candidate = {
   icao24: string;
   callsign: string;
@@ -982,6 +1018,19 @@ export default function SpotPage() {
     };
   }, []);
 
+  // Dev-only preview of the celebration tiers without a real plane overhead:
+  // /spot?celebrate=0..3 with the admin Dev-mode cookie set (DevModeToggle).
+  // Purely client-side and read-only — nothing is captured or written.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search).get("celebrate");
+    if (q == null || !/(?:^|;\s*)skydex_dev=1(?:;|$)/.test(document.cookie)) return;
+    // Next tick, so the page paints once before the dialog rises (and so this
+    // isn't a synchronous setState inside the effect).
+    const t = setTimeout(() => setResult(fakeDiscovery(Math.min(3, Math.max(0, Number(q) || 0)))), 0);
+    return () => clearTimeout(t);
+  }, []);
+
   // Grab the current camera frame as a JPEG blob (centre-crop under digital
   // zoom), or null if the stream isn't ready (e.g. the tab was backgrounded).
   async function grabPhotoBlob(): Promise<Blob | null> {
@@ -1080,6 +1129,8 @@ export default function SpotPage() {
           destination: s.destination ?? null,
           rarity: s.rarity ?? "common",
           discoveries: json.discoveries ?? { type: false, airline: false, origin: false, destination: false },
+          firstCatch: json.firstCatch ?? false,
+          newRarityTier: json.newRarityTier ?? false,
           specialLivery: json.specialLivery ?? null,
           tickets: ct,
           // The saved row, card-shaped — powers the standard Lightbox on photo tap.

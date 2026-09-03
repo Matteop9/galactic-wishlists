@@ -1,12 +1,13 @@
 {
   "name": "skydex",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test lib/*.test.ts"
   },
   "dependencies": {
     "@capacitor/core": "^8.5.0",

@@ -9,6 +9,7 @@ import {
 } from "@/lib/fr24";
 import { normalizeBrand, airlineFromCallsign, callsignIcao } from "@/lib/airlines";
 import { specialLivery } from "@/lib/specialLiveries";
+import { RARITY_RANK, RARITY_TIERS } from "@/lib/rarity";
 import { aircraftTypeName, aircraftTypeDisplay, aircraftCategory } from "@/lib/aircraftTypes";
 import {
   haversineMeters,
@@ -379,11 +380,21 @@ export async function POST(request: Request) {
       .limit(1);
     return (data?.length ?? 0) > 0;
   };
-  const [seenType, seenAirline, seenOrigin, seenDestination] = await Promise.all([
+  // Their very first catch? Same "before the insert" framing — one head count.
+  const anyBefore = async (): Promise<boolean> => {
+    const { data } = await supabase
+      .from("sightings")
+      .select("id")
+      .eq("user_id", user.id)
+      .limit(1);
+    return (data?.length ?? 0) > 0;
+  };
+  const [seenType, seenAirline, seenOrigin, seenDestination, seenAny] = await Promise.all([
     seenBefore("aircraft_type", aircraftType),
     seenBefore("airline_icao", airlineIcao),
     seenBefore("origin", origin),
     seenBefore("destination", destination),
+    anyBefore(),
   ]);
   const discoveries = {
     type: Boolean(aircraftType) && !seenType,
@@ -391,6 +402,7 @@ export async function POST(request: Request) {
     origin: Boolean(origin) && !seenOrigin,
     destination: Boolean(destination) && !seenDestination,
   };
+  const firstCatch = !seenAny;
 
   // Rarity is driven by the aircraft type's tier in the universe.
   let rarity = "common";
@@ -401,6 +413,21 @@ export async function POST(request: Request) {
       .eq("code", aircraftType)
       .maybeSingle();
     if (typeRow?.rarity) rarity = typeRow.rarity;
+  }
+
+  // Never caught anything this rare (or rarer) before? Drives the celebration
+  // tier on the client. Probe only for rare+ — a first common/uncommon is not a
+  // moment worth a fanfare. Index: sightings_user_rarity_idx (user_id, rarity).
+  let newRarityTier = false;
+  const rarityRank = RARITY_RANK[rarity] ?? 0;
+  if (rarityRank >= RARITY_RANK.rare) {
+    const { data: rarer } = await supabase
+      .from("sightings")
+      .select("id")
+      .eq("user_id", user.id)
+      .in("rarity", RARITY_TIERS.slice(rarityRank))
+      .limit(1);
+    newRarityTier = (rarer?.length ?? 0) === 0;
   }
 
   // ---- Photo upload — already validated up front (size + magic bytes); the
@@ -513,6 +540,9 @@ export async function POST(request: Request) {
     sighting: data,
     photoUrl,
     discoveries,
+    // Celebration flags (optional for older clients; see lib/celebration.ts).
+    firstCatch,
+    newRarityTier,
     typeName,
     specialLivery: liv?.livery ?? null,
     wetLease,

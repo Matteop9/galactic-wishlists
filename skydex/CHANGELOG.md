@@ -2,6 +2,33 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.7 — 2026-09-03
+
+**New-catch celebration tiers + mascot groundwork.** The Discovery moment (`components/DiscoveryMoment.tsx`) had no entrance motion at all, and the two keyframes written for it in the June redesign (`.sd-stamp-thunk`, `.sd-card-rise`) were never wired up. This release makes the post-capture screen celebrate in proportion to novelty, and lays the documents for a mascot character (research + a brief for Claude Design).
+
+### Added — `lib/celebration.ts` (+ `lib/celebration.test.ts`)
+`celebrationTier(result)` → 0–3, a pure function of **server-supplied facts only** (never the late-arriving `type_popularity` RPC, so the animation can never visibly upgrade mid-play): 0 repeat · 1 any `discoveries.*` · 2 rarity ≥ rare, special livery, or `newRarityTier` · 3 `firstCatch` or legendary. `celebrationHeadline()` adds "First catch" / "Legendary" above the existing "New discovery" / "Caught!". First unit tests in the repo: `npm test` = `node --test lib/*.test.ts` (Node 24 strips types natively — no runner dependency; `tsconfig` gains `allowImportingTsExtensions` so the lib can import `./rarity.ts` by extension).
+
+### Changed — `/api/sightings` returns two optional flags
+`app/api/sightings/route.ts`: alongside the four `seenBefore` probes, `firstCatch` (no prior sighting for this user) and `newRarityTier` (no prior sighting at this rarity or rarer; only probed for rare+). Both optional in the JSON so older clients ignore them. Migration `20260903120001_sightings_user_rarity_idx.sql` adds `sightings_user_rarity_idx (user_id, rarity)` for the new probe (applied via Supabase MCP).
+
+### Changed — `components/DiscoveryMoment.tsx`
+- Card enters with `.sd-card-rise`; tier ≥ 1 slams the rarity stamp (`.sd-stamp-thunk`) and staggers the "New …" chips in (`animationDelay` 350 ms + 90 ms/chip).
+- Tier ≥ 2: `.sd-burst` ring in `RARITY_COLOR[rarity]` behind the stamp, timed to land after the thunk; the four popularity numbers count up (`useCountUp`, rAF, ~700 ms, only when tier ≥ 2).
+- Tier 3: `ConfettiLayer` — 40 `transform`/`opacity`-only spans in brass/sky/stamp/paper, positions derived deterministically from the index (no `Math.random`, keeps the component pure under React 19 lint rules), fixed `z-60` `pointer-events: none`, unmounts after 3.2 s or the moment the page is hidden so a backgrounded WKWebView never double-drops. Hero line gets `.sd-hero-reveal`.
+- `navigator.vibrate` on tier ≥ 2 behind feature detection (Android only; iOS haptics need `@capacitor/haptics` + a native rebuild — deferred). No sound, deliberately.
+- New optional `mascotSlot?: ReactNode` prop, rendered for tier ≥ 2 — reserved for the mascot component once designed; unused this release.
+- Photo wrapper holds `h-44` when there is no photo so the stamp always has a home.
+
+### Changed — `app/globals.css`
+New `sd-burst`, `sd-confetti-fall` keyframes + `.sd-burst`, `.sd-confetti-layer`, `.sd-confetti-piece`, `.sd-hero-reveal`. Reduced-motion block: hero reveal off, `.sd-burst` holds as a still faded halo (a big catch must still read as special), `.sd-confetti-layer` hidden.
+
+### Added — dev preview of the tiers
+`app/spot/page.tsx`: with the admin Dev-mode cookie (`skydex_dev=1`, `components/DevModeToggle.tsx`) set, `/spot?celebrate=0..3` synthesises a `DiscoveryResult` (`fakeDiscovery()`) and opens the Discovery moment — no camera, no API call, nothing written. Mapping at the real `setResult` now carries `firstCatch` / `newRarityTier` (default `false`).
+
+### Added — mascot research + design brief (documents only; `research/` is gitignored, so local-only like `docs/`)
+`research/mascot-research.md` (evidence memo: Duolingo/Finch/Forest/Willow/Clippy, archetype comparison, production options, naming risks — "Skye" collides with Paw Patrol’s helicopter-pilot Skye and sits next to Sky plc’s marks) and `research/mascot-design-brief.md` (brief for Claude Design: brand DNA + tokens, three archetype directions to explore, three alternative names requested, six-pose SVG set, speech-bubble spec, six touchpoint mockups, motion notes, deliverable format matching the June redesign round). Decisions recorded: moments-only presence, never on the viewfinder, settings toggle, haptics deferred.
+
 ## v1.0.6 — 2026-08-31
 
 **App Review response (submission 99babdee, reviewed 31 Aug): Guideline 1.5 (Support URL) + 5.1.2 (leaderboard data-use disclosure).** Both were metadata/web-side — the same build can be resubmitted once ASC's Support URL points at the new page and the Privacy Policy URL points at `/privacy`.

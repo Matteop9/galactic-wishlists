@@ -197,6 +197,61 @@ body {
   animation: sd-card-rise 0.45s ease-out both;
 }
 
+/* ---- Discovery-moment celebration (lib/celebration.ts tiers) ------------- */
+/* Tier 2+: a rarity-coloured ring blooms out from behind the stamp, timed to
+   land just after sd-stamp-thunk settles. Colour comes inline (RARITY_COLOR). */
+@keyframes sd-burst {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.sd-burst {
+  pointer-events: none;
+  animation: sd-burst 0.75s ease-out 0.45s both;
+}
+/* Tier 3: paper confetti. ~40 spans, each driven by inline custom properties
+   (--x, --r0, --r1, --dur, --delay); transform/opacity only, so it stays on the
+   compositor in WKWebView. The layer unmounts itself once the last piece lands. */
+@keyframes sd-confetti-fall {
+  0% {
+    transform: translate3d(var(--x), -8vh, 0) rotate(var(--r0));
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(calc(var(--x) + var(--drift)), 108vh, 0) rotate(var(--r1));
+    opacity: 0;
+  }
+}
+.sd-confetti-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sd-confetti-piece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 11px;
+  border-radius: 1px;
+  will-change: transform, opacity;
+  animation: sd-confetti-fall var(--dur) cubic-bezier(0.3, 0.6, 0.6, 1) var(--delay) both;
+}
+/* Tier 3 hero line reveals a beat after the stamp lands. */
+.sd-hero-reveal {
+  animation: sd-card-rise 0.5s ease-out 0.7s both;
+}
+
 /* ---- Loading language ---------------------------------------------------- */
 /* Spinner: the jet circling a dashed range ring (components/Loading.tsx). */
 @keyframes sd-spin {
@@ -273,8 +328,19 @@ body {
   }
   .sd-tag-swing,
   .sd-stamp-thunk,
-  .sd-card-rise {
+  .sd-card-rise,
+  .sd-hero-reveal {
     animation: none !important;
+  }
+  /* celebration: the ring holds as a still halo so a big catch still reads as
+     special; the confetti simply doesn't render */
+  .sd-burst {
+    animation: none !important;
+    transform: scale(1.6);
+    opacity: 0.35;
+  }
+  .sd-confetti-layer {
+    display: none;
   }
   /* loading stays legible without motion: spinner fades instead of spinning,
      skeletons hold their static fill */
