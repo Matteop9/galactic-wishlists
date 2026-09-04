@@ -38,6 +38,9 @@ export default function GuideModal() {
 
   function close() {
     localStorage.setItem(SEEN_KEY, "1");
+    // She introduces herself in the guide, so the standalone intro card
+    // (components/MascotMoments) must not follow this up.
+    localStorage.setItem("skydex_mascot_intro_seen", "1");
     setOpen(false);
   }
 

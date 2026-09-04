@@ -20,6 +20,7 @@ import { announceTicketsChanged, type CaptureTickets, type TicketStatus } from "
 import DiscoveryMoment, { type DiscoveryResult } from "@/components/DiscoveryMoment";
 import Mascot from "@/components/Mascot";
 import MascotSays from "@/components/MascotSays";
+import { captureLine } from "@/lib/mascotLines";
 import { PlaneSpinner, SpinnerBlock } from "@/components/Loading";
 import { TicketGlyph } from "@/components/TicketChip";
 import TargetOverlay from "@/components/TargetOverlay";
@@ -1534,13 +1535,16 @@ export default function SpotPage() {
       {result && (
         <DiscoveryMoment
           result={result}
-          mascotSlot={
-            <MascotSays pose="celebrate" size={72}>
-              {result.discoveries.livery && result.specialLivery
-                ? "Special delivery — new livery for the logbook."
-                : "Didn’t see that coming — nice catch."}
-            </MascotSays>
-          }
+          mascotSlot={(() => {
+            // She always speaks on a big catch and about one ordinary catch in
+            // three (seeded by the sighting id) — lib/mascotLines.
+            const line = captureLine(result);
+            return line ? (
+              <MascotSays pose={line.pose} size={72}>
+                {line.text}
+              </MascotSays>
+            ) : undefined;
+          })()}
           onClose={() => {
             // "Spot another" (also backdrop click / Escape) — a fresh target:
             // keeping the lock re-offered the plane just logged, and re-tapping

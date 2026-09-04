@@ -2,6 +2,21 @@
 
 > **Releases:** user-facing version log lives in `lib/releases.ts` and renders on the home screen. On every published release, bump `CURRENT_VERSION`, prepend a `RELEASES` entry, and mirror it here. Versioning is **semantic MAJOR.MINOR.PATCH** (patch = feature/fix in-phase; minor = phase milestone e.g. 0.3.0 native app; major = public launch). Early `v0.10x` entries below were renumbered to `0.1.x`.
 
+## v1.0.9 — 2026-09-03
+
+**Skye in more places (user request): intro for existing users, chatter on ordinary catches, occasional route hints.** Still within the presence rule — dismissible, rate-limited, never on `/spot`, never over a dialog.
+
+### Added — `lib/mascotLines.ts` (+ `lib/mascotLines.test.ts`)
+Single home for everything she says. `seedHash` (FNV-1a) + `pickBySeed` keep picks deterministic (React purity, and the same catch always gets the same line). `captureLine(result)`: tier ≥ 2 always speaks (`big` / `first` / `legendary` / `livery` pools), tier 0–1 speaks on ~1 in `CAPTURE_CHATTER_ONE_IN = 3` seeded by sighting id, drawing from `new` or `repeat`. `HINTS` keyed by route prefix + `"*"` general pool (`hintPool()` merges longest-prefix route + general); `HINT_QUIET_ROUTES` (`/spot`, `/login`, `/auth`, legal, `/support`, `/s/`); `HINT_CHANCE = 0.35`, `HINT_MIN_GAP_MS = 20 min`, `HINT_DWELL_MS = 9 s`. 5 tests.
+
+### Added — `components/MascotMoments.tsx` (mounted in `app/layout.tsx` after WeeklyReview)
+- **Intro**: once, for anyone with `skydex_guide_seen` but no `skydex_mascot_intro_seen` (existing users) — a fixed paper card above the tab bar (wave, 64 px, "Meet Skye", link to Settings → Your companion, "Noted"). `GuideModal.close()` now also sets the intro key, so new users who met her in the guide never get both.
+- **Hints**: signed-in only; on each navigation, after a 1.8 s settle, if not a quiet route, no `[role=dialog]` open, cool-down passed and the dice land (`HINT_CHANCE`), show a point-pose bubble above the tab bar; never repeats the previous hint (`skydex_mascot_hint_last`), stamps `skydex_mascot_hint_at`; slides away after `HINT_DWELL_MS` or on tap.
+- Dev: with the `skydex_dev=1` cookie, `?intro=1` / `?hint=1` force each.
+
+### Changed
+- `app/spot/page.tsx` passes `mascotSlot` from `captureLine(result)` (pose `wave` for ordinary lines, `celebrate` for big ones); `DiscoveryMoment` renders the slot whenever provided (the tier ≥ 2 gate moved into `captureLine`).
+
 ## v1.0.8 — 2026-09-03
 
 **App Review response #2 (submission 99babdee, re-reviewed 3 Sept): Guideline 5.1.2 — "The consent needs to be present inside the app binary."** The v1.0.6 fix was web/metadata only (privacy policy wording + a support page); the reviewer wants the agreement obtained *in the app* before a score reaches a global leaderboard. This release adds that consent, makes the leaderboards genuinely optional, and enforces both server-side. Because the iOS shell is Capacitor hosted-mode, this reaches build 1.0(5) with the Vercel deploy — no new binary needed.
@@ -27,7 +42,8 @@ POST now rejects with 403 when `public_consent_at` is null, so no photo or score
 
 **Note:** the boards read empty until users accept (all 20 existing profiles start at `public_consent_at is null`); each is restored the moment its owner agrees.
 
-## v1.0.8 — 2026-09-03
+**Also in v1.0.8 — shipped earlier the same day by a parallel session (App Review 5.1.2 consent gate); the two entries were folded into one version, per the release runbook.**
+
 
 **The mascot lands (Slice 3) + "Special delivery".** Claude Design returned direction A (aviation-coded bird) as `design-handoff/09-skye/` (7 poses, stable ids `#head #eyes #wing-l #wing-r`, brass only on the goggle rim, name proposals Wilco / Pip / Vera — Skye stays the working name pending a word-mark search).
 

@@ -56,7 +56,7 @@ export default function DiscoveryMoment({
   onClose: () => void;
   /** Delete this just-saved catch and return to the camera. */
   onRetake?: () => Promise<{ ok?: boolean; error?: string }>;
-  /** Optional companion (the mascot, once designed) — shown for tier ≥ 2 only. */
+  /** Optional companion line — the caller decides when she speaks (lib/mascotLines captureLine). */
   mascotSlot?: ReactNode;
 }) {
   const [pop, setPop] = useState<Popularity | null>(null);
@@ -209,7 +209,7 @@ export default function DiscoveryMoment({
           </div>
         )}
 
-        {tier >= 2 && mascotSlot && <div className="mt-4 flex justify-center">{mascotSlot}</div>}
+        {mascotSlot && <div className="mt-4 flex justify-center">{mascotSlot}</div>}
 
         {hero && (
           <p

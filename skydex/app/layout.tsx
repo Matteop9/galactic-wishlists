@@ -9,6 +9,7 @@ import GuideModal from "@/components/GuideModal";
 import ConsentGate from "@/components/ConsentGate";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import WeeklyReview from "@/components/WeeklyReview";
+import MascotMoments from "@/components/MascotMoments";
 import { getViewer } from "@/lib/auth";
 import { CURRENT_VERSION } from "@/lib/releases";
 
@@ -90,6 +91,8 @@ export default async function RootLayout({
         {/* Blocking until the user explicitly agrees to publishing (5.1.2). */}
         {user && !consented && <ConsentGate optIn={leaderboardOptIn} />}
         {user && <WeeklyReview userId={user.id} />}
+        {/* Companion: one-time intro for existing users + occasional route hints (never on /spot). */}
+        <MascotMoments signedIn={Boolean(user)} />
         <footer className="border-t border-paper-edge">
           <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-5 py-4 font-mono text-xs text-ink-faint">
             <span>SkyDex · v{CURRENT_VERSION}</span>
