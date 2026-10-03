@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  adminUpsertPick,
   fetchCurrentGameweek,
+  fetchGameweek,
   fetchPickScores,
   fetchSeasonTeamMembers,
   fetchSeasons,
@@ -23,12 +26,22 @@ import { SPORTS } from '../lib/teams'
    Weekend). Method segmented control (Win / BTTS / No pick), selection, second
    team iff BTTS, odds stepper (min 1.50), lock CTA, team progress row.
    Odds are kept as TEXT while typing — a controlled number would swallow the
-   decimal point ("1." parses to 1 and re-renders without the dot). */
+   decimal point ("1." parses to 1 and re-renders without the dot).
+   Admin late entry: once the window has closed, admins can still add or fix a
+   pick (any participant, any closed/settled week via `?gw=<id>`), through the
+   admin_upsert_pick RPC rather than the RLS-gated upsert (migration 0029). */
 
 function EnterPickInner() {
   const qc = useQueryClient()
-  const { me, players } = usePlayer()
-  const gwQ = useQuery({ queryKey: ['currentGw'], queryFn: fetchCurrentGameweek })
+  const { me, players, isAdmin } = usePlayer()
+  // `?gw=<id>` (linked from a gameweek page) lets an admin target a past week;
+  // everyone else always lands on the current gameweek.
+  const [params] = useSearchParams()
+  const gwParam = isAdmin ? params.get('gw') : null
+  const gwQ = useQuery({
+    queryKey: gwParam ? ['gw', gwParam] : ['currentGw'],
+    queryFn: () => (gwParam ? fetchGameweek(gwParam) : fetchCurrentGameweek()),
+  })
   const gw = gwQ.data
   const seasonsQ = useQuery({
     queryKey: ['seasons'],
@@ -88,6 +101,30 @@ function EnterPickInner() {
     return players.filter((p) => p.acca_team === me.acca_team)
   }, [me, players, stm])
 
+  const windowOpen =
+    !!gw &&
+    ['scheduled', 'open'].includes(gw.status) &&
+    Date.now() >= new Date(gw.window_opens).getTime() &&
+    Date.now() < new Date(gw.window_closes).getTime()
+  const pastDeadline =
+    !!gw &&
+    (['closed', 'settled'].includes(gw.status) ||
+      Date.now() >= new Date(gw.window_closes).getTime())
+  // Admins may add/fix picks after the deadline (server-enforced by the RPC).
+  const lateEntry = isAdmin && pastDeadline && gw?.status !== 'skipped'
+  const canSave = windowOpen || lateEntry
+  const closesIn = useCountdown(windowOpen ? gw!.window_closes : null)
+
+  // Late entry is for anyone in the gameweek, not just my own team.
+  const participants = useMemo(() => {
+    if (stm && stm.length > 0) {
+      const ids = new Set(stm.map((m) => m.player_id))
+      return players.filter((p) => ids.has(p.id))
+    }
+    return players
+  }, [players, stm])
+  const eligible = lateEntry ? participants : myTeamPlayers
+
   const [forPlayer, setForPlayer] = useState<string | null>(null)
   const target = forPlayer ?? me?.id ?? null
   const existing = picks?.find((p) => p.player_id === target)
@@ -117,16 +154,9 @@ function EnterPickInner() {
     }
   }, [existing?.id, target])
 
-  const windowOpen =
-    !!gw &&
-    ['scheduled', 'open'].includes(gw.status) &&
-    Date.now() >= new Date(gw.window_opens).getTime() &&
-    Date.now() < new Date(gw.window_closes).getTime()
-  const closesIn = useCountdown(windowOpen ? gw!.window_closes : null)
-
   const save = useMutation({
     mutationFn: () =>
-      upsertPick(
+      (lateEntry ? adminUpsertPick : upsertPick)(
         method === 'None'
           ? {
               // Sheet convention: a no-pick is method 'N/A'. The odds here are a
@@ -148,7 +178,16 @@ function EnterPickInner() {
               odds: Math.round(oddsNum * 100) / 100,
             },
       ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['pickScores', gw?.id] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['pickScores', gw?.id] })
+      if (lateEntry) {
+        // the RPC may un-settle the week (settled → closed) and reshape rows
+        qc.invalidateQueries({ queryKey: ['gw', gw?.id] })
+        qc.invalidateQueries({ queryKey: ['gameweeks'] })
+        qc.invalidateQueries({ queryKey: ['currentGw'] })
+        qc.invalidateQueries({ queryKey: ['teamWeekScores', gw?.id] })
+      }
+    },
   })
 
   const valid =
@@ -180,7 +219,7 @@ function EnterPickInner() {
       </div>
     )
 
-  if (me && myTeamPlayers.length === 0)
+  if (me && eligible.length === 0)
     return (
       <div className="page-in px-4">
         <PageTitle>ENTER PICK</PageTitle>
@@ -233,17 +272,33 @@ function EnterPickInner() {
         </div>
       )}
 
-      {!windowOpen && (
+      {!windowOpen && !lateEntry && (
         <LiveBanner pulse={false}>
-          Window is {gw.status === 'closed' || Date.now() >= new Date(gw.window_closes).getTime() ? 'closed' : `not open yet — opens ${ukTime(gw.window_opens)}`}
+          Window is {pastDeadline ? 'closed' : `not open yet — opens ${ukTime(gw.window_opens)}`}
         </LiveBanner>
+      )}
+
+      {lateEntry && (
+        <div
+          className="rounded-[12px] border px-3.5 py-2.5 text-[11.5px]"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--color-loss) 50%, transparent)',
+            background: 'rgba(240,96,96,0.08)',
+            color: 'var(--color-loss)',
+          }}
+        >
+          <span className="font-bold">Admin late entry.</span> The window closed{' '}
+          {ukTime(gw.window_closes)}. Saving here adds or overwrites the pick for anyone in this
+          week (a swept no-pick is replaced), un-settles it, and drops the week back to “closed”
+          for you to settle on the gameweek page. Every save is audited.
+        </div>
       )}
 
       {/* who am I picking for */}
       <div className="mb-4 mt-3">
         <div className="overline mb-1.5">PICKING FOR — {gwDate(gw.gw_date)}</div>
         <div className="flex flex-wrap gap-2">
-          {myTeamPlayers.map((p) => {
+          {eligible.map((p) => {
             const row = picks?.find((x) => x.player_id === p.id)
             const has = !!row
             const active = target === p.id
@@ -388,12 +443,14 @@ function EnterPickInner() {
       )}
       {save.isSuccess && (
         <p className="mb-2 text-[11.5px]" style={{ color: 'var(--color-accent-bright)' }}>
-          Locked in{existing ? ' (updated)' : ''}. Editable until {ukTime(gw.window_closes)}.
+          {lateEntry
+            ? `Recorded as a late entry${existing ? ' (overwritten)' : ''}. Settle it on the gameweek page.`
+            : `Locked in${existing ? ' (updated)' : ''}. Editable until ${ukTime(gw.window_closes)}.`}
         </p>
       )}
 
       <button
-        disabled={!valid || !windowOpen || save.isPending}
+        disabled={!valid || !canSave || save.isPending}
         onClick={() => save.mutate()}
         className="cta w-full rounded-[12px] py-3.5 text-[15px] font-bold disabled:opacity-40"
         style={{
@@ -405,10 +462,12 @@ function EnterPickInner() {
         {save.isPending
           ? 'Saving…'
           : method === 'None'
-            ? 'Record no pick'
-            : existing
-              ? 'Update pick'
-              : 'Lock it in'}
+            ? lateEntry ? 'Record no pick (late)' : 'Record no pick'
+            : lateEntry
+              ? existing ? 'Overwrite pick (late)' : 'Add pick (late)'
+              : existing
+                ? 'Update pick'
+                : 'Lock it in'}
       </button>
       <p className="mt-2 text-center text-[11px] text-muted">
         {method === 'None'

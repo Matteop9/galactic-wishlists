@@ -10,6 +10,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.11.0',
+    date: '2026-10-03',
+    title: 'Late picks, by the admin',
+    items: [
+      'Missed the Saturday cut-off? An admin can now add or fix a pick after the window has closed — it replaces the auto no-pick and gets settled like any other',
+      'Closed and settled gameweeks have a “Late entry” link for admins; everyone else’s deadline is exactly as before',
+    ],
+  },
+  {
     version: '0.10.0',
     date: '2026-09-02',
     title: 'Pages that fill in, not flash',

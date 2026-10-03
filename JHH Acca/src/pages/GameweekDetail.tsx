@@ -299,6 +299,23 @@ function GameweekDetailInner() {
         </p>
       )}
 
+      {isAdmin && gw && ['closed', 'settled'].includes(gw.status) && (
+        <Link
+          to={`/pick?gw=${gw.id}`}
+          className="pressable mb-3 flex items-center justify-between rounded-[12px] border px-3.5 py-2.5 text-[11.5px]"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--color-gold) 45%, transparent)',
+            background: 'rgba(242,201,76,0.07)',
+            color: 'var(--color-gold)',
+          }}
+        >
+          <span>
+            <span className="font-bold">Late entry.</span> Add or fix a pick for this week — admin only, audited.
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      )}
+
       {sweeps.map((w) => (
         <SweepBanner key={w.team_name} teamName={w.team_name} legs={w.legs} color={isTest ? 'var(--color-gold)' : teamColor(w.team_name)} />
       ))}

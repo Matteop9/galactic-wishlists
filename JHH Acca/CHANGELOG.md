@@ -1,5 +1,35 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.11.0 — 2026-10-03
+
+Admin late pick entry. Picks live in the group chat (Fri 8 PM) and get transcribed into the app
+by Sat 23:59; when one wasn't, the sweeper wrote an N/A row (team-average odds, result 0,
+locked) and nobody could put the real pick in afterwards. Now admins can — the deadline is
+unchanged for everyone else.
+
+- **`admin_upsert_pick(p_gw, p_player, p_method, p_team, p_second_team, p_odds)`** (migration
+  `0029`, security definer, admins only): inserts or overwrites a pick after the window has
+  closed for any participant in that gameweek. Resets `result`/`void_reason`/`locked` so the row
+  is re-settled on the gameweek page (a swept no-pick is replaced), drops the fixture match when
+  the selection changed, finalises a late `N/A` immediately via `insert_no_picks`, and flips a
+  `settled` week back to `closed` while any pick is unsettled (same shape as `settle_pick`). Fires
+  the usual `picks_stamp` + `audit_picks` triggers. Validates method/odds ≥ 1.50/BTTS second team
+  server-side.
+- **Why an RPC, not a policy change**: `picks_insert` applies `window_open()` to admins too, and
+  PostgREST's upsert is `INSERT … ON CONFLICT`, so even the admin update path was rejected once
+  closed — and the column grants keep `result`/`locked` unreachable, so a corrected row would have
+  stayed scored 0. RLS policies and grants are untouched; the RPC is the one sanctioned route.
+- **Enter Pick** (`src/pages/EnterPick.tsx`): admins see an "Admin late entry" banner once the
+  window has closed (status `closed`/`settled`, or past `window_closes`), can pick for anyone in
+  the week (not just teammates), and save through the RPC; labels read "Add pick (late)" /
+  "Overwrite pick (late)" / "Record no pick (late)". Non-admins: unchanged, button still disabled.
+  Accepts `?gw=<id>` (admins only) to target a past gameweek; otherwise the current one.
+- **Gameweek page**: admin-only "Late entry" link on `closed`/`settled` weeks →
+  `/pick?gw=<id>`. On save, `gw` / `gameweeks` / `currentGw` / `teamWeekScores` caches are
+  invalidated as the week may un-settle.
+- Numbered `0029` because the live project already carries a `0028_intl_break_only` migration
+  (breaks-only standings mode, `leaderboard(date, date, text)`) that is not in this repo.
+
 ## v0.10.0 — 2026-09-02
 
 Loading states and motion. Feedback-queue request: *"Loading pages, animations"* — clarified as

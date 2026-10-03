@@ -189,6 +189,28 @@ export const upsertPick = (pick: {
       .single(),
   )
 
+/** Admin-only late entry (migration 0029): inserts or overwrites a pick after
+    the window has closed, un-settling the row so it can be re-settled. Replaces
+    a swept no-pick. Use `upsertPick` while the window is open. */
+export const adminUpsertPick = (pick: {
+  gameweek_id: string
+  player_id: string
+  method: string
+  team: string
+  second_team: string | null
+  odds: number
+}) =>
+  unwrap<string>(
+    supabase.rpc('admin_upsert_pick', {
+      p_gw: pick.gameweek_id,
+      p_player: pick.player_id,
+      p_method: pick.method,
+      p_team: pick.team,
+      p_second_team: pick.second_team,
+      p_odds: pick.odds,
+    }),
+  )
+
 export const settlePick = (
   pickId: string,
   result: 0 | 1 | null,
