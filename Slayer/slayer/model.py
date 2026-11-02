@@ -146,9 +146,10 @@ def model_master(master: str, table: dict, *, required: list[dict], ca_bosses: s
         r["p"] = r["weight"] / total if total and not r["blocked"] else 0.0
         r["score"] = _score(r, maxes, weights)
         r["scores"] = {k: _score(r, maxes, w) for k, w in cfg["objectives"].items() if not k.startswith("_")}
+        has_ca = weights["ca"] > 0 and r["ca"] > 0   # brief rule: open CA points on the task = DO
         if r["blocked"]:
-            r["verdict"] = "UNBLOCK?" if r["score"] >= cfg["do_score_min"] else "BLOCKED"
-        elif r["score"] >= cfg["do_score_min"]:
+            r["verdict"] = "UNBLOCK?" if (has_ca or r["score"] >= cfg["do_score_min"]) else "BLOCKED"
+        elif has_ca or r["score"] >= cfg["do_score_min"]:
             r["verdict"] = "DO"
         elif r["score"] <= block_cut and r["p"] >= cfg["block_weight_min_pct"] / 100:
             r["verdict"] = "BLOCK"

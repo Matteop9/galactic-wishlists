@@ -232,7 +232,7 @@ Recommended blocks under ca (0 free slots): none; cost 0 slayer pts [derived]. 1
 
 Block list by objective [derived]: **ca** ['Metal Dragons', 'Abyssal Demons', 'Dark Beasts', 'Hellhounds', 'Lizardmen', 'Black Dragons', 'Cave Kraken']; **xp** ['Cave Kraken']; **gp** ['Dark Beasts', 'TzHaar', 'Kalphite', 'Nechryael']; **balanced** ['Dark Beasts', 'Cave Kraken']
 
-Blocked tasks worth freeing under ca: ['Dagannoth', 'Greater Demons']. Freeing lifts per roll to CA 6.92, xp/hr 46,227, gp/hr 1,137,535 [derived] (cancelling a block is free, re-blocking costs again).
+Blocked tasks worth freeing under ca: ['Black Demons', 'Dagannoth', 'Greater Demons']. Freeing lifts per roll to CA 7.11, xp/hr 46,198, gp/hr 1,203,985 [derived] (cancelling a block is free, re-blocking costs again).
 
 Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
 
@@ -241,13 +241,13 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 | Greater Demons | 9 | 0.0 | 51 | 50,000 | 3,849,000 | 15* | 1.00 | 1.00/0.45/0.97 | Greater Demon, K'ril Tsutsaroth, Skotizo, Tormented Demon | **UNBLOCK?** |
 | Dagannoth | 9 | 0.0 | 41 | 85,000 | 1,995,000 | 15* | 0.80 | 0.80/0.77/0.50 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **UNBLOCK?** |
 | TzHaar | 10 | 4.5 | 38 | 100,000 | 100,000* | 60* | 0.75 | 0.75/0.91/0.03 | TzHaar-Ket-Rak's Challenges, TzKal-Zuk, TzTok-Jad | **DO** |
-| Fire Giants | 7 | 3.1 | 15 | 40,000 | 50,000* | 20* | 0.29 | 0.29/0.36/0.01 | Fire Giant, Giants, Royal Titans | **SKIP** |
-| Gryphons | 7 | 3.1 | 14 | 50,000 | 150,000* | 25* | 0.27 | 0.27/0.45/0.04 | Shellbane gryphon | **SKIP** |
-| Black Demons | 8 | 0.0 | 13 | 45,000 | 3,958,000 | 18* | 0.25 | 0.25/0.41/1.00 | Demonic Gorilla, Skotizo | **BLOCKED** |
-| Boss | 12 | 5.4 | 11.88 | 40,000* | 3,118,000 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **SKIP** |
-| Gargoyles | 8 | 3.6 | 6 | 30,000 | 855,000 | 25* | 0.12 | 0.12/0.27/0.22 | Gargoyle, Grotesque Guardians | **SKIP** |
-| Cave Kraken | 9 | 4.0 | 5 | 15,000 | 812,000 | 30* | 0.10 | 0.10/0.14/0.21 | Kraken | **BLOCK** |
-| Blue Dragons | 4 | 1.8 | 5 | 25,000 | 3,857,000 | 25* | 0.10 | 0.10/0.23/0.97 | Vorkath | **SKIP** |
+| Fire Giants | 7 | 3.1 | 15 | 40,000 | 50,000* | 20* | 0.29 | 0.29/0.36/0.01 | Fire Giant, Giants, Royal Titans | **DO** |
+| Gryphons | 7 | 3.1 | 14 | 50,000 | 150,000* | 25* | 0.27 | 0.27/0.45/0.04 | Shellbane gryphon | **DO** |
+| Black Demons | 8 | 0.0 | 13 | 45,000 | 3,958,000 | 18* | 0.25 | 0.25/0.41/1.00 | Demonic Gorilla, Skotizo | **UNBLOCK?** |
+| Boss | 12 | 5.4 | 11.88 | 40,000* | 3,118,000 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **DO** |
+| Gargoyles | 8 | 3.6 | 6 | 30,000 | 855,000 | 25* | 0.12 | 0.12/0.27/0.22 | Gargoyle, Grotesque Guardians | **DO** |
+| Cave Kraken | 9 | 4.0 | 5 | 15,000 | 812,000 | 30* | 0.10 | 0.10/0.14/0.21 | Kraken | **DO** |
+| Blue Dragons | 4 | 1.8 | 5 | 25,000 | 3,857,000 | 25* | 0.10 | 0.10/0.23/0.97 | Vorkath | **DO** |
 | Metal Dragons | 14 | 0.0 | 0 | 30,000 | 1,627,000 | 45* | 0.00 | 0.00/0.27/0.41 | - | **BLOCKED** |
 | Abyssal Demons | 12 | 5.4 | 0 | 80,000 | 2,307,000 | 18* | 0.00 | 0.00/0.73/0.58 | Abyssal Sire | **BLOCK** |
 | Dark Beasts | 11 | 4.9 | 0 | 42,000 | 150,000* | 25* | 0.00 | 0.00/0.38/0.04 | - | **BLOCK** |
@@ -297,13 +297,13 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 | Greater demons | 7 | 2.7 | 51 | 50,000 | 3,849,000 | 15* | 1.00 | 1.00/0.45/0.97 | Greater Demon, K'ril Tsutsaroth, Skotizo, Tormented Demon | **DO** |
 | Dagannoth | 8 | 3.1 | 41 | 85,000 | 1,995,000 | 15* | 0.80 | 0.80/0.77/0.50 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
 | TzHaar | 10 | 3.8 | 38 | 100,000 | 100,000* | 60* | 0.75 | 0.75/0.91/0.03 | TzHaar-Ket-Rak's Challenges, TzKal-Zuk, TzTok-Jad | **DO** |
-| Fire giants | 9 | 3.4 | 15 | 40,000 | 50,000* | 20* | 0.29 | 0.29/0.36/0.01 | Fire Giant, Giants, Royal Titans | **SKIP** |
-| Gryphons | 7 | 2.7 | 14 | 50,000 | 150,000* | 25* | 0.27 | 0.27/0.45/0.04 | Shellbane gryphon | **SKIP** |
-| Black demons | 9 | 3.4 | 13 | 45,000 | 3,958,000 | 18* | 0.25 | 0.25/0.41/1.00 | Demonic Gorilla, Skotizo | **SKIP** |
-| Boss | 8 | 3.1 | 11.88 | 40,000* | 3,118,000 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **SKIP** |
-| Gargoyles | 6 | 2.3 | 6 | 30,000 | 855,000 | 25* | 0.12 | 0.12/0.27/0.22 | Gargoyle, Grotesque Guardians | **SKIP** |
-| Cave kraken | 6 | 2.3 | 5 | 15,000 | 812,000 | 30* | 0.10 | 0.10/0.14/0.21 | Kraken | **SKIP** |
-| Blue dragons | 4 | 1.5 | 5 | 25,000 | 3,857,000 | 25* | 0.10 | 0.10/0.23/0.97 | Vorkath | **SKIP** |
+| Fire giants | 9 | 3.4 | 15 | 40,000 | 50,000* | 20* | 0.29 | 0.29/0.36/0.01 | Fire Giant, Giants, Royal Titans | **DO** |
+| Gryphons | 7 | 2.7 | 14 | 50,000 | 150,000* | 25* | 0.27 | 0.27/0.45/0.04 | Shellbane gryphon | **DO** |
+| Black demons | 9 | 3.4 | 13 | 45,000 | 3,958,000 | 18* | 0.25 | 0.25/0.41/1.00 | Demonic Gorilla, Skotizo | **DO** |
+| Boss | 8 | 3.1 | 11.88 | 40,000* | 3,118,000 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **DO** |
+| Gargoyles | 6 | 2.3 | 6 | 30,000 | 855,000 | 25* | 0.12 | 0.12/0.27/0.22 | Gargoyle, Grotesque Guardians | **DO** |
+| Cave kraken | 6 | 2.3 | 5 | 15,000 | 812,000 | 30* | 0.10 | 0.10/0.14/0.21 | Kraken | **DO** |
+| Blue dragons | 4 | 1.5 | 5 | 25,000 | 3,857,000 | 25* | 0.10 | 0.10/0.23/0.97 | Vorkath | **DO** |
 | Metal dragons | 12 | 4.6 | 0 | 30,000 | 1,627,000 | 45* | 0.00 | 0.00/0.27/0.41 | - | **BLOCK** |
 | Abyssal demons | 9 | 3.4 | 0 | 80,000 | 2,307,000 | 18* | 0.00 | 0.00/0.73/0.58 | Abyssal Sire | **SKIP** |
 | Bloodveld | 9 | 3.4 | 0 | 100,000 | 150,000* | 15* | 0.00 | 0.00/0.91/0.04 | Bloodveld | **SKIP** |
@@ -343,9 +343,9 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 
 `*` = assumed rate, not measured.
 
-### Konar: per roll CA 3.23 -> 4.44, xp/hr 41,399 -> 41,378, gp/hr 1,313,092 -> 1,471,622 [derived]
+### Konar: per roll CA 3.23 -> 4.74, xp/hr 41,399 -> 37,938, gp/hr 1,313,092 -> 1,458,814 [derived]
 
-Recommended blocks under ca (7 free slots): ['Metal dragons', 'Drakes', 'Wyrms', 'Abyssal demons', 'Bloodveld', 'Cave kraken', 'Fire giants']; cost 560 slayer pts [derived], funded by 31 tasks at 18 pts. 13 of the eligible rows still have an assumed xp or gp figure.
+Recommended blocks under ca (7 free slots): ['Metal dragons', 'Drakes', 'Wyrms', 'Abyssal demons', 'Bloodveld', 'Fire giants', 'Kalphite']; cost 560 slayer pts [derived], funded by 31 tasks at 18 pts. 13 of the eligible rows still have an assumed xp or gp figure.
 
 Block list by objective [derived]: **ca** ['Metal dragons', 'Drakes', 'Wyrms', 'Abyssal demons', 'Bloodveld', 'Cave kraken', 'Fire giants']; **xp** ['Cave kraken']; **gp** ['Bloodveld', 'Fire giants', 'Kalphite']; **balanced** ['Drakes', 'Cave kraken', 'Fire giants']
 
@@ -354,12 +354,12 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 | Task | Wt | Roll % | CA pts | XP/hr | GP/hr | Min | Score | ca/xp/gp | Counts | Verdict |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Dagannoth | 8 | 3.6 | 41 | 85,000 | 1,995,000 | 15* | 1.00 | 1.00/0.77/0.50 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
-| Black demons | 9 | 4.0 | 13 | 45,000 | 3,958,000 | 18* | 0.32 | 0.32/0.41/1.00 | Skotizo | **SKIP** |
-| Greater demons | 7 | 3.1 | 13 | 50,000 | 3,849,000 | 15* | 0.32 | 0.32/0.45/0.97 | Greater Demon, Skotizo | **SKIP** |
-| Bosses | 8 | 3.6 | 11.88 | 40,000* | 3,118,000 | 40* | 0.29 | 0.29/0.36/0.79 | boss pool | **SKIP** |
-| Gargoyles | 6 | 2.7 | 6 | 30,000 | 855,000 | 25* | 0.15 | 0.15/0.27/0.22 | Gargoyle, Grotesque Guardians | **SKIP** |
-| Cave kraken | 9 | 4.0 | 5 | 15,000 | 812,000 | 30* | 0.12 | 0.12/0.14/0.21 | Kraken | **BLOCK** |
-| Lesser Nagua | 2 | 0.9 | 4 | 30,000* | 504,000 | 10* | 0.10 | 0.10/0.27/0.13 | Amoxliatl | **SKIP** |
+| Black demons | 9 | 4.0 | 13 | 45,000 | 3,958,000 | 18* | 0.32 | 0.32/0.41/1.00 | Skotizo | **DO** |
+| Greater demons | 7 | 3.1 | 13 | 50,000 | 3,849,000 | 15* | 0.32 | 0.32/0.45/0.97 | Greater Demon, Skotizo | **DO** |
+| Bosses | 8 | 3.6 | 11.88 | 40,000* | 3,118,000 | 40* | 0.29 | 0.29/0.36/0.79 | boss pool | **DO** |
+| Gargoyles | 6 | 2.7 | 6 | 30,000 | 855,000 | 25* | 0.15 | 0.15/0.27/0.22 | Gargoyle, Grotesque Guardians | **DO** |
+| Cave kraken | 9 | 4.0 | 5 | 15,000 | 812,000 | 30* | 0.12 | 0.12/0.14/0.21 | Kraken | **DO** |
+| Lesser Nagua | 2 | 0.9 | 4 | 30,000* | 504,000 | 10* | 0.10 | 0.10/0.27/0.13 | Amoxliatl | **DO** |
 | Metal dragons | 15 | 6.7 | 0 | 30,000 | 1,627,000 | 45* | 0.00 | 0.00/0.27/0.41 | - | **BLOCK** |
 | Drakes | 10 | 4.5 | 0 | 35,000 | 639,000 | 30* | 0.00 | 0.00/0.32/0.16 | - | **BLOCK** |
 | Wyrms | 10 | 4.5 | 0 | 53,000 | 645,000 | 25* | 0.00 | 0.00/0.48/0.16 | Wyrm | **BLOCK** |
