@@ -9,6 +9,7 @@ import sys
 
 from ca.buckets import group
 from ca.idmap import reconcile_with_baseline, save_tasks
+from ca.ordering import order
 from ca.solver import solve
 from fetch.ca_table import get_ca_tasks
 from fetch.common import DATA, ROOT, log, today
@@ -128,6 +129,9 @@ def main():
                      + ", ".join(f"{b} {p} pts" for b, p in sorted(gated.items(), key=lambda x: -x[1]))
                      + f" = {sum(gated.values())} of {sum(v['pts'] for v in slayer_bosses.values())} Slayer-bucket pts.")
 
+    # ordering view (Matteo-weighted)
+    ordering = order(s["chosen"], tasks, done_ids, kc=hs["kc"], gated=set(gated), cfg=cfg["ordering"], solver_cfg=cfg)
+
     # turael example
     tm = next((m for m in masters if m["master"] == args.turael_master), masters[0])
     row = None
@@ -150,6 +154,7 @@ def main():
 
     ctx = {"date": date, "config": cfg, "wikisync": ws, "hiscores": hs, "tasks": tasks, "done_ids": done_ids,
            "solver": s, "diff": diff, "buckets": bk, "slayer": masters, "costs": costs, "turael": tb,
+           "ordering": ordering,
            "flags": flags, "missing": missing, "questions": questions}
     md = build(ctx, show_tasks=args.tasks)
     (ROOT / "report.md").write_text(md, encoding="utf-8")

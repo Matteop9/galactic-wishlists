@@ -9,3 +9,7 @@
 - Config filled from Matteo's answers: Like a Boss on, Duradel, Wings Spread owned, 7 Duradel blocks, no forced excludes.
 - New UNBLOCK? verdict for blocked tasks that carry open CA points, with EV if freed. Blocks matched case-insensitively, unknown block names logged.
 - Turael example skips blocked tasks; report handles a zero-probability target.
+
+## 2026-11-02 v0.2.0
+- Ordering view (`ca/ordering.py`, report section 2b): ranks required-set bosses by open pts x KC familiarity x access (level gate, avoid list, team list), all weights in `config.ordering`.
+- Avoid-list pricing: re-runs the solver with avoid bosses excluded and reports the cutoff shift and the tasks that come in instead. CoX exclusion today: 6.1% -> 4.6%.

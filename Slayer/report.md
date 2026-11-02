@@ -57,6 +57,86 @@ First tasks outside the line:
 
 1-point-better alternative: swap the cutoff task for The Nightmare: Explosion! (Elite, 4 pts, 6.1%).
 
+## 2b. Ordering for Matteo
+
+Score = open pts x (1 + 0.5 x log10(1 + KC)) x access. KC [read]; weights, avoid list ['Chambers of Xeric', 'Chambers of Xeric: Challenge Mode'] (x0.25) and team list (x0.6) are [assumed]. Level-gated bosses score 0. This reorders the required set, it does not change it.
+
+| # | Boss | Open pts | Tasks | KC | Lowest comp% | Score | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | Tombs of Amascut | 73 | 16 | 10 | 8.2% | 111 | fresh target |
+| 2 | Phantom Muspah | 52 | 11 | 7 | 6.9% | 75 | fresh target |
+| 3 | Tombs of Amascut: Expert Mode | 69 | 13 | 0 | 6.5% | 69 | never killed |
+| 4 | Corrupted Hunllef | 22 | 4 | 4,517 | 9.7% | 62 | grind, familiar |
+| 5 | Theatre of Blood | 41 | 8 | 59 | 6.4% | 46 | team content |
+| 6 | Zulrah | 40 | 9 | 1 | 16.0% | 46 | fresh target |
+| 7 | K'ril Tsutsaroth | 30 | 7 | 4 | 8.6% | 40 | fresh target |
+| 8 | Yama | 38 | 8 | 0 | 7.7% | 38 | never killed |
+| 9 | General Graardor | 29 | 7 | 2 | 6.2% | 36 | fresh target |
+| 10 | The Hueycoatl | 35 | 10 | 0 | 13.5% | 35 | never killed |
+| 11 | Phosani's Nightmare | 35 | 7 | 0 | 6.7% | 35 | never killed |
+| 12 | TzTok-Jad | 25 | 5 | 4 | 8.2% | 34 | fresh target |
+| 13 | Crystalline Hunllef | 17 | 4 | 91 | 17.7% | 34 | fresh target |
+| 14 | Kree'arra | 26 | 6 | 1 | 6.2% | 30 | fresh target |
+| 15 | Duke Sucellus | 11 | 2 | 1,740 | 6.7% | 29 | grind, familiar |
+| 16 | Commander Zilyana | 25 | 6 | 1 | 6.3% | 29 | fresh target |
+| 17 | Theatre of Blood: Entry Mode | 25 | 6 | 59 | 10.9% | 28 | team content |
+| 18 | Corporeal Beast | 17 | 4 | 14 | 10.9% | 27 | fresh target |
+| 19 | Royal Titans | 15 | 7 | 35 | 17.7% | 27 | fresh target |
+| 20 | Hespori | 12 | 3 | 49 | 10.0% | 22 | fresh target |
+| 21 | Skotizo | 13 | 3 | 17 | 22.2% | 21 | fresh target |
+| 22 | Maggot King | 21 | 5 | 0 | 2.5% | 21 | never killed |
+| 23 | Mad Angel | 18 | 7 | 1 | 2.2% | 21 | fresh target |
+| 24 | Nex | 22 | 4 | 12 | 8.6% | 21 | team content |
+| 25 | Doom of Mokhaiotl | 19 | 4 | 0 | 6.2% | 19 | never killed |
+| 26 | Moons of Peril | 12 | 4 | 10 | 31.1% | 18 | fresh target |
+| 27 | Barrows | 10 | 4 | 27 | 29.1% | 17 | fresh target |
+| 28 | Zalcano | 16 | 4 | 0 | 19.0% | 16 | never killed |
+| 29 | The Nightmare | 16 | 4 | 0 | 7.5% | 16 | never killed |
+| 30 | Dagannoth Rex | 15 | 5 | 0 | 8.7% | 15 | never killed |
+| 31 | Chaos Elemental | 13 | 4 | 1 | 18.8% | 15 | fresh target |
+| 32 | Scorpia | 13 | 4 | 1 | 18.2% | 15 | fresh target |
+| 33 | TzHaar-Ket-Rak's Challenges | 13 | 3 | 1 | 6.4% | 15 | fresh target |
+| 34 | Shellbane gryphon | 14 | 7 | 0 | 14.4% | 14 | never killed |
+| 35 | Chambers of Xeric | 90 | 20 | 0 | 6.1% | 14 | avoid list, team content, never killed |
+| 36 | Crazy Archaeologist | 9 | 4 | 7 | 35.8% | 13 | fresh target |
+| 37 | Dagannoth Prime | 13 | 4 | 0 | 11.9% | 13 | never killed |
+| 38 | Dagannoth Supreme | 13 | 4 | 0 | 9.1% | 13 | never killed |
+| 39 | Kraken | 5 | 1 | 1,000 | 25.5% | 13 | grind, familiar |
+| 40 | Chaos Fanatic | 10 | 4 | 1 | 19.6% | 12 | fresh target |
+| 41 | Vorkath | 5 | 1 | 324 | 10.5% | 11 | fresh target |
+| 42 | Grotesque Guardians | 6 | 1 | 50 | 9.4% | 11 | fresh target |
+| 43 | Tombs of Amascut: Entry Mode | 7 | 2 | 10 | 23.0% | 11 | fresh target |
+| 44 | Fortis Colosseum | 10 | 2 | 0 | 9.1% | 10 | never killed |
+| 45 | Vet'ion | 7 | 2 | 6 | 32.6% | 10 | fresh target |
+| 46 | Giant Mole | 6 | 2 | 14 | 28.4% | 10 | fresh target |
+| 47 | Venenatis | 7 | 2 | 4 | 24.9% | 9 | fresh target |
+| 48 | Tormented Demon | 8 | 2 | - | 6.3% | 8 | no KC tracked |
+| 49 | Wintertodt | 4 | 2 | 76 | 39.8% | 8 | fresh target |
+| 50 | Deranged Archaeologist | 7 | 4 | 0 | 35.2% | 7 | never killed |
+| 51 | Amoxliatl | 4 | 1 | 20 | 7.6% | 7 | fresh target |
+| 52 | Glough | 4 | 1 | - | 8.4% | 4 | no KC tracked |
+| 53 | Galvek | 4 | 1 | - | 7.0% | 4 | no KC tracked |
+| 54 | Fragment of Seren | 4 | 1 | - | 6.7% | 4 | no KC tracked |
+| 55 | Chambers of Xeric: Challenge Mode | 25 | 5 | 0 | 8.3% | 4 | avoid list, team content, never killed |
+| 56 | Alchemical Hydra | 61 | 12 | 0 | 6.2% | 0 | level-gated, never killed |
+| 57 | Araxxor | 60 | 12 | 0 | 9.1% | 0 | level-gated, never killed |
+| 58 | Thermonuclear Smoke Devil | 12 | 3 | 0 | 19.3% | 0 | level-gated, never killed |
+
+Avoid-list cost [derived]: the required set holds 115 pts from ['Chambers of Xeric', 'Chambers of Xeric: Challenge Mode']. Excluding them entirely moves the cutoff from 6.1% to 4.6% (295 tasks, 1232 pts). Tasks that would come in instead, hardest first:
+- 4.6% TzHaar-Ket-Rak's Challenges: TzHaar-Ket-Rak's Speed-Chaser (Master, 5)
+- 4.9% TzHaar-Ket-Rak's Challenges: Supplies? Who Needs 'em? (Master, 5)
+- 5.0% Vardorvis: Axe Enthusiast (Grandmaster, 6)
+- 5.0% Kree'arra: Feather Hunter (Grandmaster, 6)
+- 5.1% Doom of Mokhaiotl: Doom Chaser (Master, 5)
+- 5.2% The Nightmare: Nightmare (Solo) Speed-Trialist (Elite, 4)
+- 5.3% The Hueycoatl: Hueycoatl Speed-Runner (Grandmaster, 6)
+- 5.3% Theatre of Blood: Hard Mode: Hard Mode? Completed It (Master, 5)
+- 5.4% Theatre of Blood: Theatre (4-Scale) Speed-Chaser (Master, 5)
+- 5.4% Doom of Mokhaiotl: Doom Crawler (Elite, 4)
+- 5.4% The Nightmare: Sleep Tight (Elite, 4)
+- 5.5% Phosani's Nightmare: Perfect Phosani's Nightmare (Grandmaster, 6)
+- and 10 more
+
 ## 3. Route buckets
 
 ### Slayer: 18 bosses, 77 tasks, 302 pts [derived]

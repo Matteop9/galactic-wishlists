@@ -73,6 +73,29 @@ def build(ctx: dict, *, show_tasks: bool = False) -> str:
         w(f"\n1-point-better alternative: swap the cutoff task for {alt['boss']}: {alt['task']} "
           f"({alt['tier']}, {alt['pts']} pts, {_pct(alt['comp_pct'])}).\n")
 
+    od, oc = ctx["ordering"], cfg["ordering"]
+    w("## 2b. Ordering for Matteo\n")
+    w(f"Score = open pts x (1 + {oc['kc_weight']} x log10(1 + KC)) x access. KC {R}; weights, avoid list "
+      f"{oc['avoid_bosses']} (x{oc['avoid_factor']}) and team list (x{oc['team_factor']}) are {A}. "
+      f"Level-gated bosses score 0. This reorders the required set, it does not change it.\n")
+    w("| # | Boss | Open pts | Tasks | KC | Lowest comp% | Score | Why |\n|---|---|---|---|---|---|---|---|")
+    for i, r in enumerate(od["rows"], 1):
+        kc_s = "-" if r["kc"] is None else f"{r['kc']:,}"
+        w(f"| {i} | {r['boss']} | {r['pts']} | {len(r['tasks'])} | {kc_s} | {_pct(r['min_pct'])} | {r['score']:.0f} | {r['why']} |")
+    w("")
+    alt = od["avoid_alt"]
+    if alt:
+        w(f"Avoid-list cost {D}: the required set holds {od['avoid_pts_in_set']} pts from {od['avoid_bosses']}. "
+          f"Excluding them entirely moves the cutoff from {_pct(s['cutoff_pct'])} to {_pct(alt['cutoff_pct'])} "
+          f"({alt['n']} tasks, {alt['total']} pts). Tasks that would come in instead, hardest first:")
+        base_ids = s["chosen_ids"]
+        new_in = [t for t in alt["chosen"] if t["id"] not in base_ids]
+        for t in sorted(new_in, key=lambda t: (t["comp_pct"] or 0))[:12]:
+            w(f"- {_pct(t['comp_pct'])} {t['boss']}: {t['task']} ({t['tier']}, {t['pts']})")
+        if len(new_in) > 12:
+            w(f"- and {len(new_in) - 12} more")
+        w("")
+
     w("## 3. Route buckets\n")
     g = ctx["buckets"]["groups"]
     for bk in ORDER:

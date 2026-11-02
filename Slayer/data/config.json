@@ -3,24 +3,77 @@
   "player": "Hahap",
   "target_points": 1965,
   "forced_include": [
-    "Mad Angel Adept", "Mad Angel Veteran", "Mad Angel Speed-Runner", "Dancing Queen", "Juggling Act",
-    "Smite Fight", "This Is Madness", "Camping the King", "King-sized clobbering", "Trying to fit in"
+    "Mad Angel Adept",
+    "Mad Angel Veteran",
+    "Mad Angel Speed-Runner",
+    "Dancing Queen",
+    "Juggling Act",
+    "Smite Fight",
+    "This Is Madness",
+    "Camping the King",
+    "King-sized clobbering",
+    "Trying to fit in"
   ],
   "forced_exclude": [],
   "slayer": {
-    "masters": ["Duradel", "Nieve", "Konar", "Krystilia"],
+    "masters": [
+      "Duradel",
+      "Nieve",
+      "Konar",
+      "Krystilia"
+    ],
     "current_master": "Duradel",
     "like_a_boss_unlocked": true,
-    "unlocks_owned": ["Like a Boss", "Wings Spread"],
-    "unlocks_assumed": ["Reptile Got Ripped", "Basilocked", "Hot Stuff", "I Wildy More Slayer", "Seeing Red", "Actual Vampyre Slayer", "Stop the Wyvern"],
+    "unlocks_owned": [
+      "Like a Boss",
+      "Wings Spread"
+    ],
+    "unlocks_assumed": [
+      "Reptile Got Ripped",
+      "Basilocked",
+      "Hot Stuff",
+      "I Wildy More Slayer",
+      "Seeing Red",
+      "Actual Vampyre Slayer",
+      "Stop the Wyvern"
+    ],
     "blocks": {
-      "Duradel": ["Metal Dragons", "Dagannoth", "Black Demons", "Suqahs", "Drakes", "Wyrms", "Greater Demons"],
-      "Nieve": [], "Konar": [], "Krystilia": []
+      "Duradel": [
+        "Metal Dragons",
+        "Dagannoth",
+        "Black Demons",
+        "Suqahs",
+        "Drakes",
+        "Wyrms",
+        "Greater Demons"
+      ],
+      "Nieve": [],
+      "Konar": [],
+      "Krystilia": []
     },
     "block_slots": 7,
     "skip_cost": 30,
     "block_weight_min_pct": 4.0,
     "turael_task_minutes": 3,
     "task_minutes_default": 20
+  },
+  "ordering": {
+    "_note": "Ordering view weights. kc_weight scales familiarity by log10(KC); avoid/team factors multiply access. All assumed.",
+    "kc_weight": 0.5,
+    "grind_kc": 500,
+    "avoid_bosses": [
+      "Chambers of Xeric",
+      "Chambers of Xeric: Challenge Mode"
+    ],
+    "avoid_factor": 0.25,
+    "team_bosses": [
+      "Theatre of Blood",
+      "Theatre of Blood: Hard Mode",
+      "Theatre of Blood: Entry Mode",
+      "Chambers of Xeric",
+      "Chambers of Xeric: Challenge Mode",
+      "Nex"
+    ],
+    "team_factor": 0.6
   }
 }
