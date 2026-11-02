@@ -1,7 +1,8 @@
-"""Per-master slayer model: roll probability, open CA points, DO/SKIP/BLOCK verdicts, block EV."""
+"""Per-master slayer model: roll probability, open CA points, XP/GP baselines, verdicts per objective, block EV."""
+import json
 import re
 
-from fetch.common import log
+from fetch.common import DATA, log
 
 # CA-table boss name -> extra names to look for in a master's monster/alternatives text.
 ALIASES = {
@@ -21,26 +22,39 @@ KRYSTILIA_ALTS = {
     "Hill Giants": [], "Moss giants": [], "Ice giants": [],
 }
 BOSS_ROWS = {"boss", "bosses", "wilderness bosses / demi-bosses"}
-# Boss-table bosses that are NOT in the wiki pool but a CA boss name maps onto a pool name.
 POOL_ALIASES = {"Barrows brothers": "Barrows", "Crazy archaeologist": "Crazy Archaeologist",
                 "The Leviathan": "Leviathan", "The Whisperer": "Whisperer",
                 "Dagannoth Kings": ["Dagannoth Prime", "Dagannoth Rex", "Dagannoth Supreme"]}
+DIMS = ("ca", "xp", "gp")
 
 
 def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", s.lower().replace("’", "'")).strip()
 
 
+def load_rates() -> dict:
+    d = json.loads((DATA / "task_rates.json").read_text(encoding="utf-8"))
+    log("rates", f"{len(d['rates'])} assignment baselines loaded, "
+                 f"{sum(1 for r in d['rates'].values() if r.get('source') == 'measured')} measured, rest assumed")
+    return d
+
+
+def rate_for(rates: dict, monster: str) -> dict:
+    r = rates["rates"].get(_norm(monster))
+    if r is None:
+        return {**rates["_default"], "source": "default"}
+    return r
+
+
 def bosses_on_assignment(master: str, a: dict, ca_bosses: set[str]) -> list[str]:
-    """CA bosses that count while on this assignment."""
     if master == "Krystilia":
         return KRYSTILIA_ALTS.get(a["monster"], [])
     text = _norm(a["monster"] + " | " + " | ".join(a["alts"]))
     hits = []
     for boss in ca_bosses:
-        names = [_norm(boss)] + ALIASES.get(boss, [])
-        if boss in ("N/A",):
+        if boss == "N/A":
             continue
+        names = [_norm(boss)] + ALIASES.get(boss, [])
         if any(n and n in text for n in names):
             hits.append(boss)
     return sorted(hits)
@@ -60,13 +74,41 @@ def pool_bosses(boss_slayer: dict, ca_bosses: set[str], slayer_level: int) -> li
     return out
 
 
+def _score(r: dict, maxes: dict, weights: dict) -> float:
+    return sum(weights[d] * (r[d] / maxes[d] if maxes[d] else 0) for d in DIMS)
+
+
+def _block_cut(scores: list[float], cfg: dict) -> float:
+    """BLOCK threshold: the worse of an absolute floor and the master's bottom quantile."""
+    if not scores:
+        return cfg["block_score_max"]
+    srt = sorted(scores)
+    q = srt[min(len(srt) - 1, int(len(srt) * cfg["block_quantile"]))]
+    return max(cfg["block_score_max"], q)
+
+
+def _ev(rows: list[dict], total: int) -> dict:
+    """Expected value per roll (CA pts) and time-weighted xp/hr, gp/hr over the active roll table."""
+    if not rows or not total:
+        return {"ca": 0, "xp": 0, "gp": 0}
+    t = sum(r["weight"] / total * r["minutes"] for r in rows)
+    return {
+        "ca": sum(r["weight"] / total * r["ca"] for r in rows),
+        "xp": sum(r["weight"] / total * r["minutes"] * r["xp"] for r in rows) / t if t else 0,
+        "gp": sum(r["weight"] / total * r["minutes"] * r["gp"] for r in rows) / t if t else 0,
+    }
+
+
 def model_master(master: str, table: dict, *, required: list[dict], ca_bosses: set[str], slayer_level: int,
-                 blocks: list[str], unlocks: list[str], pool: list[str], cfg: dict, costs: dict) -> dict:
+                 blocks: list[str], unlocks: list[str], pool: list[str], cfg: dict, costs: dict,
+                 rates: dict, objective: str) -> dict:
     open_by_boss = {}
     for t in required:
         open_by_boss[t["boss"]] = open_by_boss.get(t["boss"], 0) + t["pts"]
     pool_open = [open_by_boss.get(b, 0) for b in pool]
     pool_ev = sum(pool_open) / len(pool) if pool else 0
+    weights = cfg["objectives"][objective]
+    blocks_l = {b.lower() for b in blocks}
 
     rows = []
     for a in table["assignments"]:
@@ -80,9 +122,11 @@ def model_master(master: str, table: dict, *, required: list[dict], ca_bosses: s
         is_boss = a["monster"].lower() in BOSS_ROWS
         bosses = pool if is_boss else bosses_on_assignment(master, a, ca_bosses)
         open_pts = pool_ev if is_boss else sum(open_by_boss.get(b, 0) for b in bosses)
+        rt = rate_for(rates, a["monster"])
         rows.append({**a, "eligible": True, "is_boss": is_boss, "bosses": bosses,
-                     "open_pts": round(open_pts, 2),
-                     "blocked": a["monster"].lower() in {b.lower() for b in blocks},
+                     "ca": round(open_pts, 2), "open_pts": round(open_pts, 2),
+                     "xp": rt["xp_hr"], "gp": rt["gp_hr"], "minutes": rt["min_per_task"], "rate_src": rt["source"],
+                     "blocked": a["monster"].lower() in blocks_l,
                      "unlock": unlock.group(1) if unlock else None})
     known = {r["monster"].lower() for r in rows}
     for b in blocks:
@@ -92,54 +136,67 @@ def model_master(master: str, table: dict, *, required: list[dict], ca_bosses: s
     elig = [r for r in rows if r["eligible"]]
     active = [r for r in elig if not r["blocked"]]
     total = sum(r["weight"] for r in active)
-    min_p = cfg["block_weight_min_pct"] / 100
+    maxes = {d: max((r[d] for r in elig), default=0) for d in DIMS}
+    block_cut = _block_cut([_score(r, maxes, weights) for r in elig], cfg)
     for r in rows:
         if not r["eligible"]:
             r["verdict"] = "N/A"
             continue
         r["p"] = r["weight"] / total if total and not r["blocked"] else 0.0
+        r["score"] = _score(r, maxes, weights)
+        r["scores"] = {k: _score(r, maxes, w) for k, w in cfg["objectives"].items() if not k.startswith("_")}
         if r["blocked"]:
-            r["verdict"] = "UNBLOCK?" if r["open_pts"] > 0 else "BLOCKED"
-        elif r["open_pts"] > 0:
+            r["verdict"] = "UNBLOCK?" if r["score"] >= cfg["do_score_min"] else "BLOCKED"
+        elif r["score"] >= cfg["do_score_min"]:
             r["verdict"] = "DO"
-        elif r["p"] >= min_p:
+        elif r["score"] <= block_cut and r["p"] >= cfg["block_weight_min_pct"] / 100:
             r["verdict"] = "BLOCK"
         else:
             r["verdict"] = "SKIP"
 
-    ev_before = sum(r["p"] * r["open_pts"] for r in active)
+    ev_before = _ev(active, total)
     free_slots = max(0, cfg["block_slots"] - len(blocks))
     cands = sorted((r for r in active if r["verdict"] == "BLOCK"), key=lambda r: -r["weight"])[:free_slots]
     rec = [r["monster"] for r in cands]
-    total_after = total - sum(r["weight"] for r in cands)
-    ev_after = sum((r["weight"] / total_after) * r["open_pts"] for r in active if r["monster"] not in rec) if total_after else 0
-    # EV if the blocked-but-valuable tasks were freed (blocks are free to cancel, re-blocking costs again)
+    kept = [r for r in active if r["monster"] not in rec]
+    ev_after = _ev(kept, sum(r["weight"] for r in kept))
     unblock = [r for r in elig if r["verdict"] == "UNBLOCK?"]
-    total_unb = total + sum(r["weight"] for r in unblock)
-    ev_unblocked = sum((r["weight"] / total_unb) * r["open_pts"] for r in active + unblock) if total_unb else 0
+    freed = active + unblock
+    ev_unblocked = _ev(freed, sum(r["weight"] for r in freed))
+
+    # What the block list would be under each objective, for the comparison table.
+    by_obj = {}
+    for k, w in cfg["objectives"].items():
+        if k.startswith("_"):
+            continue
+        sc = {r["monster"]: _score(r, maxes, w) for r in elig}
+        cut = _block_cut(list(sc.values()), cfg)
+        blk = sorted((r for r in elig if sc[r["monster"]] <= cut
+                      and r["weight"] / (total or 1) >= cfg["block_weight_min_pct"] / 100),
+                     key=lambda r: -r["weight"])[:cfg["block_slots"]]
+        by_obj[k] = [r["monster"] for r in blk]
+
     block_cost = costs.get(master, {}).get("block_cost")
     pts_per_task = costs.get(master, {}).get("points")
-    log("slayer", f"{master}: {len(elig)} eligible, {len(active)} active, EV {ev_before:.2f} -> {ev_after:.2f} CA pts/roll "
-                  f"with blocks {rec}")
+    log("slayer", f"{master} [{objective}]: {len(elig)} eligible, {len(active)} active, "
+                  f"EV ca {ev_before['ca']:.2f}->{ev_after['ca']:.2f}, xp/hr {ev_before['xp']:,.0f}->{ev_after['xp']:,.0f}, "
+                  f"gp/hr {ev_before['gp']:,.0f}->{ev_after['gp']:,.0f}; blocks {rec}")
     return {
-        "master": master, "rows": rows, "total_weight": total, "ev_before": ev_before, "ev_after": ev_after,
-        "recommended_blocks": rec, "free_slots": free_slots, "block_cost": block_cost, "pts_per_task": pts_per_task,
+        "master": master, "objective": objective, "rows": rows, "total_weight": total,
+        "ev_before": ev_before, "ev_after": ev_after, "ev_unblocked": ev_unblocked,
+        "recommended_blocks": rec, "blocks_by_objective": by_obj, "free_slots": free_slots,
+        "block_cost": block_cost, "pts_per_task": pts_per_task,
         "rec_block_points": (block_cost or 0) * len(rec),
         "rolls_to_fund_blocks": ((block_cost or 0) * len(rec) / pts_per_task) if pts_per_task else None,
         "pool": pool, "pool_ev": pool_ev, "pool_open": dict(zip(pool, pool_open)),
-        "unblock": [r["monster"] for r in unblock], "ev_unblocked": ev_unblocked,
+        "unblock": [r["monster"] for r in unblock],
+        "assumed_rates": sum(1 for r in elig if r["rate_src"] != "measured"),
     }
 
 
 def turael_boost(*, p_target: float, pts_per_task: int, skip_cost: int, turael_minutes: float, streak: int,
                  milestones=((10, 5), (50, 15), (100, 25), (250, 35), (1000, 50))) -> dict:
-    """Fish for a task via Turael (streak reset) vs skipping at the main master.
-
-    Skipping: each roll costs skip_cost points, keeps streak; expected rolls 1/p.
-    Turael: each Turael task costs ~turael_minutes and 0 points; the streak reset forfeits the next
-    milestone bonus (multiplier x pts_per_task) that the current streak was building towards. ASSUMED
-    milestone multipliers, override via config if the wiki disagrees.
-    """
+    """Fish for a task via Turael (streak reset) vs skipping at the main master. Milestone multipliers ASSUMED."""
     if p_target <= 0:
         return {"error": "target task has zero probability at this master"}
     rolls = 1 / p_target

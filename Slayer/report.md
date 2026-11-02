@@ -16,6 +16,7 @@ Caveat: comp% is population difficulty, not Matteo's. He is a CG/DT2 main (top-7
 ## Missing inputs
 
 - data/ids_2026-10-25.json (25 Oct id list) was never supplied, so the 25 Oct -> 2 Nov gain of 52 tasks / 160 pts in the brief cannot be reproduced. Paste it and re-run.
+- data/task_rates.json: no measured xp/gp/minutes baselines yet, all seeded estimates. Overwrite entries and set source to measured.
 
 ## 1. Baseline
 
@@ -223,208 +224,226 @@ Like a Boss unlocked: True [assumed]. Current master: Duradel [assumed]. Unlocks
 
 Master costs [read]: Turael 0 pts/task, block 40, Spria 0 pts/task, block 40, Krystilia 25 pts/task, block 100, Mazchna 6 pts/task, block 50, Vannaka 8 pts/task, block 60, Chaeldar 10 pts/task, block 70, Konar 18 pts/task, block 80, Nieve 12 pts/task, block 90, Duradel 15 pts/task, block 100, Mortimer 0 pts/task, block 120
 
-### Duradel: EV 3.76 -> 3.76 CA pts per roll [derived]
+Objective this run: **ca** weights {'ca': 1.0, 'xp': 0.0, 'gp': 0.0} [assumed]. Score = weighted sum of each task's CA open pts, xp/hr and gp/hr, each scaled 0..1 against the master's best. DO >= 0.5, BLOCK at or below the master's bottom 25% of scores (floor 0.15) with roll >= 4.0%. XP/GP/minutes come from data/task_rates.json; entries not marked measured are [assumed].
 
-Recommended blocks (0 free slots): none; cost 0 slayer pts [derived].
+### Duradel: per roll CA 3.76 -> 3.76, xp/hr 38,979 -> 38,979, gp/hr 295,437 -> 295,437 [derived]
 
-Blocked tasks with open CA points: ['Black Demons', 'Dagannoth', 'Greater Demons']. Freeing them lifts EV to 7.11 pts/roll [derived] (cancelling a block is free, re-blocking costs again).
+Recommended blocks under ca (0 free slots): none; cost 0 slayer pts [derived]. 38 of the eligible rows use assumed rates.
 
-Boss-task pool 32 bosses, mean open 11.9 pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
+Block list by objective [derived]: **ca** ['Metal Dragons', 'Abyssal Demons', 'Dark Beasts', 'Hellhounds', 'Lizardmen', 'Black Dragons', 'Cave Kraken']; **xp** ['Metal Dragons', 'TzHaar', 'Black Dragons', 'Cave Kraken']; **gp** ['Dark Beasts', 'Hellhounds', 'Lizardmen', 'TzHaar', 'Dagannoth', 'Kalphite']; **balanced** ['Metal Dragons']
 
-| Task | Weight | Roll % | Open CA pts | Counts | Verdict |
-|---|---|---|---|---|---|
-| Greater Demons | 9 | 0.0 | 51 | Greater Demon, K'ril Tsutsaroth, Skotizo, Tormented Demon | **UNBLOCK?** |
-| Dagannoth | 9 | 0.0 | 41 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **UNBLOCK?** |
-| TzHaar | 10 | 4.5 | 38 | TzHaar-Ket-Rak's Challenges, TzKal-Zuk, TzTok-Jad | **DO** |
-| Fire Giants | 7 | 3.1 | 15 | Fire Giant, Giants, Royal Titans | **DO** |
-| Gryphons | 7 | 3.1 | 14 | Shellbane gryphon | **DO** |
-| Black Demons | 8 | 0.0 | 13 | Demonic Gorilla, Skotizo | **UNBLOCK?** |
-| Boss | 12 | 5.4 | 11.88 | boss pool | **DO** |
-| Gargoyles | 8 | 3.6 | 6 | Gargoyle, Grotesque Guardians | **DO** |
-| Cave Kraken | 9 | 4.0 | 5 | Kraken | **DO** |
-| Blue Dragons | 4 | 1.8 | 5 | Vorkath | **DO** |
-| Metal Dragons | 14 | 0.0 | 0 | - | **BLOCKED** |
-| Abyssal Demons | 12 | 5.4 | 0 | Abyssal Sire | **BLOCK** |
-| Dark Beasts | 11 | 4.9 | 0 | - | **BLOCK** |
-| Hellhounds | 10 | 4.5 | 0 | Cerberus, Hellhound | **BLOCK** |
-| Lizardmen | 10 | 4.5 | 0 | Lizardman Shaman | **BLOCK** |
-| Black Dragons | 9 | 4.0 | 0 | Black Dragon, Brutal Black Dragon, King Black Dragon | **BLOCK** |
-| Kalphite | 9 | 4.0 | 0 | Kalphite Queen | **BLOCK** |
-| Nechryael | 9 | 4.0 | 0 | - | **BLOCK** |
-| Bloodveld | 8 | 3.6 | 0 | Bloodveld | **SKIP** |
-| Drakes | 8 | 0.0 | 0 | - | **BLOCKED** |
-| Red Dragons | 8 | 3.6 | 0 | - | **SKIP** |
-| Suqahs | 8 | 0.0 | 0 | - | **BLOCKED** |
-| Vampyres | 8 | 3.6 | 0 | - | **SKIP** |
-| Wyrms | 8 | 0.0 | 0 | Wyrm | **BLOCKED** |
-| Aberrant Spectres | 7 | 3.1 | 0 | Aberrant Spectre | **SKIP** |
-| Basilisks | 7 | 3.1 | 0 | Basilisk Knight | **SKIP** |
-| Fossil Island Wyverns | 7 | 3.1 | 0 | - | **SKIP** |
-| Skeletal Wyverns | 7 | 3.1 | 0 | Skeletal Wyvern | **SKIP** |
-| Spiritual Creatures | 7 | 3.1 | 0 | - | **SKIP** |
-| Trolls | 6 | 2.7 | 0 | - | **SKIP** |
-| Ankou | 5 | 2.2 | 0 | - | **SKIP** |
-| Dust Devils | 5 | 2.2 | 0 | - | **SKIP** |
-| Frost dragons | 5 | 2.2 | 0 | - | **SKIP** |
-| Cave Horrors | 4 | 1.8 | 0 | - | **SKIP** |
-| Elves | 4 | 1.8 | 0 | - | **SKIP** |
-| Kurask | 4 | 1.8 | 0 | Kurask | **SKIP** |
-| Mutated Zygomites | 2 | 0.9 | 0 | - | **SKIP** |
-| Waterfiends | 2 | 0.9 | 0 | - | **SKIP** |
-| Araxytes | 10 | - | - | needs Slayer 92 | N/A |
-| Smoke Devils | 9 | - | - | needs Slayer 93 | N/A |
-| Aviansie | 8 | - | - | needs unlock 'Watch the birdie' | N/A |
-| Warped creatures | 8 | - | - | needs unlock 'Warped Reality' | N/A |
-| Aquanites | 5 | - | - | needs unlock 'Lured In' | N/A |
+Blocked tasks worth freeing under ca: ['Dagannoth', 'Greater Demons']. Freeing lifts per roll to CA 6.92, xp/hr 39,817, gp/hr 289,988 [derived] (cancelling a block is free, re-blocking costs again).
 
-### Nieve: EV 6.09 -> 6.38 CA pts per roll [derived]
+Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
 
-Recommended blocks (7 free slots): ['Metal dragons']; cost 90 slayer pts [derived], funded by 8 tasks at 12 pts.
+| Task | Wt | Roll % | CA pts | XP/hr | GP/hr | Min | Score | ca/xp/gp | Counts | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Greater Demons | 9 | 0.0 | 51 | 55,000* | 200,000* | 15* | 1.00 | 1.00/0.65/0.20 | Greater Demon, K'ril Tsutsaroth, Skotizo, Tormented Demon | **UNBLOCK?** |
+| Dagannoth | 9 | 0.0 | 41 | 60,000* | 150,000* | 15* | 0.80 | 0.80/0.71/0.15 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **UNBLOCK?** |
+| TzHaar | 10 | 4.5 | 38 | 20,000* | 100,000* | 60* | 0.75 | 0.75/0.24/0.10 | TzHaar-Ket-Rak's Challenges, TzKal-Zuk, TzTok-Jad | **DO** |
+| Fire Giants | 7 | 3.1 | 15 | 50,000* | 50,000* | 20* | 0.29 | 0.29/0.59/0.05 | Fire Giant, Giants, Royal Titans | **SKIP** |
+| Gryphons | 7 | 3.1 | 14 | 35,000* | 150,000* | 25* | 0.27 | 0.27/0.41/0.15 | Shellbane gryphon | **SKIP** |
+| Black Demons | 8 | 0.0 | 13 | 50,000* | 150,000* | 18* | 0.25 | 0.25/0.59/0.15 | Demonic Gorilla, Skotizo | **BLOCKED** |
+| Boss | 12 | 5.4 | 11.88 | 40,000* | 1,000,000* | 40* | 0.23 | 0.23/0.47/1.00 | boss pool | **SKIP** |
+| Gargoyles | 8 | 3.6 | 6 | 40,000* | 300,000* | 25* | 0.12 | 0.12/0.47/0.30 | Gargoyle, Grotesque Guardians | **SKIP** |
+| Cave Kraken | 9 | 4.0 | 5 | 30,000* | 400,000* | 30* | 0.10 | 0.10/0.35/0.40 | Kraken | **BLOCK** |
+| Blue Dragons | 4 | 1.8 | 5 | 30,000* | 200,000* | 25* | 0.10 | 0.10/0.35/0.20 | Vorkath | **SKIP** |
+| Metal Dragons | 14 | 0.0 | 0 | 25,000* | 300,000* | 45* | 0.00 | 0.00/0.29/0.30 | - | **BLOCKED** |
+| Abyssal Demons | 12 | 5.4 | 0 | 80,000* | 500,000* | 18* | 0.00 | 0.00/0.94/0.50 | Abyssal Sire | **BLOCK** |
+| Dark Beasts | 11 | 4.9 | 0 | 40,000* | 150,000* | 25* | 0.00 | 0.00/0.47/0.15 | - | **BLOCK** |
+| Hellhounds | 10 | 4.5 | 0 | 50,000* | 50,000* | 20* | 0.00 | 0.00/0.59/0.05 | Cerberus, Hellhound | **BLOCK** |
+| Lizardmen | 10 | 4.5 | 0 | 40,000* | 150,000* | 25* | 0.00 | 0.00/0.47/0.15 | Lizardman Shaman | **BLOCK** |
+| Black Dragons | 9 | 4.0 | 0 | 30,000* | 500,000* | 35* | 0.00 | 0.00/0.35/0.50 | Black Dragon, Brutal Black Dragon, King Black Dragon | **BLOCK** |
+| Kalphite | 9 | 4.0 | 0 | 50,000* | 50,000* | 15* | 0.00 | 0.00/0.59/0.05 | Kalphite Queen | **BLOCK** |
+| Nechryael | 9 | 4.0 | 0 | 85,000* | 450,000* | 18* | 0.00 | 0.00/1.00/0.45 | - | **BLOCK** |
+| Bloodveld | 8 | 3.6 | 0 | 70,000* | 150,000* | 15* | 0.00 | 0.00/0.82/0.15 | Bloodveld | **SKIP** |
+| Drakes | 8 | 0.0 | 0 | 35,000* | 300,000* | 30* | 0.00 | 0.00/0.41/0.30 | - | **BLOCKED** |
+| Red Dragons | 8 | 3.6 | 0 | 30,000* | 200,000* | 30* | 0.00 | 0.00/0.35/0.20 | - | **SKIP** |
+| Suqahs | 8 | 0.0 | 0 | 45,000* | 50,000* | 20* | 0.00 | 0.00/0.53/0.05 | - | **BLOCKED** |
+| Vampyres | 8 | 3.6 | 0 | 35,000* | 150,000* | 25* | 0.00 | 0.00/0.41/0.15 | - | **SKIP** |
+| Wyrms | 8 | 0.0 | 0 | 35,000* | 200,000* | 25* | 0.00 | 0.00/0.41/0.20 | Wyrm | **BLOCKED** |
+| Aberrant Spectres | 7 | 3.1 | 0 | 45,000* | 150,000* | 20* | 0.00 | 0.00/0.53/0.15 | Aberrant Spectre | **SKIP** |
+| Basilisks | 7 | 3.1 | 0 | 35,000* | 400,000* | 30* | 0.00 | 0.00/0.41/0.40 | Basilisk Knight | **SKIP** |
+| Fossil Island Wyverns | 7 | 3.1 | 0 | 30,000* | 300,000* | 30* | 0.00 | 0.00/0.35/0.30 | - | **SKIP** |
+| Skeletal Wyverns | 7 | 3.1 | 0 | 30,000* | 400,000* | 35* | 0.00 | 0.00/0.35/0.40 | Skeletal Wyvern | **SKIP** |
+| Spiritual Creatures | 7 | 3.1 | 0 | 35,000* | 30,000* | 25* | 0.00 | 0.00/0.41/0.03 | - | **SKIP** |
+| Trolls | 6 | 2.7 | 0 | 40,000* | 20,000* | 15* | 0.00 | 0.00/0.47/0.02 | - | **SKIP** |
+| Ankou | 5 | 2.2 | 0 | 45,000* | 50,000* | 12* | 0.00 | 0.00/0.53/0.05 | - | **SKIP** |
+| Dust Devils | 5 | 2.2 | 0 | 75,000* | 250,000* | 12* | 0.00 | 0.00/0.88/0.25 | - | **SKIP** |
+| Frost dragons | 5 | 2.2 | 0 | 30,000* | 400,000* | 30* | 0.00 | 0.00/0.35/0.40 | - | **SKIP** |
+| Cave Horrors | 4 | 1.8 | 0 | 35,000* | 150,000* | 20* | 0.00 | 0.00/0.41/0.15 | - | **SKIP** |
+| Elves | 4 | 1.8 | 0 | 30,000* | 200,000* | 20* | 0.00 | 0.00/0.35/0.20 | - | **SKIP** |
+| Kurask | 4 | 1.8 | 0 | 35,000* | 150,000* | 20* | 0.00 | 0.00/0.41/0.15 | Kurask | **SKIP** |
+| Mutated Zygomites | 2 | 0.9 | 0 | 25,000* | 30,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Waterfiends | 2 | 0.9 | 0 | 30,000* | 30,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+| Araxytes | 10 | - | - | - | - | - | - | - | needs Slayer 92 | N/A |
+| Smoke Devils | 9 | - | - | - | - | - | - | - | needs Slayer 93 | N/A |
+| Aviansie | 8 | - | - | - | - | - | - | - | needs unlock 'Watch the birdie' | N/A |
+| Warped creatures | 8 | - | - | - | - | - | - | - | needs unlock 'Warped Reality' | N/A |
+| Aquanites | 5 | - | - | - | - | - | - | - | needs unlock 'Lured In' | N/A |
 
-Boss-task pool 32 bosses, mean open 11.9 pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
+`*` = assumed rate, not measured.
 
-| Task | Weight | Roll % | Open CA pts | Counts | Verdict |
-|---|---|---|---|---|---|
-| Greater demons | 7 | 2.7 | 51 | Greater Demon, K'ril Tsutsaroth, Skotizo, Tormented Demon | **DO** |
-| Dagannoth | 8 | 3.1 | 41 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
-| TzHaar | 10 | 3.8 | 38 | TzHaar-Ket-Rak's Challenges, TzKal-Zuk, TzTok-Jad | **DO** |
-| Fire giants | 9 | 3.4 | 15 | Fire Giant, Giants, Royal Titans | **DO** |
-| Gryphons | 7 | 2.7 | 14 | Shellbane gryphon | **DO** |
-| Black demons | 9 | 3.4 | 13 | Demonic Gorilla, Skotizo | **DO** |
-| Boss | 8 | 3.1 | 11.88 | boss pool | **DO** |
-| Gargoyles | 6 | 2.3 | 6 | Gargoyle, Grotesque Guardians | **DO** |
-| Cave kraken | 6 | 2.3 | 5 | Kraken | **DO** |
-| Blue dragons | 4 | 1.5 | 5 | Vorkath | **DO** |
-| Metal dragons | 12 | 4.6 | 0 | - | **BLOCK** |
-| Abyssal demons | 9 | 3.4 | 0 | Abyssal Sire | **SKIP** |
-| Bloodveld | 9 | 3.4 | 0 | Bloodveld | **SKIP** |
-| Kalphite | 9 | 3.4 | 0 | Kalphite Queen | **SKIP** |
-| Custodian stalker | 8 | 3.1 | 0 | - | **SKIP** |
-| Hellhounds | 8 | 3.1 | 0 | Cerberus, Hellhound | **SKIP** |
-| Lizardmen | 8 | 3.1 | 0 | Lizardman Shaman | **SKIP** |
-| Suqahs | 8 | 3.1 | 0 | - | **SKIP** |
-| Drakes | 7 | 2.7 | 0 | - | **SKIP** |
-| Nechryael | 7 | 2.7 | 0 | - | **SKIP** |
-| Wyrms | 7 | 2.7 | 0 | Wyrm | **SKIP** |
-| Aberrant spectres | 6 | 2.3 | 0 | Aberrant Spectre | **SKIP** |
-| Basilisks | 6 | 2.3 | 0 | Basilisk Knight | **SKIP** |
-| Black dragons | 6 | 2.3 | 0 | Black Dragon, Brutal Black Dragon, King Black Dragon | **SKIP** |
-| Dust devils | 6 | 2.3 | 0 | - | **SKIP** |
-| Spiritual creatures | 6 | 2.3 | 0 | - | **SKIP** |
-| Trolls | 6 | 2.3 | 0 | - | **SKIP** |
-| Vampyres | 6 | 2.3 | 0 | - | **SKIP** |
-| Ankou | 5 | 1.9 | 0 | - | **SKIP** |
-| Cave horrors | 5 | 1.9 | 0 | - | **SKIP** |
-| Dark beasts | 5 | 1.9 | 0 | - | **SKIP** |
-| Fossil Island Wyverns | 5 | 1.9 | 0 | - | **SKIP** |
-| Frost dragons | 5 | 1.9 | 0 | - | **SKIP** |
-| Red dragons | 5 | 1.9 | 0 | - | **SKIP** |
-| Skeletal Wyverns | 5 | 1.9 | 0 | Skeletal Wyvern | **SKIP** |
-| Elves | 4 | 1.5 | 0 | - | **SKIP** |
-| Scabarites | 4 | 1.5 | 0 | - | **SKIP** |
-| Brine rats | 3 | 1.1 | 0 | - | **SKIP** |
-| Kurask | 3 | 1.1 | 0 | Kurask | **SKIP** |
-| Turoth | 3 | 1.1 | 0 | - | **SKIP** |
-| Mutated Zygomites | 2 | 0.8 | 0 | - | **SKIP** |
-| Araxytes | 8 | - | - | needs Slayer 92 | N/A |
-| Smoke devils | 7 | - | - | needs Slayer 93 | N/A |
-| Aviansie | 6 | - | - | needs unlock 'Watch the birdie' | N/A |
-| Warped creatures | 6 | - | - | needs unlock 'Warped Reality' | N/A |
-| Aquanites | 5 | - | - | needs unlock 'Lured In' | N/A |
+### Nieve: per roll CA 6.09 -> 6.38, xp/hr 38,472 -> 39,702, gp/hr 251,069 -> 246,600 [derived]
 
-### Konar: EV 3.23 -> 4.74 CA pts per roll [derived]
+Recommended blocks under ca (7 free slots): ['Metal dragons']; cost 90 slayer pts [derived], funded by 8 tasks at 12 pts. 41 of the eligible rows use assumed rates.
 
-Recommended blocks (7 free slots): ['Metal dragons', 'Drakes', 'Wyrms', 'Abyssal demons', 'Bloodveld', 'Fire giants', 'Kalphite']; cost 560 slayer pts [derived], funded by 31 tasks at 18 pts.
+Block list by objective [derived]: **ca** ['Metal dragons']; **xp** ['Metal dragons']; **gp** none; **balanced** ['Metal dragons']
 
-Boss-task pool 32 bosses, mean open 11.9 pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
+Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
 
-| Task | Weight | Roll % | Open CA pts | Counts | Verdict |
-|---|---|---|---|---|---|
-| Dagannoth | 8 | 3.6 | 41 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
-| Black demons | 9 | 4.0 | 13 | Skotizo | **DO** |
-| Greater demons | 7 | 3.1 | 13 | Greater Demon, Skotizo | **DO** |
-| Bosses | 8 | 3.6 | 11.88 | boss pool | **DO** |
-| Gargoyles | 6 | 2.7 | 6 | Gargoyle, Grotesque Guardians | **DO** |
-| Cave kraken | 9 | 4.0 | 5 | Kraken | **DO** |
-| Lesser Nagua | 2 | 0.9 | 4 | Amoxliatl | **DO** |
-| Metal dragons | 15 | 6.7 | 0 | - | **BLOCK** |
-| Drakes | 10 | 4.5 | 0 | - | **BLOCK** |
-| Wyrms | 10 | 4.5 | 0 | Wyrm | **BLOCK** |
-| Abyssal demons | 9 | 4.0 | 0 | Abyssal Sire | **BLOCK** |
-| Bloodveld | 9 | 4.0 | 0 | Bloodveld | **BLOCK** |
-| Fire giants | 9 | 4.0 | 0 | Fire Giant, Giants | **BLOCK** |
-| Kalphite | 9 | 4.0 | 0 | Kalphite Queen | **BLOCK** |
-| Hellhounds | 8 | 3.6 | 0 | Cerberus, Hellhound | **SKIP** |
-| Lizardmen | 8 | 3.6 | 0 | Lizardman Shaman | **SKIP** |
-| Nechryael | 7 | 3.1 | 0 | - | **SKIP** |
-| Aberrant spectres | 6 | 2.7 | 0 | Aberrant Spectre | **SKIP** |
-| Black dragons | 6 | 2.7 | 0 | Black Dragon, Brutal Black Dragon | **SKIP** |
-| Dust devils | 6 | 2.7 | 0 | - | **SKIP** |
-| Jellies | 6 | 2.7 | 0 | - | **SKIP** |
-| Trolls | 6 | 2.7 | 0 | - | **SKIP** |
-| Ankou | 5 | 2.2 | 0 | - | **SKIP** |
-| Basilisks | 5 | 2.2 | 0 | Basilisk Knight | **SKIP** |
-| Dark beasts | 5 | 2.2 | 0 | - | **SKIP** |
-| Fossil Island Wyverns | 5 | 2.2 | 0 | - | **SKIP** |
-| Red dragons | 5 | 2.2 | 0 | - | **SKIP** |
-| Skeletal Wyverns | 5 | 2.2 | 0 | Skeletal Wyvern | **SKIP** |
-| Blue dragons | 4 | 1.8 | 0 | - | **SKIP** |
-| Vampyres | 4 | 1.8 | 0 | - | **SKIP** |
-| Kurask | 3 | 1.3 | 0 | Kurask | **SKIP** |
-| Turoth | 3 | 1.3 | 0 | - | **SKIP** |
-| Brine rats | 2 | 0.9 | 0 | - | **SKIP** |
-| Mutated Zygomites | 2 | 0.9 | 0 | - | **SKIP** |
-| Waterfiends | 2 | 0.9 | 0 | - | **SKIP** |
-| Hydras | 10 | - | - | needs Slayer 95 | N/A |
-| Smoke devils | 7 | - | - | needs Slayer 93 | N/A |
-| Aviansie | 6 | - | - | needs unlock 'Watch the birdie' | N/A |
-| Warped creatures | 4 | - | - | needs unlock 'Warped Reality' | N/A |
+| Task | Wt | Roll % | CA pts | XP/hr | GP/hr | Min | Score | ca/xp/gp | Counts | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Greater demons | 7 | 2.7 | 51 | 55,000* | 200,000* | 15* | 1.00 | 1.00/0.65/0.20 | Greater Demon, K'ril Tsutsaroth, Skotizo, Tormented Demon | **DO** |
+| Dagannoth | 8 | 3.1 | 41 | 60,000* | 150,000* | 15* | 0.80 | 0.80/0.71/0.15 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
+| TzHaar | 10 | 3.8 | 38 | 20,000* | 100,000* | 60* | 0.75 | 0.75/0.24/0.10 | TzHaar-Ket-Rak's Challenges, TzKal-Zuk, TzTok-Jad | **DO** |
+| Fire giants | 9 | 3.4 | 15 | 50,000* | 50,000* | 20* | 0.29 | 0.29/0.59/0.05 | Fire Giant, Giants, Royal Titans | **SKIP** |
+| Gryphons | 7 | 2.7 | 14 | 35,000* | 150,000* | 25* | 0.27 | 0.27/0.41/0.15 | Shellbane gryphon | **SKIP** |
+| Black demons | 9 | 3.4 | 13 | 50,000* | 150,000* | 18* | 0.25 | 0.25/0.59/0.15 | Demonic Gorilla, Skotizo | **SKIP** |
+| Boss | 8 | 3.1 | 11.88 | 40,000* | 1,000,000* | 40* | 0.23 | 0.23/0.47/1.00 | boss pool | **SKIP** |
+| Gargoyles | 6 | 2.3 | 6 | 40,000* | 300,000* | 25* | 0.12 | 0.12/0.47/0.30 | Gargoyle, Grotesque Guardians | **SKIP** |
+| Cave kraken | 6 | 2.3 | 5 | 30,000* | 400,000* | 30* | 0.10 | 0.10/0.35/0.40 | Kraken | **SKIP** |
+| Blue dragons | 4 | 1.5 | 5 | 30,000* | 200,000* | 25* | 0.10 | 0.10/0.35/0.20 | Vorkath | **SKIP** |
+| Metal dragons | 12 | 4.6 | 0 | 25,000* | 300,000* | 45* | 0.00 | 0.00/0.29/0.30 | - | **BLOCK** |
+| Abyssal demons | 9 | 3.4 | 0 | 80,000* | 500,000* | 18* | 0.00 | 0.00/0.94/0.50 | Abyssal Sire | **SKIP** |
+| Bloodveld | 9 | 3.4 | 0 | 70,000* | 150,000* | 15* | 0.00 | 0.00/0.82/0.15 | Bloodveld | **SKIP** |
+| Kalphite | 9 | 3.4 | 0 | 50,000* | 50,000* | 15* | 0.00 | 0.00/0.59/0.05 | Kalphite Queen | **SKIP** |
+| Custodian stalker | 8 | 3.1 | 0 | 35,000* | 100,000* | 20* | 0.00 | 0.00/0.41/0.10 | - | **SKIP** |
+| Hellhounds | 8 | 3.1 | 0 | 50,000* | 50,000* | 20* | 0.00 | 0.00/0.59/0.05 | Cerberus, Hellhound | **SKIP** |
+| Lizardmen | 8 | 3.1 | 0 | 40,000* | 150,000* | 25* | 0.00 | 0.00/0.47/0.15 | Lizardman Shaman | **SKIP** |
+| Suqahs | 8 | 3.1 | 0 | 45,000* | 50,000* | 20* | 0.00 | 0.00/0.53/0.05 | - | **SKIP** |
+| Drakes | 7 | 2.7 | 0 | 35,000* | 300,000* | 30* | 0.00 | 0.00/0.41/0.30 | - | **SKIP** |
+| Nechryael | 7 | 2.7 | 0 | 85,000* | 450,000* | 18* | 0.00 | 0.00/1.00/0.45 | - | **SKIP** |
+| Wyrms | 7 | 2.7 | 0 | 35,000* | 200,000* | 25* | 0.00 | 0.00/0.41/0.20 | Wyrm | **SKIP** |
+| Aberrant spectres | 6 | 2.3 | 0 | 45,000* | 150,000* | 20* | 0.00 | 0.00/0.53/0.15 | Aberrant Spectre | **SKIP** |
+| Basilisks | 6 | 2.3 | 0 | 35,000* | 400,000* | 30* | 0.00 | 0.00/0.41/0.40 | Basilisk Knight | **SKIP** |
+| Black dragons | 6 | 2.3 | 0 | 30,000* | 500,000* | 35* | 0.00 | 0.00/0.35/0.50 | Black Dragon, Brutal Black Dragon, King Black Dragon | **SKIP** |
+| Dust devils | 6 | 2.3 | 0 | 75,000* | 250,000* | 12* | 0.00 | 0.00/0.88/0.25 | - | **SKIP** |
+| Spiritual creatures | 6 | 2.3 | 0 | 35,000* | 30,000* | 25* | 0.00 | 0.00/0.41/0.03 | - | **SKIP** |
+| Trolls | 6 | 2.3 | 0 | 40,000* | 20,000* | 15* | 0.00 | 0.00/0.47/0.02 | - | **SKIP** |
+| Vampyres | 6 | 2.3 | 0 | 35,000* | 150,000* | 25* | 0.00 | 0.00/0.41/0.15 | - | **SKIP** |
+| Ankou | 5 | 1.9 | 0 | 45,000* | 50,000* | 12* | 0.00 | 0.00/0.53/0.05 | - | **SKIP** |
+| Cave horrors | 5 | 1.9 | 0 | 35,000* | 150,000* | 20* | 0.00 | 0.00/0.41/0.15 | - | **SKIP** |
+| Dark beasts | 5 | 1.9 | 0 | 40,000* | 150,000* | 25* | 0.00 | 0.00/0.47/0.15 | - | **SKIP** |
+| Fossil Island Wyverns | 5 | 1.9 | 0 | 30,000* | 300,000* | 30* | 0.00 | 0.00/0.35/0.30 | - | **SKIP** |
+| Frost dragons | 5 | 1.9 | 0 | 30,000* | 400,000* | 30* | 0.00 | 0.00/0.35/0.40 | - | **SKIP** |
+| Red dragons | 5 | 1.9 | 0 | 30,000* | 200,000* | 30* | 0.00 | 0.00/0.35/0.20 | - | **SKIP** |
+| Skeletal Wyverns | 5 | 1.9 | 0 | 30,000* | 400,000* | 35* | 0.00 | 0.00/0.35/0.40 | Skeletal Wyvern | **SKIP** |
+| Elves | 4 | 1.5 | 0 | 30,000* | 200,000* | 20* | 0.00 | 0.00/0.35/0.20 | - | **SKIP** |
+| Scabarites | 4 | 1.5 | 0 | 30,000* | 50,000* | 20* | 0.00 | 0.00/0.35/0.05 | - | **SKIP** |
+| Brine rats | 3 | 1.1 | 0 | 25,000* | 30,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Kurask | 3 | 1.1 | 0 | 35,000* | 150,000* | 20* | 0.00 | 0.00/0.41/0.15 | Kurask | **SKIP** |
+| Turoth | 3 | 1.1 | 0 | 35,000* | 80,000* | 15* | 0.00 | 0.00/0.41/0.08 | - | **SKIP** |
+| Mutated Zygomites | 2 | 0.8 | 0 | 25,000* | 30,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Araxytes | 8 | - | - | - | - | - | - | - | needs Slayer 92 | N/A |
+| Smoke devils | 7 | - | - | - | - | - | - | - | needs Slayer 93 | N/A |
+| Aviansie | 6 | - | - | - | - | - | - | - | needs unlock 'Watch the birdie' | N/A |
+| Warped creatures | 6 | - | - | - | - | - | - | - | needs unlock 'Warped Reality' | N/A |
+| Aquanites | 5 | - | - | - | - | - | - | - | needs unlock 'Lured In' | N/A |
 
-### Krystilia: EV 1.28 -> 1.33 CA pts per roll [derived]
+`*` = assumed rate, not measured.
 
-Recommended blocks (7 free slots): ['Greater demons']; cost 100 slayer pts [derived], funded by 4 tasks at 25 pts.
+### Konar: per roll CA 3.23 -> 4.44, xp/hr 40,806 -> 42,292, gp/hr 290,348 -> 293,978 [derived]
 
-Boss-task pool 32 bosses, mean open 11.9 pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
+Recommended blocks under ca (7 free slots): ['Metal dragons', 'Drakes', 'Wyrms', 'Abyssal demons', 'Bloodveld', 'Cave kraken', 'Fire giants']; cost 560 slayer pts [derived], funded by 31 tasks at 18 pts. 35 of the eligible rows use assumed rates.
 
-| Task | Weight | Roll % | Open CA pts | Counts | Verdict |
-|---|---|---|---|---|---|
-| Scorpions | 6 | 3.1 | 13 | Scorpia | **DO** |
-| Wilderness bosses / demi-bosses | 8 | 4.1 | 11.88 | boss pool | **DO** |
-| Spiders | 6 | 3.1 | 7 | Venenatis | **DO** |
-| Skeletons | 5 | 2.6 | 7 | Vet'ion | **DO** |
-| Greater demons | 8 | 4.1 | 0 | - | **BLOCK** |
-| Aviansie | 7 | 3.6 | 0 | - | **SKIP** |
-| Black demons | 7 | 3.6 | 0 | - | **SKIP** |
-| Fire giants | 7 | 3.6 | 0 | - | **SKIP** |
-| Hellhounds | 7 | 3.6 | 0 | - | **SKIP** |
-| Ice warriors | 7 | 3.6 | 0 | - | **SKIP** |
-| Magic axes | 7 | 3.6 | 0 | - | **SKIP** |
-| Ankou | 6 | 3.1 | 0 | - | **SKIP** |
-| Bears | 6 | 3.1 | 0 | Callisto | **SKIP** |
-| Earth warriors | 6 | 3.1 | 0 | - | **SKIP** |
-| Ice giants | 6 | 3.1 | 0 | - | **SKIP** |
-| Lesser demons | 6 | 3.1 | 0 | - | **SKIP** |
-| Mammoths | 6 | 3.1 | 0 | - | **SKIP** |
-| Spiritual creatures | 6 | 3.1 | 0 | - | **SKIP** |
-| Abyssal demons | 5 | 2.6 | 0 | - | **SKIP** |
-| Chaos druids | 5 | 2.6 | 0 | - | **SKIP** |
-| Dust devils | 5 | 2.6 | 0 | - | **SKIP** |
-| Ents | 5 | 2.6 | 0 | - | **SKIP** |
-| Jellies | 5 | 2.6 | 0 | - | **SKIP** |
-| Nechryael | 5 | 2.6 | 0 | - | **SKIP** |
-| Revenants | 5 | 2.6 | 0 | - | **SKIP** |
-| Rogues | 5 | 2.6 | 0 | - | **SKIP** |
-| Bandits | 4 | 2.0 | 0 | - | **SKIP** |
-| Black dragons | 4 | 2.0 | 0 | King Black Dragon | **SKIP** |
-| Bloodveld | 4 | 2.0 | 0 | - | **SKIP** |
-| Dark warriors | 4 | 2.0 | 0 | - | **SKIP** |
-| Green dragons | 4 | 2.0 | 0 | - | **SKIP** |
-| Moss giants | 4 | 2.0 | 0 | - | **SKIP** |
-| Black Knights | 3 | 1.5 | 0 | - | **SKIP** |
-| Hill Giants | 3 | 1.5 | 0 | - | **SKIP** |
-| Lava dragons | 3 | 1.5 | 0 | - | **SKIP** |
-| Pirates | 3 | 1.5 | 0 | - | **SKIP** |
-| Zombies | 3 | 1.5 | 0 | - | **SKIP** |
+Block list by objective [derived]: **ca** ['Metal dragons', 'Drakes', 'Wyrms', 'Abyssal demons', 'Bloodveld', 'Cave kraken', 'Fire giants']; **xp** ['Metal dragons', 'Cave kraken']; **gp** ['Black demons', 'Bloodveld', 'Fire giants', 'Kalphite']; **balanced** ['Metal dragons']
+
+Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
+
+| Task | Wt | Roll % | CA pts | XP/hr | GP/hr | Min | Score | ca/xp/gp | Counts | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Dagannoth | 8 | 3.6 | 41 | 60,000* | 150,000* | 15* | 1.00 | 1.00/0.71/0.15 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
+| Black demons | 9 | 4.0 | 13 | 50,000* | 150,000* | 18* | 0.32 | 0.32/0.59/0.15 | Skotizo | **SKIP** |
+| Greater demons | 7 | 3.1 | 13 | 55,000* | 200,000* | 15* | 0.32 | 0.32/0.65/0.20 | Greater Demon, Skotizo | **SKIP** |
+| Bosses | 8 | 3.6 | 11.88 | 40,000* | 1,000,000* | 40* | 0.29 | 0.29/0.47/1.00 | boss pool | **SKIP** |
+| Gargoyles | 6 | 2.7 | 6 | 40,000* | 300,000* | 25* | 0.15 | 0.15/0.47/0.30 | Gargoyle, Grotesque Guardians | **SKIP** |
+| Cave kraken | 9 | 4.0 | 5 | 30,000* | 400,000* | 30* | 0.12 | 0.12/0.35/0.40 | Kraken | **BLOCK** |
+| Lesser Nagua | 2 | 0.9 | 4 | 30,000* | 50,000* | 10* | 0.10 | 0.10/0.35/0.05 | Amoxliatl | **SKIP** |
+| Metal dragons | 15 | 6.7 | 0 | 25,000* | 300,000* | 45* | 0.00 | 0.00/0.29/0.30 | - | **BLOCK** |
+| Drakes | 10 | 4.5 | 0 | 35,000* | 300,000* | 30* | 0.00 | 0.00/0.41/0.30 | - | **BLOCK** |
+| Wyrms | 10 | 4.5 | 0 | 35,000* | 200,000* | 25* | 0.00 | 0.00/0.41/0.20 | Wyrm | **BLOCK** |
+| Abyssal demons | 9 | 4.0 | 0 | 80,000* | 500,000* | 18* | 0.00 | 0.00/0.94/0.50 | Abyssal Sire | **BLOCK** |
+| Bloodveld | 9 | 4.0 | 0 | 70,000* | 150,000* | 15* | 0.00 | 0.00/0.82/0.15 | Bloodveld | **BLOCK** |
+| Fire giants | 9 | 4.0 | 0 | 50,000* | 50,000* | 20* | 0.00 | 0.00/0.59/0.05 | Fire Giant, Giants | **BLOCK** |
+| Kalphite | 9 | 4.0 | 0 | 50,000* | 50,000* | 15* | 0.00 | 0.00/0.59/0.05 | Kalphite Queen | **BLOCK** |
+| Hellhounds | 8 | 3.6 | 0 | 50,000* | 50,000* | 20* | 0.00 | 0.00/0.59/0.05 | Cerberus, Hellhound | **SKIP** |
+| Lizardmen | 8 | 3.6 | 0 | 40,000* | 150,000* | 25* | 0.00 | 0.00/0.47/0.15 | Lizardman Shaman | **SKIP** |
+| Nechryael | 7 | 3.1 | 0 | 85,000* | 450,000* | 18* | 0.00 | 0.00/1.00/0.45 | - | **SKIP** |
+| Aberrant spectres | 6 | 2.7 | 0 | 45,000* | 150,000* | 20* | 0.00 | 0.00/0.53/0.15 | Aberrant Spectre | **SKIP** |
+| Black dragons | 6 | 2.7 | 0 | 30,000* | 500,000* | 35* | 0.00 | 0.00/0.35/0.50 | Black Dragon, Brutal Black Dragon | **SKIP** |
+| Dust devils | 6 | 2.7 | 0 | 75,000* | 250,000* | 12* | 0.00 | 0.00/0.88/0.25 | - | **SKIP** |
+| Jellies | 6 | 2.7 | 0 | 45,000* | 80,000* | 15* | 0.00 | 0.00/0.53/0.08 | - | **SKIP** |
+| Trolls | 6 | 2.7 | 0 | 40,000* | 20,000* | 15* | 0.00 | 0.00/0.47/0.02 | - | **SKIP** |
+| Ankou | 5 | 2.2 | 0 | 45,000* | 50,000* | 12* | 0.00 | 0.00/0.53/0.05 | - | **SKIP** |
+| Basilisks | 5 | 2.2 | 0 | 35,000* | 400,000* | 30* | 0.00 | 0.00/0.41/0.40 | Basilisk Knight | **SKIP** |
+| Dark beasts | 5 | 2.2 | 0 | 40,000* | 150,000* | 25* | 0.00 | 0.00/0.47/0.15 | - | **SKIP** |
+| Fossil Island Wyverns | 5 | 2.2 | 0 | 30,000* | 300,000* | 30* | 0.00 | 0.00/0.35/0.30 | - | **SKIP** |
+| Red dragons | 5 | 2.2 | 0 | 30,000* | 200,000* | 30* | 0.00 | 0.00/0.35/0.20 | - | **SKIP** |
+| Skeletal Wyverns | 5 | 2.2 | 0 | 30,000* | 400,000* | 35* | 0.00 | 0.00/0.35/0.40 | Skeletal Wyvern | **SKIP** |
+| Blue dragons | 4 | 1.8 | 0 | 30,000* | 200,000* | 25* | 0.00 | 0.00/0.35/0.20 | - | **SKIP** |
+| Vampyres | 4 | 1.8 | 0 | 35,000* | 150,000* | 25* | 0.00 | 0.00/0.41/0.15 | - | **SKIP** |
+| Kurask | 3 | 1.3 | 0 | 35,000* | 150,000* | 20* | 0.00 | 0.00/0.41/0.15 | Kurask | **SKIP** |
+| Turoth | 3 | 1.3 | 0 | 35,000* | 80,000* | 15* | 0.00 | 0.00/0.41/0.08 | - | **SKIP** |
+| Brine rats | 2 | 0.9 | 0 | 25,000* | 30,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Mutated Zygomites | 2 | 0.9 | 0 | 25,000* | 30,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Waterfiends | 2 | 0.9 | 0 | 30,000* | 30,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+| Hydras | 10 | - | - | - | - | - | - | - | needs Slayer 95 | N/A |
+| Smoke devils | 7 | - | - | - | - | - | - | - | needs Slayer 93 | N/A |
+| Aviansie | 6 | - | - | - | - | - | - | - | needs unlock 'Watch the birdie' | N/A |
+| Warped creatures | 4 | - | - | - | - | - | - | - | needs unlock 'Warped Reality' | N/A |
+
+`*` = assumed rate, not measured.
+
+### Krystilia: per roll CA 1.28 -> 1.33, xp/hr 39,686 -> 39,071, gp/hr 221,011 -> 221,855 [derived]
+
+Recommended blocks under ca (7 free slots): ['Greater demons']; cost 100 slayer pts [derived], funded by 4 tasks at 25 pts. 37 of the eligible rows use assumed rates.
+
+Block list by objective [derived]: **ca** ['Greater demons']; **xp** ['Wilderness bosses / demi-bosses']; **gp** none; **balanced** none
+
+Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed]): Phantom Muspah 52, Zulrah 40, K'ril Tsutsaroth 30, General Graardor 29, Kree'arra 26, Commander Zilyana 25, Maggot King 21, Dagannoth Rex 15, Shellbane gryphon 14, Chaos Elemental 13, Dagannoth Prime 13, Dagannoth Supreme 13, Scorpia 13, Duke Sucellus 11, Barrows 10, Chaos Fanatic 10, Crazy Archaeologist 9, Venenatis 7, Vet'ion 7, Giant Mole 6, Grotesque Guardians 6, Kraken 5, Vorkath 5
+
+| Task | Wt | Roll % | CA pts | XP/hr | GP/hr | Min | Score | ca/xp/gp | Counts | Verdict |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Scorpions | 6 | 3.1 | 13 | 25,000* | 20,000* | 10* | 1.00 | 1.00/0.29/0.03 | Scorpia | **DO** |
+| Wilderness bosses / demi-bosses | 8 | 4.1 | 11.88 | 30,000* | 800,000* | 30* | 0.91 | 0.91/0.35/1.00 | boss pool | **DO** |
+| Spiders | 6 | 3.1 | 7 | 25,000* | 20,000* | 10* | 0.54 | 0.54/0.29/0.03 | Venenatis | **DO** |
+| Skeletons | 5 | 2.6 | 7 | 30,000* | 20,000* | 10* | 0.54 | 0.54/0.35/0.03 | Vet'ion | **DO** |
+| Greater demons | 8 | 4.1 | 0 | 55,000* | 200,000* | 15* | 0.00 | 0.00/0.65/0.25 | - | **BLOCK** |
+| Aviansie | 7 | 3.6 | 0 | 35,000* | 300,000* | 25* | 0.00 | 0.00/0.41/0.38 | - | **SKIP** |
+| Black demons | 7 | 3.6 | 0 | 50,000* | 150,000* | 18* | 0.00 | 0.00/0.59/0.19 | - | **SKIP** |
+| Fire giants | 7 | 3.6 | 0 | 50,000* | 50,000* | 20* | 0.00 | 0.00/0.59/0.06 | - | **SKIP** |
+| Hellhounds | 7 | 3.6 | 0 | 50,000* | 50,000* | 20* | 0.00 | 0.00/0.59/0.06 | - | **SKIP** |
+| Ice warriors | 7 | 3.6 | 0 | 30,000* | 20,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+| Magic axes | 7 | 3.6 | 0 | 30,000* | 50,000* | 10* | 0.00 | 0.00/0.35/0.06 | - | **SKIP** |
+| Ankou | 6 | 3.1 | 0 | 45,000* | 50,000* | 12* | 0.00 | 0.00/0.53/0.06 | - | **SKIP** |
+| Bears | 6 | 3.1 | 0 | 30,000* | 20,000* | 10* | 0.00 | 0.00/0.35/0.03 | Callisto | **SKIP** |
+| Earth warriors | 6 | 3.1 | 0 | 30,000* | 20,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+| Ice giants | 6 | 3.1 | 0 | 40,000* | 30,000* | 15* | 0.00 | 0.00/0.47/0.04 | - | **SKIP** |
+| Lesser demons | 6 | 3.1 | 0 | 40,000* | 30,000* | 15* | 0.00 | 0.00/0.47/0.04 | - | **SKIP** |
+| Mammoths | 6 | 3.1 | 0 | 35,000* | 50,000* | 15* | 0.00 | 0.00/0.41/0.06 | - | **SKIP** |
+| Spiritual creatures | 6 | 3.1 | 0 | 35,000* | 30,000* | 25* | 0.00 | 0.00/0.41/0.04 | - | **SKIP** |
+| Abyssal demons | 5 | 2.6 | 0 | 80,000* | 500,000* | 18* | 0.00 | 0.00/0.94/0.62 | - | **SKIP** |
+| Chaos druids | 5 | 2.6 | 0 | 25,000* | 100,000* | 10* | 0.00 | 0.00/0.29/0.12 | - | **SKIP** |
+| Dust devils | 5 | 2.6 | 0 | 75,000* | 250,000* | 12* | 0.00 | 0.00/0.88/0.31 | - | **SKIP** |
+| Ents | 5 | 2.6 | 0 | 30,000* | 100,000* | 15* | 0.00 | 0.00/0.35/0.12 | - | **SKIP** |
+| Jellies | 5 | 2.6 | 0 | 45,000* | 80,000* | 15* | 0.00 | 0.00/0.53/0.10 | - | **SKIP** |
+| Nechryael | 5 | 2.6 | 0 | 85,000* | 450,000* | 18* | 0.00 | 0.00/1.00/0.56 | - | **SKIP** |
+| Revenants | 5 | 2.6 | 0 | 25,000* | 800,000* | 25* | 0.00 | 0.00/0.29/1.00 | - | **SKIP** |
+| Rogues | 5 | 2.6 | 0 | 25,000* | 20,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Bandits | 4 | 2.0 | 0 | 30,000* | 20,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+| Black dragons | 4 | 2.0 | 0 | 30,000* | 500,000* | 35* | 0.00 | 0.00/0.35/0.62 | King Black Dragon | **SKIP** |
+| Bloodveld | 4 | 2.0 | 0 | 70,000* | 150,000* | 15* | 0.00 | 0.00/0.82/0.19 | - | **SKIP** |
+| Dark warriors | 4 | 2.0 | 0 | 25,000* | 20,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Green dragons | 4 | 2.0 | 0 | 30,000* | 300,000* | 25* | 0.00 | 0.00/0.35/0.38 | - | **SKIP** |
+| Moss giants | 4 | 2.0 | 0 | 35,000* | 20,000* | 12* | 0.00 | 0.00/0.41/0.03 | - | **SKIP** |
+| Black Knights | 3 | 1.5 | 0 | 30,000* | 20,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+| Hill Giants | 3 | 1.5 | 0 | 35,000* | 20,000* | 12* | 0.00 | 0.00/0.41/0.03 | - | **SKIP** |
+| Lava dragons | 3 | 1.5 | 0 | 30,000* | 300,000* | 25* | 0.00 | 0.00/0.35/0.38 | - | **SKIP** |
+| Pirates | 3 | 1.5 | 0 | 25,000* | 20,000* | 10* | 0.00 | 0.00/0.29/0.03 | - | **SKIP** |
+| Zombies | 3 | 1.5 | 0 | 30,000* | 20,000* | 10* | 0.00 | 0.00/0.35/0.03 | - | **SKIP** |
+
+`*` = assumed rate, not measured.
 
 ## 5. Turael boost example
 

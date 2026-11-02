@@ -123,26 +123,36 @@ def build(ctx: dict, *, show_tasks: bool = False) -> str:
       f"Skip {sc['skip_cost']} pts {A}. Verdict BLOCK needs roll chance >= {sc['block_weight_min_pct']}% {A}.\n")
     w(f"Master costs {R}: " + ", ".join(f"{k} {v['points']} pts/task, block {v['block_cost']}"
                                         for k, v in ctx["costs"].items()) + "\n")
+    w(f"Objective this run: **{ctx['slayer'][0]['objective']}** weights {sc['objectives'][ctx['slayer'][0]['objective']]} {A}. "
+      f"Score = weighted sum of each task's CA open pts, xp/hr and gp/hr, each scaled 0..1 against the master's best. "
+      f"DO >= {sc['do_score_min']}, BLOCK at or below the master's bottom {sc['block_quantile']:.0%} of scores (floor {sc['block_score_max']}) with roll >= {sc['block_weight_min_pct']}%. "
+      f"XP/GP/minutes come from data/task_rates.json; entries not marked measured are {A}.\n")
     for m in ctx["slayer"]:
-        w(f"### {m['master']}: EV {m['ev_before']:.2f} -> {m['ev_after']:.2f} CA pts per roll {D}\n")
-        w(f"Recommended blocks ({m['free_slots']} free slots): {m['recommended_blocks'] or 'none'}; "
+        eb, ea, eu = m["ev_before"], m["ev_after"], m["ev_unblocked"]
+        w(f"### {m['master']}: per roll CA {eb['ca']:.2f} -> {ea['ca']:.2f}, xp/hr {eb['xp']:,.0f} -> {ea['xp']:,.0f}, "
+          f"gp/hr {eb['gp']:,.0f} -> {ea['gp']:,.0f} {D}\n")
+        w(f"Recommended blocks under {m['objective']} ({m['free_slots']} free slots): {m['recommended_blocks'] or 'none'}; "
           f"cost {m['rec_block_points']} slayer pts {D}"
           + (f", funded by {m['rolls_to_fund_blocks']:.0f} tasks at {m['pts_per_task']} pts" if m['rolls_to_fund_blocks'] else "")
-          + ".\n")
+          + f". {m['assumed_rates']} of the eligible rows use assumed rates.\n")
+        w(f"Block list by objective {D}: " + "; ".join(f"**{k}** {v or 'none'}" for k, v in m["blocks_by_objective"].items()) + "\n")
         if m["unblock"]:
-            w(f"Blocked tasks with open CA points: {m['unblock']}. Freeing them lifts EV to "
-              f"{m['ev_unblocked']:.2f} pts/roll {D} (cancelling a block is free, re-blocking costs again).\n")
+            w(f"Blocked tasks worth freeing under {m['objective']}: {m['unblock']}. Freeing lifts per roll to CA {eu['ca']:.2f}, "
+              f"xp/hr {eu['xp']:,.0f}, gp/hr {eu['gp']:,.0f} {D} (cancelling a block is free, re-blocking costs again).\n")
         if m["pool"]:
-            w(f"Boss-task pool {len(m['pool'])} bosses, mean open {m['pool_ev']:.1f} pts {D} (uniform pick {A}): "
+            w(f"Boss-task pool {len(m['pool'])} bosses, mean open {m['pool_ev']:.1f} CA pts {D} (uniform pick {A}): "
               + ", ".join(f"{b} {p}" for b, p in sorted(m["pool_open"].items(), key=lambda x: -x[1]) if p) + "\n")
-        w("| Task | Weight | Roll % | Open CA pts | Counts | Verdict |\n|---|---|---|---|---|---|")
-        for r in sorted(m["rows"], key=lambda r: (r["verdict"] == "N/A", -r.get("open_pts", 0), -r["weight"])):
+        w("| Task | Wt | Roll % | CA pts | XP/hr | GP/hr | Min | Score | ca/xp/gp | Counts | Verdict |\n|---|---|---|---|---|---|---|---|---|---|---|")
+        for r in sorted(m["rows"], key=lambda r: (r["verdict"] == "N/A", -r.get("score", 0), -r["weight"])):
             if r["verdict"] == "N/A":
-                w(f"| {r['monster']} | {r['weight']} | - | - | {r['why']} | N/A |")
+                w(f"| {r['monster']} | {r['weight']} | - | - | - | - | - | - | - | {r['why']} | N/A |")
                 continue
             counts = "boss pool" if r["is_boss"] else ", ".join(r["bosses"]) or "-"
-            w(f"| {r['monster']} | {r['weight']} | {r['p'] * 100:.1f} | {r['open_pts']:g} | {counts} | **{r['verdict']}** |")
-        w("")
+            src = "" if r["rate_src"] == "measured" else "*"
+            sc3 = "/".join(f"{r['scores'][k]:.2f}" for k in ("ca", "xp", "gp"))
+            w(f"| {r['monster']} | {r['weight']} | {r['p'] * 100:.1f} | {r['ca']:g} | {r['xp']:,}{src} | {r['gp']:,}{src} | "
+              f"{r['minutes']}{src} | {r['score']:.2f} | {sc3} | {counts} | **{r['verdict']}** |")
+        w("\n`*` = assumed rate, not measured.\n")
 
     w("## 5. Turael boost example\n")
     tb = ctx["turael"]

@@ -13,3 +13,8 @@
 ## 2026-11-02 v0.2.0
 - Ordering view (`ca/ordering.py`, report section 2b): ranks required-set bosses by open pts x KC familiarity x access (level gate, avoid list, team list), all weights in `config.ordering`.
 - Avoid-list pricing: re-runs the solver with avoid bosses excluded and reports the cutoff shift and the tasks that come in instead. CoX exclusion today: 6.1% -> 4.6%.
+
+## 2026-11-02 v0.3.0
+- Slayer model generalised beyond CA: every assignment carries an XP/hr, GP/hr and minutes baseline from `data/task_rates.json` (75 seeded estimates, overwrite and mark `measured`).
+- `--objective ca|xp|gp|balanced` (presets in `config.slayer.objectives`) scores tasks 0..1 per dimension against the master's best; verdicts DO/SKIP/BLOCK/UNBLOCK? follow the chosen objective, BLOCK is the bottom quartile with a floor.
+- Report shows per-master expected CA/roll, xp/hr and gp/hr before/after blocks, and the block list each objective would pick side by side.

@@ -17,7 +17,7 @@ from fetch.hiscores import get_hiscores
 from fetch.slayer_tables import get_boss_slayer, get_master_costs, get_master_table
 from fetch.wikisync import get_wikisync
 from report.build import build
-from slayer.model import model_master, pool_bosses, turael_boost
+from slayer.model import load_rates, model_master, pool_bosses, turael_boost
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -52,6 +52,7 @@ def main():
     ap.add_argument("--turael-target", default=None, help="assignment name; default = highest open CA pts")
     ap.add_argument("--turael-master", default="Duradel")
     ap.add_argument("--streak", type=int, default=0)
+    ap.add_argument("--objective", default=None, help="ca | xp | gp | balanced (config slayer.objectives)")
     args = ap.parse_args()
 
     date = today()
@@ -111,15 +112,23 @@ def main():
         missing.append("config slayer.like_a_boss_unlocked is null: boss tasks modelled as unlocked.")
     if sc["current_master"] is None:
         missing.append("config slayer.current_master is null: all four masters reported, none preferred.")
+    rates = load_rates()
+    if not any(r.get("source") == "measured" for r in rates["rates"].values()):
+        missing.append("data/task_rates.json: no measured xp/gp/minutes baselines yet, all seeded estimates. "
+                       "Overwrite entries and set source to measured.")
     if not any(sc["blocks"].values()):
         missing.append("config slayer.blocks all empty: verdicts assume no current blocks.")
+    objective = args.objective or sc["default_objective"]
+    if objective not in sc["objectives"]:
+        raise SystemExit(f"unknown objective {objective!r}; choose from {list(sc['objectives'])}")
+    log("run", f"objective {objective} weights {sc['objectives'][objective]}")
     masters = []
     for m in sc["masters"]:
         table = get_master_table(m, **kw)
         masters.append(model_master(m, table, required=s["chosen"], ca_bosses=ca_bosses, slayer_level=slayer_level,
                                     blocks=sc["blocks"].get(m, []),
                                     unlocks=sc.get("unlocks_owned", []) + sc["unlocks_assumed"], pool=pool,
-                                    cfg=sc, costs=costs))
+                                    cfg=sc, costs=costs, rates=rates, objective=objective))
     # Slayer-bucket bosses whose only on-task route is level-gated right now
     slayer_bosses = bk["groups"]["Slayer"]
     reachable = {b for m in masters for r in m["rows"] if r.get("eligible") for b in r.get("bosses", [])}

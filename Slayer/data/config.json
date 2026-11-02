@@ -55,7 +55,34 @@
     "skip_cost": 30,
     "block_weight_min_pct": 4.0,
     "turael_task_minutes": 3,
-    "task_minutes_default": 20
+    "task_minutes_default": 20,
+    "objectives": {
+      "_note": "Weights over normalised (0..1 per master) CA open pts, xp/hr, gp/hr. --objective picks one; 'ca' is the brief's default.",
+      "ca": {
+        "ca": 1.0,
+        "xp": 0.0,
+        "gp": 0.0
+      },
+      "xp": {
+        "ca": 0.0,
+        "xp": 1.0,
+        "gp": 0.0
+      },
+      "gp": {
+        "ca": 0.0,
+        "xp": 0.0,
+        "gp": 1.0
+      },
+      "balanced": {
+        "ca": 0.5,
+        "xp": 0.3,
+        "gp": 0.2
+      }
+    },
+    "default_objective": "ca",
+    "do_score_min": 0.5,
+    "block_score_max": 0.15,
+    "block_quantile": 0.25
   },
   "ordering": {
     "_note": "Ordering view weights. kc_weight scales familiarity by log10(KC); avoid/team factors multiply access. All assumed.",
