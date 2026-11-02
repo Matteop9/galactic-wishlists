@@ -119,3 +119,4 @@ Findings from the first run that change the brief:
 - WikiSync needs a User-Agent header or it 403s. Hiscores: use `index_lite.json`, activities arrive named.
 - `data/ids_2026-10-25.json` was never supplied; the diff step seeds from this run's snapshot instead.
 - Duradel blocks as of 2 Nov: Metal Dragons, Dagannoth, Black Demons, Suqahs, Drakes, Wyrms, Greater Demons. Three of them (Greater Demons 51, Dagannoth 41, Black Demons 13 open pts) are flagged UNBLOCK?; EV 3.76 -> 7.11 per roll if freed.
+- v0.3.0: slayer verdicts now take `--objective ca|xp|gp|balanced`; XP/GP/minutes per assignment live in `data/task_rates.json` (all seeded estimates until Matteo marks entries `measured`). Under xp, Nechryael/Abyssal demons/Dust devils/Bloodveld lead at Duradel; four of his seven blocks (Dagannoth, Greater/Black demons, Suqahs) are UNBLOCK? under xp.
