@@ -18,3 +18,6 @@
 - Slayer model generalised beyond CA: every assignment carries an XP/hr, GP/hr and minutes baseline from `data/task_rates.json` (75 seeded estimates, overwrite and mark `measured`).
 - `--objective ca|xp|gp|balanced` (presets in `config.slayer.objectives`) scores tasks 0..1 per dimension against the master's best; verdicts DO/SKIP/BLOCK/UNBLOCK? follow the chosen objective, BLOCK is the bottom quartile with a floor.
 - Report shows per-master expected CA/roll, xp/hr and gp/hr before/after blocks, and the block list each objective would pick side by side.
+
+## 2026-11-02 v0.3.1
+- Rates sourced from the wiki (fetched 2 Nov 2026): xp/hr for 41 assignments from the Slayer training table (best listed method, raw text kept in `xp_wiki` with the wiki's own do/skip recommendation in `wiki_rec`), gp/hr for 44 from the Money making guide index (guide named in `gp_note`; boss alternatives used where that is the on-task money, e.g. Cerberus for hellhounds). Boss-task gp = mean of 31 Like a Boss pool guides. Per-field `xp_src`/`gp_src`; report marks only assumed cells with `*`. Minutes per task remain estimates. Raw scrape kept in `data/wiki_rates_raw_2026-11-02.json`.

@@ -114,8 +114,10 @@ def main():
         missing.append("config slayer.current_master is null: all four masters reported, none preferred.")
     rates = load_rates()
     if not any(r.get("source") == "measured" for r in rates["rates"].values()):
-        missing.append("data/task_rates.json: no measured xp/gp/minutes baselines yet, all seeded estimates. "
-                       "Overwrite entries and set source to measured.")
+        n_wiki = sum(1 for x in rates["rates"].values() if x.get("source") == "wiki")
+        missing.append(f"data/task_rates.json: no measured baselines yet; {n_wiki} entries use wiki xp/gp figures, "
+                       f"{len(rates['rates']) - n_wiki} are estimates, minutes per task are all estimates. "
+                       "Overwrite any entry and set source to measured.")
     if not any(sc["blocks"].values()):
         missing.append("config slayer.blocks all empty: verdicts assume no current blocks.")
     objective = args.objective or sc["default_objective"]

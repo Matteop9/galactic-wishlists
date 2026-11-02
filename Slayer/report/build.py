@@ -126,7 +126,7 @@ def build(ctx: dict, *, show_tasks: bool = False) -> str:
     w(f"Objective this run: **{ctx['slayer'][0]['objective']}** weights {sc['objectives'][ctx['slayer'][0]['objective']]} {A}. "
       f"Score = weighted sum of each task's CA open pts, xp/hr and gp/hr, each scaled 0..1 against the master's best. "
       f"DO >= {sc['do_score_min']}, BLOCK at or below the master's bottom {sc['block_quantile']:.0%} of scores (floor {sc['block_score_max']}) with roll >= {sc['block_weight_min_pct']}%. "
-      f"XP/GP/minutes come from data/task_rates.json; entries not marked measured are {A}.\n")
+      f"XP/GP come from data/task_rates.json: wiki Slayer training + Money making guide figures {R}, estimates where the wiki has none {A}; minutes per task are {A}.\n")
     for m in ctx["slayer"]:
         eb, ea, eu = m["ev_before"], m["ev_after"], m["ev_unblocked"]
         w(f"### {m['master']}: per roll CA {eb['ca']:.2f} -> {ea['ca']:.2f}, xp/hr {eb['xp']:,.0f} -> {ea['xp']:,.0f}, "
@@ -134,7 +134,7 @@ def build(ctx: dict, *, show_tasks: bool = False) -> str:
         w(f"Recommended blocks under {m['objective']} ({m['free_slots']} free slots): {m['recommended_blocks'] or 'none'}; "
           f"cost {m['rec_block_points']} slayer pts {D}"
           + (f", funded by {m['rolls_to_fund_blocks']:.0f} tasks at {m['pts_per_task']} pts" if m['rolls_to_fund_blocks'] else "")
-          + f". {m['assumed_rates']} of the eligible rows use assumed rates.\n")
+          + f". {m['assumed_rates']} of the eligible rows still have an assumed xp or gp figure.\n")
         w(f"Block list by objective {D}: " + "; ".join(f"**{k}** {v or 'none'}" for k, v in m["blocks_by_objective"].items()) + "\n")
         if m["unblock"]:
             w(f"Blocked tasks worth freeing under {m['objective']}: {m['unblock']}. Freeing lifts per roll to CA {eu['ca']:.2f}, "
@@ -148,10 +148,12 @@ def build(ctx: dict, *, show_tasks: bool = False) -> str:
                 w(f"| {r['monster']} | {r['weight']} | - | - | - | - | - | - | - | {r['why']} | N/A |")
                 continue
             counts = "boss pool" if r["is_boss"] else ", ".join(r["bosses"]) or "-"
-            src = "" if r["rate_src"] == "measured" else "*"
+            xs = "*" if r["xp_src"] == "assumed" else ""
+            gs = "*" if r["gp_src"] == "assumed" else ""
+            ms = "" if r["rate_src"] == "measured" else "*"
             sc3 = "/".join(f"{r['scores'][k]:.2f}" for k in ("ca", "xp", "gp"))
-            w(f"| {r['monster']} | {r['weight']} | {r['p'] * 100:.1f} | {r['ca']:g} | {r['xp']:,}{src} | {r['gp']:,}{src} | "
-              f"{r['minutes']}{src} | {r['score']:.2f} | {sc3} | {counts} | **{r['verdict']}** |")
+            w(f"| {r['monster']} | {r['weight']} | {r['p'] * 100:.1f} | {r['ca']:g} | {r['xp']:,}{xs} | {r['gp']:,}{gs} | "
+              f"{r['minutes']}{ms} | {r['score']:.2f} | {sc3} | {counts} | **{r['verdict']}** |")
         w("\n`*` = assumed rate, not measured.\n")
 
     w("## 5. Turael boost example\n")

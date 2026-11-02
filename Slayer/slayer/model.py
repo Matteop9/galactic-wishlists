@@ -126,6 +126,7 @@ def model_master(master: str, table: dict, *, required: list[dict], ca_bosses: s
         rows.append({**a, "eligible": True, "is_boss": is_boss, "bosses": bosses,
                      "ca": round(open_pts, 2), "open_pts": round(open_pts, 2),
                      "xp": rt["xp_hr"], "gp": rt["gp_hr"], "minutes": rt["min_per_task"], "rate_src": rt["source"],
+                     "xp_src": rt.get("xp_src", "assumed"), "gp_src": rt.get("gp_src", "assumed"),
                      "blocked": a["monster"].lower() in blocks_l,
                      "unlock": unlock.group(1) if unlock else None})
     known = {r["monster"].lower() for r in rows}
@@ -190,7 +191,7 @@ def model_master(master: str, table: dict, *, required: list[dict], ca_bosses: s
         "rolls_to_fund_blocks": ((block_cost or 0) * len(rec) / pts_per_task) if pts_per_task else None,
         "pool": pool, "pool_ev": pool_ev, "pool_open": dict(zip(pool, pool_open)),
         "unblock": [r["monster"] for r in unblock],
-        "assumed_rates": sum(1 for r in elig if r["rate_src"] != "measured"),
+        "assumed_rates": sum(1 for r in elig if r["xp_src"] == "assumed" or r["gp_src"] == "assumed"),
     }
 
 
