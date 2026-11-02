@@ -34,8 +34,8 @@ def _norm(s: str) -> str:
 
 def load_rates() -> dict:
     d = json.loads((DATA / "task_rates.json").read_text(encoding="utf-8"))
-    log("rates", f"{len(d['rates'])} assignment baselines loaded, "
-                 f"{sum(1 for r in d['rates'].values() if r.get('source') == 'measured')} measured, rest assumed")
+    n = {k: sum(1 for r in d['rates'].values() if r.get('source') == k) for k in ('measured', 'wiki', 'assumed')}
+    log("rates", f"{len(d['rates'])} assignment baselines loaded: {n['measured']} measured, {n['wiki']} wiki, {n['assumed']} assumed")
     return d
 
 

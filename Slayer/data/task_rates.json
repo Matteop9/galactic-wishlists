@@ -585,7 +585,7 @@
     },
     "boss": {
       "xp_hr": 40000,
-      "gp_hr": 3118000.0,
+      "gp_hr": 3118000,
       "min_per_task": 40,
       "source": "wiki",
       "note": "Pool average, varies wildly by boss",
@@ -597,7 +597,7 @@
     },
     "bosses": {
       "xp_hr": 40000,
-      "gp_hr": 3118000.0,
+      "gp_hr": 3118000,
       "min_per_task": 40,
       "source": "wiki",
       "xp_src": "assumed",

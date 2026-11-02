@@ -244,7 +244,7 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 | Fire Giants | 7 | 3.1 | 15 | 40,000 | 50,000* | 20* | 0.29 | 0.29/0.36/0.01 | Fire Giant, Giants, Royal Titans | **SKIP** |
 | Gryphons | 7 | 3.1 | 14 | 50,000 | 150,000* | 25* | 0.27 | 0.27/0.45/0.04 | Shellbane gryphon | **SKIP** |
 | Black Demons | 8 | 0.0 | 13 | 45,000 | 3,958,000 | 18* | 0.25 | 0.25/0.41/1.00 | Demonic Gorilla, Skotizo | **BLOCKED** |
-| Boss | 12 | 5.4 | 11.88 | 40,000* | 3,118,000.0 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **SKIP** |
+| Boss | 12 | 5.4 | 11.88 | 40,000* | 3,118,000 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **SKIP** |
 | Gargoyles | 8 | 3.6 | 6 | 30,000 | 855,000 | 25* | 0.12 | 0.12/0.27/0.22 | Gargoyle, Grotesque Guardians | **SKIP** |
 | Cave Kraken | 9 | 4.0 | 5 | 15,000 | 812,000 | 30* | 0.10 | 0.10/0.14/0.21 | Kraken | **BLOCK** |
 | Blue Dragons | 4 | 1.8 | 5 | 25,000 | 3,857,000 | 25* | 0.10 | 0.10/0.23/0.97 | Vorkath | **SKIP** |
@@ -300,7 +300,7 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 | Fire giants | 9 | 3.4 | 15 | 40,000 | 50,000* | 20* | 0.29 | 0.29/0.36/0.01 | Fire Giant, Giants, Royal Titans | **SKIP** |
 | Gryphons | 7 | 2.7 | 14 | 50,000 | 150,000* | 25* | 0.27 | 0.27/0.45/0.04 | Shellbane gryphon | **SKIP** |
 | Black demons | 9 | 3.4 | 13 | 45,000 | 3,958,000 | 18* | 0.25 | 0.25/0.41/1.00 | Demonic Gorilla, Skotizo | **SKIP** |
-| Boss | 8 | 3.1 | 11.88 | 40,000* | 3,118,000.0 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **SKIP** |
+| Boss | 8 | 3.1 | 11.88 | 40,000* | 3,118,000 | 40* | 0.23 | 0.23/0.36/0.79 | boss pool | **SKIP** |
 | Gargoyles | 6 | 2.3 | 6 | 30,000 | 855,000 | 25* | 0.12 | 0.12/0.27/0.22 | Gargoyle, Grotesque Guardians | **SKIP** |
 | Cave kraken | 6 | 2.3 | 5 | 15,000 | 812,000 | 30* | 0.10 | 0.10/0.14/0.21 | Kraken | **SKIP** |
 | Blue dragons | 4 | 1.5 | 5 | 25,000 | 3,857,000 | 25* | 0.10 | 0.10/0.23/0.97 | Vorkath | **SKIP** |
@@ -356,7 +356,7 @@ Boss-task pool 32 bosses, mean open 11.9 CA pts [derived] (uniform pick [assumed
 | Dagannoth | 8 | 3.6 | 41 | 85,000 | 1,995,000 | 15* | 1.00 | 1.00/0.77/0.50 | Dagannoth Prime, Dagannoth Rex, Dagannoth Supreme | **DO** |
 | Black demons | 9 | 4.0 | 13 | 45,000 | 3,958,000 | 18* | 0.32 | 0.32/0.41/1.00 | Skotizo | **SKIP** |
 | Greater demons | 7 | 3.1 | 13 | 50,000 | 3,849,000 | 15* | 0.32 | 0.32/0.45/0.97 | Greater Demon, Skotizo | **SKIP** |
-| Bosses | 8 | 3.6 | 11.88 | 40,000* | 3,118,000.0 | 40* | 0.29 | 0.29/0.36/0.79 | boss pool | **SKIP** |
+| Bosses | 8 | 3.6 | 11.88 | 40,000* | 3,118,000 | 40* | 0.29 | 0.29/0.36/0.79 | boss pool | **SKIP** |
 | Gargoyles | 6 | 2.7 | 6 | 30,000 | 855,000 | 25* | 0.15 | 0.15/0.27/0.22 | Gargoyle, Grotesque Guardians | **SKIP** |
 | Cave kraken | 9 | 4.0 | 5 | 15,000 | 812,000 | 30* | 0.12 | 0.12/0.14/0.21 | Kraken | **BLOCK** |
 | Lesser Nagua | 2 | 0.9 | 4 | 30,000* | 504,000 | 10* | 0.10 | 0.10/0.27/0.13 | Amoxliatl | **SKIP** |
