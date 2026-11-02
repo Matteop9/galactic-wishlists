@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+/* Dark-only, one-handed. Tokens are the whole palette. */
+:root {
+  --bg: #0b0d10;
+  --surface: #14181d;
+  --surface-2: #1b2128;
+  --line: #262d36;
+  --fg: #e8ecf1;
+  --muted: #8b95a3;
+  --accent: #b8ff57; /* lime: the "go" colour */
+  --accent-2: #5ad7ff; /* cyan: cardio */
+  --warn: #ffc85c;
+  --danger: #ff6b6b;
+  --pr: #ffd166;
+  /* chart series (validated for dark surface, fixed order: lifting/weight, cardio, other) */
+  --chart-1: #5aa023;
+  --chart-2: #3987e5;
+  --chart-3: #c98500;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-pr: var(--pr);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* iOS PWA safe areas */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.animate-pop {
+  animation: pop 160ms ease-out;
+}
