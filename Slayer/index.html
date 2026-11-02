@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hahap Tracker</title>
+<style>
+  :root{--bg:#0f1115;--panel:#171a21;--line:#262b36;--text:#e6e8ee;--muted:#8b93a7;--acc:#f0b429;--ok:#3fb950;--warn:#d29922;--bad:#f85149;--blue:#58a6ff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,Segoe UI,Roboto,sans-serif}
+  header{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline}
+  header h1{font-size:18px;margin:0;color:var(--acc)}
+  header .meta{color:var(--muted);font-size:12px}
+  nav{display:flex;gap:4px;padding:8px 16px;border-bottom:1px solid var(--line);overflow-x:auto}
+  nav button,.tabs button,.seg button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+  nav button.on,.tabs button.on,.seg button.on{background:var(--acc);color:#111;border-color:var(--acc);font-weight:600}
+  main{padding:16px;max-width:1300px;margin:0 auto}
+  section{display:none}section.on{display:block}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .card .k{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .card .v{font-size:22px;font-weight:600;margin-top:2px}
+  .card .s{color:var(--muted);font-size:12px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600;position:sticky;top:0;background:var(--bg);cursor:pointer;user-select:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.sub td{color:var(--muted);font-size:12px;background:#13161c}
+  .tag{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600}
+  .DO{background:#1f3b2a;color:var(--ok)}.SKIP{background:#2a2d35;color:var(--muted)}.BLOCK{background:#3b1f23;color:var(--bad)}
+  .BLOCKED{background:#2a2d35;color:#b9bfcc}.UNBLOCK{background:#3b3315;color:var(--acc)}.NA{background:#1a1d24;color:#555c6b}
+  .Slayer{color:var(--ok)}.Like{color:var(--blue)}.End{color:var(--bad)}.Anytime{color:var(--muted)}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+  input,select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font:inherit}
+  input[type=number]{width:110px}
+  .btn{background:var(--acc);color:#111;border:none;border-radius:6px;padding:7px 14px;font-weight:600;cursor:pointer}
+  .btn.sec{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+  .flag{background:var(--panel);border-left:3px solid var(--warn);padding:8px 10px;margin:6px 0;font-size:13px;border-radius:0 6px 6px 0}
+  .flag.miss{border-color:var(--bad)}
+  .muted{color:var(--muted)}
+  .ast{color:var(--warn)}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;overflow:auto;max-height:260px;white-space:pre-wrap}
+  .wrap{overflow-x:auto}
+  @media (max-width:700px){td,th{padding:5px 5px}.card .v{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Hahap tracker</h1>
+  <span class="meta" id="meta">loading report.json…</span>
+  <span class="row" style="margin:0 0 0 auto">
+    <select id="runObj"></select>
+    <button class="btn" id="runBtn" title="Fetch live data and rebuild (needs serve.py)">Refresh data</button>
+  </span>
+</header>
+<nav>
+  <button data-tab="overview" class="on">Overview</button>
+  <button data-tab="order">Ordering</button>
+  <button data-tab="slayer">Slayer</button>
+  <button data-tab="log">Task log</button>
+  <button data-tab="turael">Turael</button>
+</nav>
+<main>
+  <section id="overview" class="on">
+    <div class="cards" id="cards"></div>
+    <div class="wrap"><table id="tiers"></table></div>
+    <h3>Flags and judgement calls</h3><div id="flags"></div>
+    <h3>Missing inputs</h3><div id="missing"></div>
+    <h3>Since last snapshot</h3><div id="diff" class="muted"></div>
+  </section>
+
+  <section id="order">
+    <div class="row">
+      <span class="seg" id="bucketSeg"></span>
+      <input id="orderSearch" placeholder="search boss or task">
+      <label><input type="checkbox" id="showTasks"> show tasks</label>
+    </div>
+    <p class="muted" id="orderNote"></p>
+    <div class="wrap"><table id="orderTbl"></table></div>
+  </section>
+
+  <section id="slayer">
+    <div class="row">
+      <span class="tabs" id="masterTabs"></span>
+      <span class="seg" id="objSeg"></span>
+      <label><input type="checkbox" id="hideNA" checked> hide ineligible</label>
+    </div>
+    <div class="cards" id="slayerCards"></div>
+    <p id="slayerNote" class="muted"></p>
+    <div class="wrap"><table id="slayerTbl"></table></div>
+    <p class="muted"><span class="ast">*</span> = estimate with no wiki or measured source. Click a column header to sort.</p>
+  </section>
+
+  <section id="log">
+    <p class="muted">One line per completed task. Measured rates replace wiki figures on the next refresh. Needs serve.py running.</p>
+    <form id="logForm" class="row">
+      <input type="date" id="lDate" required>
+      <select id="lMaster"></select>
+      <input list="taskList" id="lTask" placeholder="task (as the master names it)" required style="min-width:220px">
+      <datalist id="taskList"></datalist>
+      <input type="number" id="lAmount" placeholder="kills" min="1">
+      <input type="number" id="lMin" placeholder="minutes" min="1" required>
+      <input type="number" id="lXp" placeholder="xp gained" min="0">
+      <input type="number" id="lGp" placeholder="gp (net)" step="1000">
+      <input id="lNote" placeholder="note (method, cannon…)" style="min-width:200px">
+      <button class="btn" type="submit">Log task</button>
+    </form>
+    <p id="logMsg" class="muted"></p>
+    <h3>Measured so far</h3>
+    <div class="wrap"><table id="measuredTbl"></table></div>
+    <h3>Entries</h3>
+    <div class="wrap"><table id="logTbl"></table></div>
+  </section>
+
+  <section id="turael">
+    <p class="muted">Fish for a task via Turael (streak reset, 0 pts, ~3 min each) vs skipping at the main master at 30 pts. Milestone multipliers 5/15/25/35/50× are the wiki's. Enter your streak.</p>
+    <div class="row">
+      <select id="tMaster"></select>
+      <select id="tTask"></select>
+      <label>streak <input type="number" id="tStreak" value="0" min="0"></label>
+      <label>Turael min/task <input type="number" id="tMin" value="3" min="1" step="0.5"></label>
+    </div>
+    <div class="cards" id="tCards"></div>
+  </section>
+</main>
+
+<script>
+let R = null, LOGS = [];
+const $ = s => document.querySelector(s);
+const fmt = n => n == null ? '-' : Math.round(n).toLocaleString('en-GB');
+const pct = x => x == null ? '-' : x.toFixed(1) + '%';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let state = { master: null, obj: null, bucket: 'all', sort: {} };
+
+async function load() {
+  R = await (await fetch('report.json?' + Date.now())).json();
+  try { LOGS = await (await fetch('data/task_log.json?' + Date.now())).json(); } catch { LOGS = []; }
+  state.master = state.master || R.slayer_config.current_master || Object.values(R.masters)[0][0].master;
+  state.obj = state.obj || R.default_objective;
+  $('#meta').textContent = `${R.player} · ${R.date} · WikiSync ${new Date(R.wikisync_timestamp).toLocaleString('en-GB')} · Slayer ${R.slayer_level}`;
+  const objs = Object.keys(R.objectives);
+  $('#runObj').innerHTML = objs.map(o => `<option ${o === state.obj ? 'selected' : ''}>${o}</option>`).join('');
+  renderOverview(); renderOrder(); renderSlayer(); renderLog(); renderTurael();
+}
+
+function renderOverview() {
+  const s = R.summary;
+  $('#cards').innerHTML = [
+    ['Tasks done', `${s.done}/${s.total}`, ''],
+    ['Points', fmt(s.earned), `target ${fmt(s.target)}, need ${fmt(s.needed)}`],
+    ['Required set', `${s.required_n} tasks`, `${fmt(s.required_pts)} pts, cutoff ${pct(s.cutoff_pct)}`],
+    ['Avoid list cost', R.avoid.alt_cutoff != null ? pct(R.avoid.alt_cutoff) : '-', `cutoff without ${R.avoid.bosses.join(', ')} (${R.avoid.pts_in_set} pts)`],
+  ].map(([k, v, t]) => `<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${esc(t)}</div></div>`).join('');
+  $('#tiers').innerHTML = '<tr><th>Tier</th><th class="num">Done</th><th class="num">Total</th><th class="num">Pts each</th><th class="num">Earned</th></tr>' +
+    Object.entries(s.tiers).map(([t, d]) => `<tr><td>${t}</td><td class="num">${d.done}</td><td class="num">${d.total}</td><td class="num">${d.pts}</td><td class="num">${d.done * d.pts}</td></tr>`).join('');
+  $('#flags').innerHTML = R.flags.map(f => `<div class="flag">${esc(f)}</div>`).join('') || '<p class="muted">none</p>';
+  $('#missing').innerHTML = R.missing.map(f => `<div class="flag miss">${esc(f)}</div>`).join('') || '<p class="muted">none</p>';
+  $('#diff').innerHTML = R.diff ? `Since ${R.diff.prev_date}: +${R.diff.gained.length} tasks, +${R.diff.gained_pts} pts<br>` +
+    R.diff.gained.map(t => `${esc(t.boss)}: ${esc(t.task)} (${t.tier}, ${t.pts})`).join('<br>') : 'No previous snapshot yet.';
+}
+
+function renderOrder() {
+  const bks = ['all', ...R.buckets];
+  $('#bucketSeg').innerHTML = bks.map(b => `<button class="${state.bucket === b ? 'on' : ''}" data-b="${b}">${b}</button>`).join('');
+  $('#bucketSeg').querySelectorAll('button').forEach(b => b.onclick = () => { state.bucket = b.dataset.b; renderOrder(); });
+  const q = $('#orderSearch').value.trim().toLowerCase();
+  const show = $('#showTasks').checked;
+  const rows = R.ordering.filter(r => (state.bucket === 'all' || r.bucket === state.bucket) &&
+    (!q || r.boss.toLowerCase().includes(q) || r.tasks.some(t => t.task.toLowerCase().includes(q))));
+  $('#orderNote').textContent = `${rows.length} bosses, ${rows.reduce((a, r) => a + r.pts, 0)} pts. Score = open pts × KC familiarity × access (level gate, avoid list, team).`;
+  let h = '<tr><th class="num">#</th><th>Boss</th><th>Bucket</th><th class="num">Pts</th><th class="num">Tasks</th><th class="num">KC</th><th class="num">Lowest %</th><th class="num">Score</th><th>Why</th></tr>';
+  for (const r of rows) {
+    h += `<tr><td class="num">${r.rank}</td><td>${esc(r.boss)}</td><td class="${r.bucket.split(' ')[0].split('-')[0]}">${r.bucket}</td><td class="num">${r.pts}</td><td class="num">${r.n}</td><td class="num">${r.kc == null ? '-' : fmt(r.kc)}</td><td class="num">${pct(r.min_pct)}</td><td class="num">${r.score}</td><td class="muted">${esc(r.why)}</td></tr>`;
+    if (show || q) for (const t of r.tasks) if (!q || r.boss.toLowerCase().includes(q) || t.task.toLowerCase().includes(q))
+      h += `<tr class="sub"><td></td><td colspan="2">↳ ${esc(t.task)}</td><td class="num">${t.pts}</td><td>${t.tier}</td><td colspan="2" class="num">${pct(t.comp_pct)}</td><td colspan="2">${esc(t.type || '')}</td></tr>`;
+  }
+  $('#orderTbl').innerHTML = h;
+}
+
+function masterData() { return R.masters[state.obj].find(m => m.master === state.master); }
+
+function renderSlayer() {
+  const masters = R.masters[state.obj].map(m => m.master);
+  $('#masterTabs').innerHTML = masters.map(m => `<button class="${m === state.master ? 'on' : ''}" data-m="${m}">${m}</button>`).join('');
+  $('#masterTabs').querySelectorAll('button').forEach(b => b.onclick = () => { state.master = b.dataset.m; renderSlayer(); });
+  $('#objSeg').innerHTML = Object.keys(R.objectives).map(o => `<button class="${o === state.obj ? 'on' : ''}" data-o="${o}">${o}</button>`).join('');
+  $('#objSeg').querySelectorAll('button').forEach(b => b.onclick = () => { state.obj = b.dataset.o; renderSlayer(); });
+  const m = masterData(); if (!m) return;
+  const c = R.costs[m.master] || {};
+  $('#slayerCards').innerHTML = [
+    ['CA pts / roll', `${m.ev_before.ca.toFixed(2)} → ${m.ev_after.ca.toFixed(2)}`, 'before → after recommended blocks'],
+    ['XP / hr', `${fmt(m.ev_before.xp)} → ${fmt(m.ev_after.xp)}`, 'time-weighted over the roll table'],
+    ['GP / hr', `${fmt(m.ev_before.gp)} → ${fmt(m.ev_after.gp)}`, ''],
+    ['Blocks', `${m.recommended_blocks.length ? m.recommended_blocks.join(', ') : 'none'}`, `${m.free_slots} free slots, ${c.block_cost ?? '?'} pts each, ${c.points ?? '?'} pts/task`],
+  ].map(([k, v, t]) => `<div class="card"><div class="k">${k}</div><div class="v" style="font-size:16px">${esc(v)}</div><div class="s">${esc(t)}</div></div>`).join('');
+  const cfgBlocks = R.slayer_config.blocks[m.master] || [];
+  let note = `Current blocks (config): ${cfgBlocks.length ? cfgBlocks.join(', ') : 'none'}. `;
+  if (m.unblock.length) note += `Worth freeing under ${state.obj}: ${m.unblock.join(', ')} → CA ${m.ev_unblocked.ca.toFixed(2)}, xp/hr ${fmt(m.ev_unblocked.xp)}, gp/hr ${fmt(m.ev_unblocked.gp)}. `;
+  note += 'Block list by objective: ' + Object.entries(m.blocks_by_objective).map(([k, v]) => `${k}: ${v.length ? v.join(', ') : 'none'}`).join(' · ');
+  $('#slayerNote').textContent = note;
+  const hide = $('#hideNA').checked;
+  let rows = m.rows.filter(r => !hide || r.eligible);
+  const sk = state.sort.key || 'score', sd = state.sort.dir ?? -1;
+  rows.sort((a, b) => {
+    if (a.eligible !== b.eligible) return a.eligible ? -1 : 1;
+    const av = a[sk], bv = b[sk];
+    if (typeof av === 'string') return av.localeCompare(bv) * -sd;
+    return ((av ?? -1) - (bv ?? -1)) * sd;
+  });
+  const cols = [['monster', 'Task'], ['weight', 'Wt', 1], ['p', 'Roll %', 1], ['ca', 'CA pts', 1], ['xp', 'XP/hr', 1], ['gp', 'GP/hr', 1], ['minutes', 'Min', 1], ['score', 'Score', 1], ['bosses', 'Counts'], ['verdict', 'Verdict']];
+  let h = '<tr>' + cols.map(([k, l, n]) => `<th class="${n ? 'num' : ''}" data-k="${k}">${l}${sk === k ? (sd < 0 ? ' ▼' : ' ▲') : ''}</th>`).join('') + '</tr>';
+  for (const r of rows) {
+    if (!r.eligible) { h += `<tr><td>${esc(r.monster)}</td><td class="num">${r.weight}</td><td colspan="7" class="muted">${esc(r.why)}</td><td><span class="tag NA">N/A</span></td></tr>`; continue; }
+    const a = s => s === 'assumed' ? '<span class="ast">*</span>' : '';
+    const vcls = r.verdict.replace('?', '');
+    h += `<tr><td>${esc(r.monster)}${r.unlock ? ` <span class="muted">(${esc(r.unlock)})</span>` : ''}</td><td class="num">${r.weight}</td><td class="num">${(r.p * 100).toFixed(1)}</td><td class="num">${r.ca}</td>` +
+      `<td class="num">${fmt(r.xp)}${a(r.xp_src)}</td><td class="num">${fmt(r.gp)}${a(r.gp_src)}</td><td class="num">${r.minutes}${r.rate_src === 'measured' ? '' : '<span class="ast">*</span>'}</td>` +
+      `<td class="num" title="ca/xp/gp ${Object.values(r.scores).map(x => x.toFixed(2)).join('/')}">${r.score.toFixed(2)}</td>` +
+      `<td class="muted">${r.is_boss ? 'boss pool' : esc((r.bosses || []).join(', ')) || '-'}</td><td><span class="tag ${vcls}">${r.verdict}</span></td></tr>`;
+  }
+  $('#slayerTbl').innerHTML = h;
+  $('#slayerTbl').querySelectorAll('th').forEach(th => th.onclick = () => {
+    const k = th.dataset.k; state.sort = { key: k, dir: state.sort.key === k ? -state.sort.dir : -1 }; renderSlayer();
+  });
+}
+
+function renderLog() {
+  const masters = R.masters[state.obj].map(m => m.master);
+  $('#lMaster').innerHTML = masters.map(m => `<option ${m === state.master ? 'selected' : ''}>${m}</option>`).join('');
+  const names = new Set(); for (const ms of Object.values(R.masters)) for (const m of ms) for (const r of m.rows) names.add(r.monster);
+  $('#taskList').innerHTML = [...names].sort().map(n => `<option value="${esc(n)}">`).join('');
+  if (!$('#lDate').value) $('#lDate').value = new Date().toISOString().slice(0, 10);
+  const me = Object.entries(R.measured || {});
+  $('#measuredTbl').innerHTML = me.length ? '<tr><th>Task</th><th class="num">XP/hr</th><th class="num">GP/hr</th><th class="num">Min/task</th><th class="num">Logged</th></tr>' +
+    me.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="num">${fmt(v.xp_hr)}</td><td class="num">${fmt(v.gp_hr)}</td><td class="num">${v.min_per_task}</td><td class="num">${v.n_logged}</td></tr>`).join('')
+    : '<tr><td class="muted">nothing measured yet. Log tasks, then Refresh data.</td></tr>';
+  $('#logTbl').innerHTML = LOGS.length ? '<tr><th>Date</th><th>Master</th><th>Task</th><th class="num">Kills</th><th class="num">Min</th><th class="num">XP</th><th class="num">GP</th><th>Note</th><th></th></tr>' +
+    LOGS.map((e, i) => `<tr><td>${esc(e.date)}</td><td>${esc(e.master)}</td><td>${esc(e.task)}</td><td class="num">${e.amount ?? ''}</td><td class="num">${e.minutes}</td><td class="num">${fmt(e.xp)}</td><td class="num">${fmt(e.gp)}</td><td class="muted">${esc(e.note)}</td><td><button class="btn sec" data-del="${i}">✕</button></td></tr>`).join('')
+    : '<tr><td class="muted">no entries</td></tr>';
+  $('#logTbl').querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    const e = LOGS[+b.dataset.del];
+    if (!confirm(`Delete ${e.task} on ${e.date}?`)) return;
+    await post('/api/log', { ...e, _delete: +b.dataset.del }); await load();
+  });
+}
+
+async function post(url, body) {
+  const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error((await r.json()).error || r.statusText);
+  return r.json();
+}
+
+$('#logForm').onsubmit = async ev => {
+  ev.preventDefault();
+  const e = { date: $('#lDate').value, master: $('#lMaster').value, task: $('#lTask').value.trim(), amount: +$('#lAmount').value || null,
+    minutes: +$('#lMin').value, xp: +$('#lXp').value || 0, gp: +$('#lGp').value || 0, note: $('#lNote').value.trim() };
+  try { const r = await post('/api/log', e); $('#logMsg').textContent = `saved (${r.n} entries). Refresh data to fold it into the rates.`; $('#lTask').value = ''; $('#lAmount').value = ''; $('#lMin').value = ''; $('#lXp').value = ''; $('#lGp').value = ''; $('#lNote').value = ''; await load(); $('[data-tab=log]').click(); }
+  catch (err) { $('#logMsg').textContent = 'not saved: ' + err.message + ' (is serve.py running?)'; }
+};
+
+$('#runBtn').onclick = async () => {
+  const btn = $('#runBtn'); btn.disabled = true; btn.textContent = 'running…';
+  try { const r = await post('/api/run', { objective: $('#runObj').value }); state.obj = $('#runObj').value; await load(); alert((r.ok ? 'Done.\n' : 'Run failed.\n') + r.log); }
+  catch (err) { alert('Could not run: ' + err.message + '\nStart it with: python serve.py'); }
+  btn.disabled = false; btn.textContent = 'Refresh data';
+};
+
+function renderTurael() {
+  const masters = R.masters[state.obj].map(m => m.master);
+  $('#tMaster').innerHTML = masters.map(m => `<option ${m === state.master ? 'selected' : ''}>${m}</option>`).join('');
+  const fill = () => {
+    const m = R.masters[state.obj].find(x => x.master === $('#tMaster').value);
+    const cur = $('#tTask').value;
+    $('#tTask').innerHTML = m.rows.filter(r => r.eligible && !r.blocked).sort((a, b) => b.ca - a.ca).map(r => `<option ${r.monster === cur ? 'selected' : ''}>${esc(r.monster)}</option>`).join('');
+    calc();
+  };
+  const calc = () => {
+    const m = R.masters[state.obj].find(x => x.master === $('#tMaster').value);
+    const r = m.rows.find(x => x.monster === $('#tTask').value); if (!r) return;
+    const pts = (R.costs[m.master] || {}).points || 0, skip = R.slayer_config.skip_cost, streak = +$('#tStreak').value, tmin = +$('#tMin').value;
+    const rolls = 1 / r.p, skipPts = skip * (rolls - 1);
+    const ms = [[10, 5], [50, 15], [100, 25], [250, 35], [1000, 50]];
+    const nxt = ms.find(([k]) => k > streak % 1000) || [1000, 50];
+    const loss = nxt[1] * pts, tm = tmin * (rolls - 1);
+    $('#tCards').innerHTML = [
+      ['Roll chance', (r.p * 100).toFixed(1) + '%', `expected ${rolls.toFixed(1)} rolls`],
+      ['Skip route', fmt(skipPts) + ' pts', 'streak kept, instant'],
+      ['Turael route', fmt(tm) + ' min', `plus ~${fmt(loss)} pts forfeited (next milestone ${nxt[0]} at ${nxt[1]}×${pts})`],
+      ['Verdict', skipPts <= loss ? 'SKIP' : 'TURAEL', 'points only; your time is not priced'],
+    ].map(([k, v, t]) => `<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${esc(t)}</div></div>`).join('');
+  };
+  $('#tMaster').onchange = fill; $('#tTask').onchange = calc; $('#tStreak').oninput = calc; $('#tMin').oninput = calc;
+  fill();
+}
+
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+});
+$('#orderSearch').oninput = renderOrder; $('#showTasks').onchange = renderOrder; $('#hideNA').onchange = renderSlayer;
+load().catch(e => { $('#meta').textContent = 'could not load report.json: ' + e.message + '. Run python run.py, then serve with python serve.py'; });
+</script>
+</body>
+</html>

@@ -17,7 +17,9 @@ from fetch.hiscores import get_hiscores
 from fetch.slayer_tables import get_boss_slayer, get_master_costs, get_master_table
 from fetch.wikisync import get_wikisync
 from report.build import build
+from report.jsonout import write_json
 from slayer.model import load_rates, model_master, pool_bosses, turael_boost
+from slayer.tasklog import apply_task_log, load_log
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -113,6 +115,10 @@ def main():
     if sc["current_master"] is None:
         missing.append("config slayer.current_master is null: all four masters reported, none preferred.")
     rates = load_rates()
+    measured = apply_task_log(rates, load_log())
+    if measured:
+        (DATA / "task_rates.json").write_text(json.dumps(rates, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        log("rates", f"task_rates.json updated with {len(measured)} measured tasks")
     if not any(r.get("source") == "measured" for r in rates["rates"].values()):
         n_wiki = sum(1 for x in rates["rates"].values() if x.get("source") == "wiki")
         missing.append(f"data/task_rates.json: no measured baselines yet; {n_wiki} entries use wiki xp/gp figures, "
@@ -124,13 +130,15 @@ def main():
     if objective not in sc["objectives"]:
         raise SystemExit(f"unknown objective {objective!r}; choose from {list(sc['objectives'])}")
     log("run", f"objective {objective} weights {sc['objectives'][objective]}")
-    masters = []
-    for m in sc["masters"]:
-        table = get_master_table(m, **kw)
-        masters.append(model_master(m, table, required=s["chosen"], ca_bosses=ca_bosses, slayer_level=slayer_level,
-                                    blocks=sc["blocks"].get(m, []),
-                                    unlocks=sc.get("unlocks_owned", []) + sc["unlocks_assumed"], pool=pool,
-                                    cfg=sc, costs=costs, rates=rates, objective=objective))
+    tables = {m: get_master_table(m, **kw) for m in sc["masters"]}
+    masters_by_obj = {}
+    for obj in (k for k in sc["objectives"] if not k.startswith("_")):
+        masters_by_obj[obj] = [
+            model_master(m, tables[m], required=s["chosen"], ca_bosses=ca_bosses, slayer_level=slayer_level,
+                         blocks=sc["blocks"].get(m, []), unlocks=sc.get("unlocks_owned", []) + sc["unlocks_assumed"],
+                         pool=pool, cfg=sc, costs=costs, rates=rates, objective=obj)
+            for m in sc["masters"]]
+    masters = masters_by_obj[objective]
     # Slayer-bucket bosses whose only on-task route is level-gated right now
     slayer_bosses = bk["groups"]["Slayer"]
     reachable = {b for m in masters for r in m["rows"] if r.get("eligible") for b in r.get("bosses", [])}
@@ -170,6 +178,7 @@ def main():
     md = build(ctx, show_tasks=args.tasks)
     (ROOT / "report.md").write_text(md, encoding="utf-8")
     log("report", f"wrote report.md ({len(md):,} chars)")
+    write_json(ctx, masters_by_obj, measured)
 
     write_snapshot(date, {"date": date, "wikisync_timestamp": ws["timestamp"], "ca_ids": sorted(done_ids),
                           "earned": s["earned"], "required_n": s["n"], "required_pts": s["total"],

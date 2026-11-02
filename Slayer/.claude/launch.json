@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "slayer-dashboard", "runtimeExecutable": "python", "runtimeArgs": ["serve.py", "--no-open"], "port": 8765 }
+  ]
+}

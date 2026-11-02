@@ -21,3 +21,8 @@
 
 ## 2026-11-02 v0.3.1
 - Rates sourced from the wiki (fetched 2 Nov 2026): xp/hr for 41 assignments from the Slayer training table (best listed method, raw text kept in `xp_wiki` with the wiki's own do/skip recommendation in `wiki_rec`), gp/hr for 44 from the Money making guide index (guide named in `gp_note`; boss alternatives used where that is the on-task money, e.g. Cerberus for hellhounds). Boss-task gp = mean of 31 Like a Boss pool guides. Per-field `xp_src`/`gp_src`; report marks only assumed cells with `*`. Minutes per task remain estimates. Raw scrape kept in `data/wiki_rates_raw_2026-11-02.json`.
+
+## 2026-11-02 v0.4.0
+- Local dashboard: `python serve.py` opens http://127.0.0.1:8765/ (`index.html`, no build). Tabs: Overview (cards, tiers, flags, diff), Ordering (bucket filter, search, task expansion), Slayer (master tabs, objective switch, sortable verdict table, EV cards, block list by objective), Task log, Turael calculator.
+- `run.py` now writes `report.json` (all four objectives modelled every run) and ingests `data/task_log.json`: logged tasks become measured xp/gp/minutes in `task_rates.json`, overriding wiki figures.
+- `serve.py` (stdlib): serves the page, `POST /api/log` appends/deletes entries, `POST /api/run` reruns the pipeline so the Refresh button works from the page.
