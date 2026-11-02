@@ -1,0 +1,26 @@
+{
+  "_note": "Brief asked for config.yaml; PyYAML is not installed so this is JSON. Every value here is tagged 'assumed' in reports unless a fetched source overrides it. Answers from Matteo 2 Nov 2026: LaB unlocked, Duradel, Wings Spread owned, 7 Duradel blocks, no forced excludes.",
+  "player": "Hahap",
+  "target_points": 1965,
+  "forced_include": [
+    "Mad Angel Adept", "Mad Angel Veteran", "Mad Angel Speed-Runner", "Dancing Queen", "Juggling Act",
+    "Smite Fight", "This Is Madness", "Camping the King", "King-sized clobbering", "Trying to fit in"
+  ],
+  "forced_exclude": [],
+  "slayer": {
+    "masters": ["Duradel", "Nieve", "Konar", "Krystilia"],
+    "current_master": "Duradel",
+    "like_a_boss_unlocked": true,
+    "unlocks_owned": ["Like a Boss", "Wings Spread"],
+    "unlocks_assumed": ["Reptile Got Ripped", "Basilocked", "Hot Stuff", "I Wildy More Slayer", "Seeing Red", "Actual Vampyre Slayer", "Stop the Wyvern"],
+    "blocks": {
+      "Duradel": ["Metal Dragons", "Dagannoth", "Black Demons", "Suqahs", "Drakes", "Wyrms", "Greater Demons"],
+      "Nieve": [], "Konar": [], "Krystilia": []
+    },
+    "block_slots": 7,
+    "skip_cost": 30,
+    "block_weight_min_pct": 4.0,
+    "turael_task_minutes": 3,
+    "task_minutes_default": 20
+  }
+}

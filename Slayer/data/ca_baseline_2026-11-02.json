@@ -1,0 +1,4587 @@
+[
+ {
+  "boss": "Aberrant Spectre",
+  "task": "Noxious Foe",
+  "tier": "Easy",
+  "comp_pct": 69.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Barrows",
+  "task": "Defence? What Defence?",
+  "tier": "Easy",
+  "comp_pct": 74.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Barrows",
+  "task": "Barrows Novice",
+  "tier": "Easy",
+  "comp_pct": 66.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Black Dragon",
+  "task": "Big, Black and Fiery",
+  "tier": "Easy",
+  "comp_pct": 80.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bloodveld",
+  "task": "The Demonic Punching Bag",
+  "tier": "Easy",
+  "comp_pct": 79.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Brutus",
+  "task": "Brutus Novice",
+  "tier": "Easy",
+  "comp_pct": 54.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "A Slow Death",
+  "tier": "Easy",
+  "comp_pct": 35.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "Fighting as Intended II",
+  "tier": "Easy",
+  "comp_pct": 34.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "Bryophyta Novice",
+  "tier": "Easy",
+  "comp_pct": 47.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "Preparation Is Key",
+  "tier": "Easy",
+  "comp_pct": 45.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "Protection from Moss",
+  "tier": "Easy",
+  "comp_pct": 42.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Deranged Archaeologist",
+  "task": "Deranged Archaeologist Novice",
+  "tier": "Easy",
+  "comp_pct": 39.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fire Giant",
+  "task": "The Walking Volcano",
+  "tier": "Easy",
+  "comp_pct": 83.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Giant Mole",
+  "task": "Giant Mole Novice",
+  "tier": "Easy",
+  "comp_pct": 44.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Giants",
+  "task": "Into the Den of Giants",
+  "tier": "Easy",
+  "comp_pct": 38.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Greater Demon",
+  "task": "A Greater Foe",
+  "tier": "Easy",
+  "comp_pct": 79.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Greater Demon",
+  "task": "Not So Great After All",
+  "tier": "Easy",
+  "comp_pct": 61.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Hellhound",
+  "task": "A Demon's Best Friend",
+  "tier": "Easy",
+  "comp_pct": 80.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "King Black Dragon",
+  "task": "King Black Dragon Novice",
+  "tier": "Easy",
+  "comp_pct": 43.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Lizardman Shaman",
+  "task": "Shayzien Protector",
+  "tier": "Easy",
+  "comp_pct": 43.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Lizardman Shaman",
+  "task": "A Scaley Encounter",
+  "tier": "Easy",
+  "comp_pct": 59.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Obor",
+  "task": "Sleeping Giant",
+  "tier": "Easy",
+  "comp_pct": 34.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Obor",
+  "task": "Fighting as Intended",
+  "tier": "Easy",
+  "comp_pct": 33.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Obor",
+  "task": "Obor Novice",
+  "tier": "Easy",
+  "comp_pct": 47.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "One by one",
+  "tier": "Easy",
+  "comp_pct": 34.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Elemental Company",
+  "tier": "Easy",
+  "comp_pct": 36.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Let them fight",
+  "tier": "Easy",
+  "comp_pct": 36.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Sarachnis",
+  "task": "Sarachnis Novice",
+  "tier": "Easy",
+  "comp_pct": 41.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Scurrius",
+  "task": "Sit Rat",
+  "tier": "Easy",
+  "comp_pct": 37.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Scurrius",
+  "task": "Scurrius Novice",
+  "tier": "Easy",
+  "comp_pct": 57.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Dry Cleaning",
+  "tier": "Easy",
+  "comp_pct": 14.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Adept",
+  "tier": "Easy",
+  "comp_pct": 20.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Calm Before the Storm",
+  "tier": "Easy",
+  "comp_pct": 66.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Fire in the Hole!",
+  "tier": "Easy",
+  "comp_pct": 40.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Tempoross Novice",
+  "tier": "Easy",
+  "comp_pct": 70.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Master of Buckets",
+  "tier": "Easy",
+  "comp_pct": 60.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Mummy!",
+  "tier": "Easy",
+  "comp_pct": 56.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Handyman",
+  "tier": "Easy",
+  "comp_pct": 77.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Cosy",
+  "tier": "Easy",
+  "comp_pct": 77.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Wintertodt Novice",
+  "tier": "Easy",
+  "comp_pct": 82.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Wyrm",
+  "task": "A Slithery Encounter",
+  "tier": "Easy",
+  "comp_pct": 69.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Temotli Triumph",
+  "tier": "Medium",
+  "comp_pct": 25.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Champion",
+  "tier": "Medium",
+  "comp_pct": 40.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Barrows",
+  "task": "Barrows Champion",
+  "tier": "Medium",
+  "comp_pct": 59.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Barrows",
+  "task": "Can't Touch Me",
+  "tier": "Medium",
+  "comp_pct": 29.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Barrows",
+  "task": "Pray for Success",
+  "tier": "Medium",
+  "comp_pct": 55.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Brutal Black Dragon",
+  "task": "Brutal, Big, Black and Firey",
+  "tier": "Medium",
+  "comp_pct": 41.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Brutus",
+  "task": "Beef vs Beef",
+  "tier": "Medium",
+  "comp_pct": 36.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Brutus",
+  "task": "Brutus Champion",
+  "tier": "Medium",
+  "comp_pct": 51.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "Quick Cutter",
+  "tier": "Medium",
+  "comp_pct": 38.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Bryophyta",
+  "task": "Bryophyta Champion",
+  "tier": "Medium",
+  "comp_pct": 31.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Chaos Fanatic",
+  "task": "Sorry, What Was That?",
+  "tier": "Medium",
+  "comp_pct": 35.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chaos Fanatic",
+  "task": "Chaos Fanatic Champion",
+  "tier": "Medium",
+  "comp_pct": 29.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crazy Archaeologist",
+  "task": "Crazy Archaeologist Champion",
+  "tier": "Medium",
+  "comp_pct": 42.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crazy Archaeologist",
+  "task": "Mage of the Ruins",
+  "tier": "Medium",
+  "comp_pct": 50.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crazy Archaeologist",
+  "task": "I'd Rather Not Learn",
+  "tier": "Medium",
+  "comp_pct": 43.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Prime",
+  "task": "Dagannoth Prime Champion",
+  "tier": "Medium",
+  "comp_pct": 36.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Rex",
+  "task": "A Frozen King",
+  "tier": "Medium",
+  "comp_pct": 24.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Rex",
+  "task": "Dagannoth Rex Champion",
+  "tier": "Medium",
+  "comp_pct": 51.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Supreme",
+  "task": "Dagannoth Supreme Champion",
+  "tier": "Medium",
+  "comp_pct": 36.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Deranged Archaeologist",
+  "task": "Deranged Archaeologist Champion",
+  "tier": "Medium",
+  "comp_pct": 35.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Deranged Archaeologist",
+  "task": "Mage of the Swamp",
+  "tier": "Medium",
+  "comp_pct": 41.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Deranged Archaeologist",
+  "task": "I'd Rather Be Illiterate",
+  "tier": "Medium",
+  "comp_pct": 41.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Gargoyle",
+  "task": "A Smashing Time",
+  "tier": "Medium",
+  "comp_pct": 59.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Giant Mole",
+  "task": "Giant Mole Champion",
+  "tier": "Medium",
+  "comp_pct": 40.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Giant Mole",
+  "task": "Avoiding Those Little Arms",
+  "tier": "Medium",
+  "comp_pct": 51.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "King Black Dragon",
+  "task": "King Black Dragon Champion",
+  "tier": "Medium",
+  "comp_pct": 37.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "King Black Dragon",
+  "task": "Antifire Protection",
+  "tier": "Medium",
+  "comp_pct": 46.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "King Black Dragon",
+  "task": "Claw Clipper",
+  "tier": "Medium",
+  "comp_pct": 41.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "King Black Dragon",
+  "task": "Hide Penetration",
+  "tier": "Medium",
+  "comp_pct": 40.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kurask",
+  "task": "Master of Broad Weaponry",
+  "tier": "Medium",
+  "comp_pct": 59.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Mad Angel Adept",
+  "tier": "Medium",
+  "comp_pct": 5.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Dancing Queen",
+  "tier": "Medium",
+  "comp_pct": 2.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Juggling Act",
+  "tier": "Medium",
+  "comp_pct": 3.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Smite Fight",
+  "tier": "Medium",
+  "comp_pct": 2.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Moons of Peril Speed-Trialist",
+  "tier": "Medium",
+  "comp_pct": 48.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Back to Our Roots",
+  "tier": "Medium",
+  "comp_pct": 34.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Perilous Novice",
+  "tier": "Medium",
+  "comp_pct": 50.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Lunar Triplet",
+  "tier": "Medium",
+  "comp_pct": 59.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "N/A",
+  "task": "Sit Back and Relax",
+  "tier": "Medium",
+  "comp_pct": 55.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Obor",
+  "task": "Obor Champion",
+  "tier": "Medium",
+  "comp_pct": 31.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Obor",
+  "task": "Back to the Wall",
+  "tier": "Medium",
+  "comp_pct": 42.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Obor",
+  "task": "Squashing the Giant",
+  "tier": "Medium",
+  "comp_pct": 33.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "It takes too long",
+  "tier": "Medium",
+  "comp_pct": 38.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Royal Titan Champion",
+  "tier": "Medium",
+  "comp_pct": 45.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Royal Titan Adept",
+  "tier": "Medium",
+  "comp_pct": 41.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Sarachnis",
+  "task": "Sarachnis Champion",
+  "tier": "Medium",
+  "comp_pct": 36.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Sarachnis",
+  "task": "Newspaper Enthusiast",
+  "tier": "Medium",
+  "comp_pct": 44.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Scurrius",
+  "task": "Scurrius Champion",
+  "tier": "Medium",
+  "comp_pct": 48.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Scurrius",
+  "task": "Perfect Scurrius",
+  "tier": "Medium",
+  "comp_pct": 42.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Scurrius",
+  "task": "Efficient Pest Control",
+  "tier": "Medium",
+  "comp_pct": 34.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Speedrunner",
+  "tier": "Medium",
+  "comp_pct": 15.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Perfect Shellbane",
+  "tier": "Medium",
+  "comp_pct": 20.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Veteran",
+  "tier": "Medium",
+  "comp_pct": 19.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Skeletal Wyvern",
+  "task": "A Frozen Foe from the Past",
+  "tier": "Medium",
+  "comp_pct": 61.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Demonbane Weaponry",
+  "tier": "Medium",
+  "comp_pct": 52.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Skotizo Champion",
+  "tier": "Medium",
+  "comp_pct": 56.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Demonic Weakening",
+  "tier": "Medium",
+  "comp_pct": 45.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Tempoross Champion",
+  "tier": "Medium",
+  "comp_pct": 66.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "The Lone Angler",
+  "tier": "Medium",
+  "comp_pct": 44.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "You're a wizard",
+  "tier": "Medium",
+  "comp_pct": 23.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Champion",
+  "tier": "Medium",
+  "comp_pct": 41.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Can We Fix It?",
+  "tier": "Medium",
+  "comp_pct": 79.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Wintertodt Champion",
+  "tier": "Medium",
+  "comp_pct": 80.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Leaving No One Behind",
+  "tier": "Medium",
+  "comp_pct": 74.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Abyssal Adept",
+  "tier": "Hard",
+  "comp_pct": 31.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Don't Stop Moving",
+  "tier": "Hard",
+  "comp_pct": 30.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Don't Whip Me",
+  "tier": "Hard",
+  "comp_pct": 31.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "They Grow Up Too Fast",
+  "tier": "Hard",
+  "comp_pct": 22.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Nagua Negation",
+  "tier": "Hard",
+  "comp_pct": 35.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Totally Shattered",
+  "tier": "Hard",
+  "comp_pct": 39.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Kemo Makti",
+  "tier": "Hard",
+  "comp_pct": 30.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Adept",
+  "tier": "Hard",
+  "comp_pct": 32.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Speed-Trialist",
+  "tier": "Hard",
+  "comp_pct": 28.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Barrows",
+  "task": "Faithless Crypt Run",
+  "tier": "Hard",
+  "comp_pct": 38.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Barrows",
+  "task": "Just Like That",
+  "tier": "Hard",
+  "comp_pct": 41.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Brutus",
+  "task": "Smarter than a Cow",
+  "tier": "Hard",
+  "comp_pct": 39.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Callisto",
+  "task": "Callisto Adept",
+  "tier": "Hard",
+  "comp_pct": 29.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Chaos Elemental",
+  "task": "Chaos Elemental Adept",
+  "tier": "Hard",
+  "comp_pct": 23.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chaos Elemental",
+  "task": "The Flincher",
+  "tier": "Hard",
+  "comp_pct": 18.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chaos Elemental",
+  "task": "Hoarder",
+  "tier": "Hard",
+  "comp_pct": 33.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chaos Fanatic",
+  "task": "Chaos Fanatic Adept",
+  "tier": "Hard",
+  "comp_pct": 24.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chaos Fanatic",
+  "task": "Praying to the Gods",
+  "tier": "Hard",
+  "comp_pct": 19.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Commander Zilyana Adept",
+  "tier": "Hard",
+  "comp_pct": 19.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Commander Showdown",
+  "tier": "Hard",
+  "comp_pct": 12.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crazy Archaeologist",
+  "task": "Crazy Archaeologist Adept",
+  "tier": "Hard",
+  "comp_pct": 35.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Prime",
+  "task": "Dagannoth Prime Adept",
+  "tier": "Hard",
+  "comp_pct": 32.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Rex",
+  "task": "Dagannoth Rex Adept",
+  "tier": "Hard",
+  "comp_pct": 47.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Supreme",
+  "task": "Dagannoth Supreme Adept",
+  "tier": "Hard",
+  "comp_pct": 31.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "Ourg Freezer",
+  "tier": "Hard",
+  "comp_pct": 17.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "General Graardor Adept",
+  "tier": "Hard",
+  "comp_pct": 27.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "General Showdown",
+  "tier": "Hard",
+  "comp_pct": 12.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Giant Mole",
+  "task": "Whack-a-Mole",
+  "tier": "Hard",
+  "comp_pct": 41.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Giant Mole",
+  "task": "Why Are You Running?",
+  "tier": "Hard",
+  "comp_pct": 49.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Prison Break",
+  "tier": "Hard",
+  "comp_pct": 37.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Adept",
+  "tier": "Hard",
+  "comp_pct": 32.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Don't Look at the Eclipse",
+  "tier": "Hard",
+  "comp_pct": 37.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Static Awareness",
+  "tier": "Hard",
+  "comp_pct": 37.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Granite Footwork",
+  "tier": "Hard",
+  "comp_pct": 37.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Heal No More",
+  "tier": "Hard",
+  "comp_pct": 37.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Hespori",
+  "task": "Weed Whacker",
+  "tier": "Hard",
+  "comp_pct": 54.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Hespori",
+  "task": "Hespori Adept",
+  "tier": "Hard",
+  "comp_pct": 59.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Hespori",
+  "task": "Hesporisn't",
+  "tier": "Hard",
+  "comp_pct": 45.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "K'ril Tsutsaroth Adept",
+  "tier": "Hard",
+  "comp_pct": 21.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demonic Showdown",
+  "tier": "Hard",
+  "comp_pct": 12.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demonbane Weaponry II",
+  "tier": "Hard",
+  "comp_pct": 35.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "Yarr No More",
+  "tier": "Hard",
+  "comp_pct": 36.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kalphite Queen",
+  "task": "Kalphite Queen Adept",
+  "tier": "Hard",
+  "comp_pct": 26.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kalphite Queen",
+  "task": "Chitin Penetrator",
+  "tier": "Hard",
+  "comp_pct": 32.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "King Black Dragon",
+  "task": "Who Is the King Now?",
+  "tier": "Hard",
+  "comp_pct": 21.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kraken",
+  "task": "Kraken Adept",
+  "tier": "Hard",
+  "comp_pct": 42.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kraken",
+  "task": "Unnecessary Optimisation",
+  "tier": "Hard",
+  "comp_pct": 32.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kraken",
+  "task": "Krakan't Hurt Me",
+  "tier": "Hard",
+  "comp_pct": 36.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "Kree'arra Adept",
+  "tier": "Hard",
+  "comp_pct": 15.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "Airborne Showdown",
+  "tier": "Hard",
+  "comp_pct": 9.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Perfect Mad Angel",
+  "tier": "Hard",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Mad Angel Veteran",
+  "tier": "Hard",
+  "comp_pct": 4.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "Mad Angel Speed-Runner",
+  "tier": "Hard",
+  "comp_pct": 2.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Maggot Squasher",
+  "tier": "Hard",
+  "comp_pct": 10.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Fortified",
+  "tier": "Hard",
+  "comp_pct": 48.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Perilous Champion",
+  "tier": "Hard",
+  "comp_pct": 43.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Moons of Peril Speed-Chaser",
+  "tier": "Hard",
+  "comp_pct": 41.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Betrayal",
+  "tier": "Hard",
+  "comp_pct": 32.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Fat of the Land",
+  "tier": "Hard",
+  "comp_pct": 42.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "The Clone Zone",
+  "tier": "Hard",
+  "comp_pct": 37.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "Perilous Dancer",
+  "tier": "Hard",
+  "comp_pct": 31.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Adept",
+  "tier": "Hard",
+  "comp_pct": 32.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Titan Killer",
+  "tier": "Hard",
+  "comp_pct": 17.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "I need room",
+  "tier": "Hard",
+  "comp_pct": 37.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Perfect Royal Titans",
+  "tier": "Hard",
+  "comp_pct": 37.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "Royal Titan Speed-Runner",
+  "tier": "Hard",
+  "comp_pct": 28.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Sarachnis",
+  "task": "Inspect Repellent",
+  "tier": "Hard",
+  "comp_pct": 41.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Sarachnis",
+  "task": "Ready to Pounce",
+  "tier": "Hard",
+  "comp_pct": 37.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Scorpia",
+  "task": "I Can't Reach That",
+  "tier": "Hard",
+  "comp_pct": 24.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Scorpia",
+  "task": "Scorpia Adept",
+  "tier": "Hard",
+  "comp_pct": 21.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Scorpia",
+  "task": "Guardians No More",
+  "tier": "Hard",
+  "comp_pct": 30.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Survivor",
+  "tier": "Hard",
+  "comp_pct": 14.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Shellbane gryphon",
+  "task": "Featherweight Fighter",
+  "tier": "Hard",
+  "comp_pct": 14.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Skotizo Adept",
+  "tier": "Hard",
+  "comp_pct": 47.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Dress Like You Mean It",
+  "tier": "Hard",
+  "comp_pct": 48.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tempoross",
+  "task": "Why Cook?",
+  "tier": "Hard",
+  "comp_pct": 31.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "I'm your son",
+  "tier": "Hard",
+  "comp_pct": 13.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Adept",
+  "tier": "Hard",
+  "comp_pct": 36.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Pillar Lover",
+  "tier": "Hard",
+  "comp_pct": 33.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare Adept",
+  "tier": "Hard",
+  "comp_pct": 18.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Theatre of Blood: SM Adept",
+  "tier": "Hard",
+  "comp_pct": 49.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Confident Raider",
+  "tier": "Hard",
+  "comp_pct": 45.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Movin' on up",
+  "tier": "Hard",
+  "comp_pct": 46.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Novice Tomb Looter",
+  "tier": "Hard",
+  "comp_pct": 29.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Novice Tomb Explorer",
+  "tier": "Hard",
+  "comp_pct": 49.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Venenatis",
+  "task": "Venenatis Adept",
+  "tier": "Hard",
+  "comp_pct": 27.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vet'ion",
+  "task": "Vet'ion Adept",
+  "tier": "Hard",
+  "comp_pct": 34.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Wintertodt",
+  "task": "Why Fletch?",
+  "tier": "Hard",
+  "comp_pct": 39.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Zulrah Adept",
+  "tier": "Hard",
+  "comp_pct": 38.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Abyssal Veteran",
+  "tier": "Elite",
+  "comp_pct": 28.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Demonic Rebound",
+  "tier": "Elite",
+  "comp_pct": 18.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Perfect Sire",
+  "tier": "Elite",
+  "comp_pct": 29.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Abyssal Sire",
+  "task": "Respiratory Runner",
+  "tier": "Elite",
+  "comp_pct": 28.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Veteran",
+  "tier": "Elite",
+  "comp_pct": 24.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Without Ralos' Light",
+  "tier": "Elite",
+  "comp_pct": 23.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Speed-Chaser",
+  "tier": "Elite",
+  "comp_pct": 7.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Araxxor Veteran",
+  "tier": "Elite",
+  "comp_pct": 26.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Araxxor Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 24.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Relaxxor",
+  "tier": "Elite",
+  "comp_pct": 16.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Basilisk Knight",
+  "task": "Reflecting on This Encounter",
+  "tier": "Elite",
+  "comp_pct": 43.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Brutus",
+  "task": "Brutus Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 28.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Callisto",
+  "task": "Callisto Veteran",
+  "tier": "Elite",
+  "comp_pct": 27.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Cerberus",
+  "task": "Unrequired Antifire",
+  "tier": "Elite",
+  "comp_pct": 31.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Cerberus",
+  "task": "Anti-Bite Mechanics",
+  "tier": "Elite",
+  "comp_pct": 31.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Cerberus",
+  "task": "Ghost Buster",
+  "tier": "Elite",
+  "comp_pct": 28.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Cerberus",
+  "task": "Cerberus Veteran",
+  "tier": "Elite",
+  "comp_pct": 29.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Shayzien Specialist",
+  "tier": "Elite",
+  "comp_pct": 21.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric Veteran",
+  "tier": "Elite",
+  "comp_pct": 23.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Undying Raid Team",
+  "tier": "Elite",
+  "comp_pct": 29.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Redemption Enthusiast",
+  "tier": "Elite",
+  "comp_pct": 23.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Perfectly Balanced",
+  "tier": "Elite",
+  "comp_pct": 26.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Together We'll Fall",
+  "tier": "Elite",
+  "comp_pct": 19.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Mutta-diet",
+  "tier": "Elite",
+  "comp_pct": 34.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Blizzard Dodger",
+  "tier": "Elite",
+  "comp_pct": 20.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Dancing with Statues",
+  "tier": "Elite",
+  "comp_pct": 28.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Cryo No More",
+  "tier": "Elite",
+  "comp_pct": 23.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Kill It with Fire",
+  "tier": "Elite",
+  "comp_pct": 21.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Dust Seeker",
+  "tier": "Elite",
+  "comp_pct": 15.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chaos Elemental",
+  "task": "Chaos Elemental Veteran",
+  "tier": "Elite",
+  "comp_pct": 19.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Reminisce",
+  "tier": "Elite",
+  "comp_pct": 7.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Commander Zilyana Veteran",
+  "tier": "Elite",
+  "comp_pct": 15.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corporeal Beast",
+  "task": "Corporeal Beast Veteran",
+  "tier": "Elite",
+  "comp_pct": 13.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corporeal Beast",
+  "task": "Hot on Your Feet",
+  "tier": "Elite",
+  "comp_pct": 14.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Corporeal Beast",
+  "task": "Chicken Killer",
+  "tier": "Elite",
+  "comp_pct": 14.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corporeal Beast",
+  "task": "Finding the Weak Spot",
+  "tier": "Elite",
+  "comp_pct": 12.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Veteran",
+  "tier": "Elite",
+  "comp_pct": 35.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "3, 2, 1 -Mage",
+  "tier": "Elite",
+  "comp_pct": 35.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Crystalline Warrior",
+  "tier": "Elite",
+  "comp_pct": 21.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "3, 2, 1 -Range",
+  "tier": "Elite",
+  "comp_pct": 32.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Egniol Diet",
+  "tier": "Elite",
+  "comp_pct": 17.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Veteran",
+  "tier": "Elite",
+  "comp_pct": 42.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Wolf Puncher",
+  "tier": "Elite",
+  "comp_pct": 20.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Prime",
+  "task": "From One King to Another",
+  "tier": "Elite",
+  "comp_pct": 11.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Prime",
+  "task": "Death to the Seer King",
+  "tier": "Elite",
+  "comp_pct": 15.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Rex",
+  "task": "Toppling the Diarchy",
+  "tier": "Elite",
+  "comp_pct": 8.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Rex",
+  "task": "Death to the Warrior King",
+  "tier": "Elite",
+  "comp_pct": 17.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Supreme",
+  "task": "Rapid Succession",
+  "tier": "Elite",
+  "comp_pct": 9.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Dagannoth Supreme",
+  "task": "Death to the Archer King",
+  "tier": "Elite",
+  "comp_pct": 24.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Demonic Gorilla",
+  "task": "Hitting Them Where It Hurts",
+  "tier": "Elite",
+  "comp_pct": 44.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Demonic Gorilla",
+  "task": "If Gorillas Could Fly",
+  "tier": "Elite",
+  "comp_pct": 60.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Adept",
+  "tier": "Elite",
+  "comp_pct": 23.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Exposed Doom",
+  "tier": "Elite",
+  "comp_pct": 21.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Crawler",
+  "tier": "Elite",
+  "comp_pct": 5.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Adept",
+  "tier": "Elite",
+  "comp_pct": 29.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 16.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "I was here first!",
+  "tier": "Elite",
+  "comp_pct": 10.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Denied",
+  "tier": "Elite",
+  "comp_pct": 15.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Furball",
+  "tier": "Elite",
+  "comp_pct": 17.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Fragment of Seren",
+  "task": "Fragment of Seren Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 6.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Galvek",
+  "task": "Galvek Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 7.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "Ourg Freezer II",
+  "tier": "Elite",
+  "comp_pct": 19.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "General Graardor Veteran",
+  "tier": "Elite",
+  "comp_pct": 22.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Giant Mole",
+  "task": "Hard Hitter",
+  "tier": "Elite",
+  "comp_pct": 28.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Glough",
+  "task": "Glough Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 8.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "From Dusk...",
+  "tier": "Elite",
+  "comp_pct": 22.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 27.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Veteran",
+  "tier": "Elite",
+  "comp_pct": 28.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Perfect Grotesque Guardians",
+  "tier": "Elite",
+  "comp_pct": 35.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Done before Dusk",
+  "tier": "Elite",
+  "comp_pct": 37.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Hespori",
+  "task": "Plant-Based Diet",
+  "tier": "Elite",
+  "comp_pct": 32.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Hespori",
+  "task": "Hespori Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 23.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "K'ril Tsutsaroth Veteran",
+  "tier": "Elite",
+  "comp_pct": 16.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demonic Defence",
+  "tier": "Elite",
+  "comp_pct": 14.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "The Bane of Demons",
+  "tier": "Elite",
+  "comp_pct": 8.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kalphite Queen",
+  "task": "Insect Deflection",
+  "tier": "Elite",
+  "comp_pct": 19.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kalphite Queen",
+  "task": "Prayer Smasher",
+  "tier": "Elite",
+  "comp_pct": 17.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kalphite Queen",
+  "task": "Kalphite Queen Veteran",
+  "tier": "Elite",
+  "comp_pct": 23.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kraken",
+  "task": "Ten-tacles",
+  "tier": "Elite",
+  "comp_pct": 31.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "Kree'arra Veteran",
+  "tier": "Elite",
+  "comp_pct": 12.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Leviathan Adept",
+  "tier": "Elite",
+  "comp_pct": 17.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Leviathan Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 8.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "This Is Madness",
+  "tier": "Elite",
+  "comp_pct": 2.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Mad Angel",
+  "task": "The Pen Is Mightier",
+  "tier": "Elite",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Maggot Exterminator",
+  "tier": "Elite",
+  "comp_pct": 7.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Trying to fit in",
+  "tier": "Elite",
+  "comp_pct": 2.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Moons of Peril",
+  "task": "High Hitter",
+  "tier": "Elite",
+  "comp_pct": 52.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Nex",
+  "task": "Nex Veteran",
+  "tier": "Elite",
+  "comp_pct": 23.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Nex",
+  "task": "Nex Survivors",
+  "tier": "Elite",
+  "comp_pct": 22.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Versatile Drainer",
+  "tier": "Elite",
+  "comp_pct": 18.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 22.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Veteran",
+  "tier": "Elite",
+  "comp_pct": 25.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Can't Escape",
+  "tier": "Elite",
+  "comp_pct": 15.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Veteran",
+  "tier": "Elite",
+  "comp_pct": 9.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Royal Titans",
+  "task": "No time to pray",
+  "tier": "Elite",
+  "comp_pct": 17.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Scorpia",
+  "task": "Scorpia Veteran",
+  "tier": "Elite",
+  "comp_pct": 18.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Demon Evasion",
+  "tier": "Elite",
+  "comp_pct": 25.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Up for the Challenge",
+  "tier": "Elite",
+  "comp_pct": 31.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 33.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Veteran",
+  "tier": "Elite",
+  "comp_pct": 30.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Perfect Hueycoatl",
+  "tier": "Elite",
+  "comp_pct": 18.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Mimic",
+  "task": "Mimic Veteran",
+  "tier": "Elite",
+  "comp_pct": 27.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare (5-Scale) Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 7.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare Veteran",
+  "tier": "Elite",
+  "comp_pct": 10.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Explosion!",
+  "tier": "Elite",
+  "comp_pct": 6.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare (Solo) Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 5.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Sleep Tight",
+  "tier": "Elite",
+  "comp_pct": 5.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre of Blood Veteran",
+  "tier": "Elite",
+  "comp_pct": 10.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "They Won't Expect This",
+  "tier": "Elite",
+  "comp_pct": 21.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Appropriate Tools",
+  "tier": "Elite",
+  "comp_pct": 30.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "No-Pillar",
+  "tier": "Elite",
+  "comp_pct": 45.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Just To Be Safe",
+  "tier": "Elite",
+  "comp_pct": 22.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Pass It On",
+  "tier": "Elite",
+  "comp_pct": 11.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Nylocas, On the Rocks",
+  "tier": "Elite",
+  "comp_pct": 14.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Chally Time",
+  "tier": "Elite",
+  "comp_pct": 15.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Attack, Step, Wait",
+  "tier": "Elite",
+  "comp_pct": 18.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Don't Look at Me!",
+  "tier": "Elite",
+  "comp_pct": 28.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Anticoagulants",
+  "tier": "Elite",
+  "comp_pct": 31.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Thermonuclear Smoke Devil",
+  "task": "Thermonuclear Veteran",
+  "tier": "Elite",
+  "comp_pct": 28.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Thermonuclear Smoke Devil",
+  "task": "Spec'd Out",
+  "tier": "Elite",
+  "comp_pct": 19.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Thermonuclear Smoke Devil",
+  "task": "Hazard Prevention",
+  "tier": "Elite",
+  "comp_pct": 20.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Apmeken",
+  "tier": "Elite",
+  "comp_pct": 29.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Dropped the ball",
+  "tier": "Elite",
+  "comp_pct": 36.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Helpful spirit who?",
+  "tier": "Elite",
+  "comp_pct": 8.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Tomb Explorer",
+  "tier": "Elite",
+  "comp_pct": 44.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Het",
+  "tier": "Elite",
+  "comp_pct": 34.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Hardcore Raiders",
+  "tier": "Elite",
+  "comp_pct": 33.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "No skipping allowed",
+  "tier": "Elite",
+  "comp_pct": 9.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Hardcore Tombs",
+  "tier": "Elite",
+  "comp_pct": 30.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Down Do Specs",
+  "tier": "Elite",
+  "comp_pct": 22.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Crondis",
+  "tier": "Elite",
+  "comp_pct": 35.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "I'm in a rush",
+  "tier": "Elite",
+  "comp_pct": 26.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Novice Tomb Raider",
+  "tier": "Elite",
+  "comp_pct": 23.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Expert Tomb Explorer",
+  "tier": "Elite",
+  "comp_pct": 30.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tormented Demon",
+  "task": "Rapid Reload",
+  "tier": "Elite",
+  "comp_pct": 7.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tormented Demon",
+  "task": "Unending Torment",
+  "tier": "Elite",
+  "comp_pct": 43.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tormented Demon",
+  "task": "Through Fire and Flames",
+  "tier": "Elite",
+  "comp_pct": 42.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Tormented Demon",
+  "task": "Two Times the Torment",
+  "tier": "Elite",
+  "comp_pct": 6.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "The II Jad Challenge",
+  "tier": "Elite",
+  "comp_pct": 14.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Facing Jad Head-on III",
+  "tier": "Elite",
+  "comp_pct": 9.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "TzHaar-Ket-Rak's Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 7.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Half-Way There",
+  "tier": "Elite",
+  "comp_pct": 19.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Facing Jad Head-on",
+  "tier": "Elite",
+  "comp_pct": 13.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "A Near Miss!",
+  "tier": "Elite",
+  "comp_pct": 38.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Veteran",
+  "tier": "Elite",
+  "comp_pct": 71.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Vardorvis Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 15.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Vardorvis Adept",
+  "tier": "Elite",
+  "comp_pct": 25.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Venenatis",
+  "task": "Venenatis Veteran",
+  "tier": "Elite",
+  "comp_pct": 24.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vet'ion",
+  "task": "Vet'eran",
+  "tier": "Elite",
+  "comp_pct": 32.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Vorkath Veteran",
+  "tier": "Elite",
+  "comp_pct": 45.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Stick 'em With the Pointy End",
+  "tier": "Elite",
+  "comp_pct": 25.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Zombie Destroyer",
+  "tier": "Elite",
+  "comp_pct": 21.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Tentacular",
+  "tier": "Elite",
+  "comp_pct": 10.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Whisperer Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 9.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Whisperer Adept",
+  "tier": "Elite",
+  "comp_pct": 16.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Yama",
+  "task": "Yama Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 15.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Yama Adept",
+  "tier": "Elite",
+  "comp_pct": 22.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Back so soon?",
+  "tier": "Elite",
+  "comp_pct": 20.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zalcano",
+  "task": "Team Player",
+  "tier": "Elite",
+  "comp_pct": 25.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zalcano",
+  "task": "The Spurned Hero",
+  "tier": "Elite",
+  "comp_pct": 28.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zalcano",
+  "task": "Perfect Zalcano",
+  "tier": "Elite",
+  "comp_pct": 19.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zalcano",
+  "task": "Zalcano Veteran",
+  "tier": "Elite",
+  "comp_pct": 27.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Snake Rebound",
+  "tier": "Elite",
+  "comp_pct": 19.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Snake. Snake!? Snaaaaaake!",
+  "tier": "Elite",
+  "comp_pct": 34.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Zulrah Speed-Trialist",
+  "tier": "Elite",
+  "comp_pct": 30.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Zulrah Veteran",
+  "tier": "Elite",
+  "comp_pct": 34.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Working Overtime",
+  "tier": "Master",
+  "comp_pct": 17.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "The Flame Skipper",
+  "tier": "Master",
+  "comp_pct": 20.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Master",
+  "tier": "Master",
+  "comp_pct": 22.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Mixing Correctly",
+  "tier": "Master",
+  "comp_pct": 23.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 15.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Alcleanical Hydra",
+  "tier": "Master",
+  "comp_pct": 23.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Don't Flame Me",
+  "tier": "Master",
+  "comp_pct": 24.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Unrequired Antipoisons",
+  "tier": "Master",
+  "comp_pct": 23.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Lightning Lure",
+  "tier": "Master",
+  "comp_pct": 24.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Araxxor Master",
+  "tier": "Master",
+  "comp_pct": 24.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Let it seep in",
+  "tier": "Master",
+  "comp_pct": 17.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Perfect Araxxor",
+  "tier": "Master",
+  "comp_pct": 19.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Araxyte Betrayal",
+  "tier": "Master",
+  "comp_pct": 12.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Araxxor Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 18.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Arachnid Lover",
+  "tier": "Master",
+  "comp_pct": 15.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Cerberus",
+  "task": "Arooo No More",
+  "tier": "Master",
+  "comp_pct": 30.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Cerberus",
+  "task": "Cerberus Master",
+  "tier": "Master",
+  "comp_pct": 27.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Undying Raider",
+  "tier": "Master",
+  "comp_pct": 9.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Stop Drop and Roll",
+  "tier": "Master",
+  "comp_pct": 23.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric Master",
+  "tier": "Master",
+  "comp_pct": 17.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "No Time for Death",
+  "tier": "Master",
+  "comp_pct": 16.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "A Not So Special Lizard",
+  "tier": "Master",
+  "comp_pct": 6.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Putting It Olm on the Line",
+  "tier": "Master",
+  "comp_pct": 5.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Perfect Olm (Trio)",
+  "tier": "Master",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Blind Spot",
+  "tier": "Master",
+  "comp_pct": 19.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Trio) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Playing with Lasers",
+  "tier": "Master",
+  "comp_pct": 28.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Anvil No More",
+  "tier": "Master",
+  "comp_pct": 32.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Perfect Olm (Solo)",
+  "tier": "Master",
+  "comp_pct": 5.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Solo) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (5-Scale) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 3.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (5-Scale) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Immortal Raid Team",
+  "tier": "Master",
+  "comp_pct": 12.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Solo) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 3.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Immortal Raider",
+  "tier": "Master",
+  "comp_pct": 4.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM Master",
+  "tier": "Master",
+  "comp_pct": 10.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Trio) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 8.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Moving Collateral",
+  "tier": "Master",
+  "comp_pct": 6.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corporeal Beast",
+  "task": "Corporeal Beast Master",
+  "tier": "Master",
+  "comp_pct": 10.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Master",
+  "tier": "Master",
+  "comp_pct": 33.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Perfect Corrupted Hunllef",
+  "tier": "Master",
+  "comp_pct": 28.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Defence Doesn't Matter II",
+  "tier": "Master",
+  "comp_pct": 9.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 8.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Warrior",
+  "tier": "Master",
+  "comp_pct": 16.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Defence Doesn't Matter",
+  "tier": "Master",
+  "comp_pct": 19.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Master",
+  "tier": "Master",
+  "comp_pct": 36.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 5.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Perfect Crystalline Hunllef",
+  "tier": "Master",
+  "comp_pct": 19.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Mokhaiotl Drift",
+  "tier": "Master",
+  "comp_pct": 6.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Mine's Better",
+  "tier": "Master",
+  "comp_pct": 2.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Grub Patrol",
+  "tier": "Master",
+  "comp_pct": 6.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Chaser",
+  "tier": "Master",
+  "comp_pct": 5.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Veteran",
+  "tier": "Master",
+  "comp_pct": 10.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Cold Feet",
+  "tier": "Master",
+  "comp_pct": 8.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 12.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Master",
+  "tier": "Master",
+  "comp_pct": 21.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Perfect Duke Sucellus",
+  "tier": "Master",
+  "comp_pct": 17.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Sportsmanship",
+  "tier": "Master",
+  "comp_pct": 13.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "One-off",
+  "tier": "Master",
+  "comp_pct": 9.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Showboating",
+  "tier": "Master",
+  "comp_pct": 10.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Colosseum Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "I Brought Mine Too",
+  "tier": "Master",
+  "comp_pct": 4.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Perfect Grotesque Guardians II",
+  "tier": "Master",
+  "comp_pct": 18.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 19.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "... 'til Dawn",
+  "tier": "Master",
+  "comp_pct": 14.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Hespori",
+  "task": "Hespori Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 10.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kraken",
+  "task": "One Hundred Tentacles",
+  "tier": "Master",
+  "comp_pct": 25.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "Swoop No More",
+  "tier": "Master",
+  "comp_pct": 9.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "Collateral Damage",
+  "tier": "Master",
+  "comp_pct": 6.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Leviathan Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 5.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Leviathan Master",
+  "tier": "Master",
+  "comp_pct": 10.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Perfect Leviathan",
+  "tier": "Master",
+  "comp_pct": 6.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Serpentine Solo",
+  "tier": "Master",
+  "comp_pct": 13.3,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Maggot King",
+  "task": "King-sized clobbering",
+  "tier": "Master",
+  "comp_pct": 5.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Perfect Maggot King",
+  "tier": "Master",
+  "comp_pct": 2.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Cordoned Off",
+  "tier": "Master",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Digging in",
+  "tier": "Master",
+  "comp_pct": 3.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Camping the King",
+  "tier": "Master",
+  "comp_pct": 2.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Nex",
+  "task": "Nex Master",
+  "tier": "Master",
+  "comp_pct": 18.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Nex",
+  "task": "A siphon will solve this",
+  "tier": "Master",
+  "comp_pct": 21.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Nex",
+  "task": "There is no escape!",
+  "tier": "Master",
+  "comp_pct": 22.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Nex",
+  "task": "Contain this!",
+  "tier": "Master",
+  "comp_pct": 22.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Nex",
+  "task": "Nex Trio",
+  "tier": "Master",
+  "comp_pct": 8.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Nex",
+  "task": "Shadows Move...",
+  "tier": "Master",
+  "comp_pct": 22.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Essence Farmer",
+  "tier": "Master",
+  "comp_pct": 10.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "More than just a ranged weapon",
+  "tier": "Master",
+  "comp_pct": 7.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Walk Straight Pray True",
+  "tier": "Master",
+  "comp_pct": 23.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 8.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Space is Tight",
+  "tier": "Master",
+  "comp_pct": 19.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Master",
+  "tier": "Master",
+  "comp_pct": 22.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Dreamland Express",
+  "tier": "Master",
+  "comp_pct": 7.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "I Would Simply React",
+  "tier": "Master",
+  "comp_pct": 7.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Master",
+  "tier": "Master",
+  "comp_pct": 7.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Crush Hour",
+  "tier": "Master",
+  "comp_pct": 7.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Speedchaser",
+  "tier": "Master",
+  "comp_pct": 7.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Skotizo",
+  "task": "Precise Positioning",
+  "tier": "Master",
+  "comp_pct": 22.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 13.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Is it a bird?",
+  "tier": "Master",
+  "comp_pct": 19.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare Master",
+  "tier": "Master",
+  "comp_pct": 8.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Perfect Nightmare",
+  "tier": "Master",
+  "comp_pct": 3.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare (Solo) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare (5-Scale) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Nylocas",
+  "tier": "Master",
+  "comp_pct": 3.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Back in My Day...",
+  "tier": "Master",
+  "comp_pct": 7.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Can't Drain This",
+  "tier": "Master",
+  "comp_pct": 3.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Sotetseg",
+  "tier": "Master",
+  "comp_pct": 6.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre of Blood Master",
+  "tier": "Master",
+  "comp_pct": 8.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "A Timely Snack",
+  "tier": "Master",
+  "comp_pct": 5.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Verzik",
+  "tier": "Master",
+  "comp_pct": 1.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Maiden",
+  "tier": "Master",
+  "comp_pct": 6.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Can You Dance?",
+  "tier": "Master",
+  "comp_pct": 8.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Pop It",
+  "tier": "Master",
+  "comp_pct": 6.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (Trio) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 6.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (4-Scale) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 5.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Bloat",
+  "tier": "Master",
+  "comp_pct": 9.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Two-Down",
+  "tier": "Master",
+  "comp_pct": 14.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (5-Scale) Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Xarpus",
+  "tier": "Master",
+  "comp_pct": 3.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Theatre of Blood: SM Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 10.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Hard Mode? Completed It",
+  "tier": "Master",
+  "comp_pct": 5.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Tomb Looter",
+  "tier": "Master",
+  "comp_pct": 27.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "You are not prepared",
+  "tier": "Master",
+  "comp_pct": 8.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Tombs Speed Runner",
+  "tier": "Master",
+  "comp_pct": 3.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Tomb Raider",
+  "tier": "Master",
+  "comp_pct": 22.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Scabaras",
+  "tier": "Master",
+  "comp_pct": 35.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Zebak",
+  "tier": "Master",
+  "comp_pct": 16.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Kephri",
+  "tier": "Master",
+  "comp_pct": 9.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Wardens",
+  "tier": "Master",
+  "comp_pct": 2.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Akkha",
+  "tier": "Master",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Ba-Ba",
+  "tier": "Master",
+  "comp_pct": 9.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Chompington",
+  "tier": "Master",
+  "comp_pct": 11.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut",
+  "task": "Better get movin'",
+  "tier": "Master",
+  "comp_pct": 20.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Expert Tomb Looter",
+  "tier": "Master",
+  "comp_pct": 18.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Doesn't bug me",
+  "tier": "Master",
+  "comp_pct": 3.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Something of an expert myself",
+  "tier": "Master",
+  "comp_pct": 20.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Resourceful Raider",
+  "tier": "Master",
+  "comp_pct": 8.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "All out of medics",
+  "tier": "Master",
+  "comp_pct": 6.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Ba-Bananza",
+  "tier": "Master",
+  "comp_pct": 11.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Rockin' around the croc",
+  "tier": "Master",
+  "comp_pct": 8.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Warden't you believe it",
+  "tier": "Master",
+  "comp_pct": 19.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "But... Damage",
+  "tier": "Master",
+  "comp_pct": 4.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Fancy feet",
+  "tier": "Master",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tormented Demon",
+  "task": "Three Times the Thrashing",
+  "tier": "Master",
+  "comp_pct": 4.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Supplies? Who Needs 'em?",
+  "tier": "Master",
+  "comp_pct": 4.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "TzHaar-Ket-Rak's Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 4.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "The IV Jad Challenge",
+  "tier": "Master",
+  "comp_pct": 6.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Facing Jad Head-on IV",
+  "tier": "Master",
+  "comp_pct": 4.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Multi-Style Specialist",
+  "tier": "Master",
+  "comp_pct": 5.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Nibblers, Begone!",
+  "tier": "Master",
+  "comp_pct": 6.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 6.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "You Didn't Say Anything About a Bat",
+  "tier": "Master",
+  "comp_pct": 12.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Master",
+  "tier": "Master",
+  "comp_pct": 23.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Denying the Healers",
+  "tier": "Master",
+  "comp_pct": 21.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Vardorvis Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 12.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Vardorvis Master",
+  "tier": "Master",
+  "comp_pct": 17.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Budget Cutter",
+  "tier": "Master",
+  "comp_pct": 10.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Perfect Vardorvis",
+  "tier": "Master",
+  "comp_pct": 10.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "The Walk",
+  "tier": "Master",
+  "comp_pct": 12.4,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Vorkath Master",
+  "tier": "Master",
+  "comp_pct": 33.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Dodging the Dragon",
+  "tier": "Master",
+  "comp_pct": 10.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Extended Encounter",
+  "tier": "Master",
+  "comp_pct": 8.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Vorkath Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 20.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Whisperer Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 5.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Perfect Whisperer",
+  "tier": "Master",
+  "comp_pct": 6.7,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Whisperer Master",
+  "tier": "Master",
+  "comp_pct": 9.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Yama",
+  "task": "No toppings, no drinks, thanks",
+  "tier": "Master",
+  "comp_pct": 7.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Yama Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 5.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Yama Veteran",
+  "tier": "Master",
+  "comp_pct": 17.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Fire fighter",
+  "tier": "Master",
+  "comp_pct": 18.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Shadow dancer",
+  "tier": "Master",
+  "comp_pct": 16.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Perfect Zulrah",
+  "tier": "Master",
+  "comp_pct": 16.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Zulrah Master",
+  "tier": "Master",
+  "comp_pct": 30.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Zulrah Speed-Chaser",
+  "tier": "Master",
+  "comp_pct": 20.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 6.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Alchemical Hydra",
+  "task": "No Pressure",
+  "tier": "Grandmaster",
+  "comp_pct": 8.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Araxxor Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 9.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Swimming in Venom",
+  "tier": "Grandmaster",
+  "comp_pct": 21.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Araxxor",
+  "task": "Perfect Araxxor 2",
+  "tier": "Grandmaster",
+  "comp_pct": 9.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (5-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Trio) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Solo) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 13.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Trio) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Solo) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (5-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 8.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Animal Whisperer",
+  "tier": "Grandmaster",
+  "comp_pct": 7.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Commander Zilyana",
+  "task": "Peach Conjurer",
+  "tier": "Grandmaster",
+  "comp_pct": 5.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 27.1,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Egniol Diet II",
+  "tier": "Grandmaster",
+  "comp_pct": 9.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Corrupted Hunllef",
+  "task": "Wolf Puncher II",
+  "tier": "Grandmaster",
+  "comp_pct": 15.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Duel of Mokhaiotl",
+  "tier": "Grandmaster",
+  "comp_pct": 1.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "The Praying Mantis",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "It's Dark Down Here",
+  "tier": "Grandmaster",
+  "comp_pct": 3.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Darkness Is Your Ally?",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Perfect Doom",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Racer",
+  "tier": "Grandmaster",
+  "comp_pct": 1.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Doom of Mokhaiotl",
+  "task": "Mopping up",
+  "tier": "Grandmaster",
+  "comp_pct": 6.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 8.0,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Sleeper",
+  "tier": "Grandmaster",
+  "comp_pct": 4.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Duke Sucellus",
+  "task": "Mirror Image",
+  "tier": "Grandmaster",
+  "comp_pct": 6.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Reinforcements",
+  "tier": "Grandmaster",
+  "comp_pct": 1.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Perfect Footwork",
+  "tier": "Grandmaster",
+  "comp_pct": 4.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Colosseum Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Slow Dancing in the Sand",
+  "tier": "Grandmaster",
+  "comp_pct": 2.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Fortis Colosseum",
+  "task": "Colosseum Grand Champion",
+  "tier": "Grandmaster",
+  "comp_pct": 3.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "Defence Matters",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "Ourg Killer",
+  "tier": "Grandmaster",
+  "comp_pct": 9.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "General Graardor",
+  "task": "Keep Away",
+  "tier": "Grandmaster",
+  "comp_pct": 6.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 9.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "Ash Collector",
+  "tier": "Grandmaster",
+  "comp_pct": 10.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demon Whisperer",
+  "tier": "Grandmaster",
+  "comp_pct": 9.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "Feather Hunter",
+  "tier": "Grandmaster",
+  "comp_pct": 5.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Kree'arra",
+  "task": "The Worst Ranged Weapon",
+  "tier": "Grandmaster",
+  "comp_pct": 6.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Leviathan Sleeper",
+  "tier": "Grandmaster",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Unconventional",
+  "tier": "Grandmaster",
+  "comp_pct": 4.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Leviathan",
+  "task": "Leviathan Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.8,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Maggot King",
+  "task": "Maggot King Speed Chaser",
+  "tier": "Grandmaster",
+  "comp_pct": 1.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Nex",
+  "task": "I should see a doctor",
+  "tier": "Grandmaster",
+  "comp_pct": 16.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Nex",
+  "task": "Perfect Nex",
+  "tier": "Grandmaster",
+  "comp_pct": 17.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Nex",
+  "task": "Nex Duo",
+  "tier": "Grandmaster",
+  "comp_pct": 4.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Manipulator",
+  "tier": "Grandmaster",
+  "comp_pct": 6.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 6.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Speedrunner",
+  "tier": "Grandmaster",
+  "comp_pct": 5.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Perfect Phosani's Nightmare",
+  "tier": "Grandmaster",
+  "comp_pct": 5.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Phosani's Nightmare",
+  "task": "Can't Wake Up",
+  "tier": "Grandmaster",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 5.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare (5-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Terrible Parent",
+  "tier": "Grandmaster",
+  "comp_pct": 3.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "Nightmare (Solo) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "The Nightmare",
+  "task": "A Long Trip",
+  "tier": "Grandmaster",
+  "comp_pct": 3.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Perfect Theatre",
+  "tier": "Grandmaster",
+  "comp_pct": 1.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (4-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 1.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (Trio) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Morytania Only",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (Duo) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre (5-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 1.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood",
+  "task": "Theatre of Blood Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 6.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Royal Affairs",
+  "tier": "Grandmaster",
+  "comp_pct": 2.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Harder Mode III",
+  "tier": "Grandmaster",
+  "comp_pct": 1.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Pack Like a Yak",
+  "tier": "Grandmaster",
+  "comp_pct": 1.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Personal Space",
+  "tier": "Grandmaster",
+  "comp_pct": 1.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Nylo Sniper",
+  "tier": "Grandmaster",
+  "comp_pct": 2.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre: HM (Trio) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 1.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Harder Mode II",
+  "tier": "Grandmaster",
+  "comp_pct": 1.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Team Work Makes the Dream Work",
+  "tier": "Grandmaster",
+  "comp_pct": 4.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre: HM (4-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre of Blood: HM Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Stop Right There!",
+  "tier": "Grandmaster",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Harder Mode I",
+  "tier": "Grandmaster",
+  "comp_pct": 1.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre: HM (5-Scale) Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Het",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Scabaras",
+  "tier": "Grandmaster",
+  "comp_pct": 6.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Apmeken",
+  "tier": "Grandmaster",
+  "comp_pct": 6.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Crondis",
+  "tier": "Grandmaster",
+  "comp_pct": 13.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "All Praise Zebak",
+  "tier": "Grandmaster",
+  "comp_pct": 2.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Tombs Speed Runner III",
+  "tier": "Grandmaster",
+  "comp_pct": 2.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Tombs Speed Runner II",
+  "tier": "Grandmaster",
+  "comp_pct": 2.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Insanity",
+  "tier": "Grandmaster",
+  "comp_pct": 2.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Maybe I'm the boss.",
+  "tier": "Grandmaster",
+  "comp_pct": 2.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Amascut's Remnant",
+  "tier": "Grandmaster",
+  "comp_pct": 7.5,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Expert Tomb Raider",
+  "tier": "Grandmaster",
+  "comp_pct": 14.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Akkhan't Do it",
+  "tier": "Grandmaster",
+  "comp_pct": 3.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "The VI Jad Challenge",
+  "tier": "Grandmaster",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "TzHaar-Ket-Rak's Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "It Wasn't a Fluke",
+  "tier": "Grandmaster",
+  "comp_pct": 2.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Wasn't Even Close",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Budget Setup",
+  "tier": "Grandmaster",
+  "comp_pct": 9.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Jad? What Are You Doing Here?",
+  "tier": "Grandmaster",
+  "comp_pct": 2.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Nibbler Chaser",
+  "tier": "Grandmaster",
+  "comp_pct": 1.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Inferno Grandmaster",
+  "tier": "Grandmaster",
+  "comp_pct": 2.4,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Facing Jad Head-on II",
+  "tier": "Grandmaster",
+  "comp_pct": 1.6,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Inferno Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.1,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "The Floor Is Lava",
+  "tier": "Grandmaster",
+  "comp_pct": 1.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "No Luck Required",
+  "tier": "Grandmaster",
+  "comp_pct": 10.6,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "TzKal-Zuk",
+  "task": "Playing with Jads",
+  "tier": "Grandmaster",
+  "comp_pct": 1.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "No Time for a Drink",
+  "tier": "Grandmaster",
+  "comp_pct": 2.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 3.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "TzTok-Jad",
+  "task": "Denying the Healers II",
+  "tier": "Grandmaster",
+  "comp_pct": 8.2,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Vardorvis Sleeper",
+  "tier": "Grandmaster",
+  "comp_pct": 4.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Vardorvis Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 7.9,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vardorvis",
+  "task": "Axe Enthusiast",
+  "tier": "Grandmaster",
+  "comp_pct": 5.0,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Faithless Encounter",
+  "tier": "Grandmaster",
+  "comp_pct": 14.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Vorkath",
+  "task": "Vorkath Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 5.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Vorkath",
+  "task": "The Fremennik Way",
+  "tier": "Grandmaster",
+  "comp_pct": 9.5,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Whisperer Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 2.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Whispered",
+  "tier": "Grandmaster",
+  "comp_pct": 3.9,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Whisperer",
+  "task": "Dark Memories",
+  "tier": "Grandmaster",
+  "comp_pct": 7.2,
+  "done_2026_11_02": true
+ },
+ {
+  "boss": "Yama",
+  "task": "Yama Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 1.7,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Contractually Unbound",
+  "tier": "Grandmaster",
+  "comp_pct": 3.3,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Yama",
+  "task": "Contract Choreographer",
+  "tier": "Grandmaster",
+  "comp_pct": 13.8,
+  "done_2026_11_02": false
+ },
+ {
+  "boss": "Zulrah",
+  "task": "Zulrah Speed-Runner",
+  "tier": "Grandmaster",
+  "comp_pct": 16.0,
+  "done_2026_11_02": false
+ }
+]

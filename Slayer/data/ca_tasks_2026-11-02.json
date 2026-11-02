@@ -1,0 +1,6552 @@
+[
+ {
+  "id": 0,
+  "boss": "Aberrant Spectre",
+  "task": "Noxious Foe",
+  "desc": "Kill an Aberrant Spectre.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 69.9
+ },
+ {
+  "id": 28,
+  "boss": "Barrows",
+  "task": "Defence? What Defence?",
+  "desc": "Kill any Barrows Brother using only magical damage.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 74.4
+ },
+ {
+  "id": 24,
+  "boss": "Barrows",
+  "task": "Barrows Novice",
+  "desc": "Open the Barrows chest 10 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 66.1
+ },
+ {
+  "id": 32,
+  "boss": "Black Dragon",
+  "task": "Big, Black and Fiery",
+  "desc": "Kill a Black Dragon.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 80.9
+ },
+ {
+  "id": 33,
+  "boss": "Bloodveld",
+  "task": "The Demonic Punching Bag",
+  "desc": "Kill a Bloodveld.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 79.5
+ },
+ {
+  "id": 632,
+  "boss": "Brutus",
+  "task": "Brutus Novice",
+  "desc": "Kill Brutus.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 54.0
+ },
+ {
+  "id": 40,
+  "boss": "Bryophyta",
+  "task": "A Slow Death",
+  "desc": "Kill Bryophyta with either poison or venom being the final source of damage.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 35.8
+ },
+ {
+  "id": 37,
+  "boss": "Bryophyta",
+  "task": "Protection from Moss",
+  "desc": "Kill Bryophyta with the Protect from Magic prayer active.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 42.6
+ },
+ {
+  "id": 39,
+  "boss": "Bryophyta",
+  "task": "Preparation Is Key",
+  "desc": "Kill Bryophyta without suffering any poison damage.",
+  "type": "Perfection",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 45.0
+ },
+ {
+  "id": 35,
+  "boss": "Bryophyta",
+  "task": "Bryophyta Novice",
+  "desc": "Open Bryophyta's chest once.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 47.7
+ },
+ {
+  "id": 41,
+  "boss": "Bryophyta",
+  "task": "Fighting as Intended II",
+  "desc": "Kill Bryophyta on a free to play world.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 34.7
+ },
+ {
+  "id": 76,
+  "boss": "Deranged Archaeologist",
+  "task": "Deranged Archaeologist Novice",
+  "desc": "Kill the Deranged Archaeologist 10 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 39.4
+ },
+ {
+  "id": 80,
+  "boss": "Fire Giant",
+  "task": "The Walking Volcano",
+  "desc": "Kill a Fire Giant.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 83.7
+ },
+ {
+  "id": 177,
+  "boss": "Giant Mole",
+  "task": "Giant Mole Novice",
+  "desc": "Kill the Giant Mole 10 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 44.7
+ },
+ {
+  "id": 398,
+  "boss": "Giants",
+  "task": "Into the Den of Giants",
+  "desc": "Kill a Hill Giant, Moss Giant and Fire Giant in the Giant Cave within the Shayzien region.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 38.4
+ },
+ {
+  "id": 121,
+  "boss": "Greater Demon",
+  "task": "Not So Great After All",
+  "desc": "Finish off a Greater Demon with a demonbane weapon.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 61.9
+ },
+ {
+  "id": 120,
+  "boss": "Greater Demon",
+  "task": "A Greater Foe",
+  "desc": "Kill a Greater Demon.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 79.9
+ },
+ {
+  "id": 122,
+  "boss": "Hellhound",
+  "task": "A Demon's Best Friend",
+  "desc": "Kill a Hellhound.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 80.5
+ },
+ {
+  "id": 162,
+  "boss": "King Black Dragon",
+  "task": "King Black Dragon Novice",
+  "desc": "Kill the King Black Dragon 10 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 43.4
+ },
+ {
+  "id": 174,
+  "boss": "Lizardman Shaman",
+  "task": "A Scaley Encounter",
+  "desc": "Kill a Lizardman Shaman.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 59.1
+ },
+ {
+  "id": 175,
+  "boss": "Lizardman Shaman",
+  "task": "Shayzien Protector",
+  "desc": "Kill a Lizardman Shaman in Molch which has not dealt damage to anyone (excluding its Spawns).",
+  "type": "Perfection",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 43.3
+ },
+ {
+  "id": 134,
+  "boss": "Obor",
+  "task": "Fighting as Intended",
+  "desc": "Kill Obor on a free to play world.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 33.4
+ },
+ {
+  "id": 129,
+  "boss": "Obor",
+  "task": "Obor Novice",
+  "desc": "Open Obor's chest once.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 47.0
+ },
+ {
+  "id": 131,
+  "boss": "Obor",
+  "task": "Sleeping Giant",
+  "desc": "Kill Obor whilst he is immobilized.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 34.8
+ },
+ {
+  "id": 597,
+  "boss": "Royal Titans",
+  "task": "Let them fight",
+  "desc": "Kill the Royal Titans while having the Royal Titans kill a total of 10 elementals.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 36.0
+ },
+ {
+  "id": 591,
+  "boss": "Royal Titans",
+  "task": "One by one",
+  "desc": "Kill one Titan at a time, without attacking the other.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 34.7
+ },
+ {
+  "id": 594,
+  "boss": "Royal Titans",
+  "task": "Elemental Company",
+  "desc": "Kill the Royal Titans without attacking any elementals.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 36.7
+ },
+ {
+  "id": 206,
+  "boss": "Sarachnis",
+  "task": "Sarachnis Novice",
+  "desc": "Kill Sarachnis 10 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 41.4
+ },
+ {
+  "id": 523,
+  "boss": "Scurrius",
+  "task": "Sit Rat",
+  "desc": "Finish off Scurrius with a ratbane weapon in a private instance.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 37.3
+ },
+ {
+  "id": 521,
+  "boss": "Scurrius",
+  "task": "Scurrius Novice",
+  "desc": "Kill Scurrius once.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 57.2
+ },
+ {
+  "id": 630,
+  "boss": "Shellbane gryphon",
+  "task": "Dry Cleaning",
+  "desc": "Kill the Shellbane Gryphon after clearing its corrosive spit from your armour.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 14.5
+ },
+ {
+  "id": 625,
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Adept",
+  "desc": "Kill the Shellbane Gryphon 25 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 20.9
+ },
+ {
+  "id": 356,
+  "boss": "Tempoross",
+  "task": "Master of Buckets",
+  "desc": "Extinguish at least 5 fires during a single Tempoross fight.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 60.9
+ },
+ {
+  "id": 360,
+  "boss": "Tempoross",
+  "task": "Fire in the Hole!",
+  "desc": "Attack Tempoross from both sides by loading both cannons on both ships.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 40.1
+ },
+ {
+  "id": 357,
+  "boss": "Tempoross",
+  "task": "Calm Before the Storm",
+  "desc": "Repair either a mast or a totem pole.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 66.7
+ },
+ {
+  "id": 353,
+  "boss": "Tempoross",
+  "task": "Tempoross Novice",
+  "desc": "Subdue Tempoross 5 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 70.1
+ },
+ {
+  "id": 285,
+  "boss": "Wintertodt",
+  "task": "Cosy",
+  "desc": "Subdue the Wintertodt with four pieces of warm equipment equipped.",
+  "type": "Restriction",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 77.4
+ },
+ {
+  "id": 281,
+  "boss": "Wintertodt",
+  "task": "Mummy!",
+  "desc": "Heal a pyromancer after they have fallen.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 56.7
+ },
+ {
+  "id": 279,
+  "boss": "Wintertodt",
+  "task": "Wintertodt Novice",
+  "desc": "Subdue the Wintertodt 5 times.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 82.0
+ },
+ {
+  "id": 282,
+  "boss": "Wintertodt",
+  "task": "Handyman",
+  "desc": "Repair a brazier which has been destroyed by the Wintertodt.",
+  "type": "Mechanical",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 77.1
+ },
+ {
+  "id": 287,
+  "boss": "Wyrm",
+  "task": "A Slithery Encounter",
+  "desc": "Kill a Wyrm.",
+  "type": "Kill Count",
+  "tier": "Easy",
+  "pts": 1,
+  "comp_pct": 69.0
+ },
+ {
+  "id": 584,
+  "boss": "Amoxliatl",
+  "task": "Temotli Triumph",
+  "desc": "Kill Amoxliatl using only glacial temotli as a weapon.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 25.8
+ },
+ {
+  "id": 579,
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Champion",
+  "desc": "Kill Amoxliatl once.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 40.8
+ },
+ {
+  "id": 27,
+  "boss": "Barrows",
+  "task": "Pray for Success",
+  "desc": "Kill all six Barrows Brothers and loot the Barrows chest without taking any damage from any of the brothers.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 55.6
+ },
+ {
+  "id": 26,
+  "boss": "Barrows",
+  "task": "Can't Touch Me",
+  "desc": "Kill Dharok, Verac, Torag and Guthan without letting them attack you with melee.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 29.1
+ },
+ {
+  "id": 25,
+  "boss": "Barrows",
+  "task": "Barrows Champion",
+  "desc": "Open the Barrows chest 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 59.6
+ },
+ {
+  "id": 34,
+  "boss": "Brutal Black Dragon",
+  "task": "Brutal, Big, Black and Firey",
+  "desc": "Kill a Brutal Black Dragon.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 41.0
+ },
+ {
+  "id": 633,
+  "boss": "Brutus",
+  "task": "Brutus Champion",
+  "desc": "Kill Brutus 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 51.1
+ },
+ {
+  "id": 635,
+  "boss": "Brutus",
+  "task": "Beef vs Beef",
+  "desc": "Kill Brutus whilst neither equipping nor consuming anything.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 36.6
+ },
+ {
+  "id": 36,
+  "boss": "Bryophyta",
+  "task": "Bryophyta Champion",
+  "desc": "Open Bryophyta's chest 5 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 31.5
+ },
+ {
+  "id": 38,
+  "boss": "Bryophyta",
+  "task": "Quick Cutter",
+  "desc": "Kill all 3 of Bryophyta's growthlings within 3 seconds of the first one dying.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 38.9
+ },
+ {
+  "id": 63,
+  "boss": "Chaos Fanatic",
+  "task": "Sorry, What Was That?",
+  "desc": "Kill the Chaos Fanatic without anyone being hit by his explosion attack.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 35.5
+ },
+ {
+  "id": 61,
+  "boss": "Chaos Fanatic",
+  "task": "Chaos Fanatic Champion",
+  "desc": "Kill the Chaos Fanatic 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 29.8
+ },
+ {
+  "id": 72,
+  "boss": "Crazy Archaeologist",
+  "task": "Mage of the Ruins",
+  "desc": "Kill the Crazy Archaeologist with only magical attacks.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 50.5
+ },
+ {
+  "id": 73,
+  "boss": "Crazy Archaeologist",
+  "task": "I'd Rather Not Learn",
+  "desc": "Kill the Crazy Archaeologist without anyone being hit by his \"Rain of Knowledge\" attack.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 43.0
+ },
+ {
+  "id": 70,
+  "boss": "Crazy Archaeologist",
+  "task": "Crazy Archaeologist Champion",
+  "desc": "Kill the Crazy Archaeologist 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 42.9
+ },
+ {
+  "id": 197,
+  "boss": "Dagannoth Prime",
+  "task": "Dagannoth Prime Champion",
+  "desc": "Kill Dagannoth Prime 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 36.6
+ },
+ {
+  "id": 201,
+  "boss": "Dagannoth Rex",
+  "task": "Dagannoth Rex Champion",
+  "desc": "Kill Dagannoth Rex 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 51.1
+ },
+ {
+  "id": 204,
+  "boss": "Dagannoth Rex",
+  "task": "A Frozen King",
+  "desc": "Kill Dagannoth Rex whilst he is immobilized.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 24.7
+ },
+ {
+  "id": 233,
+  "boss": "Dagannoth Supreme",
+  "task": "Dagannoth Supreme Champion",
+  "desc": "Kill Dagannoth Supreme 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 36.1
+ },
+ {
+  "id": 77,
+  "boss": "Deranged Archaeologist",
+  "task": "Deranged Archaeologist Champion",
+  "desc": "Kill the Deranged Archaeologist 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 35.2
+ },
+ {
+  "id": 78,
+  "boss": "Deranged Archaeologist",
+  "task": "Mage of the Swamp",
+  "desc": "Kill the Deranged Archaeologist with only magical attacks.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 41.7
+ },
+ {
+  "id": 79,
+  "boss": "Deranged Archaeologist",
+  "task": "I'd Rather Be Illiterate",
+  "desc": "Kill the Deranged Archaeologist without anyone being hit by his \"Learn to Read\" attack.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 41.3
+ },
+ {
+  "id": 97,
+  "boss": "Gargoyle",
+  "task": "A Smashing Time",
+  "desc": "Kill a Gargoyle.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 59.2
+ },
+ {
+  "id": 178,
+  "boss": "Giant Mole",
+  "task": "Giant Mole Champion",
+  "desc": "Kill the Giant mole 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 40.4
+ },
+ {
+  "id": 182,
+  "boss": "Giant Mole",
+  "task": "Avoiding Those Little Arms",
+  "desc": "Kill the Giant Mole without her damaging anyone.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 51.8
+ },
+ {
+  "id": 165,
+  "boss": "King Black Dragon",
+  "task": "Hide Penetration",
+  "desc": "Kill the King Black Dragon with a stab weapon.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 40.5
+ },
+ {
+  "id": 164,
+  "boss": "King Black Dragon",
+  "task": "Claw Clipper",
+  "desc": "Kill the King Black Dragon with the Protect from Melee prayer activated.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 41.9
+ },
+ {
+  "id": 163,
+  "boss": "King Black Dragon",
+  "task": "King Black Dragon Champion",
+  "desc": "Kill the King Black Dragon 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 37.4
+ },
+ {
+  "id": 166,
+  "boss": "King Black Dragon",
+  "task": "Antifire Protection",
+  "desc": "Kill the King Black Dragon with an antifire potion active and an antidragon [ sic ] shield equipped.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 46.6
+ },
+ {
+  "id": 173,
+  "boss": "Kurask",
+  "task": "Master of Broad Weaponry",
+  "desc": "Kill a Kurask.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 59.6
+ },
+ {
+  "id": 651,
+  "boss": "Mad Angel",
+  "task": "Dancing Queen",
+  "desc": "Kill the Mad Angel after getting 6 consecutive enhanced attacks by dodging the sweep attack successfully during her enrage phase.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 2.5
+ },
+ {
+  "id": 653,
+  "boss": "Mad Angel",
+  "task": "Juggling Act",
+  "desc": "Kill the Mad Angel after attacking her between each bounce of the blast attack during her enrage phase. This does not need to be done immediately prior to the Mad Angel dying; it just needs to be done at any point in the fight after she becomes enraged.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 3.2
+ },
+ {
+  "id": 652,
+  "boss": "Mad Angel",
+  "task": "Smite Fight",
+  "desc": "Kill the Mad Angel after getting 3 consecutive enhanced attacks by successfully praying against the smite attacks during her enrage phase.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 2.9
+ },
+ {
+  "id": 646,
+  "boss": "Mad Angel",
+  "task": "Mad Angel Adept",
+  "desc": "Kill the Mad Angel 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 5.1
+ },
+ {
+  "id": 528,
+  "boss": "Moons of Peril",
+  "task": "Lunar Triplet",
+  "desc": "Open the Reward Chest after defeating all three Moons.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 59.1
+ },
+ {
+  "id": 529,
+  "boss": "Moons of Peril",
+  "task": "Perilous Novice",
+  "desc": "Open the Reward Chest 5 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 50.9
+ },
+ {
+  "id": 534,
+  "boss": "Moons of Peril",
+  "task": "Back to Our Roots",
+  "desc": "Defeat all three Moons in one run by only attacking with a Dragon Scimitar.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 34.3
+ },
+ {
+  "id": 535,
+  "boss": "Moons of Peril",
+  "task": "Moons of Peril Speed-Trialist",
+  "desc": "Defeat all three Moons in one run in under 8 minutes.",
+  "type": "Speed",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 48.5
+ },
+ {
+  "id": 399,
+  "boss": "N/A",
+  "task": "Sit Back and Relax",
+  "desc": "Deal 100 damage to creatures using undead thralls.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 55.4
+ },
+ {
+  "id": 130,
+  "boss": "Obor",
+  "task": "Obor Champion",
+  "desc": "Open Obor's chest 5 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 31.0
+ },
+ {
+  "id": 132,
+  "boss": "Obor",
+  "task": "Back to the Wall",
+  "desc": "Kill Obor without being pushed back more than one square by his knockback attack.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 42.2
+ },
+ {
+  "id": 133,
+  "boss": "Obor",
+  "task": "Squashing the Giant",
+  "desc": "Kill Obor without taking any damage off prayer.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 33.3
+ },
+ {
+  "id": 598,
+  "boss": "Royal Titans",
+  "task": "It takes too long",
+  "desc": "Kill both Royal Titans while they are charging up their area attack. Both titans must die during the same charging phase.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 38.2
+ },
+ {
+  "id": 590,
+  "boss": "Royal Titans",
+  "task": "Royal Titan Adept",
+  "desc": "Kill the Royal Titans 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 41.4
+ },
+ {
+  "id": 589,
+  "boss": "Royal Titans",
+  "task": "Royal Titan Champion",
+  "desc": "Kill the Royal Titans 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 45.2
+ },
+ {
+  "id": 207,
+  "boss": "Sarachnis",
+  "task": "Sarachnis Champion",
+  "desc": "Kill Sarachnis 25 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 36.6
+ },
+ {
+  "id": 210,
+  "boss": "Sarachnis",
+  "task": "Newspaper Enthusiast",
+  "desc": "Kill Sarachnis with a crush weapon.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 44.3
+ },
+ {
+  "id": 524,
+  "boss": "Scurrius",
+  "task": "Perfect Scurrius",
+  "desc": "Kill Scurrius in a private instance without taking damage from the following attacks: Tail Swipe and Falling Bricks. Pray correctly against the following attacks: Flying Fur and Bolts of Electricity.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 42.0
+ },
+ {
+  "id": 525,
+  "boss": "Scurrius",
+  "task": "Efficient Pest Control",
+  "desc": "Kill 6 Giant Rats within Scurrius' lair in 3 seconds.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 34.4
+ },
+ {
+  "id": 522,
+  "boss": "Scurrius",
+  "task": "Scurrius Champion",
+  "desc": "Kill Scurrius 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 48.1
+ },
+ {
+  "id": 628,
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Speedrunner",
+  "desc": "Kill the Shellbane Gryphon 10 times within 12:30 minutes of entering the cave.",
+  "type": "Speed",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 15.8
+ },
+ {
+  "id": 627,
+  "boss": "Shellbane gryphon",
+  "task": "Perfect Shellbane",
+  "desc": "Kill the Shellbane Gryphon without taking damage.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 20.0
+ },
+ {
+  "id": 626,
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Veteran",
+  "desc": "Kill the Shellbane Gryphon 50 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 19.7
+ },
+ {
+  "id": 223,
+  "boss": "Skeletal Wyvern",
+  "task": "A Frozen Foe from the Past",
+  "desc": "Kill a Skeletal Wyvern",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 61.9
+ },
+ {
+  "id": 44,
+  "boss": "Skotizo",
+  "task": "Skotizo Champion",
+  "desc": "Kill Skotizo once.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 56.9
+ },
+ {
+  "id": 46,
+  "boss": "Skotizo",
+  "task": "Demonic Weakening",
+  "desc": "Kill Skotizo with no altars active.",
+  "type": "Mechanical",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 45.3
+ },
+ {
+  "id": 48,
+  "boss": "Skotizo",
+  "task": "Demonbane Weaponry",
+  "desc": "Kill Skotizo with a demonbane weapon equipped.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 52.3
+ },
+ {
+  "id": 354,
+  "boss": "Tempoross",
+  "task": "Tempoross Champion",
+  "desc": "Subdue Tempoross 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 66.5
+ },
+ {
+  "id": 359,
+  "boss": "Tempoross",
+  "task": "The Lone Angler",
+  "desc": "Subdue Tempoross alone without getting hit by any fires, torrents or waves.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 44.9
+ },
+ {
+  "id": 574,
+  "boss": "The Hueycoatl",
+  "task": "You're a wizard",
+  "desc": "Kill the Hueycoatl using only earth spells.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 23.6
+ },
+ {
+  "id": 568,
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Champion",
+  "desc": "Kill the Hueycoatl once.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 41.3
+ },
+ {
+  "id": 283,
+  "boss": "Wintertodt",
+  "task": "Can We Fix It?",
+  "desc": "Subdue the Wintertodt without allowing all 4 braziers to be broken at the same time.",
+  "type": "Perfection",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 79.4
+ },
+ {
+  "id": 280,
+  "boss": "Wintertodt",
+  "task": "Wintertodt Champion",
+  "desc": "Subdue the Wintertodt 10 times.",
+  "type": "Kill Count",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 80.0
+ },
+ {
+  "id": 284,
+  "boss": "Wintertodt",
+  "task": "Leaving No One Behind",
+  "desc": "Subdue the Wintertodt without any of the Pyromancers falling.",
+  "type": "Restriction",
+  "tier": "Medium",
+  "pts": 2,
+  "comp_pct": 74.9
+ },
+ {
+  "id": 5,
+  "boss": "Abyssal Sire",
+  "task": "Don't Whip Me",
+  "desc": "Kill the Abyssal Sire without being hit by any external tentacles.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 31.9
+ },
+ {
+  "id": 7,
+  "boss": "Abyssal Sire",
+  "task": "Don't Stop Moving",
+  "desc": "Kill the Abyssal Sire without taking damage from any miasma pools.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 30.4
+ },
+ {
+  "id": 3,
+  "boss": "Abyssal Sire",
+  "task": "They Grow Up Too Fast",
+  "desc": "Kill the Abyssal Sire without letting any Scion mature.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 22.6
+ },
+ {
+  "id": 1,
+  "boss": "Abyssal Sire",
+  "task": "Abyssal Adept",
+  "desc": "Kill the Abyssal Sire 20 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 31.3
+ },
+ {
+  "id": 580,
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Adept",
+  "desc": "Kill Amoxliatl 20 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.7
+ },
+ {
+  "id": 587,
+  "boss": "Amoxliatl",
+  "task": "Totally Shattered",
+  "desc": "Kill Amoxliatl without any of her unstable ice shattering.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 39.6
+ },
+ {
+  "id": 583,
+  "boss": "Amoxliatl",
+  "task": "Nagua Negation",
+  "desc": "Kill Amoxliatl without taking any damage.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 35.4
+ },
+ {
+  "id": 586,
+  "boss": "Amoxliatl",
+  "task": "Kemo Makti",
+  "desc": "Kill Amoxliatl 10 times without leaving her chamber.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 30.6
+ },
+ {
+  "id": 581,
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Speed-Trialist",
+  "desc": "Kill Amoxliatl in less than 1 minute.",
+  "type": "Speed",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 28.0
+ },
+ {
+  "id": 29,
+  "boss": "Barrows",
+  "task": "Just Like That",
+  "desc": "Kill Karil using only damage dealt by special attacks.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 41.0
+ },
+ {
+  "id": 30,
+  "boss": "Barrows",
+  "task": "Faithless Crypt Run",
+  "desc": "Kill all six Barrows Brothers and loot the Barrows chest without ever having more than 0 prayer points.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 38.2
+ },
+ {
+  "id": 636,
+  "boss": "Brutus",
+  "task": "Smarter than a Cow",
+  "desc": "Kill Brutus without being attacked.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 39.7
+ },
+ {
+  "id": 42,
+  "boss": "Callisto",
+  "task": "Callisto Adept",
+  "desc": "Kill Callisto 10 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 29.5
+ },
+ {
+  "id": 59,
+  "boss": "Chaos Elemental",
+  "task": "Hoarder",
+  "desc": "Kill the Chaos Elemental without it unequipping any of your items.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 33.3
+ },
+ {
+  "id": 60,
+  "boss": "Chaos Elemental",
+  "task": "The Flincher",
+  "desc": "Kill the Chaos Elemental without taking any damage from its attacks.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 18.8
+ },
+ {
+  "id": 57,
+  "boss": "Chaos Elemental",
+  "task": "Chaos Elemental Adept",
+  "desc": "Kill the Chaos Elemental 10 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 23.2
+ },
+ {
+  "id": 62,
+  "boss": "Chaos Fanatic",
+  "task": "Chaos Fanatic Adept",
+  "desc": "Kill the Chaos Fanatic 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 24.6
+ },
+ {
+  "id": 64,
+  "boss": "Chaos Fanatic",
+  "task": "Praying to the Gods",
+  "desc": "Kill the Chaos Fanatic 10 times without drinking any potion which restores prayer or leaving the Wilderness.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 19.6
+ },
+ {
+  "id": 211,
+  "boss": "Commander Zilyana",
+  "task": "Commander Zilyana Adept",
+  "desc": "Kill Commander Zilyana 50 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 19.5
+ },
+ {
+  "id": 213,
+  "boss": "Commander Zilyana",
+  "task": "Commander Showdown",
+  "desc": "Finish off Commander Zilyana while all of her bodyguards are dead.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 12.9
+ },
+ {
+  "id": 71,
+  "boss": "Crazy Archaeologist",
+  "task": "Crazy Archaeologist Adept",
+  "desc": "Kill the Crazy Archaeologist 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 35.8
+ },
+ {
+  "id": 198,
+  "boss": "Dagannoth Prime",
+  "task": "Dagannoth Prime Adept",
+  "desc": "Kill Dagannoth Prime 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.4
+ },
+ {
+  "id": 202,
+  "boss": "Dagannoth Rex",
+  "task": "Dagannoth Rex Adept",
+  "desc": "Kill Dagannoth Rex 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 47.2
+ },
+ {
+  "id": 234,
+  "boss": "Dagannoth Supreme",
+  "task": "Dagannoth Supreme Adept",
+  "desc": "Kill Dagannoth Supreme 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 31.8
+ },
+ {
+  "id": 16,
+  "boss": "General Graardor",
+  "task": "General Graardor Adept",
+  "desc": "Kill General Graardor 50 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 27.1
+ },
+ {
+  "id": 20,
+  "boss": "General Graardor",
+  "task": "General Showdown",
+  "desc": "Finish off General Graardor whilst all of his bodyguards are dead.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 12.4
+ },
+ {
+  "id": 18,
+  "boss": "General Graardor",
+  "task": "Ourg Freezer",
+  "desc": "Kill General Graardor whilst he is immobilized [ sic ] .",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 17.9
+ },
+ {
+  "id": 181,
+  "boss": "Giant Mole",
+  "task": "Whack-a-Mole",
+  "desc": "Kill the Giant Mole within 10 seconds of her resurfacing.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 41.4
+ },
+ {
+  "id": 179,
+  "boss": "Giant Mole",
+  "task": "Why Are You Running?",
+  "desc": "Kill the Giant Mole without her burrowing more than 2 times.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 49.8
+ },
+ {
+  "id": 87,
+  "boss": "Grotesque Guardians",
+  "task": "Heal No More",
+  "desc": "Kill the Grotesque Guardians without letting Dawn receive any healing from her orbs.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.7
+ },
+ {
+  "id": 84,
+  "boss": "Grotesque Guardians",
+  "task": "Don't Look at the Eclipse",
+  "desc": "Kill the Grotesque Guardians without taking damage from Dusk's blinding attack.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.1
+ },
+ {
+  "id": 88,
+  "boss": "Grotesque Guardians",
+  "task": "Static Awareness",
+  "desc": "Kill the Grotesque Guardians without being hit by any lightning attacks.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.2
+ },
+ {
+  "id": 82,
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Adept",
+  "desc": "Kill the Grotesque Guardians 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.2
+ },
+ {
+  "id": 85,
+  "boss": "Grotesque Guardians",
+  "task": "Prison Break",
+  "desc": "Kill the Grotesque Guardians without taking damage from Dusk's prison attack.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.8
+ },
+ {
+  "id": 86,
+  "boss": "Grotesque Guardians",
+  "task": "Granite Footwork",
+  "desc": "Kill the Grotesque Guardians without taking damage from Dawn's rockfall attack.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.5
+ },
+ {
+  "id": 125,
+  "boss": "Hespori",
+  "task": "Weed Whacker",
+  "desc": "Kill all of Hesporis flowers within 5 seconds.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 54.0
+ },
+ {
+  "id": 123,
+  "boss": "Hespori",
+  "task": "Hespori Adept",
+  "desc": "Kill Hespori 5 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 59.3
+ },
+ {
+  "id": 124,
+  "boss": "Hespori",
+  "task": "Hesporisn't",
+  "desc": "Finish off Hespori with a special attack.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 45.1
+ },
+ {
+  "id": 332,
+  "boss": "K'ril Tsutsaroth",
+  "task": "K'ril Tsutsaroth Adept",
+  "desc": "Kill K'ril Tsutsaroth 50 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 21.6
+ },
+ {
+  "id": 335,
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demonic Showdown",
+  "desc": "Finish off K'ril Tsutsaroth whilst all of his bodyguards are dead.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 12.1
+ },
+ {
+  "id": 339,
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demonbane Weaponry II",
+  "desc": "Finish off K'ril Tsutsaroth with a demonbane weapon.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 35.2
+ },
+ {
+  "id": 334,
+  "boss": "K'ril Tsutsaroth",
+  "task": "Yarr No More",
+  "desc": "Receive kill-credit for K'ril Tsutsaroth without him using his special attack.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 36.9
+ },
+ {
+  "id": 159,
+  "boss": "Kalphite Queen",
+  "task": "Chitin Penetrator",
+  "desc": "Kill the Kalphite Queen while her defence was last lowered by you.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.7
+ },
+ {
+  "id": 157,
+  "boss": "Kalphite Queen",
+  "task": "Kalphite Queen Adept",
+  "desc": "Kill the Kalphite Queen 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 26.0
+ },
+ {
+  "id": 167,
+  "boss": "King Black Dragon",
+  "task": "Who Is the King Now?",
+  "desc": "Kill The King Black Dragon 10 times in a private instance without leaving the instance.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 21.8
+ },
+ {
+  "id": 168,
+  "boss": "Kraken",
+  "task": "Kraken Adept",
+  "desc": "Kill the Kraken 20 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 42.4
+ },
+ {
+  "id": 170,
+  "boss": "Kraken",
+  "task": "Krakan't Hurt Me",
+  "desc": "Kill the Kraken 25 times in a private instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 36.2
+ },
+ {
+  "id": 169,
+  "boss": "Kraken",
+  "task": "Unnecessary Optimisation",
+  "desc": "Kill the Kraken after killing all four tentacles.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.8
+ },
+ {
+  "id": 9,
+  "boss": "Kree'arra",
+  "task": "Kree'arra Adept",
+  "desc": "Kill Kree'arra 50 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 15.2
+ },
+ {
+  "id": 12,
+  "boss": "Kree'arra",
+  "task": "Airborne Showdown",
+  "desc": "Finish off Kree'arra whilst all of his bodyguards are dead.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 9.7
+ },
+ {
+  "id": 650,
+  "boss": "Mad Angel",
+  "task": "Mad Angel Speed-Runner",
+  "desc": "Kill the Mad Angel 5 times within 10 minutes of entering her arena.",
+  "type": "Speed",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 2.8
+ },
+ {
+  "id": 647,
+  "boss": "Mad Angel",
+  "task": "Mad Angel Veteran",
+  "desc": "Kill the Mad Angel 50 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 4.2
+ },
+ {
+  "id": 648,
+  "boss": "Mad Angel",
+  "task": "Perfect Mad Angel",
+  "desc": "Kill the Mad Angel without taking any avoidable damage.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 637,
+  "boss": "Maggot King",
+  "task": "Maggot Squasher",
+  "desc": "Kill the Maggot King.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 10.2
+ },
+ {
+  "id": 530,
+  "boss": "Moons of Peril",
+  "task": "Perilous Champion",
+  "desc": "Open the Reward Chest 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 43.2
+ },
+ {
+  "id": 537,
+  "boss": "Moons of Peril",
+  "task": "Fat of the Land",
+  "desc": "Defeat 30 Moons of Peril bosses without leaving the dungeon.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 42.1
+ },
+ {
+  "id": 533,
+  "boss": "Moons of Peril",
+  "task": "Betrayal",
+  "desc": "Defeat a Moon using its associated weapon drop.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.1
+ },
+ {
+  "id": 526,
+  "boss": "Moons of Peril",
+  "task": "The Clone Zone",
+  "desc": "Defeat the Eclipse moon by only attacking its clones.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.4
+ },
+ {
+  "id": 532,
+  "boss": "Moons of Peril",
+  "task": "Fortified",
+  "desc": "Defeat a Moon without consuming any supplies.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 48.9
+ },
+ {
+  "id": 531,
+  "boss": "Moons of Peril",
+  "task": "Perilous Dancer",
+  "desc": "Defeat all the Moons in one run while only taking damage from regular attacks.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 31.1
+ },
+ {
+  "id": 536,
+  "boss": "Moons of Peril",
+  "task": "Moons of Peril Speed-Chaser",
+  "desc": "Defeat all three Moons in one run in under 6 minutes.",
+  "type": "Speed",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 41.8
+ },
+ {
+  "id": 478,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Adept",
+  "desc": "Kill the Phantom Muspah.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 32.4
+ },
+ {
+  "id": 593,
+  "boss": "Royal Titans",
+  "task": "Titan Killer",
+  "desc": "Kill the Royal Titans 15 times without anyone leaving the instance. If a player joins the fight, the current streak will be reset to 0. If a player leaves the fight, the task will be failed and a new instance will need to be created.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 17.7
+ },
+ {
+  "id": 595,
+  "boss": "Royal Titans",
+  "task": "I need room",
+  "desc": "Kill the Royal Titans while extinguishing all fires and melting all icicles before they dissipate naturally.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.4
+ },
+ {
+  "id": 588,
+  "boss": "Royal Titans",
+  "task": "Perfect Royal Titans",
+  "desc": "Kill the Royal Titans without getting hit by any avoidable damage. This includes: Melee attacks, Explosions from the ice or fire elemental, Icicle or fire spawn damage, and Ice or fire pulse attacks.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.6
+ },
+ {
+  "id": 592,
+  "boss": "Royal Titans",
+  "task": "Royal Titan Speed-Runner",
+  "desc": "Kill the Royal Titans in less than 1:30 minutes.",
+  "type": "Speed",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 28.1
+ },
+ {
+  "id": 209,
+  "boss": "Sarachnis",
+  "task": "Inspect Repellent",
+  "desc": "Kill Sarachnis without her dealing damage to anyone.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 41.2
+ },
+ {
+  "id": 208,
+  "boss": "Sarachnis",
+  "task": "Ready to Pounce",
+  "desc": "Kill Sarachnis without her using her range attack twice in a row.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 37.3
+ },
+ {
+  "id": 220,
+  "boss": "Scorpia",
+  "task": "I Can't Reach That",
+  "desc": "Kill Scorpia without taking any damage from her.",
+  "type": "Perfection",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 24.5
+ },
+ {
+  "id": 221,
+  "boss": "Scorpia",
+  "task": "Guardians No More",
+  "desc": "Kill Scorpia without killing her guardians.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 30.2
+ },
+ {
+  "id": 218,
+  "boss": "Scorpia",
+  "task": "Scorpia Adept",
+  "desc": "Kill Scorpia 10 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 21.5
+ },
+ {
+  "id": 631,
+  "boss": "Shellbane gryphon",
+  "task": "Featherweight Fighter",
+  "desc": "Kill the Shellbane Gryphon 5 times without leaving the cave, while wearing gear weighing less than 40kg.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 14.4
+ },
+ {
+  "id": 629,
+  "boss": "Shellbane gryphon",
+  "task": "Shellbane Survivor",
+  "desc": "Kill the Shellbane Gryphon 25 times without leaving the cave.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 14.4
+ },
+ {
+  "id": 45,
+  "boss": "Skotizo",
+  "task": "Skotizo Adept",
+  "desc": "Kill Skotizo 5 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 47.7
+ },
+ {
+  "id": 358,
+  "boss": "Tempoross",
+  "task": "Why Cook?",
+  "desc": "Subdue Tempoross, getting rewarded with 10 reward permits from a single Tempoross fight.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 31.2
+ },
+ {
+  "id": 355,
+  "boss": "Tempoross",
+  "task": "Dress Like You Mean It",
+  "desc": "Subdue Tempoross while wearing any variation of the angler outfit.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 48.2
+ },
+ {
+  "id": 575,
+  "boss": "The Hueycoatl",
+  "task": "I'm your son",
+  "desc": "Kill the Hueycoatl whilst wearing two pieces of Hueycoatl armour.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 13.5
+ },
+ {
+  "id": 572,
+  "boss": "The Hueycoatl",
+  "task": "Pillar Lover",
+  "desc": "Kill the Hueycoatl whilst it is vulnerable.",
+  "type": "Mechanical",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 33.4
+ },
+ {
+  "id": 569,
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Adept",
+  "desc": "Kill the Hueycoatl 10 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 36.3
+ },
+ {
+  "id": 183,
+  "boss": "The Nightmare",
+  "task": "Nightmare Adept",
+  "desc": "Kill The Nightmare once.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 18.5
+ },
+ {
+  "id": 397,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Theatre of Blood: SM Adept",
+  "desc": "Complete the Theatre of Blood: Entry Mode 1 time.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 49.1
+ },
+ {
+  "id": 464,
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Movin' on up",
+  "desc": "Complete a Tombs of Amascut raid at level 50 or above.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 46.8
+ },
+ {
+  "id": 461,
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Novice Tomb Explorer",
+  "desc": "Complete the Tombs of Amascut in Entry mode (or above) once.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 49.5
+ },
+ {
+  "id": 465,
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Confident Raider",
+  "desc": "Complete a Tombs of Amascut raid at level 100 or above.",
+  "type": "Restriction",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 45.3
+ },
+ {
+  "id": 462,
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Novice Tomb Looter",
+  "desc": "Complete the Tombs of Amascut in Entry mode (or above) 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 29.2
+ },
+ {
+  "id": 264,
+  "boss": "Venenatis",
+  "task": "Venenatis Adept",
+  "desc": "Kill Venenatis 10 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 27.1
+ },
+ {
+  "id": 266,
+  "boss": "Vet'ion",
+  "task": "Vet'ion Adept",
+  "desc": "Kill Vet'ion 10 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 34.9
+ },
+ {
+  "id": 286,
+  "boss": "Wintertodt",
+  "task": "Why Fletch?",
+  "desc": "Subdue the Wintertodt after earning 3000 or more points.",
+  "type": "Stamina",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 39.8
+ },
+ {
+  "id": 224,
+  "boss": "Zulrah",
+  "task": "Zulrah Adept",
+  "desc": "Kill Zulrah 25 times.",
+  "type": "Kill Count",
+  "tier": "Hard",
+  "pts": 3,
+  "comp_pct": 38.9
+ },
+ {
+  "id": 4,
+  "boss": "Abyssal Sire",
+  "task": "Respiratory Runner",
+  "desc": "Kill the Abyssal Sire after only stunning him once.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.8
+ },
+ {
+  "id": 2,
+  "boss": "Abyssal Sire",
+  "task": "Abyssal Veteran",
+  "desc": "Kill the Abyssal Sire 50 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.8
+ },
+ {
+  "id": 8,
+  "boss": "Abyssal Sire",
+  "task": "Perfect Sire",
+  "desc": "Kill the Abyssal Sire without taking damage from the external tentacles, miasma pools, explosion or damage from the Abyssal Sire without praying the appropriate protection prayer.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 29.2
+ },
+ {
+  "id": 6,
+  "boss": "Abyssal Sire",
+  "task": "Demonic Rebound",
+  "desc": "Use the Vengeance spell to reflect the damage from the Abyssal Sire's explosion back to him.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 18.0
+ },
+ {
+  "id": 135,
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Veteran",
+  "desc": "Kill the Alchemical Hydra 75 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 24.0
+ },
+ {
+  "id": 585,
+  "boss": "Amoxliatl",
+  "task": "Without Ralos' Light",
+  "desc": "Kill Amoxliatl without losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.1
+ },
+ {
+  "id": 582,
+  "boss": "Amoxliatl",
+  "task": "Amoxliatl Speed-Chaser",
+  "desc": "Kill Amoxliatl in less than 30 seconds.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.6
+ },
+ {
+  "id": 558,
+  "boss": "Araxxor",
+  "task": "Araxxor Speed-Trialist",
+  "desc": "Kill Araxxor 4 times in 10:00.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 24.8
+ },
+ {
+  "id": 556,
+  "boss": "Araxxor",
+  "task": "Araxxor Veteran",
+  "desc": "Kill Araxxor 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 26.4
+ },
+ {
+  "id": 564,
+  "boss": "Araxxor",
+  "task": "Relaxxor",
+  "desc": "Kill Araxxor after destroying six eggs.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 16.0
+ },
+ {
+  "id": 31,
+  "boss": "Basilisk Knight",
+  "task": "Reflecting on This Encounter",
+  "desc": "Kill a Basilisk Knight.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 43.2
+ },
+ {
+  "id": 634,
+  "boss": "Brutus",
+  "task": "Brutus Speed-Trialist",
+  "desc": "Kill Brutus in less than 2 seconds.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.1
+ },
+ {
+  "id": 43,
+  "boss": "Callisto",
+  "task": "Callisto Veteran",
+  "desc": "Kill Callisto 20 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 27.5
+ },
+ {
+  "id": 51,
+  "boss": "Cerberus",
+  "task": "Cerberus Veteran",
+  "desc": "Kill Cerberus 75 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 29.3
+ },
+ {
+  "id": 55,
+  "boss": "Cerberus",
+  "task": "Unrequired Antifire",
+  "desc": "Kill Cerberus without taking damage from any lava pools.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 31.6
+ },
+ {
+  "id": 54,
+  "boss": "Cerberus",
+  "task": "Ghost Buster",
+  "desc": "Kill Cerberus after successfully negating 6 or more attacks from Summoned Souls.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.4
+ },
+ {
+  "id": 56,
+  "boss": "Cerberus",
+  "task": "Anti-Bite Mechanics",
+  "desc": "Kill Cerberus without taking any melee damage.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 31.2
+ },
+ {
+  "id": 299,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric Veteran",
+  "desc": "Complete the Chambers of Xeric 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.0
+ },
+ {
+  "id": 320,
+  "boss": "Chambers of Xeric",
+  "task": "Blizzard Dodger",
+  "desc": "Receive kill-credit for the Ice Demon without activating the Protect from Range prayer.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 20.3
+ },
+ {
+  "id": 314,
+  "boss": "Chambers of Xeric",
+  "task": "Shayzien Specialist",
+  "desc": "Receive kill-credit for a Lizardman Shaman without taking damage from any shamans in the room.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 21.6
+ },
+ {
+  "id": 307,
+  "boss": "Chambers of Xeric",
+  "task": "Mutta-diet",
+  "desc": "Kill the Muttadile without letting her or her baby recover hitpoints from the meat tree.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 34.2
+ },
+ {
+  "id": 312,
+  "boss": "Chambers of Xeric",
+  "task": "Undying Raid Team",
+  "desc": "Complete a Chambers of Xeric raid without anyone dying.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 29.9
+ },
+ {
+  "id": 321,
+  "boss": "Chambers of Xeric",
+  "task": "Kill It with Fire",
+  "desc": "Finish off the Ice Demon with a fire spell.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 21.6
+ },
+ {
+  "id": 316,
+  "boss": "Chambers of Xeric",
+  "task": "Cryo No More",
+  "desc": "Receive kill-credit for the Ice Demon without taking any damage.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.8
+ },
+ {
+  "id": 308,
+  "boss": "Chambers of Xeric",
+  "task": "Redemption Enthusiast",
+  "desc": "Kill the Abyssal Portal without forcing Vespula to land.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.9
+ },
+ {
+  "id": 311,
+  "boss": "Chambers of Xeric",
+  "task": "Dancing with Statues",
+  "desc": "Receive kill-credit for a Stone Guardian without taking damage from falling rocks.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.3
+ },
+ {
+  "id": 303,
+  "boss": "Chambers of Xeric",
+  "task": "Together We'll Fall",
+  "desc": "Kill the Vanguards within 10 seconds of the first one dying.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.6
+ },
+ {
+  "id": 302,
+  "boss": "Chambers of Xeric",
+  "task": "Perfectly Balanced",
+  "desc": "Kill the Vanguards without them resetting their health.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 26.4
+ },
+ {
+  "id": 292,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Dust Seeker",
+  "desc": "Complete a Chambers of Xeric Challenge mode raid in the target time.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.4
+ },
+ {
+  "id": 58,
+  "boss": "Chaos Elemental",
+  "task": "Chaos Elemental Veteran",
+  "desc": "Kill the Chaos Elemental 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.2
+ },
+ {
+  "id": 216,
+  "boss": "Commander Zilyana",
+  "task": "Reminisce",
+  "desc": "Kill Commander Zilyana in a private instance with melee only.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.6
+ },
+ {
+  "id": 212,
+  "boss": "Commander Zilyana",
+  "task": "Commander Zilyana Veteran",
+  "desc": "Kill Commander Zilyana 100 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.2
+ },
+ {
+  "id": 68,
+  "boss": "Corporeal Beast",
+  "task": "Finding the Weak Spot",
+  "desc": "Finish off the Corporeal Beast with a Halberd special attack.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 12.7
+ },
+ {
+  "id": 69,
+  "boss": "Corporeal Beast",
+  "task": "Chicken Killer",
+  "desc": "Kill the Corporeal Beast solo.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 14.5
+ },
+ {
+  "id": 67,
+  "boss": "Corporeal Beast",
+  "task": "Hot on Your Feet",
+  "desc": "Kill the Corporeal Beast without anyone killing the dark core or taking damage from the dark core.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 14.5
+ },
+ {
+  "id": 65,
+  "boss": "Corporeal Beast",
+  "task": "Corporeal Beast Veteran",
+  "desc": "Kill the Corporeal Beast 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 13.7
+ },
+ {
+  "id": 101,
+  "boss": "Corrupted Hunllef",
+  "task": "3, 2, 1 - Mage",
+  "desc": "Kill the Corrupted Hunllef without taking damage off prayer.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 35.9
+ },
+ {
+  "id": 98,
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Veteran",
+  "desc": "Complete the Corrupted Gauntlet 5 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 35.1
+ },
+ {
+  "id": 115,
+  "boss": "Crystalline Hunllef",
+  "task": "Crystalline Warrior",
+  "desc": "Kill the Crystalline Hunllef with a full set of perfected armour equipped.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 21.9
+ },
+ {
+  "id": 114,
+  "boss": "Crystalline Hunllef",
+  "task": "Egniol Diet",
+  "desc": "Kill the Crystalline Hunllef without making an egniol potion within the Gauntlet.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 17.7
+ },
+ {
+  "id": 116,
+  "boss": "Crystalline Hunllef",
+  "task": "Wolf Puncher",
+  "desc": "Kill the Crystalline Hunllef without making more than one attuned weapon.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 20.6
+ },
+ {
+  "id": 111,
+  "boss": "Crystalline Hunllef",
+  "task": "3, 2, 1 - Range",
+  "desc": "Kill the Crystalline Hunllef without taking damage off prayer.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 32.6
+ },
+ {
+  "id": 109,
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Veteran",
+  "desc": "Complete the Gauntlet 5 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 42.8
+ },
+ {
+  "id": 200,
+  "boss": "Dagannoth Prime",
+  "task": "From One King to Another",
+  "desc": "Kill Prime using a Rune Thrownaxe special attack, bounced off Dagannoth Rex.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 11.9
+ },
+ {
+  "id": 199,
+  "boss": "Dagannoth Prime",
+  "task": "Death to the Seer King",
+  "desc": "Kill Dagannoth Prime whilst under attack by Dagannoth Supreme and Dagannoth Rex.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.2
+ },
+ {
+  "id": 203,
+  "boss": "Dagannoth Rex",
+  "task": "Death to the Warrior King",
+  "desc": "Kill Dagannoth Rex whilst under attack by Dagannoth Supreme and Dagannoth Prime.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 17.0
+ },
+ {
+  "id": 205,
+  "boss": "Dagannoth Rex",
+  "task": "Toppling the Diarchy",
+  "desc": "Kill Dagannoth Rex and one other Dagannoth king at the exact same time.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 8.7
+ },
+ {
+  "id": 236,
+  "boss": "Dagannoth Supreme",
+  "task": "Rapid Succession",
+  "desc": "Kill all three Dagannoth Kings within 9 seconds of the first one.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 9.1
+ },
+ {
+  "id": 235,
+  "boss": "Dagannoth Supreme",
+  "task": "Death to the Archer King",
+  "desc": "Kill Dagannoth Supreme whilst under attack by Dagannoth Prime and Dagannoth Rex.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 24.8
+ },
+ {
+  "id": 74,
+  "boss": "Demonic Gorilla",
+  "task": "If Gorillas Could Fly",
+  "desc": "Kill a Demonic Gorilla.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 60.1
+ },
+ {
+  "id": 75,
+  "boss": "Demonic Gorilla",
+  "task": "Hitting Them Where It Hurts",
+  "desc": "Finish off a Demonic Gorilla with a demonbane weapon.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 44.6
+ },
+ {
+  "id": 613,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Exposed Doom",
+  "desc": "Defeat the Doom of Mokhaiotl during its Melee charge phase.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 21.9
+ },
+ {
+  "id": 610,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Adept",
+  "desc": "Defeat the Doom of Mokhaiotl at delve level 3.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.4
+ },
+ {
+  "id": 621,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Crawler",
+  "desc": "Defeat the Doom of Mokhaiotl level 1 in less than 30 seconds.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 5.4
+ },
+ {
+  "id": 515,
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Adept",
+  "desc": "Kill Duke Sucellus once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 29.9
+ },
+ {
+  "id": 512,
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Speed-Trialist",
+  "desc": "Kill Duke Sucellus in less than 1:00 minutes without a slayer task.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 16.3
+ },
+ {
+  "id": 542,
+  "boss": "Fortis Colosseum",
+  "task": "Furball",
+  "desc": "Complete Wave 4 without taking avoidable damage from a Manticore.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 17.2
+ },
+ {
+  "id": 545,
+  "boss": "Fortis Colosseum",
+  "task": "Denied",
+  "desc": "Complete Wave 7 without the Minotaur ever healing other enemies.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.4
+ },
+ {
+  "id": 548,
+  "boss": "Fortis Colosseum",
+  "task": "I was here first!",
+  "desc": "Kill a Jaguar Warrior using a Claw-type weapon special attack.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 10.4
+ },
+ {
+  "id": 222,
+  "boss": "Fragment of Seren",
+  "task": "Fragment of Seren Speed-Trialist",
+  "desc": "Kill The Fragment of Seren in less than 4 minutes.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 6.7
+ },
+ {
+  "id": 81,
+  "boss": "Galvek",
+  "task": "Galvek Speed-Trialist",
+  "desc": "Kill Galvek in less than 3 minutes.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.0
+ },
+ {
+  "id": 19,
+  "boss": "General Graardor",
+  "task": "Ourg Freezer II",
+  "desc": "Kill General Graardor without him attacking any players.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.2
+ },
+ {
+  "id": 17,
+  "boss": "General Graardor",
+  "task": "General Graardor Veteran",
+  "desc": "Kill General Graardor 100 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.6
+ },
+ {
+  "id": 180,
+  "boss": "Giant Mole",
+  "task": "Hard Hitter",
+  "desc": "Kill the Giant Mole with 4 or fewer instances of damage.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.4
+ },
+ {
+  "id": 119,
+  "boss": "Glough",
+  "task": "Glough Speed-Trialist",
+  "desc": "Kill Glough in less than 2 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 8.4
+ },
+ {
+  "id": 89,
+  "boss": "Grotesque Guardians",
+  "task": "Done before Dusk",
+  "desc": "Kill the Grotesque Guardians before Dusk uses his prison attack for a second time.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 37.6
+ },
+ {
+  "id": 90,
+  "boss": "Grotesque Guardians",
+  "task": "Perfect Grotesque Guardians",
+  "desc": "Kill the Grotesque Guardians whilst completing the \"Don't look at the eclipse\", \"Prison Break\", \"Granite Footwork\", \"Heal no more\", \"Static Awareness\" and \"Done before dusk\" tasks.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 35.3
+ },
+ {
+  "id": 83,
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Veteran",
+  "desc": "Kill the Grotesque Guardians 50 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.3
+ },
+ {
+  "id": 92,
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Speed-Trialist",
+  "desc": "Kill the Grotesque Guardians in less than 2 minutes.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 27.6
+ },
+ {
+  "id": 95,
+  "boss": "Grotesque Guardians",
+  "task": "From Dusk...",
+  "desc": "Kill the Grotesque Guardians 10 times without leaving the instance.",
+  "type": "Stamina",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.5
+ },
+ {
+  "id": 127,
+  "boss": "Hespori",
+  "task": "Hespori Speed-Trialist",
+  "desc": "Kill the Hespori in less than 48 seconds.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.2
+ },
+ {
+  "id": 126,
+  "boss": "Hespori",
+  "task": "Plant-Based Diet",
+  "desc": "Kill Hespori without losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 32.6
+ },
+ {
+  "id": 336,
+  "boss": "K'ril Tsutsaroth",
+  "task": "The Bane of Demons",
+  "desc": "Defeat K'ril Tsutsaroth in a private instance using only demonbane spells.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 8.6
+ },
+ {
+  "id": 333,
+  "boss": "K'ril Tsutsaroth",
+  "task": "K'ril Tsutsaroth Veteran",
+  "desc": "Kill K'ril Tsutsaroth 100 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 16.6
+ },
+ {
+  "id": 337,
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demonic Defence",
+  "desc": "Kill K'ril Tsutsaroth in a private instance without taking any of his melee hits.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 14.2
+ },
+ {
+  "id": 158,
+  "boss": "Kalphite Queen",
+  "task": "Kalphite Queen Veteran",
+  "desc": "Kill the Kalphite Queen 50 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.0
+ },
+ {
+  "id": 160,
+  "boss": "Kalphite Queen",
+  "task": "Insect Deflection",
+  "desc": "Kill the Kalphite Queen by using the Vengeance spell as the finishing blow.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.7
+ },
+ {
+  "id": 161,
+  "boss": "Kalphite Queen",
+  "task": "Prayer Smasher",
+  "desc": "Kill the Kalphite Queen using only the Verac's Flail as a weapon.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 17.5
+ },
+ {
+  "id": 171,
+  "boss": "Kraken",
+  "task": "Ten-tacles",
+  "desc": "Kill the Kraken 50 times in a private instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 31.6
+ },
+ {
+  "id": 10,
+  "boss": "Kree'arra",
+  "task": "Kree'arra Veteran",
+  "desc": "Kill Kree'arra 100 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 12.3
+ },
+ {
+  "id": 503,
+  "boss": "Leviathan",
+  "task": "Leviathan Speed-Trialist",
+  "desc": "Kill the Leviathan in less than 1:50 without a slayer task.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 8.9
+ },
+ {
+  "id": 506,
+  "boss": "Leviathan",
+  "task": "Leviathan Adept",
+  "desc": "Kill the Leviathan once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 17.2
+ },
+ {
+  "id": 649,
+  "boss": "Mad Angel",
+  "task": "This Is Madness",
+  "desc": "Kill the Mad Angel 15 times without leaving her arena.",
+  "type": "Stamina",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 2.2
+ },
+ {
+  "id": 654,
+  "boss": "Mad Angel",
+  "task": "The Pen Is Mightier",
+  "desc": "Kill the Mad Angel without equipping any weapon.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 638,
+  "boss": "Maggot King",
+  "task": "Maggot Exterminator",
+  "desc": "Kill the Maggot King 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.9
+ },
+ {
+  "id": 641,
+  "boss": "Maggot King",
+  "task": "Trying to fit in",
+  "desc": "Kill the Maggot King using only weapons that can be found in Vampyrium.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 2.6
+ },
+ {
+  "id": 527,
+  "boss": "Moons of Peril",
+  "task": "High Hitter",
+  "desc": "Defeat a Moon before they start their second special attack.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 52.4
+ },
+ {
+  "id": 412,
+  "boss": "Nex",
+  "task": "Nex Survivors",
+  "desc": "Kill Nex without anyone dying.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.7
+ },
+ {
+  "id": 410,
+  "boss": "Nex",
+  "task": "Nex Veteran",
+  "desc": "Kill Nex once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.8
+ },
+ {
+  "id": 473,
+  "boss": "Phantom Muspah",
+  "task": "Can't Escape",
+  "desc": "Kill the Phantom Muspah without running.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.4
+ },
+ {
+  "id": 479,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Veteran",
+  "desc": "Kill the Phantom Muspah 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 25.6
+ },
+ {
+  "id": 482,
+  "boss": "Phantom Muspah",
+  "task": "Versatile Drainer",
+  "desc": "Drain the Phantom Muspah's Prayer with three different sources in one kill.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 18.3
+ },
+ {
+  "id": 475,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Speed-Trialist",
+  "desc": "Kill the Phantom Muspah in less than 3 minutes without a slayer task.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.1
+ },
+ {
+  "id": 400,
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Veteran",
+  "desc": "Kill Phosani's Nightmare once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 9.0
+ },
+ {
+  "id": 596,
+  "boss": "Royal Titans",
+  "task": "No time to pray",
+  "desc": "Kill the Royal Titans without losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 17.7
+ },
+ {
+  "id": 219,
+  "boss": "Scorpia",
+  "task": "Scorpia Veteran",
+  "desc": "Kill Scorpia 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 18.2
+ },
+ {
+  "id": 47,
+  "boss": "Skotizo",
+  "task": "Demon Evasion",
+  "desc": "Kill Skotizo without taking any damage.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 25.7
+ },
+ {
+  "id": 49,
+  "boss": "Skotizo",
+  "task": "Up for the Challenge",
+  "desc": "Kill Skotizo without equipping a demonbane weapon.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 31.0
+ },
+ {
+  "id": 570,
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Veteran",
+  "desc": "Kill the Hueycoatl 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 30.1
+ },
+ {
+  "id": 571,
+  "boss": "The Hueycoatl",
+  "task": "Perfect Hueycoatl",
+  "desc": "Kill the Hueycoatl perfectly 5 times without leaving. To get a perfect kill, you must not take any avoidable damage from the Hueycoatl's lightning attack, tail slam attack or off-prayer projectile attacks.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 18.1
+ },
+ {
+  "id": 576,
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Speed-Trialist",
+  "desc": "Kill the Hueycoatl in 2:30",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 33.6
+ },
+ {
+  "id": 176,
+  "boss": "The Mimic",
+  "task": "Mimic Veteran",
+  "desc": "Kill the Mimic once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 27.4
+ },
+ {
+  "id": 194,
+  "boss": "The Nightmare",
+  "task": "Nightmare (5-Scale) Speed-Trialist",
+  "desc": "Defeat the Nightmare (5-scale) in less than 5 minutes.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.5
+ },
+ {
+  "id": 184,
+  "boss": "The Nightmare",
+  "task": "Nightmare Veteran",
+  "desc": "Kill The Nightmare 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 10.3
+ },
+ {
+  "id": 187,
+  "boss": "The Nightmare",
+  "task": "Explosion!",
+  "desc": "Kill two Husks at the same time.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 6.1
+ },
+ {
+  "id": 191,
+  "boss": "The Nightmare",
+  "task": "Nightmare (Solo) Speed-Trialist",
+  "desc": "Defeat the Nightmare (Solo) in less than 23 minutes.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 5.2
+ },
+ {
+  "id": 189,
+  "boss": "The Nightmare",
+  "task": "Sleep Tight",
+  "desc": "Kill the Nightmare solo.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 5.4
+ },
+ {
+  "id": 237,
+  "boss": "Theatre of Blood",
+  "task": "Theatre of Blood Veteran",
+  "desc": "Complete the Theatre of Blood 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 10.8
+ },
+ {
+  "id": 392,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Don't Look at Me!",
+  "desc": "Kill Xarpus in the Theatre of Blood: Entry Mode without him reflecting any damage to anyone.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.3
+ },
+ {
+  "id": 391,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Just To Be Safe",
+  "desc": "Defeat Sotetseg in the Theatre of Blood: Entry Mode after having split the big ball with your entire team. This must be done with a group size of at least 2.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.6
+ },
+ {
+  "id": 388,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "They Won't Expect This",
+  "desc": "In the Theatre of Blood: Entry Mode, enter the Pestilent Bloat room from the opposite side.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 21.4
+ },
+ {
+  "id": 389,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Chally Time",
+  "desc": "Defeat the Pestilent Bloat in the Theatre of Blood: Entry Mode by using a halberd special attack as your final attack.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.7
+ },
+ {
+  "id": 386,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Anticoagulants",
+  "desc": "Defeat the Maiden of Sugadinti in the Theatre of Blood: Entry Mode without letting any bloodspawn live for longer than 10 seconds.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 31.9
+ },
+ {
+  "id": 393,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "No-Pillar",
+  "desc": "Survive Verzik Vitur's pillar phase in the Theatre of Blood: Entry Mode without losing a single pillar.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 45.2
+ },
+ {
+  "id": 394,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Attack, Step, Wait",
+  "desc": "Survive Verzik Vitur's second phase in the Theatre of Blood: Entry Mode without anyone getting bounced by Verzik.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 18.3
+ },
+ {
+  "id": 395,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Pass It On",
+  "desc": "In the Theatre of Blood: Entry Mode, successfully pass on the green ball to a team mate.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 11.8
+ },
+ {
+  "id": 387,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Appropriate Tools",
+  "desc": "Defeat the Pestilent Bloat in the Theatre of Blood: Entry Mode with everyone having a salve amulet equipped.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 30.4
+ },
+ {
+  "id": 390,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Nylocas, On the Rocks",
+  "desc": "In the Theatre of Blood: Entry Mode, freeze any 4 Nylocas with a single Ice Barrage spell.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 14.1
+ },
+ {
+  "id": 263,
+  "boss": "Thermonuclear Smoke Devil",
+  "task": "Spec'd Out",
+  "desc": "Kill the Thermonuclear Smoke Devil using only special attacks.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.3
+ },
+ {
+  "id": 261,
+  "boss": "Thermonuclear Smoke Devil",
+  "task": "Thermonuclear Veteran",
+  "desc": "Kill the Thermonuclear Smoke Devil 20 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.8
+ },
+ {
+  "id": 262,
+  "boss": "Thermonuclear Smoke Devil",
+  "task": "Hazard Prevention",
+  "desc": "Kill the Thermonuclear Smoke Devil without it hitting anyone.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 20.7
+ },
+ {
+  "id": 451,
+  "boss": "Tombs of Amascut",
+  "task": "No skipping allowed",
+  "desc": "Defeat Ba-Ba after only attacking the non-weakened boulders in the rolling boulder phase, without dying yourself. The Boulderdash invocation must be activated.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 9.8
+ },
+ {
+  "id": 458,
+  "boss": "Tombs of Amascut",
+  "task": "Down Do Specs",
+  "desc": "Defeat the Wardens after staggering the boss a maximum of twice during phase two, without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.9
+ },
+ {
+  "id": 449,
+  "boss": "Tombs of Amascut",
+  "task": "Dropped the ball",
+  "desc": "Defeat Akkha without dropping any materialising orbs and without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 36.9
+ },
+ {
+  "id": 425,
+  "boss": "Tombs of Amascut",
+  "task": "Helpful spirit who?",
+  "desc": "Complete the Tombs of Amascut without using any supplies from the Helpful Spirit and without anyone dying. Honey locusts are included in this restriction.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 8.2
+ },
+ {
+  "id": 430,
+  "boss": "Tombs of Amascut",
+  "task": "Hardcore Raiders",
+  "desc": "Complete the Tombs of Amascut in a group of two or more without anyone dying.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 33.0
+ },
+ {
+  "id": 438,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Crondis",
+  "desc": "Complete the Crondis room without letting a crocodile get to the tree, without anyone losing water from their container and in under one minute.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 35.2
+ },
+ {
+  "id": 431,
+  "boss": "Tombs of Amascut",
+  "task": "Hardcore Tombs",
+  "desc": "Complete the Tombs of Amascut solo without dying.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 30.8
+ },
+ {
+  "id": 435,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Apmeken",
+  "desc": "Complete the Apmeken room in a group of two or more, without anyone allowing any dangers to trigger, standing in venom or being hit by a volatile baboon. You must complete this room in less than three minutes.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 29.5
+ },
+ {
+  "id": 452,
+  "boss": "Tombs of Amascut",
+  "task": "I'm in a rush",
+  "desc": "Defeat Ba-Ba after destroying four or fewer rolling boulders in total without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 26.1
+ },
+ {
+  "id": 432,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Het",
+  "desc": "Complete the Het room without taking any damage from the light beam and orbs. You must destroy the core after one exposure.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 34.3
+ },
+ {
+  "id": 468,
+  "boss": "Tombs of Amascut",
+  "task": "Tomb Explorer",
+  "desc": "Complete the Tombs of Amascut once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 44.6
+ },
+ {
+  "id": 463,
+  "boss": "Tombs of Amascut: Entry Mode",
+  "task": "Novice Tomb Raider",
+  "desc": "Complete the Tombs of Amascut in Entry mode (or above) 50 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 23.0
+ },
+ {
+  "id": 469,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Expert Tomb Explorer",
+  "desc": "Complete the Tombs of Amascut (Expert mode) once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 30.9
+ },
+ {
+  "id": 551,
+  "boss": "Tormented Demon",
+  "task": "Unending Torment",
+  "desc": "Kill a Tormented Demon.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 43.1
+ },
+ {
+  "id": 553,
+  "boss": "Tormented Demon",
+  "task": "Two Times the Torment",
+  "desc": "Kill two Tormented Demons within 2 seconds.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 6.3
+ },
+ {
+  "id": 555,
+  "boss": "Tormented Demon",
+  "task": "Rapid Reload",
+  "desc": "Hit three Tormented Demons within 3 seconds using a ballista or a crossbow.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.9
+ },
+ {
+  "id": 552,
+  "boss": "Tormented Demon",
+  "task": "Through Fire and Flames",
+  "desc": "Kill a Tormented Demon whilst their shield is inactive.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 42.0
+ },
+ {
+  "id": 367,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Facing Jad Head-on III",
+  "desc": "Complete TzHaar-Ket-Rak's second challenge with only melee.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 9.2
+ },
+ {
+  "id": 361,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "The II Jad Challenge",
+  "desc": "Complete TzHaar-Ket-Rak's second challenge.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 14.3
+ },
+ {
+  "id": 364,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "TzHaar-Ket-Rak's Speed-Trialist",
+  "desc": "Complete TzHaar-Ket-Rak's first challenge in less than 45 seconds.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 7.1
+ },
+ {
+  "id": 341,
+  "boss": "TzKal-Zuk",
+  "task": "Half-Way There",
+  "desc": "Kill a Jal-Zek within the Inferno.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.4
+ },
+ {
+  "id": 147,
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Veteran",
+  "desc": "Complete the Fight Caves once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 71.1
+ },
+ {
+  "id": 153,
+  "boss": "TzTok-Jad",
+  "task": "Facing Jad Head-on",
+  "desc": "Complete the Fight Caves with only melee.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 13.1
+ },
+ {
+  "id": 149,
+  "boss": "TzTok-Jad",
+  "task": "A Near Miss!",
+  "desc": "Complete the Fight Caves after surviving a hit from TzTok-Jad without praying.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 38.8
+ },
+ {
+  "id": 488,
+  "boss": "Vardorvis",
+  "task": "Vardorvis Adept",
+  "desc": "Kill Vardorvis once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 25.2
+ },
+ {
+  "id": 485,
+  "boss": "Vardorvis",
+  "task": "Vardorvis Speed-Trialist",
+  "desc": "Kill Vardorvis in less than 1:15 minutes without a slayer task.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.5
+ },
+ {
+  "id": 265,
+  "boss": "Venenatis",
+  "task": "Venenatis Veteran",
+  "desc": "Kill Venenatis 20 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 24.9
+ },
+ {
+  "id": 267,
+  "boss": "Vet'ion",
+  "task": "Vet'eran",
+  "desc": "Kill Vet'ion 20 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 32.6
+ },
+ {
+  "id": 273,
+  "boss": "Vorkath",
+  "task": "Stick 'em With the Pointy End",
+  "desc": "Kill Vorkath using melee weapons only.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 25.6
+ },
+ {
+  "id": 268,
+  "boss": "Vorkath",
+  "task": "Vorkath Veteran",
+  "desc": "Kill Vorkath 50 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 45.2
+ },
+ {
+  "id": 271,
+  "boss": "Vorkath",
+  "task": "Zombie Destroyer",
+  "desc": "Kill Vorkath's zombified spawn without using crumble undead.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 21.9
+ },
+ {
+  "id": 494,
+  "boss": "Whisperer",
+  "task": "Whisperer Speed-Trialist",
+  "desc": "Kill the Whisperer in less than 3:00 without a slayer task.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 9.5
+ },
+ {
+  "id": 501,
+  "boss": "Whisperer",
+  "task": "Tentacular",
+  "desc": "Kill the Whisperer whilst only being on the Arceuus spellbook.",
+  "type": "Restriction",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 10.9
+ },
+ {
+  "id": 497,
+  "boss": "Whisperer",
+  "task": "Whisperer Adept",
+  "desc": "Kill the Whisperer once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 16.1
+ },
+ {
+  "id": 607,
+  "boss": "Yama",
+  "task": "Back so soon?",
+  "desc": "Defeat Yama without the judge being attacked with the wrong style and without taking more than one instance of damage each time you are exiled from the arena.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 20.6
+ },
+ {
+  "id": 599,
+  "boss": "Yama",
+  "task": "Yama Adept",
+  "desc": "Defeat Yama once.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 22.2
+ },
+ {
+  "id": 601,
+  "boss": "Yama",
+  "task": "Yama Speed-Trialist",
+  "desc": "Defeat Yama in an average time of under 3:38 over your last four kills.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 15.6
+ },
+ {
+  "id": 329,
+  "boss": "Zalcano",
+  "task": "Perfect Zalcano",
+  "desc": "Kill Zalcano 5 times in a row without leaving or getting hit by the following: Falling rocks, rock explosions, Zalcano powering up, or standing in a red symbol.",
+  "type": "Perfection",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.0
+ },
+ {
+  "id": 330,
+  "boss": "Zalcano",
+  "task": "Team Player",
+  "desc": "Receive imbued tephra from a golem.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 25.1
+ },
+ {
+  "id": 328,
+  "boss": "Zalcano",
+  "task": "Zalcano Veteran",
+  "desc": "Kill Zalcano 25 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 27.3
+ },
+ {
+  "id": 331,
+  "boss": "Zalcano",
+  "task": "The Spurned Hero",
+  "desc": "Kill Zalcano as the player who has dealt the most damage to her.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 28.3
+ },
+ {
+  "id": 230,
+  "boss": "Zulrah",
+  "task": "Zulrah Speed-Trialist",
+  "desc": "Kill Zulrah in less than 1 minute 20 seconds, without a slayer task.",
+  "type": "Speed",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 30.4
+ },
+ {
+  "id": 227,
+  "boss": "Zulrah",
+  "task": "Snake Rebound",
+  "desc": "Kill Zulrah by using the Vengeance spell as the finishing blow.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 19.5
+ },
+ {
+  "id": 228,
+  "boss": "Zulrah",
+  "task": "Snake. Snake!? Snaaaaaake!",
+  "desc": "Kill 3 Snakelings simultaneously.",
+  "type": "Mechanical",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 34.1
+ },
+ {
+  "id": 225,
+  "boss": "Zulrah",
+  "task": "Zulrah Veteran",
+  "desc": "Kill Zulrah 75 times.",
+  "type": "Kill Count",
+  "tier": "Elite",
+  "pts": 4,
+  "comp_pct": 34.4
+ },
+ {
+  "id": 141,
+  "boss": "Alchemical Hydra",
+  "task": "The Flame Skipper",
+  "desc": "Kill the Alchemical Hydra without letting it spawn a flame wall attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 20.2
+ },
+ {
+  "id": 137,
+  "boss": "Alchemical Hydra",
+  "task": "Unrequired Antipoisons",
+  "desc": "Kill the Alchemical Hydra without being hit by the acid pool attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 23.9
+ },
+ {
+  "id": 146,
+  "boss": "Alchemical Hydra",
+  "task": "Working Overtime",
+  "desc": "Kill the Alchemical Hydra 15 times without leaving the room.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 17.1
+ },
+ {
+  "id": 139,
+  "boss": "Alchemical Hydra",
+  "task": "Don't Flame Me",
+  "desc": "Kill the Alchemical Hydra without being hit by the flame wall attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 24.5
+ },
+ {
+  "id": 138,
+  "boss": "Alchemical Hydra",
+  "task": "Lightning Lure",
+  "desc": "Kill the Alchemical Hydra without being hit by the lightning attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 24.3
+ },
+ {
+  "id": 136,
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Master",
+  "desc": "Kill the Alchemical Hydra 150 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.6
+ },
+ {
+  "id": 140,
+  "boss": "Alchemical Hydra",
+  "task": "Mixing Correctly",
+  "desc": "Kill the Alchemical Hydra without empowering it.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 23.3
+ },
+ {
+  "id": 142,
+  "boss": "Alchemical Hydra",
+  "task": "Alcleanical Hydra",
+  "desc": "Kill the Alchemical Hydra without taking any damage.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 23.1
+ },
+ {
+  "id": 144,
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Speed-Chaser",
+  "desc": "Kill the Alchemical Hydra in less than 1 minute 45 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 15.0
+ },
+ {
+  "id": 557,
+  "boss": "Araxxor",
+  "task": "Araxxor Master",
+  "desc": "Kill Araxxor 75 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 24.1
+ },
+ {
+  "id": 567,
+  "boss": "Araxxor",
+  "task": "Arachnid Lover",
+  "desc": "Kill Araxxor 10 times without leaving.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 15.1
+ },
+ {
+  "id": 559,
+  "boss": "Araxxor",
+  "task": "Araxxor Speed-Chaser",
+  "desc": "Kill Araxxor 5 times in 10:00.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 18.8
+ },
+ {
+  "id": 561,
+  "boss": "Araxxor",
+  "task": "Perfect Araxxor",
+  "desc": "Kill Araxxor perfectly, without taking damage from Araxxor's Mage & Range attacks, melee attack off prayer, araxyte minions damage, or damage from acid pools.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.3
+ },
+ {
+  "id": 566,
+  "boss": "Araxxor",
+  "task": "Araxyte Betrayal",
+  "desc": "Have an Araxyte kill three other Araxytes.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 12.7
+ },
+ {
+  "id": 563,
+  "boss": "Araxxor",
+  "task": "Let it seep in",
+  "desc": "Kill Araxxor without ever having venom or poison immunity.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 17.8
+ },
+ {
+  "id": 53,
+  "boss": "Cerberus",
+  "task": "Arooo No More",
+  "desc": "Kill Cerberus without any of the Summoned Souls being spawned.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 30.7
+ },
+ {
+  "id": 52,
+  "boss": "Cerberus",
+  "task": "Cerberus Master",
+  "desc": "Kill Cerberus 150 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 27.3
+ },
+ {
+  "id": 313,
+  "boss": "Chambers of Xeric",
+  "task": "Undying Raider",
+  "desc": "Complete a Chambers of Xeric solo raid without dying.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.0
+ },
+ {
+  "id": 315,
+  "boss": "Chambers of Xeric",
+  "task": "Playing with Lasers",
+  "desc": "Clear the Crystal Crabs room without wasting an orb after the first crystal has been activated.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 28.2
+ },
+ {
+  "id": 326,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Trio) Speed-Chaser",
+  "desc": "Complete a Chambers of Xeric (Trio) in less than 16 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.6
+ },
+ {
+  "id": 310,
+  "boss": "Chambers of Xeric",
+  "task": "Anvil No More",
+  "desc": "Kill Tekton before he returns to his anvil for a second time after the fight begins.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 32.0
+ },
+ {
+  "id": 319,
+  "boss": "Chambers of Xeric",
+  "task": "Blind Spot",
+  "desc": "Kill Tekton without taking any damage.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.6
+ },
+ {
+  "id": 322,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Solo) Speed-Chaser",
+  "desc": "Complete a Chambers of Xeric (Solo) in less than 21 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.0
+ },
+ {
+  "id": 317,
+  "boss": "Chambers of Xeric",
+  "task": "Perfect Olm (Solo)",
+  "desc": "Kill the Great Olm in a solo raid without taking damage from any of the following: Teleport portals, Fire Walls, Healing pools, Crystal Bombs, Crystal Burst or Prayer Orbs. You also cannot let his claws regenerate or take damage from the same acid pool back to back.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.9
+ },
+ {
+  "id": 309,
+  "boss": "Chambers of Xeric",
+  "task": "Stop Drop and Roll",
+  "desc": "Kill Vasa Nistirio before he performs his teleport attack for the second time.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 23.2
+ },
+ {
+  "id": 318,
+  "boss": "Chambers of Xeric",
+  "task": "Perfect Olm (Trio)",
+  "desc": "Kill the Great Olm in a trio raid without any team member taking damage from any of the following: Teleport portals, Fire Walls, Healing pools, Crystal Bombs, Crystal Burst or Prayer Orbs. You also cannot let his claws regenerate or take damage from the same acid pool back to back.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 305,
+  "boss": "Chambers of Xeric",
+  "task": "Putting It Olm on the Line",
+  "desc": "Complete a Chambers of Xeric solo raid with more than 40,000 points.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.4
+ },
+ {
+  "id": 300,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric Master",
+  "desc": "Complete the Chambers of Xeric 75 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 17.2
+ },
+ {
+  "id": 306,
+  "boss": "Chambers of Xeric",
+  "task": "A Not So Special Lizard",
+  "desc": "Kill the Great Olm in a solo raid without letting him use any of the following special attacks in his second to last phase: Crystal Burst, Lightning Walls, Teleportation Portals or left-hand autohealing.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.1
+ },
+ {
+  "id": 324,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (5-Scale) Speed-Chaser",
+  "desc": "Complete a Chambers of Xeric (5-scale) in less than 15 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.5
+ },
+ {
+  "id": 304,
+  "boss": "Chambers of Xeric",
+  "task": "No Time for Death",
+  "desc": "Clear the Tightrope room without Killing any Deathly Mages or Deathly Rangers.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 16.1
+ },
+ {
+  "id": 297,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Trio) Speed-Chaser",
+  "desc": "Complete a Chambers of Xeric: Challenge Mode (Trio) in less than 35 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.8
+ },
+ {
+  "id": 291,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Immortal Raider",
+  "desc": "Complete a Chambers of Xeric Challenge mode (Solo) raid without dying.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.3
+ },
+ {
+  "id": 288,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM Master",
+  "desc": "Complete the Chambers of Xeric: Challenge Mode 10 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.6
+ },
+ {
+  "id": 293,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Solo) Speed-Chaser",
+  "desc": "Complete a Chambers of Xeric: Challenge Mode (Solo) in less than 45 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.3
+ },
+ {
+  "id": 295,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (5-Scale) Speed-Chaser",
+  "desc": "Complete a Chambers of Xeric: Challenge Mode (5-scale) in less than 30 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.5
+ },
+ {
+  "id": 290,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Immortal Raid Team",
+  "desc": "Complete a Chambers of Xeric: Challenge mode raid without anyone dying.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 12.3
+ },
+ {
+  "id": 215,
+  "boss": "Commander Zilyana",
+  "task": "Moving Collateral",
+  "desc": "Kill Commander Zilyana in a private instance without attacking her directly.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.3
+ },
+ {
+  "id": 66,
+  "boss": "Corporeal Beast",
+  "task": "Corporeal Beast Master",
+  "desc": "Kill the Corporeal Beast 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.9
+ },
+ {
+  "id": 105,
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Warrior",
+  "desc": "Kill the Corrupted Hunllef with a full set of perfected corrupted armour equipped.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 16.2
+ },
+ {
+  "id": 107,
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Speed-Chaser",
+  "desc": "Complete a Corrupted Gauntlet in less than 7 minutes and 5 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.2
+ },
+ {
+  "id": 102,
+  "boss": "Corrupted Hunllef",
+  "task": "Perfect Corrupted Hunllef",
+  "desc": "Kill the Corrupted Hunllef without taking damage from: Tornadoes, Damaging Floor or Stomp Attacks. Also, do not take damage off prayer and do not attack the Corrupted Hunllef with the wrong weapon.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 28.1
+ },
+ {
+  "id": 103,
+  "boss": "Corrupted Hunllef",
+  "task": "Defence Doesn't Matter II",
+  "desc": "Kill the Corrupted Hunllef without making any armour within the Corrupted Gauntlet.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.7
+ },
+ {
+  "id": 99,
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Master",
+  "desc": "Complete the Corrupted Gauntlet 10 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 33.2
+ },
+ {
+  "id": 112,
+  "boss": "Crystalline Hunllef",
+  "task": "Perfect Crystalline Hunllef",
+  "desc": "Kill the Crystalline Hunllef without taking damage from: Tornadoes, Damaging Floor or Stomp Attacks. Also, do not take damage off prayer and do not attack the Crystalline Hunllef with the wrong weapon.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.4
+ },
+ {
+  "id": 117,
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Speed-Chaser",
+  "desc": "Complete the Gauntlet in less than 4 minutes and 45 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.7
+ },
+ {
+  "id": 110,
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Master",
+  "desc": "Complete the Gauntlet 20 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 36.6
+ },
+ {
+  "id": 113,
+  "boss": "Crystalline Hunllef",
+  "task": "Defence Doesn't Matter",
+  "desc": "Kill the Crystalline Hunllef without making any armour within the Gauntlet.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.9
+ },
+ {
+  "id": 611,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Veteran",
+  "desc": "Defeat the Doom of Mokhaiotl at delve level 8.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.5
+ },
+ {
+  "id": 620,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Mine's Better",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 whilst always wearing a shield.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 2.0
+ },
+ {
+  "id": 622,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Chaser",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 in less than 10:00.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.1
+ },
+ {
+  "id": 615,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Grub Patrol",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 without ever letting a grub be absorbed.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.8
+ },
+ {
+  "id": 614,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Mokhaiotl Drift",
+  "desc": "Defeat the Doom of Mokhaiotl at level 8 or above before he finishes the first burrow phase.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.2
+ },
+ {
+  "id": 516,
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Master",
+  "desc": "Kill Duke Sucellus 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 21.5
+ },
+ {
+  "id": 513,
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Speed-Chaser",
+  "desc": "Kill Duke Sucellus in less than 50 seconds without a slayer task.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 12.7
+ },
+ {
+  "id": 519,
+  "boss": "Duke Sucellus",
+  "task": "Cold Feet",
+  "desc": "Kill Duke Sucellus without taking any avoidable damage, whilst also never running.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.4
+ },
+ {
+  "id": 518,
+  "boss": "Duke Sucellus",
+  "task": "Perfect Duke Sucellus",
+  "desc": "Kill Duke Sucellus without taking any avoidable damage 5 times without leaving.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 17.9
+ },
+ {
+  "id": 540,
+  "boss": "Fortis Colosseum",
+  "task": "I Brought Mine Too",
+  "desc": "Defeat Sol Heredit using only a Spear, Hasta or Halberd.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.0
+ },
+ {
+  "id": 544,
+  "boss": "Fortis Colosseum",
+  "task": "Showboating",
+  "desc": "Defeat Sol Heredit after using Fortis Salute to the north, east, south and west of the arena while he is below 10% hitpoints.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 2.1
+ },
+ {
+  "id": 538,
+  "boss": "Fortis Colosseum",
+  "task": "Sportsmanship",
+  "desc": "Defeat Sol Heredit once.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 13.4
+ },
+ {
+  "id": 549,
+  "boss": "Fortis Colosseum",
+  "task": "Colosseum Speed-Chaser",
+  "desc": "Complete the Colosseum with a total time of 28:00 or less.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.4
+ },
+ {
+  "id": 546,
+  "boss": "Fortis Colosseum",
+  "task": "One-off",
+  "desc": "Complete Wave 11 with either 'Red Flag', 'Dynamic Duo', or 'Doom II' active.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.1
+ },
+ {
+  "id": 93,
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Speed-Chaser",
+  "desc": "Kill the Grotesque Guardians in less than 1:40 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.9
+ },
+ {
+  "id": 91,
+  "boss": "Grotesque Guardians",
+  "task": "Perfect Grotesque Guardians II",
+  "desc": "Kill the Grotesque Guardians 5 times in a row without leaving the instance, whilst completing the Perfect Grotesque Guardians task every time.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 18.9
+ },
+ {
+  "id": 96,
+  "boss": "Grotesque Guardians",
+  "task": "... 'til Dawn",
+  "desc": "Kill the Grotesque Guardians 20 times without leaving the instance.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 14.0
+ },
+ {
+  "id": 128,
+  "boss": "Hespori",
+  "task": "Hespori Speed-Chaser",
+  "desc": "Kill the Hespori in less than 36 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.0
+ },
+ {
+  "id": 172,
+  "boss": "Kraken",
+  "task": "One Hundred Tentacles",
+  "desc": "Kill the Kraken 100 times in a private instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 25.5
+ },
+ {
+  "id": 11,
+  "boss": "Kree'arra",
+  "task": "Collateral Damage",
+  "desc": "Kill Kree'arra in a private instance without ever attacking him directly.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.2
+ },
+ {
+  "id": 13,
+  "boss": "Kree'arra",
+  "task": "Swoop No More",
+  "desc": "Kill Kree'arra in a private instance without taking any melee damage from the boss or his bodyguards.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.0
+ },
+ {
+  "id": 510,
+  "boss": "Leviathan",
+  "task": "Serpentine Solo",
+  "desc": "Kill the Leviathan without stunning the boss more than once.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 13.3
+ },
+ {
+  "id": 507,
+  "boss": "Leviathan",
+  "task": "Leviathan Master",
+  "desc": "Kill the Leviathan 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.5
+ },
+ {
+  "id": 509,
+  "boss": "Leviathan",
+  "task": "Perfect Leviathan",
+  "desc": "Kill the Leviathan perfectly 5 times without leaving.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.0
+ },
+ {
+  "id": 504,
+  "boss": "Leviathan",
+  "task": "Leviathan Speed-Chaser",
+  "desc": "Kill the Leviathan in less than 1:25 without a slayer task.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.5
+ },
+ {
+  "id": 643,
+  "boss": "Maggot King",
+  "task": "Digging in",
+  "desc": "Kill the Maggot King without moving more than 40 tiles.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.1
+ },
+ {
+  "id": 639,
+  "boss": "Maggot King",
+  "task": "Camping the King",
+  "desc": "Kill the Maggot King 12 times without leaving the arena.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 2.5
+ },
+ {
+  "id": 644,
+  "boss": "Maggot King",
+  "task": "Cordoned Off",
+  "desc": "Kill the Maggot King without moving beyond the back row of tiles.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 645,
+  "boss": "Maggot King",
+  "task": "Perfect Maggot King",
+  "desc": "Kill the Maggot King without taking any avoidable damage or him ever being healed.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 2.2
+ },
+ {
+  "id": 642,
+  "boss": "Maggot King",
+  "task": "King-sized clobbering",
+  "desc": "Kill the Maggot King without missing a single melee punish.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.7
+ },
+ {
+  "id": 414,
+  "boss": "Nex",
+  "task": "Contain this!",
+  "desc": "Kill Nex without anyone taking damage from any Ice special attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.6
+ },
+ {
+  "id": 413,
+  "boss": "Nex",
+  "task": "A siphon will solve this",
+  "desc": "Kill Nex without letting her heal from her Blood Siphon special attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 21.0
+ },
+ {
+  "id": 415,
+  "boss": "Nex",
+  "task": "There is no escape!",
+  "desc": "Kill Nex without anyone being hit by the Smoke Dash special attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.9
+ },
+ {
+  "id": 411,
+  "boss": "Nex",
+  "task": "Nex Master",
+  "desc": "Kill Nex 25 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 18.6
+ },
+ {
+  "id": 420,
+  "boss": "Nex",
+  "task": "Shadows Move...",
+  "desc": "Kill Nex without anyone being hit by the Shadow Smash attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.6
+ },
+ {
+  "id": 416,
+  "boss": "Nex",
+  "task": "Nex Trio",
+  "desc": "Kill Nex with three or less players at the start of the fight.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.6
+ },
+ {
+  "id": 481,
+  "boss": "Phantom Muspah",
+  "task": "Space is Tight",
+  "desc": "Kill the Phantom Muspah whilst it is surrounded by spikes.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.8
+ },
+ {
+  "id": 476,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Speed-Chaser",
+  "desc": "Kill the Phantom Muspah in less than 2 minutes without a slayer task.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.8
+ },
+ {
+  "id": 474,
+  "boss": "Phantom Muspah",
+  "task": "Essence Farmer",
+  "desc": "Kill the Phantom Muspah 10 times in one trip.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.4
+ },
+ {
+  "id": 483,
+  "boss": "Phantom Muspah",
+  "task": "Walk Straight Pray True",
+  "desc": "Kill the Phantom Muspah without taking any avoidable damage.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 23.4
+ },
+ {
+  "id": 480,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Master",
+  "desc": "Kill the Phantom Muspah 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.4
+ },
+ {
+  "id": 472,
+  "boss": "Phantom Muspah",
+  "task": "More than just a ranged weapon",
+  "desc": "Kill the Phantom Muspah by only dealing damage to it with a salamander.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.5
+ },
+ {
+  "id": 406,
+  "boss": "Phosani's Nightmare",
+  "task": "Crush Hour",
+  "desc": "Kill Phosani's Nightmare while killing every parasite and husk in one hit.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.7
+ },
+ {
+  "id": 404,
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Speedchaser",
+  "desc": "Kill Phosani's Nightmare within 7 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.5
+ },
+ {
+  "id": 401,
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Master",
+  "desc": "Kill Phosani's Nightmare 5 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.9
+ },
+ {
+  "id": 407,
+  "boss": "Phosani's Nightmare",
+  "task": "I Would Simply React",
+  "desc": "Kill Phosani's Nightmare without allowing your prayer to be disabled.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.2
+ },
+ {
+  "id": 408,
+  "boss": "Phosani's Nightmare",
+  "task": "Dreamland Express",
+  "desc": "Kill Phosani's Nightmare without a sleepwalker reaching her during her desperation phase.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.6
+ },
+ {
+  "id": 50,
+  "boss": "Skotizo",
+  "task": "Precise Positioning",
+  "desc": "Kill Skotizo with the final source of damage being a Chinchompa explosion.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.2
+ },
+ {
+  "id": 573,
+  "boss": "The Hueycoatl",
+  "task": "Is it a bird?",
+  "desc": "Kill the Hueycoatl using only dragonbane weaponry.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.0
+ },
+ {
+  "id": 577,
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Speed-Chaser",
+  "desc": "Kill the Hueycoatl in 2:30 with five or fewer players.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 13.7
+ },
+ {
+  "id": 195,
+  "boss": "The Nightmare",
+  "task": "Nightmare (5-Scale) Speed-Chaser",
+  "desc": "Defeat the Nightmare (5-scale) in less than 4 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.3
+ },
+ {
+  "id": 185,
+  "boss": "The Nightmare",
+  "task": "Nightmare Master",
+  "desc": "Kill The Nightmare 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.3
+ },
+ {
+  "id": 188,
+  "boss": "The Nightmare",
+  "task": "Perfect Nightmare",
+  "desc": "Kill the Nightmare without any player taking damage from the following attacks: Nightmare rifts, an un-cured parasite explosion, Corpse flowers or the Nightmare's Surge. Also, no player can take damage off prayer or have their attacks slowed by the Nightmare spores.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.3
+ },
+ {
+  "id": 192,
+  "boss": "The Nightmare",
+  "task": "Nightmare (Solo) Speed-Chaser",
+  "desc": "Defeat the Nightmare (Solo) in less than 19 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.1
+ },
+ {
+  "id": 246,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Nylocas",
+  "desc": "Kill the Nylocas Vasilias without anyone in the team attacking any Nylocas with the wrong attack style, without letting a pillar collapse and without getting hit by any of the Nylocas Vasilias attacks whilst off prayer.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.9
+ },
+ {
+  "id": 245,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Bloat",
+  "desc": "Kill the Pestilent Bloat without anyone in the team taking damage from the following sources: Pestilent flies, Falling body parts or The Pestilent Bloats stomp attack.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.4
+ },
+ {
+  "id": 241,
+  "boss": "Theatre of Blood",
+  "task": "Pop It",
+  "desc": "Kill Verzik without any Nylocas being frozen and without anyone taking damage from the Nylocas.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.1
+ },
+ {
+  "id": 247,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Sotetseg",
+  "desc": "Kill Sotetseg without anyone in the team stepping on the wrong tile in the maze, without getting hit by the tornado and without taking any damage from Sotetseg's attacks whilst off prayer.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.9
+ },
+ {
+  "id": 257,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (4-Scale) Speed-Chaser",
+  "desc": "Complete the Theatre of Blood (4-scale) in less than 17 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.4
+ },
+ {
+  "id": 255,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (Trio) Speed-Chaser",
+  "desc": "Complete the Theatre of Blood (Trio) in less than 20 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.5
+ },
+ {
+  "id": 259,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (5-Scale) Speed-Chaser",
+  "desc": "Complete the Theatre of Blood (5-scale) in less than 16 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 253,
+  "boss": "Theatre of Blood",
+  "task": "Back in My Day...",
+  "desc": "Complete the Theatre of Blood without any member of the team equipping a Scythe of Vitur.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.7
+ },
+ {
+  "id": 242,
+  "boss": "Theatre of Blood",
+  "task": "A Timely Snack",
+  "desc": "Kill Sotetseg after surviving at least 3 ball attacks without sharing the damage and without anyone dying throughout the fight.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.7
+ },
+ {
+  "id": 251,
+  "boss": "Theatre of Blood",
+  "task": "Can You Dance?",
+  "desc": "Kill Xarpus without anyone in the team using a ranged or magic weapon.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.0
+ },
+ {
+  "id": 240,
+  "boss": "Theatre of Blood",
+  "task": "Two-Down",
+  "desc": "Kill the Pestilent Bloat before he shuts down for the third time.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 14.0
+ },
+ {
+  "id": 238,
+  "boss": "Theatre of Blood",
+  "task": "Theatre of Blood Master",
+  "desc": "Complete the Theatre of Blood 75 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.2
+ },
+ {
+  "id": 250,
+  "boss": "Theatre of Blood",
+  "task": "Can't Drain This",
+  "desc": "Kill The Maiden of Sugadinti without anyone in the team losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.9
+ },
+ {
+  "id": 244,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Maiden",
+  "desc": "Kill The Maiden of Sugadinti without anyone in the team taking damage from the following sources: Blood Spawn projectiles and Blood Spawn trails. Also, without taking damage off prayer and without letting any of the Nylocas Matomenos heal The Maiden.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.8
+ },
+ {
+  "id": 248,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Xarpus",
+  "desc": "Kill Xarpus without anyone in the team taking any damage from Xarpus' attacks and without letting an exhumed heal Xarpus more than twice.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.6
+ },
+ {
+  "id": 249,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Verzik",
+  "desc": "Defeat Verzik Vitur without anyone in the team taking damage from Verzik Vitur's attacks other than her spider form's correctly prayed against regular magical and ranged attacks.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 1.8
+ },
+ {
+  "id": 396,
+  "boss": "Theatre of Blood: Entry Mode",
+  "task": "Theatre of Blood: SM Speed-Chaser",
+  "desc": "Complete the Theatre of Blood: Entry Mode in less than 17 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.9
+ },
+ {
+  "id": 381,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Hard Mode? Completed It",
+  "desc": "Complete the Theatre of Blood: Hard Mode within the challenge time.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.3
+ },
+ {
+  "id": 444,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Wardens",
+  "desc": "Defeat The Wardens in a group of two or more, without anyone taking avoidable damage from the following: Warden attacks, obelisk attacks, lightning attacks in phase three, skull attack in phase three, Demi god attacks in phase three. You must have all Wardens invocations activated.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 2.8
+ },
+ {
+  "id": 424,
+  "boss": "Tombs of Amascut",
+  "task": "You are not prepared",
+  "desc": "Complete a full Tombs of Amascut raid only using supplies given inside the tomb and without anyone dying.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.3
+ },
+ {
+  "id": 466,
+  "boss": "Tombs of Amascut",
+  "task": "Tomb Looter",
+  "desc": "Complete the Tombs of Amascut 25 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 27.6
+ },
+ {
+  "id": 421,
+  "boss": "Tombs of Amascut",
+  "task": "Tombs Speed Runner",
+  "desc": "Complete the Tombs of Amascut (normal) within 18 mins at any group size.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.1
+ },
+ {
+  "id": 459,
+  "boss": "Tombs of Amascut",
+  "task": "Better get movin'",
+  "desc": "Defeat Elidinis' Warden in phase three of the Wardens fight with 'Aerial Assault', 'Stay vigilant' and 'Insanity' invocations activated and without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 20.0
+ },
+ {
+  "id": 428,
+  "boss": "Tombs of Amascut",
+  "task": "Chompington",
+  "desc": "Defeat Zebak using only melee attacks and without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 11.1
+ },
+ {
+  "id": 442,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Kephri",
+  "desc": "Defeat Kephri in a group of two or more, without anyone taking any damage from the following: egg explosions, Kephri's attacks, Exploding Scarabs, Bodyguards, dung attacks. No eggs may hatch throughout the fight.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.5
+ },
+ {
+  "id": 467,
+  "boss": "Tombs of Amascut",
+  "task": "Tomb Raider",
+  "desc": "Complete the Tombs of Amascut 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 22.0
+ },
+ {
+  "id": 441,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Scabaras",
+  "desc": "Complete the Scabaras room in less than a minute without anyone taking any damage from puzzles.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 35.1
+ },
+ {
+  "id": 436,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Ba-Ba",
+  "desc": "Defeat Ba-Ba in a group of two or more, without anyone taking any damage from the following: Ba-Ba's Attacks off-prayer, Ba-Ba's slam, rolling boulders, rubble attack or falling rocks. No sarcophagi may be opened. You must have all Ba-Ba invocations activated.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.9
+ },
+ {
+  "id": 439,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Zebak",
+  "desc": "Defeat Zebak without anyone taking any damage from: poison, Zebak's basic attacks off-prayer, blood spawns and waves. You also must not push more than two jugs on the roar attack during the fight (you may destroy stationary ones). You must have all Zebak invocations activated.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 16.7
+ },
+ {
+  "id": 433,
+  "boss": "Tombs of Amascut",
+  "task": "Perfect Akkha",
+  "desc": "Complete Akkha in a group of two or more, without anyone taking any damage from the following: Akkha's attacks off-prayer, Akkha's special attacks (orbs, memory, detonate), exploding shadow timers, orbs in the enrage phase or attacking Akkha with the wrong style. You must have all Akkha invocations activated.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 470,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Expert Tomb Looter",
+  "desc": "Complete the Tombs of Amascut (Expert mode) 25 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 18.2
+ },
+ {
+  "id": 457,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "All out of medics",
+  "desc": "Defeat Kephri without letting her heal above 25% after the first down. The 'Medic' invocation must be activated. You must do this without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.8
+ },
+ {
+  "id": 426,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Resourceful Raider",
+  "desc": "Complete the Tombs of Amascut with the \"On a diet\" and \"Dehydration\" invocations activated and without anyone dying.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.4
+ },
+ {
+  "id": 460,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Warden't you believe it",
+  "desc": "Defeat the Wardens with all Wardens invocations activated, at expert level and without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 19.9
+ },
+ {
+  "id": 429,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Fancy feet",
+  "desc": "Complete phase three of The Wardens in a group of two or more, using only melee attacks and without dying yourself. The 'Insanity' invocation must be activated.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 456,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Doesn't bug me",
+  "desc": "Defeat Kephri with all Kephri invocations activated and the path levelled up to at least four, without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 3.6
+ },
+ {
+  "id": 427,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "But... Damage",
+  "desc": "Complete the Tombs of Amascut without anyone in your party wearing or holding any equipment at tier 75 or above.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.5
+ },
+ {
+  "id": 447,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Something of an expert myself",
+  "desc": "Complete the Tombs of Amascut raid at level 350 or above without anyone dying.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 20.6
+ },
+ {
+  "id": 453,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Ba-Bananza",
+  "desc": "Defeat Ba-Ba with all Ba-Ba invocations activated and the path levelled up to at least four, without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 11.0
+ },
+ {
+  "id": 455,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Rockin' around the croc",
+  "desc": "Defeat Zebak with all Zebak invocations activated and the path levelled up to at least four, without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.5
+ },
+ {
+  "id": 554,
+  "boss": "Tormented Demon",
+  "task": "Three Times the Thrashing",
+  "desc": "Kill three Tormented Demons within 3 seconds.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.5
+ },
+ {
+  "id": 362,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "The IV Jad Challenge",
+  "desc": "Complete TzHaar-Ket-Rak's fourth challenge.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.4
+ },
+ {
+  "id": 369,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Supplies? Who Needs 'em?",
+  "desc": "Complete TzHaar-Ket-Rak's third challenge without having anything in your inventory.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.9
+ },
+ {
+  "id": 371,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Multi-Style Specialist",
+  "desc": "Complete TzHaar-Ket-Rak's third challenge while using a different attack style for each JalTok-Jad.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.6
+ },
+ {
+  "id": 368,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "Facing Jad Head-on IV",
+  "desc": "Complete TzHaar-Ket-Rak's fourth challenge with only melee.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.5
+ },
+ {
+  "id": 365,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "TzHaar-Ket-Rak's Speed-Chaser",
+  "desc": "Complete TzHaar-Ket-Rak's third challenge in less than 3 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 4.6
+ },
+ {
+  "id": 346,
+  "boss": "TzKal-Zuk",
+  "task": "Nibblers, Begone!",
+  "desc": "Kill Tzkal-Zuk without letting a pillar fall before wave 67.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.6
+ },
+ {
+  "id": 155,
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Speed-Chaser",
+  "desc": "Complete the Fight Caves in less than 30 minutes.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.0
+ },
+ {
+  "id": 152,
+  "boss": "TzTok-Jad",
+  "task": "You Didn't Say Anything About a Bat",
+  "desc": "Complete the Fight Caves without being attacked by a Tz-Kih.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 12.4
+ },
+ {
+  "id": 150,
+  "boss": "TzTok-Jad",
+  "task": "Denying the Healers",
+  "desc": "Complete the Fight caves without letting any of the Yt-MejKot heal.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 21.0
+ },
+ {
+  "id": 148,
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Master",
+  "desc": "Complete the Fight Caves 5 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 23.1
+ },
+ {
+  "id": 491,
+  "boss": "Vardorvis",
+  "task": "Perfect Vardorvis",
+  "desc": "Kill Vardorvis perfectly 5 times without leaving.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.9
+ },
+ {
+  "id": 493,
+  "boss": "Vardorvis",
+  "task": "Budget Cutter",
+  "desc": "Kill Vardorvis with gear worth 2m or less in total.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.4
+ },
+ {
+  "id": 489,
+  "boss": "Vardorvis",
+  "task": "Vardorvis Master",
+  "desc": "Kill Vardorvis 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 17.6
+ },
+ {
+  "id": 486,
+  "boss": "Vardorvis",
+  "task": "Vardorvis Speed-Chaser",
+  "desc": "Kill Vardorvis in less than 1:05 without a slayer task.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 12.6
+ },
+ {
+  "id": 278,
+  "boss": "Vorkath",
+  "task": "Extended Encounter",
+  "desc": "Kill Vorkath 10 times without leaving his area.",
+  "type": "Stamina",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 8.0
+ },
+ {
+  "id": 269,
+  "boss": "Vorkath",
+  "task": "Vorkath Master",
+  "desc": "Kill Vorkath 100 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 33.5
+ },
+ {
+  "id": 276,
+  "boss": "Vorkath",
+  "task": "Vorkath Speed-Chaser",
+  "desc": "Kill Vorkath in less than 1 minute and 15 seconds.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 20.6
+ },
+ {
+  "id": 272,
+  "boss": "Vorkath",
+  "task": "Dodging the Dragon",
+  "desc": "Kill Vorkath 5 times without taking any damage from his special attacks and without leaving his area.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 10.5
+ },
+ {
+  "id": 270,
+  "boss": "Vorkath",
+  "task": "The Walk",
+  "desc": "Hit Vorkath 12 times during the acid special without getting hit by his rapid fire or the acid pools.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 12.4
+ },
+ {
+  "id": 498,
+  "boss": "Whisperer",
+  "task": "Whisperer Master",
+  "desc": "Kill the Whisperer 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 9.6
+ },
+ {
+  "id": 500,
+  "boss": "Whisperer",
+  "task": "Perfect Whisperer",
+  "desc": "Kill the Whisperer without taking avoidable damage 5 times without leaving.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 6.7
+ },
+ {
+  "id": 495,
+  "boss": "Whisperer",
+  "task": "Whisperer Speed-Chaser",
+  "desc": "Kill the Whisperer in less than 2:25 without a slayer task.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.6
+ },
+ {
+  "id": 602,
+  "boss": "Yama",
+  "task": "Yama Speed-Chaser",
+  "desc": "Defeat Yama in an average time of under 3:00 over your last four kills.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 5.7
+ },
+ {
+  "id": 600,
+  "boss": "Yama",
+  "task": "Yama Veteran",
+  "desc": "Defeat Yama 50 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 17.3
+ },
+ {
+  "id": 606,
+  "boss": "Yama",
+  "task": "Fire fighter",
+  "desc": "Defeat Yama without getting hit by fire and having only killed void flares with special attacks.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 18.1
+ },
+ {
+  "id": 604,
+  "boss": "Yama",
+  "task": "No toppings, no drinks, thanks",
+  "desc": "Defeat Yama without anybody healing using anything other than plain pizza and without anybody drinking any potions.",
+  "type": "Restriction",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 7.7
+ },
+ {
+  "id": 605,
+  "boss": "Yama",
+  "task": "Shadow dancer",
+  "desc": "Defeat Yama without getting hit by shadows and without being more than one tile away from the center [ sic ] of his shadow crash attack.",
+  "type": "Mechanical",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 16.1
+ },
+ {
+  "id": 226,
+  "boss": "Zulrah",
+  "task": "Zulrah Master",
+  "desc": "Kill Zulrah 150 times.",
+  "type": "Kill Count",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 30.7
+ },
+ {
+  "id": 229,
+  "boss": "Zulrah",
+  "task": "Perfect Zulrah",
+  "desc": "Kill Zulrah whilst taking no damage from the following: Snakelings, Venom Clouds, Zulrah's Green or Crimson phase.",
+  "type": "Perfection",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 16.7
+ },
+ {
+  "id": 231,
+  "boss": "Zulrah",
+  "task": "Zulrah Speed-Chaser",
+  "desc": "Kill Zulrah in less than 1 minute, without a slayer task.",
+  "type": "Speed",
+  "tier": "Master",
+  "pts": 5,
+  "comp_pct": 20.2
+ },
+ {
+  "id": 143,
+  "boss": "Alchemical Hydra",
+  "task": "No Pressure",
+  "desc": "Kill the Alchemical Hydra using only Dharok's Greataxe as a weapon whilst having no more than 10 Hitpoints throughout the entire fight.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 8.3
+ },
+ {
+  "id": 145,
+  "boss": "Alchemical Hydra",
+  "task": "Alchemical Speed-Runner",
+  "desc": "Kill the Alchemical Hydra in less than 1 minute 20 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.2
+ },
+ {
+  "id": 565,
+  "boss": "Araxxor",
+  "task": "Swimming in Venom",
+  "desc": "Kill Araxxor without the boss ever moving.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 21.4
+ },
+ {
+  "id": 562,
+  "boss": "Araxxor",
+  "task": "Perfect Araxxor 2",
+  "desc": "Kill Araxxor perfectly, without hitting it during the enrage phase.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.1
+ },
+ {
+  "id": 560,
+  "boss": "Araxxor",
+  "task": "Araxxor Speed-Runner",
+  "desc": "Kill Araxxor 6 times in 10:00.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.1
+ },
+ {
+  "id": 327,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Trio) Speed-Runner",
+  "desc": "Complete a Chambers of Xeric (Trio) in less than 14 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.9
+ },
+ {
+  "id": 301,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric Grandmaster",
+  "desc": "Complete the Chambers of Xeric 150 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 13.1
+ },
+ {
+  "id": 323,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (Solo) Speed-Runner",
+  "desc": "Complete a Chambers of Xeric (Solo) in less than 17 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.5
+ },
+ {
+  "id": 325,
+  "boss": "Chambers of Xeric",
+  "task": "Chambers of Xeric (5-Scale) Speed-Runner",
+  "desc": "Complete a Chambers of Xeric (5-scale) in less than 12 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 298,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Trio) Speed-Runner",
+  "desc": "Complete a Chambers of Xeric: Challenge Mode (Trio) in less than 27 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 294,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (Solo) Speed-Runner",
+  "desc": "Complete a Chambers of Xeric: Challenge Mode (Solo) in less than 38 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.5
+ },
+ {
+  "id": 296,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM (5-Scale) Speed-Runner",
+  "desc": "Complete a Chambers of Xeric: Challenge Mode (5-scale) in less than 25 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 289,
+  "boss": "Chambers of Xeric: Challenge Mode",
+  "task": "Chambers of Xeric: CM Grandmaster",
+  "desc": "Complete the Chambers of Xeric: Challenge Mode 25 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 8.3
+ },
+ {
+  "id": 217,
+  "boss": "Commander Zilyana",
+  "task": "Peach Conjurer",
+  "desc": "Kill Commander Zilyana 50 times in a privately rented instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.6
+ },
+ {
+  "id": 214,
+  "boss": "Commander Zilyana",
+  "task": "Animal Whisperer",
+  "desc": "Kill Commander Zilyana in a private instance without taking any damage from the boss or bodyguards.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 7.4
+ },
+ {
+  "id": 108,
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Speed-Runner",
+  "desc": "Complete a Corrupted Gauntlet in less than 6 minutes and 5 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.7
+ },
+ {
+  "id": 104,
+  "boss": "Corrupted Hunllef",
+  "task": "Egniol Diet II",
+  "desc": "Kill the Corrupted Hunllef without making an egniol potion within the Corrupted Gauntlet.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.9
+ },
+ {
+  "id": 100,
+  "boss": "Corrupted Hunllef",
+  "task": "Corrupted Gauntlet Grandmaster",
+  "desc": "Complete the Corrupted Gauntlet 50 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 27.1
+ },
+ {
+  "id": 106,
+  "boss": "Corrupted Hunllef",
+  "task": "Wolf Puncher II",
+  "desc": "Kill the Corrupted Hunllef without making more than one attuned weapon.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 15.9
+ },
+ {
+  "id": 118,
+  "boss": "Crystalline Hunllef",
+  "task": "Gauntlet Speed-Runner",
+  "desc": "Complete the Gauntlet in less than 3 minutes and 45 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.2
+ },
+ {
+  "id": 617,
+  "boss": "Doom of Mokhaiotl",
+  "task": "The Praying Mantis",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 without restoring your prayer points through any method.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 624,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Mopping up",
+  "desc": "Clear at least 8 acid splats in a single Volatile Earth special attack.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.0
+ },
+ {
+  "id": 612,
+  "boss": "Doom of Mokhaiotl",
+  "task": "It's Dark Down Here",
+  "desc": "Defeat the Doom of Mokhaiotl at delve level 16.",
+  "type": "Stamina",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.3
+ },
+ {
+  "id": 623,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Doom Racer",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 in less than 7:15.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.3
+ },
+ {
+  "id": 619,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Darkness Is Your Ally?",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 without equipping a demonbane weapon.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 618,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Duel of Mokhaiotl",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 whilst only damaging the boss with one-handed melee attacks.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.5
+ },
+ {
+  "id": 616,
+  "boss": "Doom of Mokhaiotl",
+  "task": "Perfect Doom",
+  "desc": "Defeat the Doom of Mokhaiotl levels 1-8 without taking any damage from the boss, letting any grubs be absorbed, or stepping in acid blood.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 520,
+  "boss": "Duke Sucellus",
+  "task": "Mirror Image",
+  "desc": "Kill Duke Sucellus whilst only attacking the boss on the same tick Duke attacks you.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.7
+ },
+ {
+  "id": 517,
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Sleeper",
+  "desc": "Kill Awakened Duke Sucellus.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 4.0
+ },
+ {
+  "id": 514,
+  "boss": "Duke Sucellus",
+  "task": "Duke Sucellus Speed-Runner",
+  "desc": "Kill Duke Sucellus in less than 40 seconds without a slayer task.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 8.0
+ },
+ {
+  "id": 539,
+  "boss": "Fortis Colosseum",
+  "task": "Colosseum Grand Champion",
+  "desc": "Defeat Sol Heredit 10 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.3
+ },
+ {
+  "id": 541,
+  "boss": "Fortis Colosseum",
+  "task": "Slow Dancing in the Sand",
+  "desc": "Defeat Sol Heredit without running during the fight with him.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.1
+ },
+ {
+  "id": 547,
+  "boss": "Fortis Colosseum",
+  "task": "Reinforcements",
+  "desc": "Defeat Sol Heredit with \"Bees II\", \"Quartet\" and \"Solarflare II\" modifiers active.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.7
+ },
+ {
+  "id": 550,
+  "boss": "Fortis Colosseum",
+  "task": "Colosseum Speed-Runner",
+  "desc": "Complete the Colosseum with a total time of 24:00 or less.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.8
+ },
+ {
+  "id": 543,
+  "boss": "Fortis Colosseum",
+  "task": "Perfect Footwork",
+  "desc": "Defeat Sol Heredit without taking any damage from his Spear, Shield, Grapple or Triple Attack.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 4.4
+ },
+ {
+  "id": 23,
+  "boss": "General Graardor",
+  "task": "Ourg Killer",
+  "desc": "Kill General Graardor 15 times in a private instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.5
+ },
+ {
+  "id": 22,
+  "boss": "General Graardor",
+  "task": "Keep Away",
+  "desc": "Kill General Graardor in a private instance without taking any damage from the boss or bodyguards.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.2
+ },
+ {
+  "id": 21,
+  "boss": "General Graardor",
+  "task": "Defence Matters",
+  "desc": "Kill General Graardor 2 times consecutively in a private instance without taking any damage from his bodyguards.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 94,
+  "boss": "Grotesque Guardians",
+  "task": "Grotesque Guardians Speed-Runner",
+  "desc": "Kill the Grotesque Guardians in less than 1:20 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.4
+ },
+ {
+  "id": 340,
+  "boss": "K'ril Tsutsaroth",
+  "task": "Ash Collector",
+  "desc": "Kill K'ril Tsutsaroth 20 times in a private instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 10.3
+ },
+ {
+  "id": 338,
+  "boss": "K'ril Tsutsaroth",
+  "task": "Demon Whisperer",
+  "desc": "Kill K'ril Tsutsaroth in a private instance without ever being hit by his bodyguards.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.9
+ },
+ {
+  "id": 15,
+  "boss": "Kree'arra",
+  "task": "Feather Hunter",
+  "desc": "Kill Kree'arra 30 times in a private instance without leaving the room.",
+  "type": "Stamina",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.0
+ },
+ {
+  "id": 14,
+  "boss": "Kree'arra",
+  "task": "The Worst Ranged Weapon",
+  "desc": "Kill Kree'arra by only dealing damage to him with a salamander.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.8
+ },
+ {
+  "id": 508,
+  "boss": "Leviathan",
+  "task": "Leviathan Sleeper",
+  "desc": "Kill the Awakened Leviathan.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 511,
+  "boss": "Leviathan",
+  "task": "Unconventional",
+  "desc": "Kill the Leviathan using only Mithril ammunition whilst having no more than 25 Hitpoints throughout the entire fight.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 4.2
+ },
+ {
+  "id": 505,
+  "boss": "Leviathan",
+  "task": "Leviathan Speed-Runner",
+  "desc": "Kill the Leviathan in less than 1:10 without a slayer task.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 640,
+  "boss": "Maggot King",
+  "task": "Maggot King Speed Chaser",
+  "desc": "Complete the first 5 kills of the Maggot King within 9 minutes after entering the arena.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.1
+ },
+ {
+  "id": 418,
+  "boss": "Nex",
+  "task": "I should see a doctor",
+  "desc": "Kill Nex whilst a player is coughing.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 16.0
+ },
+ {
+  "id": 417,
+  "boss": "Nex",
+  "task": "Nex Duo",
+  "desc": "Kill Nex with two or less players at the start of the fight.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 4.3
+ },
+ {
+  "id": 419,
+  "boss": "Nex",
+  "task": "Perfect Nex",
+  "desc": "Kill Nex whilst completing the requirements for \"There is no escape\", \"Shadows move\", \"A siphon will solve this\", and \"Contain this!\"",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 17.5
+ },
+ {
+  "id": 484,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Manipulator",
+  "desc": "Kill the Phantom Muspah whilst completing Walk Straight Pray True, Space is Tight & Can't Escape.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.9
+ },
+ {
+  "id": 477,
+  "boss": "Phantom Muspah",
+  "task": "Phantom Muspah Speed-Runner",
+  "desc": "Kill the Phantom Muspah in less than 1 minute and 30 seconds without a slayer task.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.5
+ },
+ {
+  "id": 403,
+  "boss": "Phosani's Nightmare",
+  "task": "Perfect Phosani's Nightmare",
+  "desc": "Kill Phosani's Nightmare while only taking damage from husks, power blasts and weakened Parasites. Also, without having your attacks slowed by the Nightmare Spores or letting a Sleepwalker reach Phosani's Nightmare.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.5
+ },
+ {
+  "id": 409,
+  "boss": "Phosani's Nightmare",
+  "task": "Can't Wake Up",
+  "desc": "Kill Phosani's Nightmare 5 times in a row without leaving Phosani's Dream.",
+  "type": "Stamina",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 402,
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Grandmaster",
+  "desc": "Kill Phosani's Nightmare 25 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.7
+ },
+ {
+  "id": 405,
+  "boss": "Phosani's Nightmare",
+  "task": "Phosani's Speedrunner",
+  "desc": "Kill Phosani's Nightmare within 6 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.5
+ },
+ {
+  "id": 578,
+  "boss": "The Hueycoatl",
+  "task": "Hueycoatl Speed-Runner",
+  "desc": "Kill the Hueycoatl in 2:30 with three or fewer players.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.3
+ },
+ {
+  "id": 186,
+  "boss": "The Nightmare",
+  "task": "Terrible Parent",
+  "desc": "Kill the Nightmare solo without the Parasites healing the boss for more than 100 health.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.1
+ },
+ {
+  "id": 196,
+  "boss": "The Nightmare",
+  "task": "Nightmare (5-Scale) Speed-Runner",
+  "desc": "Defeat the Nightmare (5-scale) in less than 3:30 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.1
+ },
+ {
+  "id": 190,
+  "boss": "The Nightmare",
+  "task": "A Long Trip",
+  "desc": "Kill the Nightmare without any player losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.1
+ },
+ {
+  "id": 193,
+  "boss": "The Nightmare",
+  "task": "Nightmare (Solo) Speed-Runner",
+  "desc": "Defeat the Nightmare (Solo) in less than 16 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 243,
+  "boss": "Theatre of Blood",
+  "task": "Perfect Theatre",
+  "desc": "Complete the Theatre of Blood without anyone dying through any means and whilst everyone in the team completes the following Combat Achievement tasks in a single run: \"Perfect Maiden\", \"Perfect Bloat\", \"Perfect Nylocas\", \"Perfect Sotetseg\", \"Perfect Xarpus\" and \"Perfect Verzik\".",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.5
+ },
+ {
+  "id": 256,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (Trio) Speed-Runner",
+  "desc": "Complete the Theatre of Blood (Trio) in less than 17 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 239,
+  "boss": "Theatre of Blood",
+  "task": "Theatre of Blood Grandmaster",
+  "desc": "Complete the Theatre of Blood 150 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.4
+ },
+ {
+  "id": 260,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (5-Scale) Speed-Runner",
+  "desc": "Complete the Theatre of Blood (5-scale) in less than 14 minutes and 15 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.8
+ },
+ {
+  "id": 258,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (4-Scale) Speed-Runner",
+  "desc": "Complete the Theatre of Blood (4-scale) in less than 15 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.9
+ },
+ {
+  "id": 254,
+  "boss": "Theatre of Blood",
+  "task": "Theatre (Duo) Speed-Runner",
+  "desc": "Complete the Theatre of Blood (Duo) in less than 26 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.1
+ },
+ {
+  "id": 252,
+  "boss": "Theatre of Blood",
+  "task": "Morytania Only",
+  "desc": "Complete the Theatre of Blood without any member of the team equipping a non-barrows weapon (except Dawnbringer).",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 385,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre of Blood: HM Grandmaster",
+  "desc": "Complete the Theatre of Blood: Hard Mode 50 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 377,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Nylo Sniper",
+  "desc": "Defeat Verzik Vitur's in the Theatre of Blood: Hard Mode without anyone in your team causing a Nylocas to explode by getting too close.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.1
+ },
+ {
+  "id": 384,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre: HM (5-Scale) Speed-Runner",
+  "desc": "Complete the Theatre of Blood: Hard Mode (5-scale) with an overall time of less than 19 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 375,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Harder Mode I",
+  "desc": "Defeat Sotetseg in the Theatre of Blood: Hard Mode without anyone sharing the ball with anyone, without anyone dying, and without anyone taking damage from any of its other attacks or stepping on the wrong tile in the maze.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.9
+ },
+ {
+  "id": 380,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Pack Like a Yak",
+  "desc": "Complete the Theatre of Blood: Hard Mode within the challenge time, with no deaths and without anyone buying anything from a supply chest.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.8
+ },
+ {
+  "id": 383,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre: HM (4-Scale) Speed-Runner",
+  "desc": "Complete the Theatre of Blood: Hard Mode (4-scale) with an overall time of less than 21 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 372,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Stop Right There!",
+  "desc": "Defeat the Maiden of Sugadinti in the Theatre of Blood: Hard Mode without letting blood spawns create more than 15 blood trails.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 378,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Team Work Makes the Dream Work",
+  "desc": "When Verzik Vitur in the Theatre of Blood: Hard Mode uses her yellow power blast attack while the tornadoes are active, have everyone get through the attack without taking damage. This cannot be completed with one player alive",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 4.1
+ },
+ {
+  "id": 373,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Personal Space",
+  "desc": "Defeat the Pestilent Bloat in the Theatre of Blood: Hard Mode with at least 3 people in the room, without anyone in your team standing on top of each other.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.8
+ },
+ {
+  "id": 376,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Harder Mode II",
+  "desc": "Defeat Xarpus in the Theatre of Blood: Hard Mode after letting the exhumeds heal him to full health and without anyone in the team taking any damage.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.6
+ },
+ {
+  "id": 382,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Theatre: HM (Trio) Speed-Runner",
+  "desc": "Complete the Theatre of Blood: Hard Mode (Trio) with an overall time of less than 23 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.7
+ },
+ {
+  "id": 374,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Royal Affairs",
+  "desc": "In the Theatre of Blood: Hard Mode, complete the Nylocas room without ever letting the Nylocas Prinkipas change styles.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.6
+ },
+ {
+  "id": 379,
+  "boss": "Theatre of Blood: Hard Mode",
+  "task": "Harder Mode III",
+  "desc": "Defeat Verzik Vitur in the Theatre of Blood: Hard Mode without anyone attacking her with a melee weapon during her third phase.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.7
+ },
+ {
+  "id": 443,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Scabaras",
+  "desc": "Complete 'Perfect Scabaras' and 'Perfect Kephri' in a single run of Tombs of Amascut.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.5
+ },
+ {
+  "id": 471,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Expert Tomb Raider",
+  "desc": "Complete the Tombs of Amascut (Expert mode) 50 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 14.4
+ },
+ {
+  "id": 422,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Tombs Speed Runner II",
+  "desc": "Complete the Tombs of Amascut (expert) within 20 mins at any group size.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.5
+ },
+ {
+  "id": 445,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Insanity",
+  "desc": "Complete 'Perfect Wardens' at expert or above.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.6
+ },
+ {
+  "id": 450,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Akkhan't Do it",
+  "desc": "Defeat Akkha with all Akkha invocations activated and the path levelled up to at least four, without dying yourself.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.8
+ },
+ {
+  "id": 454,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "All Praise Zebak",
+  "desc": "Defeat Zebak without losing a single prayer point. You must also meet the conditions of the 'Rockin' Around The Croc' achievement.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.5
+ },
+ {
+  "id": 446,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Amascut's Remnant",
+  "desc": "Complete the Tombs of Amascut at raid level 500 or above without anyone dying.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 7.5
+ },
+ {
+  "id": 423,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Tombs Speed Runner III",
+  "desc": "Complete the Tombs of Amascut (expert) within 18 mins in a group of 8.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.1
+ },
+ {
+  "id": 437,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Apmeken",
+  "desc": "Complete 'Perfect Apmeken' and 'Perfect Ba-Ba' in a single run of the Tombs of Amascut.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 6.9
+ },
+ {
+  "id": 434,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Het",
+  "desc": "Complete 'Perfect Het' and 'Perfect Akkha' in a single run of the Tombs of Amascut.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 440,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Perfection of Crondis",
+  "desc": "Complete 'Perfect Crondis' and 'Perfect Zebak' in a single run of the Tombs of Amascut.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 13.2
+ },
+ {
+  "id": 448,
+  "boss": "Tombs of Amascut: Expert Mode",
+  "task": "Maybe I'm the boss.",
+  "desc": "Complete a Tombs of Amascut raid with every single boss invocation activated and without anyone dying.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.8
+ },
+ {
+  "id": 363,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "The VI Jad Challenge",
+  "desc": "Complete TzHaar-Ket-Rak's sixth challenge.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 370,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "It Wasn't a Fluke",
+  "desc": "Complete TzHaar-Ket-Rak's fifth and sixth challenges back to back without failing.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.3
+ },
+ {
+  "id": 366,
+  "boss": "TzHaar-Ket-Rak's Challenges",
+  "task": "TzHaar-Ket-Rak's Speed-Runner",
+  "desc": "Complete TzHaar-Ket-Rak's fifth challenge in less than 5 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 349,
+  "boss": "TzKal-Zuk",
+  "task": "Nibbler Chaser",
+  "desc": "Kill Tzkal-Zuk without using any magic spells during any wave in the Inferno.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.8
+ },
+ {
+  "id": 351,
+  "boss": "TzKal-Zuk",
+  "task": "Jad? What Are You Doing Here?",
+  "desc": "Kill Tzkal-Zuk without killing the JalTok-Jad which spawns during wave 69.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.9
+ },
+ {
+  "id": 344,
+  "boss": "TzKal-Zuk",
+  "task": "Playing with Jads",
+  "desc": "Complete wave 68 of the Inferno within 30 seconds of the first JalTok-Jad dying.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.9
+ },
+ {
+  "id": 345,
+  "boss": "TzKal-Zuk",
+  "task": "No Luck Required",
+  "desc": "Kill Tzkal-Zuk without being attacked by TzKal-Zuk and without taking damage from a JalTok-Jad.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 10.6
+ },
+ {
+  "id": 350,
+  "boss": "TzKal-Zuk",
+  "task": "Facing Jad Head-on II",
+  "desc": "Kill Tzkal-Zuk without equipping any range or mage weapons before wave 69.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.6
+ },
+ {
+  "id": 347,
+  "boss": "TzKal-Zuk",
+  "task": "Wasn't Even Close",
+  "desc": "Kill Tzkal-Zuk without letting your hitpoints fall below 50 during any wave in the Inferno.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 352,
+  "boss": "TzKal-Zuk",
+  "task": "Inferno Speed-Runner",
+  "desc": "Complete the Inferno in less than 65 minutes.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.1
+ },
+ {
+  "id": 342,
+  "boss": "TzKal-Zuk",
+  "task": "Inferno Grandmaster",
+  "desc": "Complete the Inferno 5 times.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.4
+ },
+ {
+  "id": 348,
+  "boss": "TzKal-Zuk",
+  "task": "Budget Setup",
+  "desc": "Kill Tzkal-Zuk without equipping a Twisted Bow within the Inferno.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.2
+ },
+ {
+  "id": 343,
+  "boss": "TzKal-Zuk",
+  "task": "The Floor Is Lava",
+  "desc": "Kill Tzkal-Zuk without letting Jal-ImKot dig during any wave in the Inferno.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.8
+ },
+ {
+  "id": 154,
+  "boss": "TzTok-Jad",
+  "task": "No Time for a Drink",
+  "desc": "Complete the Fight Caves without losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.0
+ },
+ {
+  "id": 151,
+  "boss": "TzTok-Jad",
+  "task": "Denying the Healers II",
+  "desc": "Complete the Fight Caves without TzTok-Jad being healed by a Yt-HurKot.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 8.2
+ },
+ {
+  "id": 156,
+  "boss": "TzTok-Jad",
+  "task": "Fight Caves Speed-Runner",
+  "desc": "Complete the Fight Caves in less than 26 minutes and 30 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.0
+ },
+ {
+  "id": 492,
+  "boss": "Vardorvis",
+  "task": "Axe Enthusiast",
+  "desc": "Kill Vardorvis after surviving for 3 minutes of Vardorvis' max speed, and never leaving the centre 25 tiles.",
+  "type": "Mechanical",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.0
+ },
+ {
+  "id": 490,
+  "boss": "Vardorvis",
+  "task": "Vardorvis Sleeper",
+  "desc": "Kill Awakened Vardorvis.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 4.3
+ },
+ {
+  "id": 487,
+  "boss": "Vardorvis",
+  "task": "Vardorvis Speed-Runner",
+  "desc": "Kill Vardorvis in less than 0:55 without a slayer task.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 7.9
+ },
+ {
+  "id": 277,
+  "boss": "Vorkath",
+  "task": "Vorkath Speed-Runner",
+  "desc": "Kill Vorkath in less than 54 seconds.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 5.9
+ },
+ {
+  "id": 274,
+  "boss": "Vorkath",
+  "task": "Faithless Encounter",
+  "desc": "Kill Vorkath without losing any prayer points.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 14.5
+ },
+ {
+  "id": 275,
+  "boss": "Vorkath",
+  "task": "The Fremennik Way",
+  "desc": "Kill Vorkath with only your fists.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 9.5
+ },
+ {
+  "id": 496,
+  "boss": "Whisperer",
+  "task": "Whisperer Speed-Runner",
+  "desc": "Kill the Whisperer in less than 2:05 without a slayer task.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 2.7
+ },
+ {
+  "id": 499,
+  "boss": "Whisperer",
+  "task": "Whispered",
+  "desc": "Kill the Awakened Whisperer.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.9
+ },
+ {
+  "id": 502,
+  "boss": "Whisperer",
+  "task": "Dark Memories",
+  "desc": "Kill the Whisperer whilst spending less than 6 seconds in the pre-enrage shadow realm.",
+  "type": "Restriction",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 7.2
+ },
+ {
+  "id": 603,
+  "boss": "Yama",
+  "task": "Yama Speed-Runner",
+  "desc": "Defeat Yama in an average time of under 2:34 over your last four kills.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 1.7
+ },
+ {
+  "id": 608,
+  "boss": "Yama",
+  "task": "Contract Choreographer",
+  "desc": "Defeat Yama whilst completing 'Shadow Dancer', 'Fire Fighter', 'Back so soon?' and without taking any other avoidable damage.",
+  "type": "Perfection",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 13.8
+ },
+ {
+  "id": 609,
+  "boss": "Yama",
+  "task": "Contractually Unbound",
+  "desc": "Defeat Yama under the elevated conditions of one of his non-standard contracts.",
+  "type": "Kill Count",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 3.3
+ },
+ {
+  "id": 232,
+  "boss": "Zulrah",
+  "task": "Zulrah Speed-Runner",
+  "desc": "Kill Zulrah in less than 54 seconds, without a slayer task.",
+  "type": "Speed",
+  "tier": "Grandmaster",
+  "pts": 6,
+  "comp_pct": 16.0
+ }
+]
