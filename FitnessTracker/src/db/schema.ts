@@ -89,6 +89,10 @@ export const workouts = pgTable("workouts", {
   bodyweightKg: numeric("bodyweight_kg", { precision: 5, scale: 2 }),
   sessionRpe: integer("session_rpe"),
   notes: text("notes"),
+  // Set by start_exercise / log_set; drives the set pad and the quick-log fast path.
+  currentExerciseId: integer("current_exercise_id").references(() => exercises.id, { onDelete: "set null" }),
+  // Pre-session check-in: { energy?: 1-5, timeMin?: number, notes?: string }
+  checkin: jsonb("checkin"),
 });
 
 export const sets = pgTable(

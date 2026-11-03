@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { connection } from "next/server";
 import { Chat } from "@/components/chat";
 import { loadRecentMessages } from "@/lib/chat-store";
+import { buildPad } from "@/lib/pad";
 import { getActiveWorkout, getNextTemplate, getTrend, weekTally } from "@/lib/queries";
 
 async function ChatLoader() {
@@ -13,11 +14,12 @@ async function ChatLoader() {
     getTrend(60),
     weekTally(),
   ]);
+  const pad = active ? await buildPad(active) : null;
   return (
     <Chat
       initialMessages={messages}
       header={{
-        activeWorkout: active ? { id: active.id, name: active.name, startedAt: active.startedAt.toISOString(), sets: active.sets.length } : null,
+        activeWorkout: active ? { id: active.id, name: active.name, startedAt: active.startedAt.toISOString(), sets: active.sets.filter((s) => s.setType !== "warmup").length } : null,
         nextWorkout: next?.name ?? null,
         trendKg: trend.latest?.trendKg ?? null,
         rateKg: trend.rate,
@@ -25,6 +27,7 @@ async function ChatLoader() {
         cardio: tally.cardio,
         liftTarget: tally.liftTarget,
         cardioTarget: tally.cardioTarget,
+        pad,
       }}
     />
   );

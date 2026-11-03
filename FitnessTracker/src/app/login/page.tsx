@@ -59,7 +59,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-dvh items-center justify-center p-6">
+    <main className="flex h-full items-center justify-center overflow-y-auto p-6">
       <Suspense>
         <LoginForm />
       </Suspense>

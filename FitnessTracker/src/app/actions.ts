@@ -3,14 +3,13 @@
 import { generateId, type UIMessage } from "ai";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { sets } from "@/db/schema";
+import { sets, workouts } from "@/db/schema";
 import { isAuthed } from "@/lib/auth";
 import { saveMessage } from "@/lib/chat-store";
 import { quickParse, resolveQuickSet } from "@/lib/quickparse";
 import { getActiveWorkout, logSet, num } from "@/lib/queries";
-import { serialiseSet } from "@/agent/tools/workout";
-import { templateExercises } from "@/db/schema";
-import { and } from "drizzle-orm";
+import { buildPad, describeExercise, pickNextExercise, planFor, setCurrentExercise, type PadData } from "@/lib/pad";
+import { logSetForExercise, serialiseSet, type SetInput } from "@/agent/tools/workout";
 
 async function guard() {
   if (!(await isAuthed())) throw new Error("Unauthorised");
@@ -18,12 +17,35 @@ async function guard() {
 
 export type QuickLogResult =
   | { handled: false }
-  | { handled: true; userMessage: UIMessage; assistantMessage: UIMessage };
+  | { handled: true; userMessage: UIMessage; assistantMessage: UIMessage; pad: PadData };
+
+/** Log a set with no model call and persist the user line + the log_set card, exactly as the model's tool would. */
+async function persistSetLog(exerciseId: number, userText: string, s: SetInput): Promise<QuickLogResult> {
+  const output = await logSetForExercise(exerciseId, s);
+  if ("error" in output) return { handled: false };
+  const userMessage: UIMessage = { id: generateId(), role: "user", parts: [{ type: "text", text: userText }] };
+  const assistantMessage: UIMessage = {
+    id: generateId(),
+    role: "assistant",
+    parts: [
+      {
+        type: "tool-log_set",
+        toolCallId: generateId(),
+        state: "output-available",
+        input: { exercise: output.exercise, weight_kg: s.weightKg, reps: s.reps, rir: s.rir, set_type: s.setType, partial_reps: s.partialReps, side: s.side },
+        output,
+      } as UIMessage["parts"][number],
+    ],
+  };
+  await saveMessage(userMessage);
+  await saveMessage(assistantMessage);
+  const fresh = await getActiveWorkout();
+  return { handled: true, userMessage, assistantMessage, pad: await buildPad(fresh!) };
+}
 
 /**
  * Gym-floor fast path. If the text is terse set shorthand and a workout is
- * active, log it here with no model call and return the two messages that
- * were persisted (so the thread stays consistent for the model later).
+ * active, log it here against the *current* exercise with no model call.
  */
 export async function quickLogSet(raw: string): Promise<QuickLogResult> {
   await guard();
@@ -31,58 +53,53 @@ export async function quickLogSet(raw: string): Promise<QuickLogResult> {
   if (!q) return { handled: false };
   const active = await getActiveWorkout();
   if (!active) return { handled: false };
-  const last = active.sets.at(-1);
-  if (!last) return { handled: false }; // no current exercise yet — let the model pick it
-  const resolved = resolveQuickSet(q, { weightKg: num(last.weightKg), reps: last.reps });
+  const exerciseId = active.currentExerciseId ?? active.sets.at(-1)?.exerciseId;
+  if (!exerciseId) return { handled: false }; // nothing to log against yet: let the model pick it
+  const prev = [...active.sets].reverse().find((s) => s.exerciseId === exerciseId);
+  const resolved = resolveQuickSet(q, prev ? { weightKg: num(prev.weightKg), reps: prev.reps } : null);
   if (!resolved) return { handled: false };
+  return persistSetLog(exerciseId, raw, { ...resolved, rir: q.rir, setType: q.setType, partialReps: q.partialReps, side: q.side });
+}
 
-  const ex = last.exercise;
-  const te = active.templateId
-    ? await db.query.templateExercises.findFirst({
-        where: and(eq(templateExercises.templateId, active.templateId), eq(templateExercises.exerciseId, ex.id)),
-      })
-    : null;
-  const res = await logSet({
-    workoutId: active.id,
-    exerciseId: ex.id,
-    weightKg: resolved.weightKg,
-    reps: resolved.reps,
-    rir: q.rir,
-    setType: q.setType,
-    partialReps: q.partialReps,
-    side: q.side,
-  });
-  const setNumber = active.sets.filter((s) => s.exerciseId === ex.id).length + 1;
-  const restS = te?.restS ?? ex.defaultRestS;
-  const output = {
-    set: serialiseSet(res.set),
-    exercise: ex.name,
-    exerciseId: ex.id,
-    e1rm: res.e1rm,
-    prs: res.prs,
-    setNumber,
-    plannedSets: te?.sets ?? null,
-    restS: q.setType === "warmup" ? Math.min(60, restS) : restS,
-    plates: null,
-  };
-  const toolCallId = generateId();
-  const userMessage: UIMessage = { id: generateId(), role: "user", parts: [{ type: "text", text: raw }] };
+function fmtUserSet(name: string, s: SetInput): string {
+  const w = s.weightKg === 0 ? "BW" : `${s.weightKg}`;
+  return `${name}: ${w}×${s.reps}${s.rir != null ? ` @${s.rir}` : ""}${s.setType !== "working" ? ` (${s.setType.replace("_", " ")})` : ""}${s.side ? ` ${s.side}` : ""}`;
+}
+
+/** Set pad → log directly, no model call. */
+export async function logSetFromPad(exerciseId: number, s: SetInput): Promise<QuickLogResult> {
+  await guard();
+  const active = await getActiveWorkout();
+  if (!active) return { handled: false };
+  const d = await describeExercise(active, exerciseId);
+  if (!d) return { handled: false };
+  return persistSetLog(exerciseId, fmtUserSet(d.name, s), s);
+}
+
+export type SwitchResult = { ok: true; assistantMessage: UIMessage; pad: PadData } | { ok: false; reason: "no_workout" | "all_done" | "unknown" };
+
+/** Make an exercise current (null = next incomplete on the plan) and append the same card start_exercise would. */
+export async function switchExercise(exerciseId: number | null): Promise<SwitchResult> {
+  await guard();
+  const active = await getActiveWorkout();
+  if (!active) return { ok: false, reason: "no_workout" };
+  let target = exerciseId;
+  if (target == null) {
+    const next = pickNextExercise(await planFor(active), active.currentExerciseId);
+    if (!next) return { ok: false, reason: "all_done" };
+    target = next.exerciseId;
+  }
+  const d = await describeExercise(active, target);
+  if (!d) return { ok: false, reason: "unknown" };
+  await setCurrentExercise(active.id, target);
   const assistantMessage: UIMessage = {
     id: generateId(),
     role: "assistant",
-    parts: [
-      {
-        type: "tool-log_set",
-        toolCallId,
-        state: "output-available",
-        input: { exercise: ex.name, weight_kg: resolved.weightKg, reps: resolved.reps, rir: q.rir, set_type: q.setType, partial_reps: q.partialReps, side: q.side },
-        output,
-      } as UIMessage["parts"][number],
-    ],
+    parts: [{ type: "tool-start_exercise", toolCallId: generateId(), state: "output-available", input: { exercise: d.name }, output: { workoutId: active.id, ...d } } as UIMessage["parts"][number]],
   };
-  await saveMessage(userMessage);
   await saveMessage(assistantMessage);
-  return { handled: true, userMessage, assistantMessage };
+  const fresh = await getActiveWorkout();
+  return { ok: true, assistantMessage, pad: await buildPad(fresh!) };
 }
 
 export async function adjustSet(setId: number, patch: { weightDelta?: number; repsDelta?: number; rir?: number | null }) {
@@ -101,6 +118,31 @@ export async function adjustSet(setId: number, patch: { weightDelta?: number; re
 
 export async function deleteSet(setId: number) {
   await guard();
-  await db.delete(sets).where(eq(sets.id, setId));
+  const [row] = await db.delete(sets).where(eq(sets.id, setId)).returning();
+  return { ok: true, deleted: row ? serialiseSet(row) : null };
+}
+
+/** Undo a delete from the card: re-insert the same set into the active workout. Returns the new row. */
+export async function restoreSet(exerciseId: number, s: { weightKg: number; reps: number; rir: number | null; setType: string; partialReps: number; side: string | null; note?: string | null }) {
+  await guard();
+  const active = await getActiveWorkout();
+  if (!active) throw new Error("No active workout");
+  const res = await logSet({
+    workoutId: active.id,
+    exerciseId,
+    weightKg: s.weightKg,
+    reps: s.reps,
+    rir: s.rir,
+    setType: s.setType,
+    partialReps: s.partialReps,
+    side: (s.side as "L" | "R" | null) ?? null,
+    note: s.note ?? null,
+  });
+  return serialiseSet(res.set);
+}
+
+export async function setSessionRpe(workoutId: number, rpe: number) {
+  await guard();
+  await db.update(workouts).set({ sessionRpe: rpe }).where(eq(workouts.id, workoutId));
   return { ok: true };
 }

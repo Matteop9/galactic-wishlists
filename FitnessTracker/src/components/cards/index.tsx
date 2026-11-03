@@ -4,6 +4,8 @@ import type { UIMessagePart, UIDataTypes, UITools } from "ai";
 import { SetCard } from "./set-card";
 import { WorkoutPlanCard } from "./workout-plan-card";
 import { WorkoutSummaryCard } from "./workout-summary-card";
+import { StartExerciseCard } from "./start-exercise-card";
+import { AskCard } from "./ask-card";
 import { CardioCard } from "./cardio-card";
 import { WeightCard } from "./weight-card";
 import { ChartCard } from "./chart-card";
@@ -16,7 +18,18 @@ type ToolPart = Extract<Part, { type: `tool-${string}` }> & { input?: unknown; o
 
 const SILENT = new Set(["get_active_workout", "get_last_performance", "get_last_performance_batch", "get_programme", "list_exercises", "recall", "weekly_stats", "volume_by_muscle", "e1rm_history", "get_cardio_history", "get_daily", "get_reference_programme", "get_recent_workouts", "correlate", "get_weight_trend"]);
 
-export function ToolCard({ part, onRestTimer }: { part: ToolPart; onRestTimer?: (seconds: number, label: string) => void }) {
+export function ToolCard({
+  part,
+  onRestTimer,
+  interactive = false,
+  onAnswer,
+}: {
+  part: ToolPart;
+  onRestTimer?: (seconds: number, label: string) => void;
+  /** True only on the newest message: forms and pickers are live there, read-only elsewhere. */
+  interactive?: boolean;
+  onAnswer?: (text: string) => void;
+}) {
   const name = part.type.replace(/^tool-/, "");
   if (part.state === "output-error") return <Card tone="danger">Tool {name} failed: {part.errorText}</Card>;
   if (part.state !== "output-available") {
@@ -25,14 +38,19 @@ export function ToolCard({ part, onRestTimer }: { part: ToolPart; onRestTimer?: 
   }
   const out = part.output as Record<string, unknown> | undefined;
   if (out && typeof out === "object" && "error" in out && out.error) return <Card tone="warn">{String(out.error)}</Card>;
+  if (out && typeof out === "object" && ("omitted" in out || "truncated" in out)) return null;
 
   switch (name) {
     case "log_set":
       return <SetCard output={out as never} onRestTimer={onRestTimer} />;
     case "start_workout":
       return <WorkoutPlanCard output={out as never} />;
+    case "start_exercise":
+      return <StartExerciseCard output={out as never} />;
     case "finish_workout":
-      return <WorkoutSummaryCard output={out as never} />;
+      return <WorkoutSummaryCard output={out as never} interactive={interactive} />;
+    case "ask":
+      return <AskCard spec={out as never} interactive={interactive} onAnswer={onAnswer} />;
     case "log_cardio":
       return <CardioCard output={out as never} />;
     case "log_weight":
@@ -48,8 +66,13 @@ export function ToolCard({ part, onRestTimer }: { part: ToolPart; onRestTimer?: 
       return <ProgrammeChangeCard name={name} output={out as never} />;
     case "edit_set":
       return <Card tone="muted">Set corrected: {fmtSet((out as { set: SetOut }).set)}</Card>;
+    case "delete_set":
     case "undo_last_set":
-      return <Card tone="muted">Removed {String((out as { exercise?: string }).exercise ?? "last set")} {fmtSet((out as { deleted: SetOut }).deleted)}</Card>;
+      return <Card tone="muted">Removed {String((out as { exercise?: string }).exercise ?? "set")} {fmtSet((out as { deleted: SetOut }).deleted)}</Card>;
+    case "edit_workout": {
+      const o = out as { name: string; durationMin: number; sessionRpe: number | null };
+      return <Card tone="muted">{o.name} updated: {o.durationMin} min{o.sessionRpe ? ` · RPE ${o.sessionRpe}` : ""}</Card>;
+    }
     case "remember":
       return <Card tone="muted">Remembered: {String((out as { content: string }).content)}</Card>;
     case "forget":
@@ -81,12 +104,14 @@ function label(name: string) {
   return (
     {
       start_workout: "Setting up your session",
+      start_exercise: "Loading the exercise",
       log_set: "Logging set",
       finish_workout: "Wrapping up",
       log_cardio: "Logging cardio",
       upsert_template: "Rewriting the programme",
       set_rotation: "Updating the rotation",
       render_chart: "Drawing chart",
+      ask: "One sec",
     }[name] ?? name.replace(/_/g, " ")
   );
 }

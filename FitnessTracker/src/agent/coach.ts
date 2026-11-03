@@ -6,6 +6,7 @@ import { bodyTools } from "./tools/body";
 import { programmeTools } from "./tools/programme";
 import { memoryTools } from "./tools/memory";
 import { analysisTools } from "./tools/analysis";
+import { askTools } from "./tools/ask";
 import { buildInstructions } from "./system-prompt";
 
 export const coachTools = {
@@ -15,6 +16,7 @@ export const coachTools = {
   ...programmeTools,
   ...memoryTools,
   ...analysisTools,
+  ...askTools,
 };
 
 import { createAnthropic } from "@ai-sdk/anthropic";

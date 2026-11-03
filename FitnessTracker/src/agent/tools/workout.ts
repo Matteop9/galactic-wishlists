@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { sets, workouts, templateExercises } from "@/db/schema";
 import {
@@ -16,6 +16,7 @@ import {
   suggestForExercise,
   toSetLike,
 } from "@/lib/queries";
+import { describeExercise, estimateMinutes, sessionStart, setCurrentExercise } from "@/lib/pad";
 import { SET_TYPES, bestE1rm, volumeLoad, platesPerSide } from "@/lib/training";
 import { londonDate } from "@/lib/dates";
 
@@ -34,15 +35,63 @@ export function serialiseSet(s: { id: number; setType: string; weightKg: string 
   };
 }
 
+export type SetInput = { weightKg: number; reps: number; rir: number | null; setType: string; partialReps: number; side: "L" | "R" | null; note?: string | null };
+
+/**
+ * Shared by log_set and the pad's server action so both produce the same card.
+ * Logging also makes the exercise current. setNumber counts working sets only.
+ */
+export async function logSetForExercise(exerciseId: number, s: SetInput) {
+  const active = await getActiveWorkout();
+  if (!active) return { error: "No active workout — call start_workout first." as const };
+  const te = active.templateId
+    ? await db.query.templateExercises.findFirst({
+        where: and(eq(templateExercises.templateId, active.templateId), eq(templateExercises.exerciseId, exerciseId)),
+      })
+    : null;
+  const res = await logSet({
+    workoutId: active.id,
+    exerciseId,
+    weightKg: s.weightKg,
+    reps: s.reps,
+    rir: s.rir,
+    setType: s.setType,
+    partialReps: s.partialReps,
+    side: s.side,
+    note: s.note ?? null,
+  });
+  const ex = res.exercise;
+  if (active.currentExerciseId !== ex.id) await setCurrentExercise(active.id, ex.id);
+  const mine = active.sets.filter((x) => x.exerciseId === ex.id);
+  const isWarm = s.setType === "warmup";
+  const restS = te?.restS ?? ex.defaultRestS;
+  return {
+    set: serialiseSet(res.set),
+    exercise: ex.name,
+    exerciseId: ex.id,
+    e1rm: res.e1rm,
+    prs: res.prs,
+    /** Working-set number (warm-ups don't count). For a warm-up: working sets done so far. */
+    setNumber: mine.filter((x) => x.setType !== "warmup").length + (isWarm ? 0 : 1),
+    warmups: mine.filter((x) => x.setType === "warmup").length + (isWarm ? 1 : 0),
+    plannedSets: te?.sets ?? null,
+    restS: isWarm ? Math.min(60, restS) : restS,
+    plates: ex.equipment === "barbell" ? platesPerSide(s.weightKg) : null,
+  };
+}
+
 export const workoutTools = {
   start_workout: tool({
     description:
-      "Start a lifting session. Defaults to the next template in the rotation; pass template_name to pick a specific one, or name only for a freestyle session. Returns the planned exercises with last-time numbers and today's suggested first working set for each.",
+      "Start a lifting session. Defaults to the next template in the rotation; pass template_name to pick a specific one, or name only for a freestyle session. Pass the pre-session check-in (energy, time available, niggles) when you have it. Returns the plan with last-time numbers, today's suggested first working set and an estimated duration per exercise so you can trim to the time available.",
     inputSchema: z.object({
       template_name: z.string().optional().describe("Template to use, e.g. 'Push A'. Omit for the next in rotation."),
       name: z.string().optional().describe("Freestyle session name when no template applies."),
+      energy: z.number().int().min(1).max(5).optional().describe("Pre-session energy 1-5"),
+      time_available_min: z.number().int().min(10).max(240).optional(),
+      notes: z.string().optional().describe("Niggles / constraints the user mentioned"),
     }),
-    execute: async ({ template_name, name }) => {
+    execute: async ({ template_name, name, energy, time_available_min, notes }) => {
       const active = await getActiveWorkout();
       if (active) return { error: "A workout is already in progress", workoutId: active.id, name: active.name };
       const p = await getProgramme();
@@ -54,13 +103,15 @@ export const workoutTools = {
           : undefined;
       if (template_name && !template) return { error: `No template called ${template_name}`, available: p.templates.map((t) => t.name) };
       if (!template && !name) template = undefined;
+      const checkin = energy || time_available_min || notes ? { energy, timeMin: time_available_min, notes } : null;
       const [w] = await db
         .insert(workouts)
-        .values({ templateId: template?.id ?? null, name: template?.name ?? name ?? "Freestyle" })
+        .values({ templateId: template?.id ?? null, name: template?.name ?? name ?? "Freestyle", checkin })
         .returning();
       const plan = [];
       for (const te of template?.exercises ?? []) {
         const s = await suggestForExercise(te.exerciseId, te, w.id);
+        const restS = te.restS ?? te.exercise.defaultRestS;
         plan.push({
           exerciseId: te.exerciseId,
           exercise: te.exercise.name,
@@ -68,18 +119,43 @@ export const workoutTools = {
           repRange: `${te.repMin}-${te.repMax}`,
           targetRir: te.targetRir,
           technique: te.technique,
-          restS: te.restS ?? te.exercise.defaultRestS,
+          restS,
+          estimatedMin: estimateMinutes([{ sets: te.sets, restS }]),
           last: s?.last ? { date: s.last.date, sets: s.last.sets.map(serialiseSet) } : null,
           suggested: s?.suggestion ?? null,
         });
       }
-      return { workoutId: w.id, name: w.name, templateId: template?.id ?? null, startedAt: w.startedAt.toISOString(), plan };
+      return {
+        workoutId: w.id,
+        name: w.name,
+        templateId: template?.id ?? null,
+        startedAt: w.startedAt.toISOString(),
+        checkin,
+        estimatedMin: estimateMinutes(plan),
+        timeAvailableMin: time_available_min ?? null,
+        plan,
+      };
+    },
+  }),
+
+  start_exercise: tool({
+    description:
+      "Make an exercise the current one. This opens the set pad (tap entry for weight/reps/RIR) and shows a card with the prescription, last session's top set and today's suggestion. Call it for the first exercise right after start_workout, and every time the user moves to another exercise (names it, says done/next). Shorthand like '60x10' and the pad then log to this exercise.",
+    inputSchema: z.object({ exercise: z.string() }),
+    execute: async ({ exercise }) => {
+      const active = await getActiveWorkout();
+      if (!active) return { error: "No active workout — call start_workout first." };
+      const ex = await findExercise(exercise);
+      if (!ex) return { error: `Unknown exercise '${exercise}'. Use add_exercise or pick one from the library.` };
+      await setCurrentExercise(active.id, ex.id);
+      const d = await describeExercise(active, ex.id);
+      return { workoutId: active.id, ...d! };
     },
   }),
 
   log_set: tool({
     description:
-      "Log one set in the active workout. Use exercise names from the plan/library (fuzzy match ok). weight_kg 0 = bodyweight. rir = reps in reserve (0 = failure). set_type defaults to working; use warmup/drop/myo_mini/partials/backoff/top/failure when the user says so. Returns the saved set plus any PRs and the rest to take.",
+      "Log one set in the active workout. Use exercise names from the plan/library (fuzzy match ok). weight_kg 0 = bodyweight. rir = reps in reserve (0 = failure). set_type defaults to working; use warmup/drop/myo_mini/partials/backoff/top/failure when the user says so. Logging also makes that exercise the current one. Returns the saved set, the working-set number (warm-ups excluded), PRs and the rest to take.",
     inputSchema: z.object({
       exercise: z.string(),
       weight_kg: z.number().min(0),
@@ -91,18 +167,9 @@ export const workoutTools = {
       note: z.string().optional(),
     }),
     execute: async (input) => {
-      const active = await getActiveWorkout();
-      if (!active) return { error: "No active workout — call start_workout first." };
       const ex = await findExercise(input.exercise);
       if (!ex) return { error: `Unknown exercise '${input.exercise}'. Ask the user or use add_exercise.` };
-      const te = active.templateId
-        ? await db.query.templateExercises.findFirst({
-            where: and(eq(templateExercises.templateId, active.templateId), eq(templateExercises.exerciseId, ex.id)),
-          })
-        : null;
-      const res = await logSet({
-        workoutId: active.id,
-        exerciseId: ex.id,
+      return logSetForExercise(ex.id, {
         weightKg: input.weight_kg,
         reps: input.reps,
         rir: input.rir ?? null,
@@ -111,19 +178,6 @@ export const workoutTools = {
         side: input.side ?? null,
         note: input.note ?? null,
       });
-      const doneThisExercise = active.sets.filter((s) => s.exerciseId === ex.id).length + 1;
-      const restS = te?.restS ?? ex.defaultRestS;
-      return {
-        set: serialiseSet(res.set),
-        exercise: ex.name,
-        exerciseId: ex.id,
-        e1rm: res.e1rm,
-        prs: res.prs,
-        setNumber: doneThisExercise,
-        plannedSets: te?.sets ?? null,
-        restS: input.set_type === "warmup" ? Math.min(60, restS) : restS,
-        plates: ex.equipment === "barbell" ? platesPerSide(input.weight_kg) : null,
-      };
     },
   }),
 
@@ -152,14 +206,25 @@ export const workoutTools = {
     },
   }),
 
+  delete_set: tool({
+    description: "Delete one logged set by id. Prefer this over undo_last_set when you know which set is wrong.",
+    inputSchema: z.object({ set_id: z.number().int() }),
+    execute: async ({ set_id }) => {
+      const [row] = await db.delete(sets).where(eq(sets.id, set_id)).returning();
+      if (!row) return { error: `Set ${set_id} is already gone.` };
+      return { deleted: serialiseSet(row), setId: set_id };
+    },
+  }),
+
   undo_last_set: tool({
-    description: "Delete the most recently logged set in the active workout.",
+    description: "Delete the most recently logged set in the active workout. One at a time, never in parallel.",
     inputSchema: z.object({}),
     execute: async () => {
       const active = await getActiveWorkout();
       if (!active || active.sets.length === 0) return { error: "Nothing to undo." };
       const last = active.sets[active.sets.length - 1];
-      await db.delete(sets).where(eq(sets.id, last.id));
+      const [row] = await db.delete(sets).where(eq(sets.id, last.id)).returning();
+      if (!row) return { error: "That set was already removed." };
       return { deleted: serialiseSet(last), exercise: last.exercise.name };
     },
   }),
@@ -190,7 +255,7 @@ export const workoutTools = {
   }),
 
   get_active_workout: tool({
-    description: "The in-progress workout with every set logged so far, grouped by exercise, and what's left on the plan.",
+    description: "The in-progress workout with every set logged so far, grouped by exercise, the current exercise, and what's left on the plan.",
     inputSchema: z.object({}),
     execute: async () => {
       const active = await getActiveWorkout();
@@ -199,15 +264,19 @@ export const workoutTools = {
       const template = p?.templates.find((t) => t.id === active.templateId);
       const byExercise: Record<string, ReturnType<typeof serialiseSet>[]> = {};
       for (const s of active.sets) (byExercise[s.exercise.name] ??= []).push(serialiseSet(s));
+      const workingDone = (name: string) => byExercise[name]?.filter((s) => s.setType !== "warmup").length ?? 0;
       const remaining = (template?.exercises ?? [])
-        .filter((te) => (byExercise[te.exercise.name]?.filter((s) => s.setType !== "warmup").length ?? 0) < te.sets)
-        .map((te) => ({ exercise: te.exercise.name, sets: te.sets, done: byExercise[te.exercise.name]?.length ?? 0, repRange: `${te.repMin}-${te.repMax}`, targetRir: te.targetRir, technique: te.technique }));
+        .filter((te) => workingDone(te.exercise.name) < te.sets)
+        .map((te) => ({ exercise: te.exercise.name, sets: te.sets, done: workingDone(te.exercise.name), repRange: `${te.repMin}-${te.repMax}`, targetRir: te.targetRir, technique: te.technique }));
+      const current = active.currentExerciseId ? (await describeExercise(active, active.currentExerciseId))?.name ?? null : null;
       return {
         active: true,
         workoutId: active.id,
         name: active.name,
         startedAt: active.startedAt.toISOString(),
-        minutesElapsed: Math.round((Date.now() - active.startedAt.getTime()) / 60000),
+        minutesElapsed: Math.round((Date.now() - sessionStart(active).getTime()) / 60000),
+        checkin: active.checkin,
+        currentExercise: current,
         sets: byExercise,
         remaining,
       };
@@ -215,7 +284,8 @@ export const workoutTools = {
   }),
 
   finish_workout: tool({
-    description: "End the active workout. Records session RPE and notes, advances the rotation, and returns the summary (volume, PRs, e1RM highlights).",
+    description:
+      "End the active workout. Advances the rotation and returns the summary (working sets, volume, top sets, e1RMs). Do not ask for session RPE first: the summary card collects it. Pass it only if the user already said it.",
     inputSchema: z.object({
       session_rpe: z.number().int().min(1).max(10).optional(),
       notes: z.string().optional(),
@@ -225,28 +295,56 @@ export const workoutTools = {
       if (!active) return { error: "No active workout." };
       const [w] = await db
         .update(workouts)
-        .set({ endedAt: new Date(), sessionRpe: session_rpe ?? null, notes: notes ?? null })
+        .set({ endedAt: new Date(), sessionRpe: session_rpe ?? null, notes: notes ?? null, currentExerciseId: null })
         .where(and(eq(workouts.id, active.id), isNull(workouts.endedAt)))
         .returning();
       if (w.templateId) await advanceRotation();
       const full = await getWorkout(w.id);
       const byExercise = new Map<string, typeof active.sets>();
       for (const s of full!.sets) byExercise.set(s.exercise.name, [...(byExercise.get(s.exercise.name) ?? []), s]);
-      const exercisesOut = [...byExercise.entries()].map(([name, ss]) => ({
-        exercise: name,
-        sets: ss.length,
-        topSet: ss.reduce((b, s) => (num(s.weightKg) * s.reps > num(b.weightKg) * b.reps ? s : b), ss[0]),
-        e1rm: bestE1rm(ss.map(toSetLike)),
-      }));
+      const exercisesOut = [...byExercise.entries()].map(([name, ss]) => {
+        const working = ss.filter((s) => s.setType !== "warmup");
+        const pool = working.length ? working : ss;
+        return {
+          exercise: name,
+          sets: working.length,
+          topSet: pool.reduce((b, s) => (num(s.weightKg) * s.reps > num(b.weightKg) * b.reps ? s : b), pool[0]),
+          e1rm: bestE1rm(ss.map(toSetLike)),
+        };
+      });
       return {
         workoutId: w.id,
         name: w.name,
         date: londonDate(w.startedAt),
-        durationMin: Math.round((w.endedAt!.getTime() - w.startedAt.getTime()) / 60000),
-        totalSets: full!.sets.length,
+        durationMin: Math.round((w.endedAt!.getTime() - sessionStart(full!).getTime()) / 60000),
+        totalSets: full!.sets.filter((s) => s.setType !== "warmup").length,
         volumeLoad: Math.round(volumeLoad(full!.sets.map(toSetLike))),
+        sessionRpe: w.sessionRpe,
+        checkin: w.checkin,
         exercises: exercisesOut.map((e) => ({ ...e, topSet: serialiseSet(e.topSet) })),
       };
+    },
+  }),
+
+  edit_workout: tool({
+    description: "Fix a finished session: duration in minutes, session RPE, notes. Defaults to the most recent finished workout.",
+    inputSchema: z.object({
+      workout_id: z.number().int().optional(),
+      duration_min: z.number().int().min(1).max(600).optional(),
+      session_rpe: z.number().int().min(1).max(10).optional(),
+      notes: z.string().optional(),
+    }),
+    execute: async ({ workout_id, duration_min, session_rpe, notes }) => {
+      const w = workout_id
+        ? await db.query.workouts.findFirst({ where: eq(workouts.id, workout_id) })
+        : (await db.query.workouts.findMany({ orderBy: desc(workouts.startedAt), limit: 3 })).find((x) => x.endedAt);
+      if (!w || !w.endedAt) return { error: "No finished workout to edit." };
+      const upd: Partial<typeof workouts.$inferInsert> = {};
+      if (duration_min != null) upd.startedAt = new Date(w.endedAt.getTime() - duration_min * 60000);
+      if (session_rpe != null) upd.sessionRpe = session_rpe;
+      if (notes != null) upd.notes = notes;
+      const [row] = await db.update(workouts).set(upd).where(eq(workouts.id, w.id)).returning();
+      return { workoutId: row.id, name: row.name, durationMin: Math.round((row.endedAt!.getTime() - row.startedAt.getTime()) / 60000), sessionRpe: row.sessionRpe, notes: row.notes };
     },
   }),
 

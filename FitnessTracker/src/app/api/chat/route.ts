@@ -1,6 +1,6 @@
 import { createAgentUIStreamResponse, generateId, type UIMessage } from "ai";
 import { createCoach, type ModelTier } from "@/agent/coach";
-import { loadRecentMessages, saveMessage } from "@/lib/chat-store";
+import { loadModelHistory, saveMessage } from "@/lib/chat-store";
 import { getActiveWorkout } from "@/lib/queries";
 
 export const maxDuration = 120;
@@ -21,8 +21,8 @@ export async function POST(req: Request) {
   if (!incoming) return Response.json({ error: "No message" }, { status: 400 });
   if (!incoming.id) incoming.id = generateId();
 
-  const history = await loadRecentMessages();
   await saveMessage(incoming);
+  const history = await loadModelHistory();
   const uiMessages = [...history.filter((m) => m.id !== incoming.id), incoming];
 
   const text = incoming.parts

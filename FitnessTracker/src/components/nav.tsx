@@ -13,7 +13,7 @@ const TABS = [
 export function Nav() {
   const path = usePathname();
   return (
-    <nav className="pb-safe sticky bottom-0 z-20 border-t border-line bg-bg/95 backdrop-blur">
+    <nav className="pb-safe app-nav shrink-0 border-t border-line bg-bg">
       <ul className="mx-auto flex max-w-xl justify-around">
         {TABS.map((t) => {
           const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
