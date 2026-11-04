@@ -35,7 +35,8 @@ export function modelFor(tier: ModelTier) {
 
 /** Instructions are rebuilt per request so the live context is fresh. */
 export async function createCoach(tier: ModelTier = "coach", extraInstructions = "") {
-  const instructions = (await buildInstructions()) + (extraInstructions ? `\n\n${extraInstructions}` : "");
+  const instructions = await buildInstructions();
+  if (extraInstructions) instructions.push({ role: "system", content: extraInstructions });
   return new ToolLoopAgent({
     model: modelFor(tier),
     instructions,

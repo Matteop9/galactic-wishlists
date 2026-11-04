@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1 — 2026-11-04
+
+- **Prompt caching.** The coach's instructions are now two system blocks: the stable persona carries an Anthropic cache breakpoint (which also covers the ~30 tool schemas ahead of it), and the per-request live context sits after it. 1-hour TTL so a whole session reads from one write. Verified locally: ~13.1k tokens cached per call, ~0.8k uncached. Day 1 had zero cache reads on 63 calls, which was most of its ~$1.60 bill.
+
 ## 0.2.0 — 2026-11-03
 
 Day-1 feedback release. Driven by a review of the first session's chat log.

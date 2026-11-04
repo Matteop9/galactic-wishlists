@@ -1,4 +1,5 @@
 import "server-only";
+import type { SystemModelMessage } from "ai";
 import { getActiveWorkout, getMemory, getNextTemplate, getProgramme, getSetting, getTrend, num, weekTally, getDaily } from "@/lib/queries";
 import { londonDate, londonDateTime } from "@/lib/dates";
 import { sessionStart } from "@/lib/pad";
@@ -110,6 +111,17 @@ export async function buildContext(): Promise<string> {
   return lines.join("\n");
 }
 
-export async function buildInstructions(): Promise<string> {
-  return `${PERSONA}\n\n--- LIVE CONTEXT ---\n${await buildContext()}`;
+/**
+ * Two system blocks. The persona never changes, so it carries the Anthropic
+ * cache breakpoint: the cache prefix is tools → system, so this one breakpoint
+ * caches the whole tool list plus the persona (~10k tokens) at a tenth of the
+ * price. The live context (timestamps, active workout) changes every request
+ * and sits after the breakpoint so it never invalidates the cache.
+ */
+export async function buildInstructions(): Promise<SystemModelMessage[]> {
+  return [
+    // 1 h TTL: one write per session beats a 5 m rewrite after every long rest or exercise change.
+    { role: "system", content: PERSONA, providerOptions: { anthropic: { cacheControl: { type: "ephemeral", ttl: "1h" } } } },
+    { role: "system", content: `--- LIVE CONTEXT ---\n${await buildContext()}` },
+  ];
 }
