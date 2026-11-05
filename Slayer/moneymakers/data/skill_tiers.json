@@ -1,0 +1,14 @@
+{
+  "_note": "ASSUMED human-skill tiers (1-5). Case-insensitive substring match against activity text + page name; highest matching tier wins. Unmatched: combat categories -> config.skill.default_combat (2), else default_noncombat (1). Edit freely.",
+  "_unverified": ["fractured archive", "contract of"],
+  "5": ["chambers of xeric", "tombs of amascut", "theatre of blood", "inferno", "colosseum",
+        "phosani", "doom of mokhaiotl", "yama"],
+  "4": ["cerberus", "alchemical hydra", "duke sucellus", "leviathan", "vardorvis", "whisperer", "nex",
+        "the nightmare", "gauntlet", "maggot king", "araxxor", "fractured archive", "contract of"],
+  "3": ["vorkath", "zulrah", "barrows", "general graardor", "commander zilyana", "k'ril", "kree'arra",
+        "dagannoth kings", "abyssal sire", "kraken", "thermonuclear", "grotesque guardians",
+        "corporeal beast", "callisto", "venenatis", "vet'ion", "artio", "spindel", "calvar'ion",
+        "demonic gorilla", "tormented demon", "moons of peril", "phantom muspah", "royal titans",
+        "hueycoatl", "scorpia", "amoxliatl", "mad angel", "revenant", "barbarian assault",
+        "last man standing", "kalphite queen"]
+}

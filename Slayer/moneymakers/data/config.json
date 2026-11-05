@@ -1,0 +1,42 @@
+{
+  "_note": "All values here are ASSUMED judgement calls. Edit freely; every run reads this file.",
+  "user_agent": "HahapMMG/0.1 (personal OSRS tool; github matteop9)",
+  "rate_limit_s": 0.5,
+  "mismatch_tolerance": 0.02,
+  "effort": {
+    "intensity_map": {"Low": 1, "Moderate": 3, "High": 5},
+    "category_fallback": {
+      "Collecting": 2, "Processing": 3, "Skilling": 3, "Combat": 3, "Combat/Low": 3,
+      "Combat/Mid": 3, "Combat/High": 4, "Recurring": 2, "Farming": 2, "Minigame": 3,
+      "Ironman": 3, "_default": 3
+    },
+    "text_plus": ["click-intensive", "click intensive", "tick manipulation", "tick-manipulation",
+                  "prayer flick", "prayer-flick", "3-tick", "1-tick", "2-tick", "tick perfect", "tick-perfect"],
+    "text_minus": ["afk"],
+    "text_minus_negators": ["not afk", "non-afk", "not very afk", "un-afk", "unafk", "less afk", "not as afk"]
+  },
+  "skill": {
+    "default_combat": 2,
+    "default_noncombat": 1,
+    "tick_bump_keywords": ["tick manipulation", "3-tick", "2-tick", "1-tick", "tick-manipulation"],
+    "tick_skilling_tier": 3
+  },
+  "variance": {
+    "model": "refined",
+    "_model_options": "poisson = spec v0.1 (every output line Poisson on per-hour rate); refined = Bernoulli per kill for per-kill drops, guaranteed integer drops and high-rate per-hour production deterministic",
+    "deterministic_rate_per_hour": 20,
+    "rare_rate_per_hour": 1.0
+  },
+  "bands": [
+    {"name": "steady", "max_cv": 0.10},
+    {"name": "some luck", "max_cv": 0.35},
+    {"name": "lucky", "max_cv": 1.0},
+    {"name": "lottery", "max_cv": null}
+  ],
+  "risk_penalty_sd": 0.5,
+  "hours_target_rel_err": 0.10,
+  "hours_z": 1.96,
+  "effort_bands": {"low (1-2)": [1, 2], "mid (3)": [3, 3], "high (4-5)": [4, 5]},
+  "skill_bands": {"easy (1-2)": [1, 2], "mid (3)": [3, 3], "hard (4)": [4, 4], "elite (5)": [5, 5]},
+  "report": {"top_n": 40, "matrix_n": 5, "steady_n": 20, "lottery_n": 20}
+}

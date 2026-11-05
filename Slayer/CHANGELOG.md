@@ -26,3 +26,9 @@
 - Local dashboard: `python serve.py` opens http://127.0.0.1:8765/ (`index.html`, no build). Tabs: Overview (cards, tiers, flags, diff), Ordering (bucket filter, search, task expansion), Slayer (master tabs, objective switch, sortable verdict table, EV cards, block list by objective), Task log, Turael calculator.
 - `run.py` now writes `report.json` (all four objectives modelled every run) and ingests `data/task_log.json`: logged tasks become measured xp/gp/minutes in `task_rates.json`, overriding wiki figures.
 - `serve.py` (stdlib): serves the page, `POST /api/log` appends/deletes entries, `POST /api/run` reruns the pipeline so the Refresh button works from the page.
+
+## 2026-11-05 v0.5.0 moneymakers
+- New `moneymakers/` sub-tool: ranks every wiki Money making guide by gp/hr with a luck estimate (sd, cv, luck share, hours to +-10%), effort 1-5 (wiki intensity) and human skill 1-5 (keyword table, assumed). Data from the wiki `money_making_guide` Bucket API in one request (524 guides, 489 normal + 35 recurring), not HTML scraping.
+- Variance model: per-kill drops with p<1 Bernoulli, integer drops and >=20/hr production deterministic, else Poisson (`variance.model` in `data/config.json`, `poisson` restores the pure model). Maggot King check: 9.82m/hr, cv 3.16, Elder venator fang 0.0735/hr = 89% of variance.
+- Flags: `--reprice` (live GE mid prices, gemw lines only), `--details` (wikitext scan for AFK/click/tick effort adjustments), `--force`, `--top`, `--min-profit`, `--members-only`, `--f2p-only`. Dated snapshots in `moneymakers/data/`, raw cache gitignored.
+- Open: skill tier for The Fractured Archive unverified; tax-exempt item list ignored under `--reprice`.
