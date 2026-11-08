@@ -172,6 +172,20 @@ export const SPORT_EMOJI: Record<string, string> = {
 
 export const SPORTS = new Set(Object.keys(SPORT_EMOJI))
 
+/* Team picker suggestions: break weeks suggest sports, normal weeks suggest
+   clubs (never both). Shared by Enter Pick and the admin edit sheet. */
+export function pickOptionsFor<T extends { name: string; uses: number }>(
+  dict: T[],
+  isBreak: boolean,
+): { name: string; uses: number }[] {
+  if (!isBreak) return dict.filter((o) => !SPORTS.has(o.name))
+  const used = dict.filter((o) => SPORTS.has(o.name))
+  const unused = [...SPORTS]
+    .filter((s) => !used.some((u) => u.name === s))
+    .map((name) => ({ name, uses: 0 }))
+  return [...used, ...unused]
+}
+
 /** Baseline crest for a team name, ignoring any runtime override — callers
     that want the full order should use TeamBadge (or useTeamBadges + this). */
 export function crestUrl(team: string): string | null {

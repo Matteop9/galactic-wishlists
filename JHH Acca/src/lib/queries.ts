@@ -10,6 +10,7 @@ import type {
   LeaderboardRow,
   LivePickStatus,
   LlmUsageRow,
+  Method,
   PickScore,
   Player,
   Season,
@@ -18,6 +19,7 @@ import type {
   SeasonTeamMember,
   TeamLeaderboardRow,
   TeamWeekScore,
+  VoidReason,
 } from './types'
 
 async function unwrap<T>(q: PromiseLike<{ data: T | null; error: { message: string } | null }>): Promise<T> {
@@ -196,6 +198,32 @@ export const settlePick = (
 ) =>
   unwrap(
     supabase.rpc('settle_pick', { p_pick: pickId, p_result: result, p_void_reason: voidReason }),
+  )
+
+/* Admin correction of a pick after its window has closed (any week, settled
+   or not). Writes the pick and its result in one call; 'N/A' is finalised
+   server-side at the team's average odds. Migration 0028. */
+export const adminEditPick = (a: {
+  gameweek_id: string
+  player_id: string
+  method: Method
+  team: string
+  second_team: string | null
+  odds: number
+  result: 0 | 1 | null
+  void_reason: VoidReason | null
+}) =>
+  unwrap(
+    supabase.rpc('admin_edit_pick', {
+      p_gw: a.gameweek_id,
+      p_player: a.player_id,
+      p_method: a.method,
+      p_team: a.team,
+      p_second_team: a.second_team,
+      p_odds: a.odds,
+      p_result: a.result,
+      p_void_reason: a.void_reason,
+    }),
   )
 
 export const matchPick = (

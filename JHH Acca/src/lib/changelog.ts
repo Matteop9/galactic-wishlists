@@ -10,6 +10,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.11.0',
+    date: '2026-11-08',
+    title: 'Missed picks can be fixed',
+    items: [
+      'Pick made in the chat but never put in the app? An admin can now correct any pick after the window closes, even on weeks already settled',
+      'Scores, tables and form update straight away, and every correction is logged',
+    ],
+  },
+  {
     version: '0.10.0',
     date: '2026-09-02',
     title: 'Pages that fill in, not flash',

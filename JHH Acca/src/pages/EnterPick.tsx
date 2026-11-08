@@ -17,7 +17,7 @@ import { Avatar, IntlBreakChip, PageTitle, teamColor } from '../components/ui'
 import { Skeleton } from '../components/Skeleton'
 import { ChampStars } from '../components/ChampStars'
 import { gwDate, odds2, ukTime } from '../lib/format'
-import { SPORTS } from '../lib/teams'
+import { pickOptionsFor } from '../lib/teams'
 
 /* Enter Pick: any teammate can enter for their team (pair-scoped on the Test
    Weekend). Method segmented control (Win / BTTS / No pick), selection, second
@@ -66,15 +66,7 @@ function EnterPickInner() {
 
   // Break weeks suggest sports; normal weeks suggest clubs (never both).
   const isBreak = !!gw?.is_international_break
-  const pickOptions = useMemo(() => {
-    const dict = teamDict ?? []
-    if (!isBreak) return dict.filter((o) => !SPORTS.has(o.name))
-    const used = dict.filter((o) => SPORTS.has(o.name))
-    const unused = [...SPORTS]
-      .filter((s) => !used.some((u) => u.name === s))
-      .map((name) => ({ name, uses: 0 }))
-    return [...used, ...unused]
-  }, [teamDict, isBreak])
+  const pickOptions = useMemo(() => pickOptionsFor(teamDict ?? [], isBreak), [teamDict, isBreak])
 
   // Who can I pick for? season_team_members mapping if it exists, else my acca team.
   const myTeamPlayers = useMemo(() => {

@@ -1,5 +1,36 @@
 # Changelog — The Acca (JHH Acca)
 
+## v0.11.0 — 2026-11-08
+
+Admins can correct any pick after its window has closed. Prompted by Matt's 7 Nov pick (Southampton
+1.66, lost) never making it into the app, so the midnight sweep recorded it as a no-pick; that row
+was fixed by hand the same day (`N/A` 1.64 → `Win` Southampton 1.66, result 0; week scores
+unchanged, Matt's form −2 → −1).
+
+- **`admin_edit_pick`** (migration `0028`): admin-only RPC that rewrites one pick for a closed
+  gameweek, settled or not, and settles it in the same call (method / team(s) / odds / result /
+  void reason). Validation mirrors `settle_pick`; week status is reconciled the same way
+  (settled ↔ closed). A changed selection drops the pick's fixture link and match suggestion so
+  live chips can't show the old team's match. Refuses weeks whose window is still open (Enter Pick
+  covers those) and scheduled/skipped weeks. Revoked from `PUBLIC`/`anon`.
+- **No-pick corrections** settle at the team's average odds on the spot, same convention as
+  `insert_no_picks`, excluding the player's own row. `insert_no_picks` itself is deliberately not
+  reused: it also inserts no-picks for anyone missing a row, which must never run against
+  historical weeks.
+- **Why not "reopen the week"**: `tick_gameweeks` re-closes any open week past `window_closes` on
+  its next tick, reopening would re-arm the 48h no-pick sweep and rewrite the recorded window, and
+  a settled week would bounce through `closed` for everyone. Editing the row avoids all of it.
+- **Gameweek page**: admins get **Edit** on every pick once the window has closed; the sheet takes
+  method, selection, odds and result (Pending / W / L / PP / INV) and saves them together. Editing a
+  no-pick starts the result at Pending so the new selection gets a deliberate W/L. Saving
+  invalidates every query, since one pick can move week scores, sweeps, tables, form and honours.
+- Team-suggestion logic (`pickOptionsFor`) moved to `src/lib/teams.ts`, shared by Enter Pick and
+  the edit sheet.
+- Tested against the live DB inside a rolled-back transaction as the real admin, a non-admin and
+  `anon`: BTTS win re-scores the week (JHP 4.94 → 6.84) and keeps it settled; Pending flips it to
+  closed; back to no-pick re-settles at 1.64; all six validation errors and both permission denials
+  fire.
+
 ## v0.10.0 — 2026-09-02
 
 Loading states and motion. Feedback-queue request: *"Loading pages, animations"* — clarified as
